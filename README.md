@@ -3,7 +3,7 @@ Starting my thesis by making a flowchart-application / VPL
 
 # Roadmap
 
-##  Phase 1
+##  Phase 1 - Flowchart
 - Create a 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
   - Inspired by https://www.youtube.com/watch?v=QZwneRb-zqA
 - This will get the gui basics down for the rest of the thesis
@@ -11,10 +11,10 @@ Starting my thesis by making a flowchart-application / VPL
 - Only acceptable parameter: boolean 
 - Simple gates
 - Dragging & clicking, deleting, etc... 
-- Drawing using HTML canvas (seems to make the most sense for this application)
+- Drawing using HTML canvas / or webgl, not sure which is better at this point
 
 
-##  Phase 2 
+##  Phase 2 - Utility
 - Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`
 - Figure out how to `compile` the flowchart to javascript.
 - Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
@@ -23,7 +23,7 @@ Starting my thesis by making a flowchart-application / VPL
 - (keep this tool around as-it-is right now, could be useful as an educational tool)
 
 
-## Phase 3 
+## Phase 3 - Geometry 
 - Make this application ready for geo business & wasm. 
   - Make the components accept json-serializable data. 
     - The Json, and more specifically the serde::Value enum, will be the standard for all data transfer between components. 
@@ -32,7 +32,7 @@ Starting my thesis by making a flowchart-application / VPL
 - Add a mesh visualizer
 
 
-## Phase 4
+## Phase 4 - Geospatial
 > Time for serious business 
 - Add the cj-val-rs wasm binary to this flowchart tool.
 - Load various cityjsons, and validate them using the flowchart
