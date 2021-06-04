@@ -1,4 +1,4 @@
-import {Domain, InputState, Vector2} from "../../../engine/src/lib";
+import {Domain, Domain2, InputState, Vector2} from "../../../engine/src/lib";
 import { CTX } from "../nodes/nodes-core";
 
 /**
@@ -11,7 +11,7 @@ export class Camera2 {
 
     private constructor(
         private html_canvas: HTMLCanvasElement,
-        public position: Vector2, 
+        public pos: Vector2, 
         public scale: number) {}
 
     static new(
@@ -22,7 +22,7 @@ export class Camera2 {
     }
 
     log() {
-        console.log(`camera pos: ${this.position} scale: ${this.scale}`);
+        console.log(`camera pos: ${this.pos} scale: ${this.scale}`);
     }
 
     update(state: InputState) : boolean {
@@ -40,7 +40,7 @@ export class Camera2 {
 
         // panning
         if (state.mouseRightDown) {
-            this.position.sub(state.mouseDelta);
+            this.pos.sub(state.mouseDelta);
             redraw = true;
         }
       
@@ -70,7 +70,7 @@ export class Camera2 {
         sv = sv.clone();
 
         // translate
-        sv.add(this.position);
+        sv.add(this.pos);
 
         // scale
         return sv.scaled(1/this.scale);
@@ -82,17 +82,22 @@ export class Camera2 {
         
         wv.scale(this.scale)
         // inv-translate
-        return wv.sub(this.position)
+        return wv.sub(this.pos)
     }
 
     getCenter() {
-        let width = this.html_canvas.width;
-        let height = this.html_canvas.height;
-        return this.position.clone().addn(width / 2, height / 2);
+        let box = this.getBox();
+        return box.elevate(Vector2.new(0.5,0.5));
     }
 
     moveCtxToState(ctx: CTX) {
-        ctx.translate(-this.position.x, -this.position.y)
+        ctx.translate(-this.pos.x, -this.pos.y)
         ctx.scale(this.scale, this.scale);
+    }
+
+    getBox() {
+        let width = this.html_canvas.width;
+        let height = this.html_canvas.height;
+        return Domain2.fromWH(this.pos.x, this.pos.y, width, height);
     }
 }
