@@ -3,6 +3,7 @@
 
 import { Camera2 } from "../ctx/ctx-camera";
 import { Domain2, InputState, Rectangle2, Vector2 } from "../../../engine/src/lib";
+import { resizeCanvas } from "../ctx/ctx-helpers";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -15,27 +16,40 @@ export class NodesCanvas {
     private redrawNextFrame = true;
 
     private constructor(
-        private readonly html_canvas: HTMLCanvasElement, 
         private readonly ctx: CTX,
         private readonly html_ui: HTMLDivElement,
 
         private readonly camera: Camera2,
-        private readonly inputState: InputState) {}
+        private readonly state: InputState) {}
 
     static new(html_canvas: HTMLCanvasElement, ui: HTMLDivElement) {
+
         const ctx = html_canvas.getContext('2d');
         if (!ctx || ctx == null) {
             alert("Canvas Rendering not supported in your browser. Try upgrading or switching!"); 
             return undefined;
         } 
 
-        const camera = Camera2.new(html_canvas, Vector2.new(100,100), 1);
-        const state = InputState.new(html_canvas);
-        return new NodesCanvas(html_canvas, ctx, ui, camera, state);
+        const camera = Camera2.new(ctx.canvas, Vector2.new(-100,-100), 1);
+        const state = InputState.new(ctx.canvas);
+
+        return new NodesCanvas(ctx, ui, camera, state);
     }
 
-    update() {
+    start() {
+        window.addEventListener("resize", () => this.onResize());
+        this.onResize();
+    }
+    
+    update(dt: number) {
+        this.state.preUpdate(dt);
+        
+        let r = this.camera.update(this.state);
+        if (r) {
+            this.requestRedraw();
+        }
 
+        this.state.postUpdate();
     }
 
     requestRedraw() {
@@ -46,11 +60,16 @@ export class NodesCanvas {
         if (!this.redrawNextFrame) return;
         this.redrawNextFrame = false;
 
-        let ctx = this.ctx;
-    
+        // lets start rendering! 
 
-        this.drawRectangle(ctx, Domain2.fromWH(10,10,100,100));
-        this.drawRectangle(ctx, Domain2.fromWH(10,110,100,100));
+        let ctx = this.ctx;
+        let camera = this.camera;
+        ctx.save();
+        ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+        camera.moveCtxToState(ctx);
+        this.drawRectangle(ctx, Domain2.fromWH(0,0,100,100));
+        this.drawRectangle(ctx, Domain2.fromWH(110,0,50,50));
+        ctx.restore();
     }
 
     drawRectangle(ctx: CTX, rec: Domain2) {
@@ -58,5 +77,10 @@ export class NodesCanvas {
         ctx.fillStyle = 'black';
         ctx.fillRect(rec.x.t0, rec.y.t0, rec.x.size(), rec.y.size());
         ctx.restore();
+    }
+
+    onResize() {
+        resizeCanvas(this.ctx);
+        this.redrawNextFrame = true;
     }
 }
