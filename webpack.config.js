@@ -15,9 +15,9 @@ module.exports = (env) => {
                     // Link to the geon-engine
                     loader: "ts-loader",
                     test: /\.ts$/,
-                    options: {
-                        allowTsInNodeModules: true,
-                    },
+                    // options: {
+                    //     allowTsInNodeModules: true,
+                    // },
                     include: [path.resolve(__dirname, "../engine")],
                 },
             ],

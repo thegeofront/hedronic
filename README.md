@@ -4,12 +4,12 @@ Starting my thesis by making a flowchart-application / VPL
 # Roadmap
 
 ##  Phase 1 - Flowchart
-- Create a 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
+- Create a web 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
   - Inspired by https://www.youtube.com/watch?v=QZwneRb-zqA
 - This will get the gui basics down for the rest of the thesis
-- I will not focus on anything else right now, I will just try to create a nice-to-use VPL.
+- I will not focus on anything else in this phase, I will just try to create a nice-to-use VPL.
 - Only acceptable parameter: boolean 
-- Simple gates
+- Simple gates (AND, OR, NOT, XOR), just like that video
 - Dragging & clicking, deleting, etc... 
 - Drawing using HTML canvas / or webgl, not sure which is better at this point
 
