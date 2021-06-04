@@ -21,9 +21,18 @@ export class Camera2 {
         return new Camera2(html_canvas, startPos, startScale);
     }
 
+    log() {
+        console.log(`camera pos: ${this.position} scale: ${this.scale}`);
+    }
+
     update(state: InputState) : boolean {
         let redraw = false;
         
+        if (state.IsKeyPressed(" ")) {
+            console.log("QQQ");
+            this.log();
+        }
+
         // clicking 
         if (state.mouseLeftPressed && this.onClick) {
             this.onClick(this.screenToWorld(state.mousePos));
@@ -35,13 +44,20 @@ export class Camera2 {
             redraw = true;
         }
       
-        // zooming
+        // zooming [JF] Lets leave this for later... 
         if (state.mouseScrollDelta != 0) {
-            this.scale = this.scaleRange.comform(this.scale * (1 - state.mouseScrollDelta));
-            // calculate the new top-left point
 
-            // zoompoint 
             // let zoompoint = this.getCenter();
+            // let world1 = this.screenToWorld(zoompoint);
+            // this.scale = this.scaleRange.comform(this.scale * (1 - state.mouseScrollDelta));
+            // // calculate the new top-left point
+
+            // // thanks to zoomchange, this is now different
+            // let world2 = this.screenToWorld(zoompoint);
+            // let diff = world2.sub(world1);
+            // // this.position.add(diff);
+
+
             // this.position = this.position.lerp(zoompoint, scalar / 2);
 
             redraw = true;
