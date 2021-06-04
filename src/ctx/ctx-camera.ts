@@ -7,6 +7,7 @@ import { CTX } from "../nodes/nodes-core";
 export class Camera2 {
     
     private scaleRange = Domain.new(0.3, 5)
+    public onClick?: (c: Vector2) => void;
 
     private constructor(
         private html_canvas: HTMLCanvasElement,
@@ -24,9 +25,8 @@ export class Camera2 {
         let redraw = false;
         
         // clicking 
-        if (state.mouseLeftPressed) {
-            console.log(state.mousePos)
-            console.log(this.worldToScreen(this.screenToWorld(state.mousePos)));
+        if (state.mouseLeftPressed && this.onClick) {
+            this.onClick(this.screenToWorld(state.mousePos));
         }
 
         // panning

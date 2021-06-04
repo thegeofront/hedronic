@@ -14,6 +14,7 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawNextFrame = true;
+    private recs: Domain2[] = [];
 
     private constructor(
         private readonly ctx: CTX,
@@ -37,8 +38,11 @@ export class NodesCanvas {
     }
 
     start() {
+        // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
         this.onResize();
+
+        this.camera.onClick = this.onClick.bind(this);
     }
     
     update(dt: number) {
@@ -67,8 +71,9 @@ export class NodesCanvas {
         ctx.save();
         ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
         camera.moveCtxToState(ctx);
-        this.drawRectangle(ctx, Domain2.fromWH(0,0,100,100));
-        this.drawRectangle(ctx, Domain2.fromWH(110,0,50,50));
+        for(let rec of this.recs) {
+            this.drawRectangle(ctx, rec);
+        }
         ctx.restore();
     }
 
@@ -79,8 +84,13 @@ export class NodesCanvas {
         ctx.restore();
     }
 
+    onClick(pos: Vector2) {
+        this.recs.push(Domain2.fromWH(pos.x,pos.y,50,50))
+        this.requestRedraw();
+    }
+
     onResize() {
         resizeCanvas(this.ctx);
-        this.redrawNextFrame = true;
+        this.requestRedraw();
     }
 }
