@@ -3,8 +3,8 @@
 [X] create a barebones canvas
 [X] create a pannable camera 
 [X] place rectangles on canvas 
-[ ] place standardized rectangles on a grid
- - [ ] draw the grid  
+[X] place standardized rectangles on a grid
+ - [X] draw the grid  
 [ ] place different abstract nodes on a grid, with input & output indicators
  - [ ] create 
  - [ ] select

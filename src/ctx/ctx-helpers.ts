@@ -1,4 +1,4 @@
-import { CTX } from "../nodes/nodes-core";
+import { CTX } from "../nodes/core";
 
 export function resizeCanvas(ctx: CTX) {
     // Lookup the size the browser is displaying the canvas in CSS pixels.

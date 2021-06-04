@@ -1,6 +1,6 @@
 // purpose: entry point
 
-import { NodesCanvas } from "./nodes/nodes-core";
+import { NodesCanvas } from "./nodes/core";
 
 function main() {
     // get references of all items on the canvas

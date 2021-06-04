@@ -2,8 +2,10 @@
 // purpose: wrapper for dealing with the 'whole of nodes'
 
 import { Camera2 } from "../ctx/ctx-camera";
-import { Domain2, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
+import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
+import { NodesGraph } from "./elements/graph";
+import { Chip } from "./elements/chip";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -15,14 +17,16 @@ export class NodesCanvas {
     
     private redrawNextFrame = true;
     private recs: Domain2[] = [];
-    private size = 40;
+    private size = 50;
 
     private constructor(
         private readonly ctx: CTX,
         private readonly html_ui: HTMLDivElement,
 
         private readonly camera: Camera2,
-        private readonly state: InputState) {}
+        private readonly input: InputState,
+        private readonly graph: NodesGraph,
+        ) {}
 
     static new(html_canvas: HTMLCanvasElement, ui: HTMLDivElement) {
 
@@ -34,8 +38,9 @@ export class NodesCanvas {
 
         const camera = Camera2.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
+        const graph = NodesGraph.new();
 
-        return new NodesCanvas(ctx, ui, camera, state);
+        return new NodesCanvas(ctx, ui, camera, state, graph);
     }
 
     start() {
@@ -47,14 +52,14 @@ export class NodesCanvas {
     }
     
     update(dt: number) {
-        this.state.preUpdate(dt);
+        this.input.preUpdate(dt);
         
-        let redraw = this.camera.update(this.state);
+        let redraw = this.camera.update(this.input);
         if (redraw) {
             this.requestRedraw();
         }
 
-        this.state.postUpdate();
+        this.input.postUpdate();
     }
 
     requestRedraw() {
@@ -98,7 +103,7 @@ export class NodesCanvas {
         let width = box.x.size();
         let height = box.y.size();
         let size = this.size;
-        let crosssize = size/6;
+        let crosssize = size/4;
         let topleft = Vector2.new(box.x.t0, box.y.t0);
         let gridStart = this.toWorld(this.toGrid(topleft));
 
@@ -142,6 +147,8 @@ export class NodesCanvas {
         // round to grid size
         let g = this.toGrid(pos);
         pos = Vector2.new(g.x * this.size, g.y * this.size);
+        let AND = function(a: boolean, b: boolean) : boolean[] { return [a && b] };
+        this.graph.addNode(Chip.new(g, AND));
 
         this.recs.push(Domain2.fromWH(pos.x,pos.y,this.size * 3,this.size * 2))
         this.requestRedraw();
