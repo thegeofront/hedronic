@@ -6,7 +6,9 @@ import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vect
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../elements/graph";
 import { Chip } from "../elements/chip";
-import { Operation } from "../elements/operation";
+import { Operation } from "../operations/operation";
+import * as OPS from "../operations/operations";
+import { Random } from "../../../engine/src/math/random";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -17,7 +19,7 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawNextFrame = true;
-    private _size = 50;
+    private _size = 30;
     get size() {
         return this._size;
     }
@@ -145,8 +147,23 @@ export class NodesCanvas {
         pos = this.toWorld(g);
 
         // create chip
-        let o = Operation.new(function(a: boolean, b: boolean) : boolean[] { return [a && b] });
-        this.graph.addNode(Chip.new(g, o));
+        let andOperation = Operation.new(OPS.and);
+        let orOperation = Operation.new(OPS.or);
+        let notOperation = Operation.new(OPS.not);
+
+        let rng = Random.fromRandom();
+        let value = rng.get();
+        if (value < 0.33) {
+            this.graph.addNode(Chip.new(g, andOperation));
+        } else if (value < 0.66) {
+
+            this.graph.addNode(Chip.new(g, orOperation));
+            
+        } else {
+            this.graph.addNode(Chip.new(g, notOperation));
+        }
+
+
         this.requestRedraw();
     }
 
