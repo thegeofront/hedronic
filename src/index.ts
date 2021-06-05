@@ -12,8 +12,6 @@ function main() {
 
     let acc_time = 0;
 
-
-
     function loop(elapsed_time: number) {
         let delta_time = elapsed_time - acc_time;
         acc_time = elapsed_time;

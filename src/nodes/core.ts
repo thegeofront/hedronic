@@ -4,8 +4,9 @@
 import { Camera2 } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
-import { NodesGraph } from "./elements/graph";
-import { Chip } from "./elements/chip";
+import { NodesGraph } from "../elements/graph";
+import { Chip } from "../elements/chip";
+import { Operation } from "../elements/operation";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -16,8 +17,10 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawNextFrame = true;
-    private recs: Domain2[] = [];
-    private size = 50;
+    private _size = 40;
+    get size() {
+        return this._size;
+    }
 
     private constructor(
         private readonly ctx: CTX,
@@ -49,6 +52,8 @@ export class NodesCanvas {
         this.onResize();
 
         this.camera.onClick = this.onClick.bind(this);
+
+        this.onClick(Vector2.zero());
     }
     
     update(dt: number) {
@@ -83,8 +88,8 @@ export class NodesCanvas {
         this.drawGrid(ctx);
 
         // draw rectangles 
-        for(let rec of this.recs) {
-            this.drawRectangle(ctx, rec);
+        for (let chip of this.graph.nodes.values()) {
+            chip.draw(ctx, this);
         }
 
         ctx.restore();
@@ -100,9 +105,7 @@ export class NodesCanvas {
         }
 
         let box = this.camera.getBox();
-        let width = box.x.size();
-        let height = box.y.size();
-        let size = this.size;
+        let size = this._size;
         let crosssize = size/4;
         let topleft = Vector2.new(box.x.t0, box.y.t0);
         let gridStart = this.toWorld(this.toGrid(topleft));
@@ -120,37 +123,30 @@ export class NodesCanvas {
         ctx.restore();
     }
 
-    drawRectangle(ctx: CTX, rec: Domain2) {
-        ctx.save();
-        ctx.fillStyle = 'black';
-        ctx.fillRect(rec.x.t0, rec.y.t0, rec.x.size(), rec.y.size());
-        ctx.strokeStyle = 'white';
-        ctx.lineCap = "square";
-        ctx.lineWidth = 3;
-        ctx.strokeRect(rec.x.t0, rec.y.t0, rec.x.size(), rec.y.size());
-        ctx.restore();
-    }
+    // -----
 
     toGrid(wv: Vector2) {
         return Vector2.new(
-            Math.round((wv.x - (this.size/2)) / this.size),
-            Math.round((wv.y - (this.size/2)) / this.size)
+            Math.round((wv.x - (this._size/2)) / this._size),
+            Math.round((wv.y - (this._size/2)) / this._size)
         )
     }
 
     toWorld(gv: Vector2) {
-        return gv.scaled(this.size);
+        return gv.scaled(this._size);
     }
+
+
 
     onClick(pos: Vector2) {
 
         // round to grid size
         let g = this.toGrid(pos);
-        pos = Vector2.new(g.x * this.size, g.y * this.size);
-        let AND = function(a: boolean, b: boolean) : boolean[] { return [a && b] };
-        this.graph.addNode(Chip.new(g, AND));
+        pos = this.toWorld(g);
 
-        this.recs.push(Domain2.fromWH(pos.x,pos.y,this.size * 3,this.size * 2))
+        // create chip
+        let o = Operation.new(function(a: boolean, b: boolean) : boolean[] { return [a && b] });
+        this.graph.addNode(Chip.new(g, o));
         this.requestRedraw();
     }
 
