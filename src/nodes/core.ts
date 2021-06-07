@@ -20,9 +20,7 @@ export class NodesCanvas {
     
     private redrawNextFrame = true;
     private _size = 30;
-    get size() {
-        return this._size;
-    }
+    get size() { return this._size; }
 
     private constructor(
         private readonly ctx: CTX,
@@ -31,6 +29,8 @@ export class NodesCanvas {
         private readonly camera: Camera2,
         private readonly input: InputState,
         private readonly graph: NodesGraph,
+
+        public operations: Operation[],
         ) {}
 
     static new(html_canvas: HTMLCanvasElement, ui: HTMLDivElement) {
@@ -45,7 +45,14 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
 
-        return new NodesCanvas(ctx, ui, camera, state, graph);
+        let operations = [
+            Operation.new(OPS.and),
+            Operation.new(OPS.or),
+            Operation.new(OPS.not),
+            Operation.new(OPS.test),
+        ]
+
+        return new NodesCanvas(ctx, ui, camera, state, graph, operations);
     }
 
     start() {
@@ -146,22 +153,11 @@ export class NodesCanvas {
         let g = this.toGrid(pos);
         pos = this.toWorld(g);
 
-        // create chip
-        let andOperation = Operation.new(OPS.and);
-        let orOperation = Operation.new(OPS.or);
-        let notOperation = Operation.new(OPS.not);
-
+        // spawn node with random operation
         let rng = Random.fromRandom();
-        let value = rng.get();
-        if (value < 0.33) {
-            this.graph.addNode(Chip.new(g, andOperation));
-        } else if (value < 0.66) {
-
-            this.graph.addNode(Chip.new(g, orOperation));
-            
-        } else {
-            this.graph.addNode(Chip.new(g, notOperation));
-        }
+        let count = this.operations.length;
+        let value = Math.floor(rng.get() * count);
+        this.graph.addNode(Chip.new(g, this.operations[value]));
 
 
         this.requestRedraw();
