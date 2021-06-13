@@ -1,6 +1,6 @@
 // purpose: entry point
-
-import { NodesCanvas } from "./nodes/core";
+import { FpsCounter } from "../../engine/src/lib";
+import { NodesCanvas } from "./nodes/nodes-canvas";
 
 function main() {
     // get references of all items on the canvas
@@ -11,10 +11,15 @@ function main() {
     canvas.start();
 
     let acc_time = 0;
+    let counter = FpsCounter.new();
 
     function loop(elapsed_time: number) {
         let delta_time = elapsed_time - acc_time;
         acc_time = elapsed_time;
+
+        counter._update(delta_time);
+        document.title = "fps: " + counter.getFps();
+
         canvas.update(delta_time);
         canvas.draw();
         requestAnimationFrame(loop);

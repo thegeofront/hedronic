@@ -1,10 +1,10 @@
 import {Domain, Domain2, InputState, Vector2} from "../../../engine/src/lib";
-import { CTX } from "../nodes/core";
+import { CTX } from "../nodes/nodes-canvas";
 
 /**
  * 2d camera for ctx context
  */
-export class Camera2 {
+export class CtxCamera {
     
     private scaleRange = Domain.new(0.3, 5)
     public onClick?: (c: Vector2) => void;
@@ -18,7 +18,7 @@ export class Camera2 {
         html_canvas: HTMLCanvasElement, 
         startPos: Vector2, 
         startScale: number) {
-        return new Camera2(html_canvas, startPos, startScale);
+        return new CtxCamera(html_canvas, startPos, startScale);
     }
 
     log() {

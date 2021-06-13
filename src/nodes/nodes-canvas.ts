@@ -1,13 +1,13 @@
 // author : Jos Feenstra
 // purpose: wrapper for dealing with the 'whole of nodes'
 
-import { Camera2 } from "../ctx/ctx-camera";
+import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../elements/graph";
 import { Chip } from "../elements/chip";
 import { Operation } from "../operations/operation";
-import * as OPS from "../operations/operations";
+import * as OPS from "../operations/operations-default";
 import { Random } from "../../../engine/src/math/random";
 
 // shorthands
@@ -26,31 +26,27 @@ export class NodesCanvas {
         private readonly ctx: CTX,
         private readonly html_ui: HTMLDivElement,
 
-        private readonly camera: Camera2,
+        private readonly camera: CtxCamera,
         private readonly input: InputState,
         private readonly graph: NodesGraph,
 
         public operations: Operation[],
         ) {}
 
-    static new(html_canvas: HTMLCanvasElement, ui: HTMLDivElement) {
+    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement) {
 
-        const ctx = html_canvas.getContext('2d');
+        const ctx = htmlCanvas.getContext('2d');
         if (!ctx || ctx == null) {
             alert("Canvas Rendering not supported in your browser. Try upgrading or switching!"); 
             return undefined;
         } 
 
-        const camera = Camera2.new(ctx.canvas, Vector2.new(-100,-100), 1);
+        const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
 
-        let operations = [
-            Operation.new(OPS.and),
-            Operation.new(OPS.or),
-            Operation.new(OPS.not),
-            Operation.new(OPS.test),
-        ]
+        
+        let operations: Operation[] = OPS.defaultOperations.map(fn => Operation.new(fn));
 
         return new NodesCanvas(ctx, ui, camera, state, graph, operations);
     }
@@ -59,20 +55,17 @@ export class NodesCanvas {
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
         this.onResize();
-
         this.camera.onClick = this.onClick.bind(this);
-
         this.onClick(Vector2.zero());
     }
     
     update(dt: number) {
         this.input.preUpdate(dt);
-        
         let redraw = this.camera.update(this.input);
+
         if (redraw) {
             this.requestRedraw();
         }
-
         this.input.postUpdate();
     }
 
@@ -144,8 +137,6 @@ export class NodesCanvas {
     toWorld(gv: Vector2) {
         return gv.scaled(this._size);
     }
-
-
 
     onClick(pos: Vector2) {
 

@@ -1,8 +1,6 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable } from "./cable";
 import { Chip } from "./chip";
-import * as OPS from "../operations/operations";
-
 
 /**
  * All nodes

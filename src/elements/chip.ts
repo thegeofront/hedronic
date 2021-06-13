@@ -1,5 +1,5 @@
 import { Domain2, MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { CTX, NodesCanvas } from "../nodes/core";
+import { CTX, NodesCanvas } from "../nodes/nodes-canvas";
 import { Operation } from "../operations/operation";
 
 
@@ -46,25 +46,23 @@ export class Chip {
 
         // draw operation text
         ctx.fillStyle = 'white';
-        ctx.font = '25px courier new';
+        ctx.font = '20px courier new';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         let op_center = textCenters.get(0);
-        ctx.fillText(this.operation.name.toUpperCase(), op_center.x, op_center.y);
+        ctx.fillText(this.operation.name, op_center.x, op_center.y);
 
         // draw input text
         ctx.font = '12px courier new';
-        ctx.textBaseline = "top";
         for (let i = 0 ; i < this.operation.inputs; i++) {
             let vec = textCenters.get(1 + i);
-            ctx.fillText('-', vec.x, vec.y);
+            ctx.fillText('|', vec.x, vec.y);
         }
 
         // draw output text
-        ctx.textBaseline = "bottom";
         for (let i = 0 ; i < this.operation.outputs; i++) {
             let vec = textCenters.get(1 + this.operation.inputs + i);
-            ctx.fillText('-', vec.x, vec.y);
+            ctx.fillText('|', vec.x, vec.y);
         }
 
         // ctx.fillStyle = '#222222';
@@ -87,32 +85,32 @@ function shape(ctx: CTX, inputs: number, outputs: number, size: number) : MultiV
     let step = size / part;
     let width = max * part;
     
-    let rowa = 0.5
-    let rowb = 1;
-    let rowc = 1.5;
-    let rowd = 5 + 8.5;
-    let rowe = 5 + 9;
-    let rowf = 5 + 9.5;
+    let cola = 0.5
+    let colb = 1;
+    let colc = 1.5;
+    let cold = 5 + 8.5;
+    let cole = 5 + 9;
+    let colf = 5 + 9.5;
 
     let coord = (x: number,y: number) => {
-        return Vector2.new(x*step, y*step);
+        return Vector2.new(y*step, x*step);
     }
     let moveTo = (x: number, y: number) => {
-        ctx.moveTo(x*step, y*step);
+        ctx.moveTo(y*step, x*step);
     }
     let lineTo = (x: number, y: number) => {
-        ctx.lineTo(x*step, y*step);
+        ctx.lineTo(y*step, x*step);
     }
 
     // calculate coorindates of input, output, and body centers
     let vecs = MultiVector2.new(inputs + outputs + 1);
-    vecs.set(0, coord(width/2, rowf/2));
+    vecs.set(0, coord(width/2, colf/2));
 
     // top
-    moveTo(0.5, rowe);
-    lineTo(0  , rowd);
-    lineTo(0  , rowc);
-    lineTo(0.5, rowb);
+    moveTo(0.5, cole);
+    lineTo(0.5, cold);
+    lineTo(0.5, colc);
+    lineTo(0.5, colb);
 
     // draw inputs
     for(let i = 0; i < max; i++) {
@@ -120,51 +118,52 @@ function shape(ctx: CTX, inputs: number, outputs: number, size: number) : MultiV
         if (i < inputs) {
 
             // store center
-            vecs.set(1 + i, coord(offset+ 2.5, rowb))
+            vecs.set(1 + i, coord(offset+ 2.5, colb))
 
             // draw zig-zag
-            lineTo(offset+1  , rowa);
-            lineTo(offset+4  , rowa);
-            lineTo(offset+4.5, rowb);
+            lineTo(offset+1  , cola);
+            lineTo(offset+4  , cola);
+            lineTo(offset+4.5, colb);
             if (i != max-1)
-                lineTo(offset+5.5, rowb);
+                lineTo(offset+5.5, colb);
         } else {
             // draw straight line
-            lineTo(offset+4.5, rowb);
+            // lineTo(offset+4.5, colb);
         }
     }
 
     // bottom
-    lineTo(width-0.5, rowb);
-    lineTo(width-0.0, rowc);
-    lineTo(width-0.0, rowd);
-    lineTo(width-0.5, rowe);
+    // lineTo(width-0.5, 4); // colb
+    lineTo(width-0.5, 5); // colc
+    lineTo(width-0.5, 10); // cold
+    // lineTo(width-0.5, 6); // cole
 
     // draw outputs
-    moveTo(0.5, rowe);
+    moveTo(0.5, cole);
     for(let i = 0; i < max; i++) {
         let offset = i * 5;
         if (i < outputs) {
 
             // store center
-            vecs.set(1 + inputs + i, coord(offset+ 2.5, rowe))
+            vecs.set(1 + inputs + i, coord(offset+ 2.5, cole))
 
             // draw zig-zag
-            lineTo(offset+1  , rowf);
-            lineTo(offset+4  , rowf);
-            lineTo(offset+4.5, rowe);
+            lineTo(offset+1  , colf);
+            lineTo(offset+4  , colf);
+            lineTo(offset+4.5, cole);
             if (i != max-1)
-                lineTo(offset+5.5, rowe);
+                lineTo(offset+5.5, cole);
         } else {
             // draw straight line
-            lineTo(offset+4.5,rowe);
+            // lineTo(offset+4.5,cole);
         }
     }
+    lineTo(width-0.5, 10); // cold
     return vecs;
 }
 
 
-import * as OPS from "../operations/operations";
+import * as OPS from "../operations/operations-default";
 
 function test() {
     let and_operation = Operation.new(OPS.and);
