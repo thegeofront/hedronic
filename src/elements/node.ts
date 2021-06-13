@@ -1,5 +1,5 @@
 import { Domain2, MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { CTX, NodesController } from "../nodes/nodes-canvas";
+import { CTX, NodesController } from "../nodes/nodes-controller";
 import { Operation } from "../operations/operation";
 
 

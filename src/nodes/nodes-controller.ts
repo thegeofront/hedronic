@@ -70,6 +70,9 @@ export class NodesController {
         // hook up UI 
         this.panel.renderCatalogue(this.catalogue, (idx: number) => {
             this.selectOperation(idx);
+            // we must focus on the canvas after interacting with the html UI.
+            // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
+            this.input.canvas.focus();
         });
 
     }
@@ -87,9 +90,9 @@ export class NodesController {
         }
 
         let cancelPresed =  (
-            this.input.IsKeyPressed("Escape") ||
+            this.input.IsKeyPressed("escape") ||
             this.input.IsKeyPressed(" ") ||
-            this.input.IsKeyPressed("Backspace")
+            this.input.IsKeyPressed("backspace")
             );
 
         if (cancelPresed) {
@@ -109,7 +112,6 @@ export class NodesController {
     }
 
     draw() {
-        
    
         // // draw cursor every frame, regardless
         // let g = this.toGrid(this.camera.mousePos);
@@ -200,10 +202,16 @@ export class NodesController {
 
     // -----
 
+    /**
+     * empty to deselect
+     */
     selectOperation(idx = -1) {
         this.selectedOperation = idx;
     }
 
+    /**
+     * empty to deselect
+     */
     selectNode(guid = "") {
         this.selectedNode = guid;
     }
@@ -221,9 +229,11 @@ export class NodesController {
         // let count = this.catalogue.ops.length;
         // let value = Math.floor(rng.get() * count);
         if (this.selectedOperation != -1) {
-            console.log("spawn!");
             let idx = this.selectedOperation;
             this.graph.addNode(GeonNode.new(g, this.catalogue.ops[idx]));
+            if (!this.input.IsKeyDown("shift")) {
+                this.selectOperation();
+            }
         }
 
         // this.graph.addNode(GeonNode.new(g, this.catalogue.ops[value]));
