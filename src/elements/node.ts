@@ -1,34 +1,34 @@
 import { Domain2, MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { CTX, NodesCanvas } from "../nodes/nodes-canvas";
+import { CTX, NodesController } from "../nodes/nodes-canvas";
 import { Operation } from "../operations/operation";
 
 
 /**
- * NOTE: I would like to call this 'Node', but that clashes with the STD...
+ * NOTE: I would like to call this 'Node', but that clashes with the standard library...
  * NOTE: A Chip might share an Operation with other Chips.
  */
-export class Chip {
+export class GeonNode {
 
     private constructor(
         public gridpos: Vector2, 
-        public readonly operation: Operation) {}
+        public readonly op: Operation) {}
 
-    static new(gridpos: Vector2, func: Operation) {
-        return new Chip(gridpos, func);
+    static new(gridpos: Vector2, op: Operation) {
+        return new GeonNode(gridpos, op);
     }
 
     run(...args: boolean[]) {
-        return this.operation.run(...args);
+        return this.op.run(...args);
     }
 
     log() {
         console.log(`chip at ${this.gridpos}`);
         // this.operation.name
         console.log("operation: ")
-        this.operation.log();
+        this.op.log();
     }
 
-    draw(ctx: CTX, canvas: NodesCanvas) {
+    draw(ctx: CTX, canvas: NodesController) {
 
         let pos = canvas.toWorld(this.gridpos);
         let rec = Domain2.fromWH(pos.x,pos.y, canvas.size * 2, canvas.size * 2);
@@ -40,7 +40,7 @@ export class Chip {
         ctx.beginPath();
         ctx.strokeStyle = '#ffffff';
         ctx.fillStyle = '#222222';
-        let textCenters = shape(ctx, this.operation.inputs, this.operation.outputs, canvas.size);
+        let textCenters = shape(ctx, this.op.inputs, this.op.outputs, canvas.size);
         ctx.fill();
         ctx.stroke();
 
@@ -50,18 +50,18 @@ export class Chip {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         let op_center = textCenters.get(0);
-        ctx.fillText(this.operation.name, op_center.x, op_center.y);
+        ctx.fillText(this.op.name, op_center.x, op_center.y);
 
         // draw input text
         ctx.font = '12px courier new';
-        for (let i = 0 ; i < this.operation.inputs; i++) {
+        for (let i = 0 ; i < this.op.inputs; i++) {
             let vec = textCenters.get(1 + i);
             ctx.fillText('|', vec.x, vec.y);
         }
 
         // draw output text
-        for (let i = 0 ; i < this.operation.outputs; i++) {
-            let vec = textCenters.get(1 + this.operation.inputs + i);
+        for (let i = 0 ; i < this.op.outputs; i++) {
+            let vec = textCenters.get(1 + this.op.inputs + i);
             ctx.fillText('|', vec.x, vec.y);
         }
 
@@ -163,14 +163,14 @@ function shape(ctx: CTX, inputs: number, outputs: number, size: number) : MultiV
 }
 
 
-import * as OPS from "../operations/operations-default";
+import * as OPS from "../operations/functions";
 
 function test() {
     let and_operation = Operation.new(OPS.and);
     let not_operation = Operation.new(OPS.not);
 
-    let and_chip = Chip.new(Vector2.new(6,10), and_operation);
-    let or_chip = Chip.new(Vector2.new(1,1), not_operation);
+    let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
+    let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);
 
     and_chip.log();
     or_chip.log();

@@ -2,12 +2,5 @@
     position: absolute;
     width: 100vw;
     height: 100vh;
-    background-color: var(--antracite-light);
-}
-
-#nodes-ui {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--antracite-light);
+    background-color: var(--antracite);
 }

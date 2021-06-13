@@ -8,6 +8,7 @@ export class CtxCamera {
     
     private scaleRange = Domain.new(0.3, 5)
     public onClick?: (c: Vector2) => void;
+    public mousePos = Vector2.new();
 
     private constructor(
         private html_canvas: HTMLCanvasElement,
@@ -28,6 +29,10 @@ export class CtxCamera {
     update(state: InputState) : boolean {
         let redraw = false;
         
+        // always store mouse 
+        let worldPos = this.screenToWorld(state.mousePos);
+        this.mousePos = worldPos;
+
         if (state.IsKeyPressed(" ")) {
             console.log("QQQ");
             this.log();
@@ -35,7 +40,7 @@ export class CtxCamera {
 
         // clicking 
         if (state.mouseLeftPressed && this.onClick) {
-            this.onClick(this.screenToWorld(state.mousePos));
+            this.onClick(worldPos);
         }
 
         // panning
