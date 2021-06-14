@@ -8,6 +8,7 @@ import { GeonNode } from "./node";
  * 
  */
 export type GUID = string;
+export type Comp = number;
 
 export class NodesGraph {
 
@@ -34,14 +35,24 @@ export class NodesGraph {
     addNode(node: GeonNode) {
         let key = createRandomGUID();
         this.nodes.set(key, node);
+        return key;
     }
 
     deleteNode(guid: GUID) {
-        this.nodes.delete(guid);
+        return this.nodes.delete(guid);
     }
 
     addCable(cable: Cable) {
         let key = createRandomGUID();
         this.cables.set(key, cable);
+        return key;
+    }
+
+    deleteCable(guid: GUID) {
+        return this.nodes.delete(guid);
+    }
+
+    addCableBetween(a: GUID, aComp: Comp, b: GUID, bComp: Comp) {
+        this.addCable(Cable.new(a, aComp, b, bComp));
     }
 }

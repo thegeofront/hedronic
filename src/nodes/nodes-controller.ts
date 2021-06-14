@@ -4,13 +4,14 @@
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
-import { GUID, NodesGraph } from "../elements/graph";
-import { Style, GeonNode } from "../elements/node";
+import { Comp, GUID, NodesGraph } from "../elements/graph";
+import { GeonNode } from "../elements/node";
 import { Operation } from "../operations/operation";
 import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue } from "../operations/ops-catalogue";
+import { drawCable, drawNode, NodeState } from "./nodes-rendering";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -29,9 +30,9 @@ export class NodesController {
     // selection state 
     private selectedOp: number = -1; // when placing new node
     private selectedNode: GUID = ""; // when selecting existing node
-    private selectedComp?: number; // part of the node that is selected
+    private selectedComp?: Comp; // part of the node that is selected
     private hoverNode: GUID = ""; // when selecting existing node
-    private hoverComp?: number; // when selecting existing node
+    private hoverComp?: Comp; // when selecting existing node
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
     private mgpHover = Vector2.new(); // mouse grid point hover
@@ -41,7 +42,7 @@ export class NodesController {
         private readonly panel: NodesSidePanel,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
-        private readonly graph: NodesGraph,
+        public readonly graph: NodesGraph,
 
         public catalogue: Catalogue,
         ) {}
@@ -86,8 +87,23 @@ export class NodesController {
             // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
             this.input.canvas.focus();
         });
+
+        // DEBUG add a standard graph
+        this.testGraph();
     }
     
+    testGraph() {
+        let NOT = this.catalogue.ops[2];
+        let OR = this.catalogue.ops[1];
+        let AND = this.catalogue.ops[0];
+        
+        let a = this.graph.addNode(GeonNode.new(Vector2.new(0,0), NOT));
+        let b = this.graph.addNode(GeonNode.new(Vector2.new(0,2), OR));
+        let c = this.graph.addNode(GeonNode.new(Vector2.new(5,0), AND));
+        this.graph.addCableBetween(a, 1, c,-1);
+
+    }
+
     /**
      * NOTE: this is sort of the main loop of the whole node canvas
      * @param dt 
@@ -158,20 +174,23 @@ export class NodesController {
         // draw grid 
         this.drawGrid(ctx);
 
+        // draw cables 
+        for (let [key, cable] of this.graph.cables) {
+            drawCable(ctx, cable, this);
+        }
+
         // draw nodes 
-        for (let [key, chip] of this.graph.nodes) {
+        for (let [key, node] of this.graph.nodes) {
             
             // TODO: fix the fact we cannot hover the node of the socket we are selecting...
             if (key == this.selectedNode) {
-                chip.draw(ctx, this, this.selectedComp!, Style.Selected);
+                drawNode(ctx, node, this, this.selectedComp!, NodeState.Selected);
             } else if (key == this.hoverNode) {
-                chip.draw(ctx, this, this.hoverComp!, Style.Hover);
+                drawNode(ctx, node, this, this.hoverComp!, NodeState.Hover);
             } else {
-                chip.draw(ctx, this, 0, Style.Normal);
+                drawNode(ctx, node, this, 0, NodeState.Normal);
             }
         }
-
-        // TODO draw cables 
 
         // draw selection 
 
@@ -180,7 +199,7 @@ export class NodesController {
         let g = this.toGrid(this.camera.mousePos);
         if (this.selectedOp != -1) {
             let fakeNode = GeonNode.new(g, this.catalogue.ops[this.selectedOp]);
-            fakeNode.draw(ctx, this, 0, Style.Placement);
+            drawNode(ctx, fakeNode, this, 0, NodeState.Placement);
         }
 
         // done drawing
@@ -239,6 +258,8 @@ export class NodesController {
 
     // -----
 
+    // -----
+
     /**
      * empty to deselect
      */
@@ -249,8 +270,9 @@ export class NodesController {
     /**
      * empty to deselect
      */
-    selectNode(guid = "") {
+    selectNode(guid = "", comp?: number) {
         this.selectedNode = guid;
+        this.selectedComp = comp;
     }
 
  
@@ -309,9 +331,17 @@ export class NodesController {
 
         // possibly create a line
         if (this.selectedNode != "" && this.hoverNode != "" &&
-            this.selectedComp != 0 && this.hoverComp != 0) {
-            console.log(this.selectedNode, this.hoverNode);
-            console.log("connnect these!");
+            (this.selectedComp! > 0 && this.hoverComp! < 0) || 
+            (this.selectedComp! < 0 && this.hoverComp! > 0)
+            ) {
+            console.log("adding cable...")
+            this.graph.addCableBetween(
+                this.selectedNode, 
+                this.selectedComp!, 
+                this.hoverNode, 
+                this.hoverComp!);
+            this.selectNode();
+            this.requestRedraw();
         }
 
         // reset

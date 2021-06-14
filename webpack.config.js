@@ -1,4 +1,5 @@
 const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
 
 // setup webpack using the ts-loader
 module.exports = (env) => {
@@ -40,6 +41,16 @@ module.exports = (env) => {
 
             // compress: true,
             // hot: true
+        },
+
+        optimization: {
+            minimizer: [
+                new TerserPlugin({
+                    terserOptions: {
+                        keep_fnames: true,
+                    },
+              }),
+            ],
         },
     }
 
