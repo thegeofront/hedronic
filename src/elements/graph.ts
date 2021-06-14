@@ -36,6 +36,10 @@ export class NodesGraph {
         this.nodes.set(key, node);
     }
 
+    deleteNode(guid: GUID) {
+        this.nodes.delete(guid);
+    }
+
     addCable(cable: Cable) {
         let key = createRandomGUID();
         this.cables.set(key, cable);

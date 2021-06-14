@@ -25,5 +25,5 @@ export function test(a: boolean, b: boolean, c: boolean) : boolean[] {
 }
 
 export function expand(a: boolean) : boolean[] {
-    return [a, a, a];
+    return [a, a, a, a, a, a];
 }

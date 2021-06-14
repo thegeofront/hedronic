@@ -7,7 +7,9 @@ import { CTX } from "../nodes/nodes-controller";
 export class CtxCamera {
     
     private scaleRange = Domain.new(0.3, 5)
-    public onClick?: (c: Vector2) => void;
+    public onMouseDown?: (c: Vector2) => void;
+    public onMouseUp?: (c: Vector2) => void;
+    public onMouseMove?: (c: Vector2) => void;
     public mousePos = Vector2.new();
 
     private constructor(
@@ -33,14 +35,17 @@ export class CtxCamera {
         let worldPos = this.screenToWorld(state.mousePos);
         this.mousePos = worldPos;
 
-        if (state.IsKeyPressed(" ")) {
-            console.log("QQQ");
-            this.log();
+        // we have to check these things every frame to make dragging consistent
+
+        // clicking down
+        if (state.mouseLeftPressed && this.onMouseDown) {
+            this.onMouseDown(worldPos);
         }
 
-        // clicking 
-        if (state.mouseLeftPressed && this.onClick) {
-            this.onClick(worldPos);
+        // click lift 
+        // console.log(state.mouseLeftDown, state.mouseLeftPrev);
+        if (!state.mouseLeftDown && state.mouseLeftPrev && this.onMouseUp) {
+            this.onMouseUp(worldPos);
         }
 
         // panning
@@ -67,7 +72,7 @@ export class CtxCamera {
 
             redraw = true;
         }
-
+        
         return redraw;
     }
 

@@ -5,9 +5,9 @@ import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { GUID, NodesGraph } from "../elements/graph";
-import { GeonNode } from "../elements/node";
+import { Style, GeonNode } from "../elements/node";
 import { Operation } from "../operations/operation";
-import * as OPS from "../operations/functions";
+import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue } from "../operations/ops-catalogue";
@@ -27,8 +27,14 @@ export class NodesController {
     get size() { return this._size; }
 
     // selection state 
-    private selectedOperation: number = -1; // when placing new node
+    private selectedOp: number = -1; // when placing new node
     private selectedNode: GUID = ""; // when selecting existing node
+    private selectedComp?: number; // part of the node that is selected
+    private hoverNode: GUID = ""; // when selecting existing node
+    private hoverComp?: number; // when selecting existing node
+    private mgpStart? = Vector2.new(); // mouse grid point start of selection
+    private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
+    private mgpHover = Vector2.new(); // mouse grid point hover
 
     private constructor(
         private readonly ctx: CTX,
@@ -53,7 +59,7 @@ export class NodesController {
         const graph = NodesGraph.new();
 
         
-        let operations: Operation[] = OPS.defaultOperations.map(fn => Operation.new(fn));
+        let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
         const catalogue = Catalogue.new(operations);
         const panel = NodesSidePanel.new(ui);
 
@@ -64,17 +70,22 @@ export class NodesController {
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
         this.onResize();
-        this.camera.onClick = this.onClick.bind(this);
-        this.onClick(Vector2.zero());
+        this.camera.onMouseDown = (worldPos: Vector2) => {
+            this.onMouseDown(this.toGrid(worldPos));
+        }
+        this.camera.onMouseUp = (worldPos: Vector2) => {
+            this.onMouseUp(this.toGrid(worldPos));
+        }
+
 
         // hook up UI 
         this.panel.renderCatalogue(this.catalogue, (idx: number) => {
             this.selectOperation(idx);
+            this.selectNode();
             // we must focus on the canvas after interacting with the html UI.
             // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
             this.input.canvas.focus();
         });
-
     }
     
     /**
@@ -83,12 +94,16 @@ export class NodesController {
      */
     update(dt: number) {
         this.input.preUpdate(dt);
-        let redraw = this.camera.update(this.input);
 
+        let redraw = this.camera.update(this.input);
         if (redraw) {
             this.requestRedraw();
         }
 
+        // mouse
+        this.updateMouse(this.camera.mousePos);
+        
+        // keys
         let cancelPresed =  (
             this.input.IsKeyPressed("escape") ||
             this.input.IsKeyPressed(" ") ||
@@ -97,10 +112,20 @@ export class NodesController {
 
         if (cancelPresed) {
             this.selectOperation();
+            this.selectNode();
             this.requestRedraw();
         }
 
-        if (this.selectedOperation != -1) {
+        if (this.input.IsKeyPressed("delete")) {
+            if (this.selectedNode != "") {
+                this.graph.deleteNode(this.selectedNode);
+                this.selectedNode == "";
+                this.requestRedraw();
+            }
+        }
+
+        // refresh when placing new operation / node
+        if (this.selectedOp != -1) {
             this.requestRedraw();
         }
 
@@ -116,10 +141,6 @@ export class NodesController {
         // // draw cursor every frame, regardless
         // let g = this.toGrid(this.camera.mousePos);
         // let pos = this.toWorld(g);
-
-   
-        // // draw selection indicator if we have an existing node selected 
-
 
         // redraw everything if we moved the camera, for example
         if (!this.redrawAll) {
@@ -138,17 +159,28 @@ export class NodesController {
         this.drawGrid(ctx);
 
         // draw nodes 
-        for (let chip of this.graph.nodes.values()) {
-            chip.draw(ctx, this);
+        for (let [key, chip] of this.graph.nodes) {
+            
+            // TODO: fix the fact we cannot hover the node of the socket we are selecting...
+            if (key == this.selectedNode) {
+                chip.draw(ctx, this, this.selectedComp!, Style.Selected);
+            } else if (key == this.hoverNode) {
+                chip.draw(ctx, this, this.hoverComp!, Style.Hover);
+            } else {
+                chip.draw(ctx, this, 0, Style.Normal);
+            }
         }
 
         // TODO draw cables 
 
+        // draw selection 
+
+
         // draw node if we are placing a new node
         let g = this.toGrid(this.camera.mousePos);
-        if (this.selectedOperation != -1) {
-            let fakeNode = GeonNode.new(g, this.catalogue.ops[this.selectedOperation]);
-            fakeNode.draw(ctx, this);
+        if (this.selectedOp != -1) {
+            let fakeNode = GeonNode.new(g, this.catalogue.ops[this.selectedOp]);
+            fakeNode.draw(ctx, this, 0, Style.Placement);
         }
 
         // done drawing
@@ -166,24 +198,29 @@ export class NodesController {
 
         let box = this.camera.getBox();
         let size = this._size;
-        let crosssize = size/4;
+        let crosssize = size/20;
         let topleft = Vector2.new(box.x.t0, box.y.t0);
         let gridStart = this.toWorld(this.toGrid(topleft));
 
         ctx.save();
         ctx.fillStyle = '#111111';
-        ctx.lineWidth = 0.11;
-        
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+
         for (let x = gridStart.x; x < box.x.t1; x += size) {
             for (let y = gridStart.y; y < box.y.t1; y += size) {
-                // ctx.moveTo(x,y);
-                ctx.beginPath();
-                ctx.arc(x,y,1, 0, Math.PI*2);
-                ctx.fill();
-                // cross(x, y, crosssize);
+                
+                
+                // ctx.fillRect(x,y,1,1);
+                // ctx.arc(x,y,1, 0, Math.PI*2);
+                /// ctx.fill();
+
+                ctx.moveTo(x,y);
+                cross(x, y, crosssize);
             }
         }
-        ctx.fill();
+
+        ctx.stroke();
         ctx.restore();
     }
 
@@ -206,7 +243,7 @@ export class NodesController {
      * empty to deselect
      */
     selectOperation(idx = -1) {
-        this.selectedOperation = idx;
+        this.selectedOp = idx;
     }
 
     /**
@@ -216,30 +253,106 @@ export class NodesController {
         this.selectedNode = guid;
     }
 
-    // -----
+ 
+    trySelect(gridPos: Vector2) : [GUID, number] | undefined {
+        for (let key of this.graph.nodes.keys()) {
+            let res = this.graph.nodes.get(key)!.trySelect(gridPos);
+            if (res !== undefined) {
+                return [key, res];
+            }
+        }
+        return undefined;
+    }
 
-    onClick(pos: Vector2) {
+    updateMouse(worldPos: Vector2) {
 
-        // round to grid size
-        let g = this.toGrid(pos);
-        pos = this.toWorld(g);
+        let g = this.toGrid(worldPos);
+        if (!g.equals(this.mgpHover)) {
+            this.onMouseGridMove(g);
+        }
 
-        // spawn node with random operation
-        // let rng = Random.fromRandom();
-        // let count = this.catalogue.ops.length;
-        // let value = Math.floor(rng.get() * count);
-        if (this.selectedOperation != -1) {
-            let idx = this.selectedOperation;
-            this.graph.addNode(GeonNode.new(g, this.catalogue.ops[idx]));
+    }
+
+    onMouseDown(gp: Vector2) {
+
+        // console.log("down!");
+        this.mgpStart = gp;
+        this.mgpEnd = gp;
+        
+        if (this.selectedOp != -1) {
+            // we are placing a new node
+            let idx = this.selectedOp;
+            this.graph.addNode(GeonNode.new(gp, this.catalogue.ops[idx]));
             if (!this.input.IsKeyDown("shift")) {
                 this.selectOperation();
             }
-        }
-
-        // this.graph.addNode(GeonNode.new(g, this.catalogue.ops[value]));
-
+        } else {
+            // we clicked at some spot
+            let selection = this.trySelect(gp)
+            if (selection !== undefined) {
+                // console.log("selected!", selection);
+                this.selectedNode = selection[0];
+                this.selectedComp = selection[1];
+            } else {
+                this.selectedNode = "";
+                this.selectedComp = undefined;
+            }
+        } 
 
         this.requestRedraw();
+        // this.graph.addNode(GeonNode.new(g, this.catalogue.ops[value]));
+        
+    }
+
+    onMouseUp(gp: Vector2) {
+        // console.log("up!");
+
+        // possibly create a line
+        if (this.selectedNode != "" && this.hoverNode != "" &&
+            this.selectedComp != 0 && this.hoverComp != 0) {
+            console.log(this.selectedNode, this.hoverNode);
+            console.log("connnect these!");
+        }
+
+        // reset
+        this.mgpStart = undefined;
+        this.mgpEnd = undefined;
+    }
+
+    /**
+     * fires when the mouse moves over to a new gridcell
+     */
+    onMouseGridMove(gp: Vector2) {
+
+        // console.log("move!");
+
+        // hovering
+        let selection = this.trySelect(gp)
+        if (selection !== undefined) {
+            this.hoverNode = selection[0];
+            this.hoverComp = selection[1];
+            this.requestRedraw();
+        } else {
+            this.hoverNode = "";
+            this.hoverComp = undefined;
+            this.requestRedraw();
+        }
+
+        // if mouse is down and we are selecting a node 
+        if (this.mgpStart && this.selectedNode != "") {
+            if (this.selectedComp == 0) {
+                // dragging node
+                let node = this.graph.nodes.get(this.selectedNode);
+                node?.gridpos.add(gp.subbed(this.mgpEnd!))
+            } else {
+                // dragging line
+                console.log("drag line");
+            }
+        }
+
+        // update at end, so we can use mgpEnd as a delta for dragging
+        this.mgpHover = gp;
+        this.mgpEnd = gp;
     }
 
     onResize() {

@@ -8,16 +8,16 @@
 [X] place different abstract nodes on a grid, with input & output indicators
 
 
-[ ] interact with the nodes properly
- - [ ] create 
-    - [ ] menu or buttons
+[X] interact with the nodes properly
+ - [X] create 
+    - [X] menu or buttons
     - [ ] double click detection
- - [ ] pick
-    - [ ] just use stupid logic for now, no need to be fancy 
-    - [ ] indicator
- - [ ] move
-    - [ ] clicking  
- - [ ] delete
+ - [X] pick
+    - [X] just use stupid logic for now, no need to be fancy 
+    - [X] indicator
+ - [X] move
+    - [X] clicking  
+ - [X] delete
 
 
 [ ] cables

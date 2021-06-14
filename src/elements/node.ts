@@ -1,12 +1,23 @@
 import { Domain2, MultiVector2, Vector2 } from "../../../engine/src/lib";
 import { CTX, NodesController } from "../nodes/nodes-controller";
 import { Operation } from "../operations/operation";
+import * as OPS from "../operations/functions";
+import { CtxCamera } from "../ctx/ctx-camera";
 
 
 /**
  * NOTE: I would like to call this 'Node', but that clashes with the standard library...
  * NOTE: A Chip might share an Operation with other Chips.
  */
+const NODE_GRID_WIDTH = 3;
+
+export enum Style {
+    Normal,
+    Hover,
+    Selected,
+    Placement,
+}
+
 export class GeonNode {
 
     private constructor(
@@ -28,41 +39,52 @@ export class GeonNode {
         this.op.log();
     }
 
-    draw(ctx: CTX, canvas: NodesController) {
+    draw(ctx: CTX, canvas: NodesController, component: number, style: Style) {
 
+        let max = Math.max(this.op.inputs, this.op.outputs);
         let pos = canvas.toWorld(this.gridpos);
-        let rec = Domain2.fromWH(pos.x,pos.y, canvas.size * 2, canvas.size * 2);
         
+        const BAR_WIDTH = 5;
+
         ctx.save();
 
         // draw body
         ctx.translate(pos.x, pos.y);
         ctx.beginPath();
-        ctx.strokeStyle = '#ffffff';
-        ctx.fillStyle = '#222222';
+
+        setStyle(ctx, style, component, 0);
+
         let textCenters = shape(ctx, this.op.inputs, this.op.outputs, canvas.size);
         ctx.fill();
         ctx.stroke();
 
         // draw operation text
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = "white";
         ctx.font = '20px courier new';
+        // ctx.rotate
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         let op_center = textCenters.get(0);
+        // ctx.translate(op_center.x, op_center.y);
+        // ctx.rotate(Math.PI*-0.5);
         ctx.fillText(this.op.name, op_center.x, op_center.y);
+        
 
         // draw input text
         ctx.font = '12px courier new';
         for (let i = 0 ; i < this.op.inputs; i++) {
+            setStyle(ctx, style, component, -1 - i); // -1 signals input1, -2 signals input2, etc...
             let vec = textCenters.get(1 + i);
-            ctx.fillText('|', vec.x, vec.y);
+            // ctx.fillText('|', vec.x, vec.y);
+            ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         }
 
         // draw output text
         for (let i = 0 ; i < this.op.outputs; i++) {
+            setStyle(ctx, style, component, i + 1);
             let vec = textCenters.get(1 + this.op.inputs + i);
-            ctx.fillText('|', vec.x, vec.y);
+            ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
+            // ctx.fillText('|', vec.x, vec.y);
         }
 
         // ctx.fillStyle = '#222222';
@@ -73,7 +95,57 @@ export class GeonNode {
         // ctx.strokeRect(0, 0, rec.x.size(), rec.y.size());
         ctx.restore();
     }
+
+    trySelect(gp: Vector2) : number | undefined {
+        let max = Math.max(this.op.inputs, this.op.outputs);
+
+        // see if this vector lands on an input socket, an output socket, or the body
+        let local = gp.subbed(this.gridpos);
+        if (local.y < 0 || local.y >= max) {
+            return undefined;
+        } else if (local.x == 0) {
+            if (local.y < this.op.inputs) {
+                return -(local.y + 1) // selected input
+            } else {
+                return 0; // selected body
+            }
+        } else if (local.x == 1) {
+            return 0; // selected body
+        } else if (local.x == 2) {
+            if (local.y < this.op.outputs) {
+                return local.y + 1 // selected input
+            } else {
+                return 0; // selected body
+            }
+        }
+        return undefined;
+        
+    }
 }
+
+
+function setStyle(ctx: CTX, style: Style, component: number, componentDrawn: number) {
+
+    ctx.strokeStyle = "#aaaaaa";
+    ctx.fillStyle = "#222222";
+    ctx.lineWidth = 1;
+
+    if (style == Style.Selected && component == componentDrawn) {
+        ctx.strokeStyle = "#ff0000";
+        ctx.fillStyle = "#332222";
+        ctx.lineWidth = 2;
+    } else if (style == Style.Hover && component == componentDrawn) {
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+    } else if (style == Style.Placement) {
+        ctx.lineWidth = 0.5;
+    }
+
+    if (componentDrawn != 0) {
+        ctx.fillStyle = ctx.strokeStyle;
+    }
+}
+
 
 /**
  * Draw the chip shape
@@ -162,9 +234,6 @@ function shape(ctx: CTX, inputs: number, outputs: number, size: number) : MultiV
     return vecs;
 }
 
-
-import * as OPS from "../operations/functions";
-
 function test() {
     let and_operation = Operation.new(OPS.and);
     let not_operation = Operation.new(OPS.not);
@@ -175,6 +244,4 @@ function test() {
     and_chip.log();
     or_chip.log();
 }
-
-test();
 
