@@ -32,6 +32,7 @@ Starting my thesis by making a flowchart-application / VPL
     - This solves a number of problems that will come up later.
 - Add a mesh visualizer
 
+Serde::Value looks like this
 ```rust
 pub enum Value {
     Null,
@@ -42,6 +43,7 @@ pub enum Value {
     Object(Map<String, Value>),
 }
 ``` 
+could be used to represent basicly anything. It will be the function's problem to deserialize these values.
 
 
 ## Phase 4 - Geospatial
