@@ -42,6 +42,13 @@ Starting my thesis by making a flowchart-application / VPL
 
 
 
+## Phase 5 - Usage
+- This project is not complete without making some things with this environment.
+  - Examples 
+  - Demo's
+- Create 'something' whose existence validates the creation of this whole environment.
+
+
 
 
 
