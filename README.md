@@ -24,12 +24,24 @@ Starting my thesis by making a flowchart-application / VPL
 
 
 ## Phase 3 - Geometry 
+> Note: unsure about this part
 - Make this application ready for geo business & wasm. 
   - Make the components accept json-serializable data. 
     - The Json, and more specifically the serde::Value enum, will be the standard for all data transfer between components. 
     - This will make all json-based data (cityjson, WFS, user-submitted) first-class citizens within this environment.
     - This solves a number of problems that will come up later.
 - Add a mesh visualizer
+
+```rust
+pub enum Value {
+    Null,
+    Bool(bool),
+    Number(Number),
+    String(String),
+    Array(Vec<Value>),
+    Object(Map<String, Value>),
+}
+``` 
 
 
 ## Phase 4 - Geospatial
