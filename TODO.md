@@ -21,7 +21,33 @@
 
 
 [ ] cables
+  - [X] creation by dragging
+  - [X] updates when moving components
+  - [ ] delete automatically when component is deleted. it crashes now...
+  - [ ] deal with 1 to many connections. 
+  - [ ] many to 1 is forbidden. (to disable a whole range of bugs, make specific 'create static list' components, and do not allow many to 1 cables)
+  - [ ] clickable & selectable
+  - [ ] deletable when selected
 
-[ ] support for special non-operator nodes
+
+[ ] special nodes
     [ ] input nodes -> buttons
     [ ] output nodes -> lamps
+
+[ ] run it!
+  - [ ] sort operations last to first
+  - [ ] run it, one way or another, using a list of callback functions.
+  - [ ] print it out as javascript 
+
+
+
+
+# phase 2 
+
+...
+
+
+# phase 3 
+
+[] json loading, processing, and saving.
+...

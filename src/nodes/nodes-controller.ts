@@ -100,7 +100,7 @@ export class NodesController {
         let a = this.graph.addNode(GeonNode.new(Vector2.new(0,0), NOT));
         let b = this.graph.addNode(GeonNode.new(Vector2.new(0,2), OR));
         let c = this.graph.addNode(GeonNode.new(Vector2.new(5,0), AND));
-        this.graph.addCableBetween(a, 1, c,-1);
+        this.graph.addCableBetween(a, 1, c, -1);
 
     }
 

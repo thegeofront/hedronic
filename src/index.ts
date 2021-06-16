@@ -31,5 +31,4 @@ function main() {
     requestAnimationFrame(loop);
 }
 
-
 window.addEventListener("load", main, false);

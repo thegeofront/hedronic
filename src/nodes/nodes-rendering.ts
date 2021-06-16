@@ -95,9 +95,9 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
     let c = d.clone();
     c.addn(-hgs,0);
 
-    if (c.x - b.x > 1) {
-        b.addn(hgs,0);
-        c.addn(-hgs,0);
+    if (c.x - b.x > 0) {
+        b.addn( hgs, 0);
+        c.addn(-hgs, 0);
     }
 
     ctx.strokeStyle = "white";

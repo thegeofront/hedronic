@@ -1,21 +1,29 @@
 # GEON-NODES
-Starting my thesis by making a flowchart-application / VPL
+![image](doc/images/thumbnail.png)
+
+
+# what is it 
+
+A component of my master thesis involves a flowchart-application / VPL. And since I couldn't find  any web-based flowchart api which satisfied the requirements, I had to create this
 
 # Roadmap
 
 ##  Phase 1 - Flowchart
 - Create a web 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
   - Inspired by https://www.youtube.com/watch?v=QZwneRb-zqA
-- This will get the gui basics down for the rest of the thesis
+- This will get the gui basics down
 - I will not focus on anything else in this phase, I will just try to create a nice-to-use VPL.
 - Only acceptable parameter: boolean 
 - Simple gates (AND, OR, NOT, XOR), just like that video
 - Dragging & clicking, deleting, etc... 
 - Drawing using HTML canvas / or webgl, not sure which is better at this point
+> Chose canvas API. introduces some inefficiencies, but it does the job. 
+> we *COULD* also hack html to create nodes and cables, and make them stylable using regular css...
+> hmmmmm...
 
 
 ##  Phase 2 - Utility
-- Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`
+- Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`.
 - Figure out how to `compile` the flowchart to javascript.
 - Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
 - Try to make some javascript library, external, and figure out how it can be loaded like a plugin
