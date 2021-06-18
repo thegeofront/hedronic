@@ -1,17 +1,16 @@
-import { Comp, GUID } from "./graph";
+import { Connector } from "./graph";
 
 export class Cable {
 
     private constructor(
-        public from: GUID, 
-        public fromComp: Comp, 
-        public to: GUID, 
-        public toComp: Comp) {}
+        public from: Connector, 
+        public to: Set<Connector>) {}
 
-    static new(a: GUID, aComp: Comp, b: GUID, bComp: Comp) {
-        if (aComp < bComp) {
-            return new Cable(b, bComp, a, aComp);
+    static new(a: Connector, b: Connector) : Cable {
+        if (a.idx < b.idx) {
+            return Cable.new(b, a);
+        } else {
+            return new Cable(a, new Set([b]));
         }
-        return new Cable(a, aComp, b, bComp);
     }
 }

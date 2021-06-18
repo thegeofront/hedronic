@@ -4,7 +4,7 @@
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
-import { Comp, GUID, NodesGraph } from "../elements/graph";
+import { ConnectorIdx, NodesGraph } from "../elements/graph";
 import { GeonNode } from "../elements/node";
 import { Operation } from "../operations/operation";
 import { defaultOperations } from "../operations/functions";
@@ -29,10 +29,10 @@ export class NodesController {
 
     // selection state 
     private selectedOp: number = -1; // when placing new node
-    private selectedNode: GUID = ""; // when selecting existing node
-    private selectedComp?: Comp; // part of the node that is selected
-    private hoverNode: GUID = ""; // when selecting existing node
-    private hoverComp?: Comp; // when selecting existing node
+    private selectedNode: string = ""; // when selecting existing node
+    private selectedComp?: ConnectorIdx; // part of the node that is selected
+    private hoverNode: string = ""; // when selecting existing node
+    private hoverComp?: ConnectorIdx; // when selecting existing node
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
     private mgpHover = Vector2.new(); // mouse grid point hover
@@ -93,15 +93,30 @@ export class NodesController {
     }
     
     testGraph() {
-        let NOT = this.catalogue.ops[2];
-        let OR = this.catalogue.ops[1];
-        let AND = this.catalogue.ops[0];
-        
-        let a = this.graph.addNode(GeonNode.new(Vector2.new(0,0), NOT));
-        let b = this.graph.addNode(GeonNode.new(Vector2.new(0,2), OR));
-        let c = this.graph.addNode(GeonNode.new(Vector2.new(5,0), AND));
-        this.graph.addCableBetween(a, 1, c, -1);
+        let INPUT = this.catalogue.ops[0];
+        let OUTPUT = this.catalogue.ops[1];
+        let AND = this.catalogue.ops[2];
+        let OR = this.catalogue.ops[3];
+        let NOT = this.catalogue.ops[4];
 
+        INPUT.log();
+        
+        let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
+        let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
+        let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
+        let i1 = this.graph.addNode(GeonNode.new(Vector2.new(5,1), INPUT));
+        let i2 = this.graph.addNode(GeonNode.new(Vector2.new(5,3), INPUT));
+        let o1 = this.graph.addNode(GeonNode.new(Vector2.new(20,0), OUTPUT));
+
+        console.log("so far so good");
+
+        this.graph.addConnectionBetween(i1, 0, not, 0);
+        this.graph.addConnectionBetween(i1, 0, or, 0);
+        this.graph.addConnectionBetween(i2, 0, or, 1);
+        this.graph.addConnectionBetween(or, 0, and, 1);
+        this.graph.addConnectionBetween(not, 0, and, 0);
+        this.graph.addConnectionBetween(not, 0, and, 0);
+        this.graph.addConnectionBetween(and, 0, o1, 0);
     }
 
     /**
@@ -276,9 +291,9 @@ export class NodesController {
     }
 
  
-    trySelect(gridPos: Vector2) : [GUID, number] | undefined {
-        for (let key of this.graph.nodes.keys()) {
-            let res = this.graph.nodes.get(key)!.trySelect(gridPos);
+    trySelect(gridPos: Vector2) : [string, number] | undefined {
+        for (let [key, value] of this.graph.nodes) {
+            let res = value.trySelect(gridPos);
             if (res !== undefined) {
                 return [key, res];
             }
@@ -335,11 +350,11 @@ export class NodesController {
             (this.selectedComp! < 0 && this.hoverComp! > 0)
             ) {
             console.log("adding cable...")
-            this.graph.addCableBetween(
-                this.selectedNode, 
-                this.selectedComp!, 
-                this.hoverNode, 
-                this.hoverComp!);
+            this.graph.addConnection(
+                {node: this.selectedNode, 
+                idx: this.selectedComp!}, 
+                {node: this.hoverNode, 
+                idx: this.hoverComp!});
             this.selectNode();
             this.requestRedraw();
         }
@@ -373,7 +388,7 @@ export class NodesController {
             if (this.selectedComp == 0) {
                 // dragging node
                 let node = this.graph.nodes.get(this.selectedNode);
-                node?.gridpos.add(gp.subbed(this.mgpEnd!))
+                node?.position.add(gp.subbed(this.mgpEnd!))
             } else {
                 // dragging line
                 console.log("drag line");

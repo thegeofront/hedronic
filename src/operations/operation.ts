@@ -27,6 +27,7 @@ export class Operation {
     }
 
     log() {
+        console.log(`this: ${this.func}`);
         console.log(`name: ${this.func.name}`);
         console.log(`inputs: ${this.inputs}`);
         console.log(`outputs: ${this.outputs}`);    
@@ -40,10 +41,15 @@ export class Operation {
         // HACK: its hard to determine the number of inputs, so im directly reading the string of the operation, 
         // and derriving it from the number of comma's found in the return statement.
         // this could create some nasty unforseen side effects...
-        let findoutputs = /return.*(\[.*\]).*/
-        let results = findoutputs.exec(operation.toString()) || "";
-        let r = results[results.length-1];
-        let count = r.split(',').length;
+        let getOutput = /return.*(\[.*\]).*/
+        let match = getOutput.exec(operation.toString()) || "";
+        let output = match[1];
+        if (output == "[]") {
+            return 0;
+        }
+
+        let count = output.split(',').length;
+        
         return count;
     }
 }

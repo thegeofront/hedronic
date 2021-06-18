@@ -1,29 +1,39 @@
 import { FN } from "./operation";
 
 export const defaultOperations: FN[] = [
-    and,
-    or,
-    not,
-    test,
-    expand,
+    IN,
+    OUT,
+    AND,
+    OR,
+    NOT,
+    MULTI,
+    EXPAND,
 ];
 
-export function and(a: boolean, b: boolean) : boolean[] { 
+export function IN() : boolean[] { 
+    return [true];
+}
+
+export function OUT(a: boolean) : boolean[] { 
+    return [];
+}
+
+export function AND(a: boolean, b: boolean) : boolean[] { 
     return [a && b];
 }
 
-export function or(a: boolean, b: boolean) : boolean[] { 
+export function OR(a: boolean, b: boolean) : boolean[] { 
     return [a || b];
 }
 
-export function not(a: boolean) : boolean[] {
+export function NOT(a: boolean) : boolean[] {
     return [!a];
 }
 
-export function test(a: boolean, b: boolean, c: boolean) : boolean[] {
-    return [a == b, a == c];
+export function MULTI(a: boolean, b: boolean, c: boolean) : boolean[] {
+    return [a, b];
 }
 
-export function expand(a: boolean) : boolean[] {
+export function EXPAND(a: boolean) : boolean[] {
     return [a, a, a, a, a, a];
 }

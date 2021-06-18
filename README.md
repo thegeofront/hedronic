@@ -62,8 +62,6 @@ could be used to represent basicly anything. It will be the function's problem t
 - Parse **\[TO BE DETERMINED\]** library as a plugin to this environment.
 
 
-
-
 ## Phase 5 - Usage
 - This project is not complete without making some things with this environment.
   - Examples 

@@ -20,8 +20,8 @@ export enum NodeState {
 
 export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: NodeState) {
 
-    let max = Math.max(node.op.inputs, node.op.outputs);
-    let pos = canvas.toWorld(node.gridpos);
+    let max = Math.max(node.operation.inputs, node.operation.outputs);
+    let pos = canvas.toWorld(node.position);
     
     const BAR_WIDTH = 5;
 
@@ -33,7 +33,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
 
     setStyle(ctx, style, component, 0);
 
-    let textCenters = nodeShape(ctx, node.op.inputs, node.op.outputs, canvas.size);
+    let textCenters = nodeShape(ctx, node.operation.inputs, node.operation.outputs, canvas.size);
     ctx.fill();
     ctx.stroke();
 
@@ -46,12 +46,12 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
     let op_center = textCenters.get(0);
     // ctx.translate(op_center.x, op_center.y);
     // ctx.rotate(Math.PI*-0.5);
-    ctx.fillText(node.op.name, op_center.x, op_center.y);
+    ctx.fillText(node.operation.name, op_center.x, op_center.y);
     
 
     // draw input text
     ctx.font = '12px courier new';
-    for (let i = 0 ; i < node.op.inputs; i++) {
+    for (let i = 0 ; i < node.operation.inputs; i++) {
         setStyle(ctx, style, component, -1 - i); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillText('|', vec.x, vec.y);
@@ -59,9 +59,9 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
     }
 
     // draw output text
-    for (let i = 0 ; i < node.op.outputs; i++) {
+    for (let i = 0 ; i < node.operation.outputs; i++) {
         setStyle(ctx, style, component, i + 1);
-        let vec = textCenters.get(1 + node.op.inputs + i);
+        let vec = textCenters.get(1 + node.operation.inputs + i);
         ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         // ctx.fillText('|', vec.x, vec.y);
     }
@@ -80,34 +80,36 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
     // use the components in the graph to figure out the from and to position
     let hgs = controller.size / 2
     let graph = controller.graph;
-    let fromNode = graph.nodes.get(cable.from)!;
-    let fromGridPos = fromNode.getComponentGridPosition(cable.fromComp)!;
+    let fromNode = graph.nodes.get(cable.from.node)!;
+    let fromGridPos = fromNode.getConnectorGridPosition(cable.from.idx)!;
     let a = controller.toWorld(fromGridPos).addn(hgs, hgs);
 
     // fromNode?.getComponentGridPosition()
-    let toNode = graph.nodes.get(cable.to)!;
-    let toGridPos = toNode.getComponentGridPosition(cable.toComp)!;
-    let d = controller.toWorld(toGridPos).addn(hgs, hgs);
-
-    // determine b and c 
-    let b = a.clone();
-    b.addn(hgs,0);
-    let c = d.clone();
-    c.addn(-hgs,0);
-
-    if (c.x - b.x > 0) {
-        b.addn( hgs, 0);
-        c.addn(-hgs, 0);
+    for (let to of cable.to) {
+        let toNode = graph.nodes.get(to.node)!;
+        let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
+        let d = controller.toWorld(toGridPos).addn(hgs, hgs);
+    
+        // determine b and c 
+        let b = a.clone();
+        b.addn(hgs,0);
+        let c = d.clone();
+        c.addn(-hgs,0);
+    
+        if (c.x - b.x > 0) {
+            b.addn( hgs, 0);
+            c.addn(-hgs, 0);
+        }
+    
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.lineTo(c.x, c.y);
+        ctx.lineTo(d.x, d.y);
+        ctx.stroke();
     }
-
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 8;
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.lineTo(c.x, c.y);
-    ctx.lineTo(d.x, d.y);
-    ctx.stroke();
 }
 
 
@@ -224,8 +226,8 @@ function setStyle(ctx: CTX, state: NodeState, component: number, componentDrawn:
 }
 
 function test() {
-    let and_operation = Operation.new(OPS.and);
-    let not_operation = Operation.new(OPS.not);
+    let and_operation = Operation.new(OPS.AND);
+    let not_operation = Operation.new(OPS.NOT);
 
     let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
     let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);
