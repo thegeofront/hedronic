@@ -1,6 +1,6 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { Operation } from "../operations/operation";
-import { ConnectorIdx } from "./graph";
+import { SocketIdx } from "./socket";
 
 
 export class GeonNode {
@@ -8,7 +8,7 @@ export class GeonNode {
     private constructor(
         public position: Vector2, 
         public operation: Operation,
-        public connections: Map<ConnectorIdx, string>) {}
+        public connections: Map<SocketIdx, string>) {}
 
     static new(gridpos: Vector2, op: Operation) {
         let connections = new Map();
@@ -28,7 +28,7 @@ export class GeonNode {
 
     // ---- Selection
 
-    getConnectorGridPosition(c: ConnectorIdx) {
+    getConnectorGridPosition(c: SocketIdx) {
         let gp = this.GetComponentLocalGridPosition(c); 
         if (gp === undefined) {
             return undefined;
@@ -36,7 +36,7 @@ export class GeonNode {
         return this.position.added(gp);
     }
 
-    GetComponentLocalGridPosition(c: ConnectorIdx) {
+    GetComponentLocalGridPosition(c: SocketIdx) {
         
         if (c + 1 > -this.operation.inputs && c < 0) {
             // input

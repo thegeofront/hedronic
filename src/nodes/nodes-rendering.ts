@@ -1,13 +1,13 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { Context, MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { GeonNode } from "../elements/node";
+import { GeonNode } from "../graph/node";
 import { Operation } from "../operations/operation";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
-import { Cable } from "../elements/cable";
-import { NodesGraph } from "../elements/graph";
+import { Cable } from "../graph/cable";
+import { NodesGraph } from "../graph/graph";
 
 const NODE_GRID_WIDTH = 3;
 

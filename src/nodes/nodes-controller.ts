@@ -4,14 +4,15 @@
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
-import { ConnectorIdx, NodesGraph } from "../elements/graph";
-import { GeonNode } from "../elements/node";
+import { NodesGraph } from "../graph/graph";
+import { GeonNode } from "../graph/node";
 import { Operation } from "../operations/operation";
 import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue } from "../operations/ops-catalogue";
 import { drawCable, drawNode, NodeState } from "./nodes-rendering";
+import { Socket, SocketIdx } from "../graph/socket";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -30,9 +31,9 @@ export class NodesController {
     // selection state 
     private selectedOp: number = -1; // when placing new node
     private selectedNode: string = ""; // when selecting existing node
-    private selectedComp?: ConnectorIdx; // part of the node that is selected
+    private selectedComp?: SocketIdx; // part of the node that is selected
     private hoverNode: string = ""; // when selecting existing node
-    private hoverComp?: ConnectorIdx; // when selecting existing node
+    private hoverComp?: SocketIdx; // when selecting existing node
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
     private mgpHover = Vector2.new(); // mouse grid point hover
@@ -117,6 +118,8 @@ export class NodesController {
         this.graph.addConnectionBetween(not, 0, and, 0);
         this.graph.addConnectionBetween(not, 0, and, 0);
         this.graph.addConnectionBetween(and, 0, o1, 0);
+
+        this.graph.log();
     }
 
     /**
@@ -351,10 +354,8 @@ export class NodesController {
             ) {
             console.log("adding cable...")
             this.graph.addConnection(
-                {node: this.selectedNode, 
-                idx: this.selectedComp!}, 
-                {node: this.hoverNode, 
-                idx: this.hoverComp!});
+                Socket.new(this.selectedNode, this.selectedComp!),
+                Socket.new(this.hoverNode, this.hoverComp!));
             this.selectNode();
             this.requestRedraw();
         }

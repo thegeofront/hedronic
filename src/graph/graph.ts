@@ -1,9 +1,7 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable } from "./cable";
 import { GeonNode } from "./node";
-
-export type ConnectorIdx = number; //i < 0 : inputs | i == 0 : node body | i > 0 : outputs
-export type Connector = {node: string, idx: ConnectorIdx};
+import { Socket, SocketIdx } from "./socket";
 
 /**
  * A Collection of Nodes & Cables. 
@@ -47,7 +45,7 @@ export class NodesGraph {
 
         // pull all connections at connectors
         for(let [idx, cable] of node.connections) {
-            this.pullCable(cable, {node: nkey, idx})
+            this.pullCable(cable, Socket.new(nkey, idx))
         }
         return this.nodes.delete(nkey);
     }
@@ -56,7 +54,7 @@ export class NodesGraph {
         return this.cables.get(key);
     }
 
-    plugCable(ckey: string, c: Connector) {
+    plugCable(ckey: string, c: Socket) {
         console.log("PLUG")
         let cable = this.cables.get(ckey)!;
         
@@ -74,12 +72,12 @@ export class NodesGraph {
         this.setNodeCableConnection(ckey, c);
     }
 
-    pullCable(ckey: string, c: Connector) {
+    pullCable(ckey: string, c: Socket) {
 
         // if connection is input, delete the entire cable
         console.log("PULLING OUT FROM "+ this.nodes.get(c.node)?.operation.name)
         if (c.idx < -1) {
-
+            
         }
 
 
@@ -94,7 +92,7 @@ export class NodesGraph {
 
     // ---- Cable Management
 
-    addConnection(a: Connector, b: Connector) {
+    addConnection(a: Socket, b: Socket) {
 
         // before we create the cable, make sure the sockets are free
         let cable = Cable.new(a, b);
@@ -132,18 +130,18 @@ export class NodesGraph {
     }
     
     addConnectionBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
-        let aComp: ConnectorIdx = outputIndex + 1;
-        let bComp: ConnectorIdx = (inputIndex + 1) * -1;
-        this.addConnection({node: a, idx: aComp}, {node: b, idx: bComp});
+        let aComp: SocketIdx = outputIndex + 1;
+        let bComp: SocketIdx = (inputIndex + 1) * -1;
+        this.addConnection(Socket.new(a,aComp), Socket.new(b, bComp));
     }
 
     // ---- Connection Management
 
-    getCableAtConnector(c: Connector) {
+    getCableAtConnector(c: Socket) {
         return this.nodes.get(c.node)?.connections.get(c.idx);
     }
 
-    setNodeCableConnection(ckey: string, c: Connector) {
+    setNodeCableConnection(ckey: string, c: Socket) {
         let cable = this.cables.get(ckey)!;
         let node = this.nodes.get(c.node)!;
         if (c.idx < 0) {
@@ -157,7 +155,35 @@ export class NodesGraph {
         }
     }
 
-    removeConnection(c: Connector) {
+    removeNodeConnection(c: Socket) {
         return this.nodes.get(c.node)?.connections.delete(c.idx);
+    }
+
+    log() {
+
+        console.log("GRAPH");
+
+        console.log("NODES");
+        console.log("-----");
+        for (let [nkey, node] of this.nodes) {
+            console.log(" node");
+            console.log(" L key : ", nkey);
+            console.log(" L name: ", node.operation.name);
+            console.log(" L connections: ");
+            for (let [k, v] of node.connections) {
+                console.log(`   L key: ${k} | value: ${v}`);
+            }
+        }
+
+        console.log("CABLES");
+        console.log("-----");
+        for (let [ckey, cable] of this.cables) {
+            console.log("cable")
+            console.log(" L from :", cable.from);
+            console.log(" L to   :");
+            for (let to of cable.to) {
+                console.log("   L ", to);
+            }
+        }
     }
 }

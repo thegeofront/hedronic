@@ -1,12 +1,12 @@
-import { Connector } from "./graph";
+import { Socket } from "./socket";
 
 export class Cable {
 
     private constructor(
-        public from: Connector, 
-        public to: Set<Connector>) {}
+        public from: Socket, 
+        public to: Set<Socket>) {}
 
-    static new(a: Connector, b: Connector) : Cable {
+    static new(a: Socket, b: Socket) : Cable {
         if (a.idx < b.idx) {
             return Cable.new(b, a);
         } else {
