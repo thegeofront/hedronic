@@ -111,15 +111,12 @@ export class NodesController {
 
         console.log("so far so good");
 
-        this.graph.addConnectionBetween(i1, 0, not, 0);
-        this.graph.addConnectionBetween(i1, 0, or, 0);
-        this.graph.addConnectionBetween(i2, 0, or, 1);
-        this.graph.addConnectionBetween(or, 0, and, 1);
-        this.graph.addConnectionBetween(not, 0, and, 0);
-        this.graph.addConnectionBetween(not, 0, and, 0);
-        this.graph.addConnectionBetween(and, 0, o1, 0);
-
-        this.graph.log();
+        this.graph.addLinkBetween(i1, 0, not, 0);
+        this.graph.addLinkBetween(i1, 0, or, 0);
+        this.graph.addLinkBetween(i2, 0, or, 1);
+        this.graph.addLinkBetween(or, 0, and, 1);
+        this.graph.addLinkBetween(not, 0, and, 0);
+        this.graph.addLinkBetween(and, 0, o1, 0);
     }
 
     /**
@@ -156,6 +153,10 @@ export class NodesController {
                 this.selectedNode == "";
                 this.requestRedraw();
             }
+        }
+
+        if (this.input.IsKeyPressed("p")) {
+            this.graph.log();
         }
 
         // refresh when placing new operation / node
@@ -353,7 +354,7 @@ export class NodesController {
             (this.selectedComp! < 0 && this.hoverComp! > 0)
             ) {
             console.log("adding cable...")
-            this.graph.addConnection(
+            this.graph.addLink(
                 Socket.new(this.selectedNode, this.selectedComp!),
                 Socket.new(this.hoverNode, this.hoverComp!));
             this.selectNode();

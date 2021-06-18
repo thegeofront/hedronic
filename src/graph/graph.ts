@@ -1,7 +1,7 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable } from "./cable";
 import { GeonNode } from "./node";
-import { Socket, SocketIdx } from "./socket";
+import { Socket, SocketIdx, SocketSide } from "./socket";
 
 /**
  * A Collection of Nodes & Cables. 
@@ -45,7 +45,7 @@ export class NodesGraph {
 
         // pull all connections at connectors
         for(let [idx, cable] of node.connections) {
-            this.pullCable(cable, Socket.new(nkey, idx))
+            this.emptySocket(cable, Socket.new(nkey, idx))
         }
         return this.nodes.delete(nkey);
     }
@@ -54,65 +54,75 @@ export class NodesGraph {
         return this.cables.get(key);
     }
 
-    plugCable(ckey: string, c: Socket) {
-        console.log("PLUG")
+    private fillSocket(ckey: string, c: Socket) {
         let cable = this.cables.get(ckey)!;
         
         // remove existing connections
-        if (c.idx < 0) {
-            // add an output
-            
-        } else if (c.idx > 0) {
-            // move the input
-            // this.getNode(cable.from.node)!.connections.delete(c.idx);
-            // cable.from = c;
+        if (c.side == SocketSide.Output) {
+            // take care of this one level higher than this
+        } else if (c.side == SocketSide.Input) {
+            // make sure the socket is empty
+            let existingTo = this.getCableAtConnector(c);
+            if (existingTo) {
+                this.emptySocket(existingTo, c);
+            }
         }
 
         // add the new connection
         this.setNodeCableConnection(ckey, c);
     }
 
-    pullCable(ckey: string, c: Socket) {
+    private emptySocket(ckey: string, c: Socket) {
+        let cable = this.cables.get(ckey)!;
 
-        // if connection is input, delete the entire cable
-        console.log("PULLING OUT FROM "+ this.nodes.get(c.node)?.operation.name)
-        if (c.idx < -1) {
+        console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.operation.name)
+        if (c.side == SocketSide.Output) {
+            // if connection is input, delete the entire cable
+            console.log("EMPTY Output...");
+            console.log("WE NEED TO DELETE THE ENTIRE CABLE");
+            for (let to of cable.to) {
+                this.emptySocket(ckey, to);
+            }
+            this.cables.delete(ckey);
+        } else if (c.side == SocketSide.Input) {
             
+            // console.log(cable.to.size);
+            // console.log(" c: ", c.toString());
+            cable._to.delete(c.toString());
+
+            // for (let to of cable.to()) {
+            //     console.log("to: ", to.toString());
+            // }
+            if (cable._to.size == 0) {
+                // this will delete the cable as well
+                this.emptySocket(ckey, cable.from);
+                
+            } 
+            // console.log(cable.to.size);
+
+            console.log("WE NEED TO DELETE THE ENTIRE CABLE ONLY IF WE ARE THE LAST");
         }
 
-
-        // let success = this.cables.delete(ckey);
-        // if (!success) {
-        //     return false;
-        // } 
-
+        // remove the node pointer 
+        this.removeNodeConnection(c);
 
         return true;
     }
 
     // ---- Cable Management
 
-    addConnection(a: Socket, b: Socket) {
+    addLink(a: Socket, b: Socket) {
 
         // before we create the cable, make sure the sockets are free
         let cable = Cable.new(a, b);
 
-        // If a cable is plugged in at 'to', remove it
-        for (let to of cable.to) {
-            let existingTo = this.getCableAtConnector(to);
-            
-            if (existingTo) {
-                this.pullCable(existingTo, to);
-            }
-        }
-
-        // if we have a cable at the input, do not create a new cable, 
-        // and instead, add 'to' destinations to the existing cable
+        // If a cable exist at the start of this cable, do not add a new cable.
+        // but add an additional output to this one
         let existingFrom = this.getCableAtConnector(cable.from);
         if (existingFrom) {
             console.log("adding to existing...");
             for(let to of cable.to) {
-                this.plugCable(existingFrom, to);
+                this.fillSocket(existingFrom, to);
             }
             return existingFrom;
         } 
@@ -122,40 +132,40 @@ export class NodesGraph {
         this.cables.set(cableKey, cable);
 
         // now plug it in
-        this.plugCable(cableKey, cable.from);
+        this.fillSocket(cableKey, cable.from);
         for (let to of cable.to) {
-            this.plugCable(cableKey, to);
+            this.fillSocket(cableKey, to);
         }
         return cableKey;
     }
     
-    addConnectionBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
+    addLinkBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
         let aComp: SocketIdx = outputIndex + 1;
         let bComp: SocketIdx = (inputIndex + 1) * -1;
-        this.addConnection(Socket.new(a,aComp), Socket.new(b, bComp));
+        this.addLink(Socket.new(a,aComp), Socket.new(b, bComp));
     }
 
     // ---- Connection Management
 
-    getCableAtConnector(c: Socket) {
+    private getCableAtConnector(c: Socket) {
         return this.nodes.get(c.node)?.connections.get(c.idx);
     }
 
-    setNodeCableConnection(ckey: string, c: Socket) {
+    private setNodeCableConnection(ckey: string, c: Socket) {
         let cable = this.cables.get(ckey)!;
         let node = this.nodes.get(c.node)!;
-        if (c.idx < 0) {
+        if (c.side == SocketSide.Input) {
             // input of node | 'to' / B of cable
-            cable.to.add(c);
+            cable.add(c);
             node.connections.set(c.idx, ckey);
-        } else if (c.idx > 1) {
+        } else if (c.side == SocketSide.Output) {
             // output of node | 'from' / A of cable
             cable.from = c;
             node.connections.set(c.idx, ckey);
         }
     }
 
-    removeNodeConnection(c: Socket) {
+    private removeNodeConnection(c: Socket) {
         return this.nodes.get(c.node)?.connections.delete(c.idx);
     }
 
@@ -179,10 +189,10 @@ export class NodesGraph {
         console.log("-----");
         for (let [ckey, cable] of this.cables) {
             console.log("cable")
-            console.log(" L from :", cable.from);
+            console.log(" L from :", cable.from.toString());
             console.log(" L to   :");
             for (let to of cable.to) {
-                console.log("   L ", to);
+                console.log("   L ", to.toString());
             }
         }
     }
