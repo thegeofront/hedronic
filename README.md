@@ -7,7 +7,7 @@ A component of my master thesis involves a flowchart-application / VPL. And sinc
 
 # Demo
 
-[Here](josfeenstra.nl/wip/nodes)
+[Here](https://josfeenstra.nl/wip/nodes)
 
 # Roadmap
 
