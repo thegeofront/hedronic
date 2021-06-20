@@ -1,10 +1,13 @@
 # GEON-NODES
 ![image](doc/images/thumbnail.png)
 
-
 # what is it 
 
 A component of my master thesis involves a flowchart-application / VPL. And since I couldn't find  any web-based flowchart api which satisfied the requirements, I had to create this
+
+# Demo
+
+[Here](josfeenstra.nl/wip/nodes)
 
 # Roadmap
 
