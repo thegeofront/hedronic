@@ -10,6 +10,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 [Here](https://josfeenstra.nl/wip/nodes)
 
 # Roadmap
+> this is a sketch, nothing is final
 
 ##  Phase 1 - Flowchart
 - Create a web 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
@@ -72,6 +73,10 @@ could be used to represent basicly anything. It will be the function's problem t
 - Create 'something' whose existence validates the creation of this whole environment.
 
 
+
+
+# Status
+In phase 1 right now. Blocks can be created, connected and destroyed, an internally, a graph datamodel is maintained. Now the fun part begins, when we will actually compute something!
 
 
 
