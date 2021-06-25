@@ -8,7 +8,7 @@
 [X] place different abstract nodes on a grid, with input & output indicators
 
 
-[X] interact with the nodes properly
+[X] nodes
  - [X] create 
     - [X] menu or buttons
     - [ ] double click detection
@@ -29,10 +29,18 @@
   - [ ] clickable & selectable
   - [ ] deletable when selected
 
+[ ] gizmos
+  - [ ] create and render an unconnected gizmo
+  - [ ] create and render a gizmo which shows the state of the cable
+  - [ ] create and render a gizmo with the ability to be pressed, like a switch button
+
+
+
 > Speculation: how about a different type of node, one that is concerned only with the state of 1 variable. used for:
 > - hardcoding state
 > - viewing state
 > - inputs & outputs
+> NOTE: I named this type of node: gizmo
 
 [ ] special nodes
     [ ] input nodes -> buttons
