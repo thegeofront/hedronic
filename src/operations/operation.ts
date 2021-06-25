@@ -13,13 +13,14 @@ export class Operation {
         private func: FN,
         public readonly name: string,
         public readonly inputs: number, 
-        public readonly outputs: number) {}
+        public readonly outputs: number,
+        public readonly isGizmo: boolean) {}
 
     static new(func: FN) {
         let inCount = Operation.countInputs(func);
         let outCount = Operation.countOutputs(func);
         let name = func.name;
-        return new Operation(func, name, inCount, outCount);
+        return new Operation(func, name, inCount, outCount, false);
     }
 
     run(...args: boolean[]) {
@@ -28,10 +29,15 @@ export class Operation {
 
     log() {
         console.log(`this: ${this.func}`);
+        if (this.isGizmo) {
+            console.log("gizmo: true");    
+        }
         console.log(`name: ${this.func.name}`);
         console.log(`inputs: ${this.inputs}`);
         console.log(`outputs: ${this.outputs}`);    
     }
+
+    // ---- util
 
     static countInputs(operation: FN) {
         return operation.length;

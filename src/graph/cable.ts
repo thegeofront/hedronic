@@ -1,11 +1,11 @@
-import { Gizmo } from "./gizmo";
+import { Gizmo } from "../gizmos/_gizmo";
 import { Socket } from "./socket";
 
 export class Cable {
 
     private constructor(
         public from: Socket, 
-        public nodes: Gizmo[],
+        public gizmos: Gizmo[],
         public _to: Map<string, Socket>) {}
 
     static new(a: Socket, b: Socket) : Cable {
@@ -13,9 +13,9 @@ export class Cable {
             return Cable.new(b, a);
         } else {
             let map = new Map<string, Socket>();
-            let nodes: Gizmo[] = [];
+            let gizmos: Gizmo[] = [];
             map.set(b.toString(), b);
-            return new Cable(a, nodes, map);
+            return new Cable(a, gizmos, map);
         }
     }
 

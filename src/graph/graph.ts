@@ -1,6 +1,6 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable } from "./cable";
-import { Gizmo } from "./gizmo";
+import { Gizmo } from "../gizmos/_gizmo";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 

@@ -21,15 +21,24 @@ export class NodesSidePanel {
     /**
      * Create buttons for each operation
      */
-    renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number) => void) {
+    renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number, isGizmo: boolean) => void) {
         let ops = catalogue.ops;
+        let giz = catalogue.giz;
 
         this.ui.clear();
 
         for (let i = 0 ; i < ops.length; i++) {
-            this.ui.addButton(ops[i].name, () => {
-                onPress(i);
+            let div = this.ui.addButton(ops[i].name, () => {
+                onPress(i, false);
             })
+            // div.classList.add("create-node-button");
+        }
+
+        for (let i = 0 ; i < giz.length; i++) {
+            let div = this.ui.addButton(giz[i].name, () => {
+                onPress(i, true);
+            })
+            div.classList.add("create-gizmo-button-wrapper");
         }
     }
 }

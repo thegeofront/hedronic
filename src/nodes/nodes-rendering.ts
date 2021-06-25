@@ -8,17 +8,22 @@ import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
+import { Gizmo } from "../gizmos/_gizmo";
 
 const NODE_GRID_WIDTH = 3;
 
-export enum NodeState {
+export enum DrawState {
     Normal,
     Hover,
     Selected,
     Placement,
+    Gizmo,
+    GizmoHover,
+    GizmoSelected,
+    GizmoPlacement,
 }
 
-export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: NodeState) {
+export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
 
     let max = Math.max(node.operation.inputs, node.operation.outputs);
     let pos = canvas.toWorld(node.position);
@@ -132,6 +137,18 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
     }
 }
 
+export function drawGizmo(ctx: CTX, gizmo: Gizmo, canvas: NodesController) {
+    ctx.save();
+    ctx.fillStyle = "white";
+
+    let pos = gizmo.position;
+    let size = gizmo.type.size;
+    
+    ctx.translate(pos.x, pos.y);
+    ctx.fillRect(0,0, size.x, size.y);
+    ctx.restore();
+}
+
 
 function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {
 
@@ -185,20 +202,20 @@ function drawPolyline(ctx: CTX, pl: MultiVector2) {
 }
 
 
-function setStyle(ctx: CTX, state: NodeState, component: number, componentDrawn: number) {
+function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number) {
 
     ctx.strokeStyle = "#aaaaaa";
     ctx.fillStyle = "#222222";
     ctx.lineWidth = 1;
 
-    if (state == NodeState.Selected && component == componentDrawn) {
+    if (state == DrawState.Selected && component == componentDrawn) {
         ctx.strokeStyle = "#ff0000";
         ctx.fillStyle = "#332222";
         ctx.lineWidth = 2;
-    } else if (state == NodeState.Hover && component == componentDrawn) {
+    } else if (state == DrawState.Hover && component == componentDrawn) {
         ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 2;
-    } else if (state == NodeState.Placement) {
+    } else if (state == DrawState.Placement) {
         ctx.lineWidth = 0.5;
     }
 

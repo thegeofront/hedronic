@@ -1,3 +1,4 @@
+import { Gizmo, GizmoType } from "../gizmos/_gizmo";
 import { Operation } from "./operation";
 
 
@@ -8,11 +9,11 @@ import { Operation } from "./operation";
  */
 export class Catalogue {
 
-    constructor(public ops: Operation[]) {
-        
+    constructor(public ops: Operation[], public giz: GizmoType[]) {
+
     }
 
-    static new(ops: Operation[]) : Catalogue {
-        return new Catalogue(ops);
+    static new(ops: Operation[], giz: GizmoType[]) : Catalogue {
+        return new Catalogue(ops, giz);
     }
 }

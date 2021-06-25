@@ -11,8 +11,10 @@ import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue } from "../operations/ops-catalogue";
-import { drawCable, drawNode, NodeState } from "./nodes-rendering";
+import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketIdx } from "../graph/socket";
+import { Gizmo, GizmoType } from "../gizmos/_gizmo";
+import { allGizmoKinds } from "../gizmos/all-gizmos";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -62,7 +64,8 @@ export class NodesController {
 
         
         let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
-        const catalogue = Catalogue.new(operations);
+        let gizmos: GizmoType[] = allGizmoKinds;
+        const catalogue = Catalogue.new(operations, gizmos);
         const panel = NodesSidePanel.new(ui);
 
         return new NodesController(ctx, panel, camera, state, graph, catalogue);
@@ -79,20 +82,13 @@ export class NodesController {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-
         // hook up UI 
-        this.panel.renderCatalogue(this.catalogue, (idx: number) => {
-            this.selectOperation(idx);
-            this.selectNode();
-            // we must focus on the canvas after interacting with the html UI.
-            // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
-            this.input.canvas.focus();
-        });
+        this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
 
         // DEBUG add a standard graph
         this.testGraph();
     }
-    
+
     testGraph() {
         let INPUT = this.catalogue.ops[0];
         let OUTPUT = this.catalogue.ops[1];
@@ -108,8 +104,6 @@ export class NodesController {
         let i1 = this.graph.addNode(GeonNode.new(Vector2.new(5,1), INPUT));
         let i2 = this.graph.addNode(GeonNode.new(Vector2.new(5,3), INPUT));
         let o1 = this.graph.addNode(GeonNode.new(Vector2.new(20,0), OUTPUT));
-
-        console.log("so far so good");
 
         this.graph.addLinkBetween(i1, 0, not, 0);
         this.graph.addLinkBetween(i1, 0, or, 0);
@@ -203,11 +197,11 @@ export class NodesController {
             
             // TODO: fix the fact we cannot hover the node of the socket we are selecting...
             if (key == this.selectedNode) {
-                drawNode(ctx, node, this, this.selectedComp!, NodeState.Selected);
+                drawNode(ctx, node, this, this.selectedComp!, DrawState.Selected);
             } else if (key == this.hoverNode) {
-                drawNode(ctx, node, this, this.hoverComp!, NodeState.Hover);
+                drawNode(ctx, node, this, this.hoverComp!, DrawState.Hover);
             } else {
-                drawNode(ctx, node, this, 0, NodeState.Normal);
+                drawNode(ctx, node, this, 0, DrawState.Normal);
             }
         }
 
@@ -218,7 +212,7 @@ export class NodesController {
         let g = this.toGrid(this.camera.mousePos);
         if (this.selectedOp != -1) {
             let fakeNode = GeonNode.new(g, this.catalogue.ops[this.selectedOp]);
-            drawNode(ctx, fakeNode, this, 0, NodeState.Placement);
+            drawNode(ctx, fakeNode, this, 0, DrawState.Placement);
         }
 
         // done drawing
@@ -279,16 +273,10 @@ export class NodesController {
 
     // -----
 
-    /**
-     * empty to deselect
-     */
     selectOperation(idx = -1) {
         this.selectedOp = idx;
     }
 
-    /**
-     * empty to deselect
-     */
     selectNode(guid = "", comp?: number) {
         this.selectedNode = guid;
         this.selectedComp = comp;
@@ -313,6 +301,8 @@ export class NodesController {
         }
 
     }
+
+    // ------ Events
 
     onMouseDown(gp: Vector2) {
 
@@ -401,6 +391,21 @@ export class NodesController {
         this.mgpHover = gp;
         this.mgpEnd = gp;
     }
+
+        
+    onSidePanelButtonPressed(idx: number, isGizmo: boolean) {
+
+        if (isGizmo) {
+            console.log("TODO!");
+        } else {
+            this.selectOperation(idx);
+            this.selectNode();
+            // we must focus on the canvas after interacting with the html UI.
+            // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
+            this.input.canvas.focus();
+        }
+    }
+
 
     onResize() {
         resizeCanvas(this.ctx);
