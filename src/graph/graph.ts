@@ -78,29 +78,21 @@ export class NodesGraph {
         console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.operation.name)
         if (c.side == SocketSide.Output) {
             // if connection is input, delete the entire cable
-            console.log("EMPTY Output...");
-            console.log("WE NEED TO DELETE THE ENTIRE CABLE");
+            // console.log("EMPTY Output...");
+            // console.log("WE NEED TO DELETE THE ENTIRE CABLE");
             for (let to of cable.to) {
                 this.emptySocket(ckey, to);
             }
             this.cables.delete(ckey);
         } else if (c.side == SocketSide.Input) {
-            
-            // console.log(cable.to.size);
-            // console.log(" c: ", c.toString());
+    
             cable._to.delete(c.toString());
-
-            // for (let to of cable.to()) {
-            //     console.log("to: ", to.toString());
-            // }
             if (cable._to.size == 0) {
                 // this will delete the cable as well
                 this.emptySocket(ckey, cable.from);
                 
             } 
-            // console.log(cable.to.size);
-
-            console.log("WE NEED TO DELETE THE ENTIRE CABLE ONLY IF WE ARE THE LAST");
+            // console.log("WE NEED TO DELETE THE ENTIRE CABLE ONLY IF WE ARE THE LAST");
         }
 
         // remove the node pointer 

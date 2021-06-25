@@ -23,12 +23,16 @@
 [ ] cables
   - [X] creation by dragging
   - [X] updates when moving components
-  - [ ] delete automatically when component is deleted. it crashes now...
-  - [ ] deal with 1 to many connections. 
-  - [ ] many to 1 is forbidden. (to disable a whole range of bugs, make specific 'create static list' components, and do not allow many to 1 cables)
+  - [X] delete automatically when component is deleted. it crashes now...
+  - [X] deal with 1 to many connections. 
+  - [X] many to 1 is forbidden. (to disable a whole range of bugs, make specific 'create static list' components, and do not allow many to 1 cables)
   - [ ] clickable & selectable
   - [ ] deletable when selected
 
+> Speculation: how about a different type of node, one that is concerned only with the state of 1 variable. used for:
+> - hardcoding state
+> - viewing state
+> - inputs & outputs
 
 [ ] special nodes
     [ ] input nodes -> buttons

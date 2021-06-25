@@ -1,6 +1,6 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
-import { Context, MultiVector2, Vector2 } from "../../../engine/src/lib";
+import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { GeonNode } from "../graph/node";
 import { Operation } from "../operations/operation";
 import { CTX, NodesController } from "./nodes-controller";
@@ -77,8 +77,11 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
 
 export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
 
+    // line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
+
     // use the components in the graph to figure out the from and to position
-    let hgs = controller.size / 2
+    let size = controller.size; 
+    let hgs = controller.size / 2 // half grid size
     let graph = controller.graph;
     let fromNode = graph.nodes.get(cable.from.node)!;
     let fromGridPos = fromNode.getConnectorGridPosition(cable.from.idx)!;
@@ -90,26 +93,95 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
         let d = controller.toWorld(toGridPos).addn(hgs, hgs);
     
+        let gridDelta = toGridPos.subbed(fromGridPos);
+        let something = controller.toWorld(Vector2.new(1,0));
+        let delta = d.subbed(a);
+        let half = delta.scaled(0.5);
+        
+        // make sure things are alligned to the grid nicely
+        
+        // if (gridDelta.x % 2 != 0) {
+        //     half.x -= hgs;
+        // }
+
         // determine b and c 
         let b = a.clone();
-        b.addn(hgs,0);
-        let c = d.clone();
-        c.addn(-hgs,0);
-    
-        if (c.x - b.x > 0) {
-            b.addn( hgs, 0);
-            c.addn(-hgs, 0);
-        }
-    
+        b.x += something.x;
+        
+        let c = a.clone();
+        c.x += something.x;
+        c.y += delta.y;
+
+        let line = MultiVector2.fromList([
+            a,
+            b,
+            c,
+            d
+        ]);
+
+
+        // let smallest = Math.min(Math.abs(gridDelta.x), Math.abs(gridDelta.y));
+        // let fillet = Math.max(smallest * hgs, hgs);
+        let fillet = hgs;
+        line = filletPolyline(line, fillet);
+
         ctx.strokeStyle = "white";
+        ctx.lineCap = "round";
         ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.lineTo(c.x, c.y);
-        ctx.lineTo(d.x, d.y);
-        ctx.stroke();
+        drawPolyline(ctx, line);
     }
+}
+
+
+function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {
+
+    let count = line.count + (line.count - 2);
+    let verts = MultiVector2.new(count);
+
+    // set first and last
+    verts.set(0, line.get(0));
+    verts.set(count-1, line.get(Math.ceil((count-1) / 2)));
+
+    // set in betweens
+    for (let i = 1 ; i < count-1; i++) {
+
+        let half = i / 2;
+        let pointsToPrevious = (half % 1 != 0);
+        let j = Math.ceil(half) // index in original 
+        let vert = line.get(j);
+
+        // apply fillet
+        if (pointsToPrevious) {
+            // to 
+            let prev = line.get(j-1);
+            vert.add(prev.subbed(vert).setLength(radius));
+        } else {
+            let next = line.get(j+1);
+            vert.add(next.subbed(vert).setLength(radius));
+        }
+
+
+
+        verts.set(i, vert);
+    }
+
+    return verts;
+
+    
+}
+
+function drawPolyline(ctx: CTX, pl: MultiVector2) {
+    ctx.beginPath();
+    for (let i = 0 ; i < 1; i++) {
+        let v = pl.get(i);
+        ctx.moveTo(v.x, v.y);
+    }
+
+    for (let i = 1 ; i < pl.count; i++) {
+        let v = pl.get(i);
+        ctx.lineTo(v.x, v.y);
+    }
+    ctx.stroke();
 }
 
 
