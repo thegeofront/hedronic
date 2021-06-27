@@ -1,7 +1,7 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable } from "./cable";
 import { GizmoNode } from "../gizmos/_gizmo";
-import { GeonNode } from "./node";
+import { OpNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 
 /**
@@ -12,12 +12,12 @@ import { Socket, SocketIdx, SocketSide } from "./socket";
 export class NodesGraph {
 
     private constructor(
-        public nodes: Map<string, GeonNode>, 
+        public nodes: Map<string, OpNode>, 
         public cables: Map<string, Cable>,
         public gizmos: Map<string, GizmoNode>) {}
 
     static new() {
-        let nodes = new Map<string, GeonNode>();
+        let nodes = new Map<string, OpNode>();
         let cables = new Map<string, Cable>();
         let gizmos = new Map<string, GizmoNode>();
         return new NodesGraph(nodes, cables, gizmos);
@@ -33,7 +33,7 @@ export class NodesGraph {
 
     // ---- Node Management 
 
-    addNode(node: GeonNode) {
+    addNode(node: OpNode) {
         let key = createRandomGUID();
         this.nodes.set(key, node);
         return key;

@@ -1,7 +1,7 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
-import { GeonNode } from "../graph/node";
+import { OpNode } from "../graph/node";
 import { OperationCore } from "../operations/operation";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
@@ -23,7 +23,7 @@ export enum DrawState {
     GizmoPlacement,
 }
 
-export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
+export function drawNode(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
 
     let max = Math.max(node.operation.inputs, node.operation.outputs);
     let pos = canvas.toWorld(node.position);
@@ -318,8 +318,8 @@ function test() {
     let and_operation = OperationCore.new(OPS.AND);
     let not_operation = OperationCore.new(OPS.NOT);
 
-    let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
-    let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);
+    let and_chip = OpNode.new(Vector2.new(6,10), and_operation);
+    let or_chip = OpNode.new(Vector2.new(1,1), not_operation);
 
     and_chip.log();
     or_chip.log();

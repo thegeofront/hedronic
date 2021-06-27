@@ -3,7 +3,7 @@ import { OperationCore } from "../operations/operation";
 import { SocketIdx } from "./socket";
 
 
-export class GeonNode {
+export class OpNode {
 
     private constructor(
         public position: Vector2, 
@@ -12,7 +12,7 @@ export class GeonNode {
 
     static new(gridpos: Vector2, op: OperationCore) {
         let connections = new Map();
-        return new GeonNode(gridpos, op, connections);
+        return new OpNode(gridpos, op, connections);
     }
 
     run(...args: boolean[]) {

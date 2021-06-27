@@ -5,7 +5,7 @@ import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
+import { OpNode } from "../graph/node";
 import { OperationCore } from "../operations/operation";
 import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
@@ -98,12 +98,12 @@ export class NodesController {
 
         INPUT.log();
         
-        let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
-        let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
-        let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
-        let i1 = this.graph.addNode(GeonNode.new(Vector2.new(5,1), INPUT));
-        let i2 = this.graph.addNode(GeonNode.new(Vector2.new(5,3), INPUT));
-        let o1 = this.graph.addNode(GeonNode.new(Vector2.new(20,0), OUTPUT));
+        let not = this.graph.addNode(OpNode.new(Vector2.new(10,0), NOT));
+        let or = this.graph.addNode(OpNode.new(Vector2.new(10,2), OR));
+        let and = this.graph.addNode(OpNode.new(Vector2.new(15,0), AND));
+        let i1 = this.graph.addNode(OpNode.new(Vector2.new(5,1), INPUT));
+        let i2 = this.graph.addNode(OpNode.new(Vector2.new(5,3), INPUT));
+        let o1 = this.graph.addNode(OpNode.new(Vector2.new(20,0), OUTPUT));
 
         this.graph.addLinkBetween(i1, 0, not, 0);
         this.graph.addLinkBetween(i1, 0, or, 0);
@@ -211,7 +211,7 @@ export class NodesController {
         // draw node if we are placing a new node
         let g = this.toGrid(this.camera.mousePos);
         if (this.selectedOp != -1) {
-            let fakeNode = GeonNode.new(g, this.catalogue.ops[this.selectedOp]);
+            let fakeNode = OpNode.new(g, this.catalogue.ops[this.selectedOp]);
             drawNode(ctx, fakeNode, this, 0, DrawState.Placement);
         }
 
@@ -313,7 +313,7 @@ export class NodesController {
         if (this.selectedOp != -1) {
             // we are placing a new node
             let idx = this.selectedOp;
-            this.graph.addNode(GeonNode.new(gp, this.catalogue.ops[idx]));
+            this.graph.addNode(OpNode.new(gp, this.catalogue.ops[idx]));
             if (!this.input.IsKeyDown("shift")) {
                 this.selectOperation();
             }
