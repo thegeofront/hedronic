@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../engine/src/lib";
-import { GizmoType } from "./_gizmo";
+import { GizmoCore } from "./_gizmo";
 
-export class InGizmo extends GizmoType {
+export class InGizmo extends GizmoCore {
     
     private constructor() {
         super("In", Vector2.new(1,1));

@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../engine/src/lib";
-import { Operation } from "../operations/operation";
+import { OperationCore } from "../operations/operation";
 import { SocketIdx } from "./socket";
 
 
@@ -7,10 +7,10 @@ export class GeonNode {
 
     private constructor(
         public position: Vector2, 
-        public operation: Operation,
+        public operation: OperationCore,
         public connections: Map<SocketIdx, string>) {}
 
-    static new(gridpos: Vector2, op: Operation) {
+    static new(gridpos: Vector2, op: OperationCore) {
         let connections = new Map();
         return new GeonNode(gridpos, op, connections);
     }

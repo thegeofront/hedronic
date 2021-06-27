@@ -2,13 +2,13 @@
 
 import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { GeonNode } from "../graph/node";
-import { Operation } from "../operations/operation";
+import { OperationCore } from "../operations/operation";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
-import { Gizmo } from "../gizmos/_gizmo";
+import { GizmoNode } from "../gizmos/_gizmo";
 
 const NODE_GRID_WIDTH = 3;
 
@@ -137,7 +137,7 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
     }
 }
 
-export function drawGizmo(ctx: CTX, gizmo: Gizmo, canvas: NodesController) {
+export function drawGizmo(ctx: CTX, gizmo: GizmoNode, canvas: NodesController) {
     ctx.save();
     ctx.fillStyle = "white";
 
@@ -315,8 +315,8 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
 }
 
 function test() {
-    let and_operation = Operation.new(OPS.AND);
-    let not_operation = Operation.new(OPS.NOT);
+    let and_operation = OperationCore.new(OPS.AND);
+    let not_operation = OperationCore.new(OPS.NOT);
 
     let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
     let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);

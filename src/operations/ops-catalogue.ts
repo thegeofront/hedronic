@@ -1,5 +1,5 @@
-import { Gizmo, GizmoType } from "../gizmos/_gizmo";
-import { Operation } from "./operation";
+import { GizmoNode, GizmoCore } from "../gizmos/_gizmo";
+import { OperationCore } from "./operation";
 
 
 /**
@@ -9,11 +9,11 @@ import { Operation } from "./operation";
  */
 export class Catalogue {
 
-    constructor(public ops: Operation[], public giz: GizmoType[]) {
+    constructor(public ops: OperationCore[], public giz: GizmoCore[]) {
 
     }
 
-    static new(ops: Operation[], giz: GizmoType[]) : Catalogue {
+    static new(ops: OperationCore[], giz: GizmoCore[]) : Catalogue {
         return new Catalogue(ops, giz);
     }
 }

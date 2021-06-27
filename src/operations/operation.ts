@@ -1,4 +1,13 @@
 
+// Node ---- Operation ----
+//             L Gizmo
+//                L getState() -> store it in cable
+//                L render() 
+//                L onMouseAtCertainPosition() -> 
+//                L  
+// 
+
+
 
 export type FN = (...args: boolean[]) => boolean[]
 
@@ -7,7 +16,7 @@ export type FN = (...args: boolean[]) => boolean[]
  * This is needed, so we can reason about the functionalities of chips
  * Not the same as a Node : Multiple Different Nodes will point to the same Operations
  */
-export class Operation {
+export class OperationCore {
 
     private constructor(
         private func: FN,
@@ -17,10 +26,10 @@ export class Operation {
         public readonly isGizmo: boolean) {}
 
     static new(func: FN) {
-        let inCount = Operation.countInputs(func);
-        let outCount = Operation.countOutputs(func);
+        let inCount = OperationCore.countInputs(func);
+        let outCount = OperationCore.countOutputs(func);
         let name = func.name;
-        return new Operation(func, name, inCount, outCount, false);
+        return new OperationCore(func, name, inCount, outCount, false);
     }
 
     run(...args: boolean[]) {

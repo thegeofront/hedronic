@@ -10,11 +10,12 @@
 //              also, only gizmo's are allowed to hold state. 
 
 import { Vector2 } from "../../../engine/src/lib";
+import { CTX } from "../nodes/nodes-controller";
 import { ButtonGizmo } from "./button-gizmo";
 import { PreviewGizmo } from "./preview-gizmo";
 
 // prototype pattern
-export class GizmoType {
+export class GizmoCore {
 
     protected constructor(
         public name: string,
@@ -26,20 +27,23 @@ export class GizmoType {
 
     }
 
+    renderAddition(ctx: CTX, gizmo: GizmoNode) {
+        
+    }
 }
 
 
-export class Gizmo {
+export class GizmoNode {
 
     private constructor(
         public cable: string,
         public state: boolean,
-        public type: GizmoType,
+        public type: GizmoCore,
         public position: Vector2) {}
 
-    static new(cable: string, position: Vector2, kind: GizmoType) : Gizmo {
+    static new(cable: string, position: Vector2, kind: GizmoCore) : GizmoNode {
         let size = Vector2.new(1,1);
         let state = false;
-        return new Gizmo(cable, state, kind, position);
+        return new GizmoNode(cable, state, kind, position);
     }
 }

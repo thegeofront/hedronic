@@ -1,8 +1,8 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { CTX } from "../nodes/nodes-controller";
-import { Gizmo, GizmoType } from "./_gizmo";
+import { GizmoNode, GizmoCore } from "./_gizmo";
 
-export class ButtonGizmo extends GizmoType {
+export class ButtonGizmo extends GizmoCore {
     
     private constructor() {
         super("Button", Vector2.new(1,1));
@@ -16,7 +16,7 @@ export class ButtonGizmo extends GizmoType {
 
     }
 
-    renderAddition(ctx: CTX, gizmo: Gizmo) {
+    renderAddition(ctx: CTX, gizmo: GizmoNode) {
         
     }
 

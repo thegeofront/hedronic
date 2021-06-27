@@ -6,14 +6,14 @@ import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vect
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
-import { Operation } from "../operations/operation";
+import { OperationCore } from "../operations/operation";
 import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue } from "../operations/ops-catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketIdx } from "../graph/socket";
-import { Gizmo, GizmoType } from "../gizmos/_gizmo";
+import { GizmoNode, GizmoCore } from "../gizmos/_gizmo";
 import { allGizmoKinds } from "../gizmos/all-gizmos";
 
 // shorthands
@@ -63,8 +63,8 @@ export class NodesController {
         const graph = NodesGraph.new();
 
         
-        let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
-        let gizmos: GizmoType[] = allGizmoKinds;
+        let operations: OperationCore[] = defaultOperations.map(fn => OperationCore.new(fn));
+        let gizmos: GizmoCore[] = allGizmoKinds;
         const catalogue = Catalogue.new(operations, gizmos);
         const panel = NodesSidePanel.new(ui);
 
