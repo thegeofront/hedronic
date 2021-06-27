@@ -1,6 +1,6 @@
 import { UI } from "../../../engine/src/lib";
 import { OperationCore } from "../operations/operation";
-import { Catalogue } from "../operations/ops-catalogue";
+import { Catalogue } from "../operations/catalogue";
 
 /**
  * All UI besides the canvas itself
@@ -22,8 +22,8 @@ export class NodesSidePanel {
      * Create buttons for each operation
      */
     renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number, isGizmo: boolean) => void) {
-        let ops = catalogue.ops;
-        let giz = catalogue.giz;
+        let ops = catalogue.operations;
+        let giz = catalogue.gizmos;
 
         this.ui.clear();
 

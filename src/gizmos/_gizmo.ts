@@ -2,12 +2,13 @@
 // purpose:     We make a distinction between 'normal' nodes, and gizmo's. 
 //              gizmo's are directly tied to one and only one cable.
 //              used as:
-//                - input
-//                - output
+//                - global input
+//                - global output
 //                - visuals
 //                - cable management
 //
 //              also, only gizmo's are allowed to hold state. 
+//              
 
 import { Vector2 } from "../../../engine/src/lib";
 import { CTX } from "../nodes/nodes-controller";

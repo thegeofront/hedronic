@@ -1,15 +1,3 @@
-import { FN } from "./operation";
-
-export const defaultOperations: FN[] = [
-    IN,
-    OUT,
-    AND,
-    OR,
-    NOT,
-    MULTI,
-    EXPAND,
-];
-
 export function IN() : boolean[] { 
     return [true];
 }

@@ -6,15 +6,11 @@ import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vect
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
 import { OpNode } from "../graph/node";
-import { OperationCore } from "../operations/operation";
-import { defaultOperations } from "../operations/functions";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
-import { Catalogue } from "../operations/ops-catalogue";
+import { Catalogue } from "../operations/catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
-import { Socket, SocketIdx, SocketSide } from "../graph/socket";
-import { GizmoNode, GizmoCore } from "../gizmos/_gizmo";
-import { allGizmoKinds } from "../gizmos/all-gizmos";
+import { Socket, SocketSide } from "../graph/socket";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -32,8 +28,6 @@ export class NodesController {
 
     // selection state 
     private selected?: Socket;
-    private selectedOp: number = -1; // when placing new node
-
     private hover?: Socket;
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
@@ -61,10 +55,7 @@ export class NodesController {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
 
-        
-        let operations: OperationCore[] = defaultOperations.map(fn => OperationCore.new(fn));
-        let gizmos: GizmoCore[] = allGizmoKinds;
-        const catalogue = Catalogue.new(operations, gizmos);
+        const catalogue = Catalogue.newDefault();
         const panel = NodesSidePanel.new(ui);
 
         return new NodesController(ctx, panel, camera, state, graph, catalogue);
@@ -89,11 +80,11 @@ export class NodesController {
     }
 
     testGraph() {
-        let INPUT = this.catalogue.ops[0];
-        let OUTPUT = this.catalogue.ops[1];
-        let AND = this.catalogue.ops[2];
-        let OR = this.catalogue.ops[3];
-        let NOT = this.catalogue.ops[4];
+        let INPUT = this.catalogue.operations[0];
+        let OUTPUT = this.catalogue.operations[1];
+        let AND = this.catalogue.operations[2];
+        let OR = this.catalogue.operations[3];
+        let NOT = this.catalogue.operations[4];
 
         INPUT.log();
         
@@ -135,7 +126,7 @@ export class NodesController {
             );
 
         if (cancelPresed) {
-            this.selectOperation();
+            this.catalogue.select();
             this.selectSocket();
             this.requestRedraw();
         }
@@ -153,7 +144,7 @@ export class NodesController {
         }
 
         // refresh when placing new operation / node
-        if (this.selectedOp != -1) {
+        if (this.catalogue.selected) {
             this.requestRedraw();
         }
 
@@ -209,8 +200,8 @@ export class NodesController {
 
         // draw node if we are placing a new node
         let g = this.toGrid(this.camera.mousePos);
-        if (this.selectedOp != -1) {
-            let fakeNode = OpNode.new(g, this.catalogue.ops[this.selectedOp]);
+        if (this.catalogue.selected) {
+            let fakeNode = this.catalogue.createSelectedNode(g)!;
             drawNode(ctx, fakeNode, this, 0, DrawState.Placement);
         }
 
@@ -272,10 +263,6 @@ export class NodesController {
 
     // -----
 
-    selectOperation(idx = -1) {
-        this.selectedOp = idx;
-    }
-
     hoverSocket(s?: Socket) {
         this.hover = s;
     }
@@ -312,12 +299,11 @@ export class NodesController {
         this.mgpStart = gp;
         this.mgpEnd = gp;
         
-        if (this.selectedOp != -1) {
+        if (this.catalogue.selected) {
             // we are placing a new node
-            let idx = this.selectedOp;
-            this.graph.addNode(OpNode.new(gp, this.catalogue.ops[idx]));
+            this.graph.addNode(this.catalogue.createSelectedNode(gp)!);
             if (!this.input.IsKeyDown("shift")) {
-                this.selectOperation();
+                this.catalogue.select();
             }
         } else {
             // we clicked at some spot. 
@@ -344,8 +330,6 @@ export class NodesController {
                 this.requestRedraw();
             }
         }
-
-
 
         // reset
         this.mgpStart = undefined;
@@ -386,7 +370,7 @@ export class NodesController {
         if (isGizmo) {
             console.log("TODO!");
         } else {
-            this.selectOperation(idx);
+            this.catalogue.select(idx);
             this.selectSocket();
             // we must focus on the canvas after interacting with the html UI.
             // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
