@@ -1,5 +1,9 @@
-import { CTX } from "../nodes/nodes-controller";
 
+// shorthands
+export type CTX = CanvasRenderingContext2D; 
+export type Canvas = HTMLCanvasElement;
+
+// for resizing
 export function resizeCanvas(ctx: CTX) {
     // Lookup the size the browser is displaying the canvas in CSS pixels.
     let canvas = ctx.canvas as HTMLCanvasElement;

@@ -8,7 +8,7 @@ import { NodesGraph } from "../graph/graph";
 import { OpNode } from "../graph/node";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
-import { Catalogue } from "../operations/catalogue";
+import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
 
@@ -126,7 +126,7 @@ export class NodesController {
             );
 
         if (cancelPresed) {
-            this.catalogue.select();
+            this.catalogue.deselect();
             this.selectSocket();
             this.requestRedraw();
         }
@@ -201,7 +201,7 @@ export class NodesController {
         // draw node if we are placing a new node
         let g = this.toGrid(this.camera.mousePos);
         if (this.catalogue.selected) {
-            let fakeNode = this.catalogue.createSelectedNode(g)!;
+            let fakeNode = this.catalogue.spawn(g)!;
             drawNode(ctx, fakeNode, this, 0, DrawState.Placement);
         }
 
@@ -259,9 +259,9 @@ export class NodesController {
         return gv.scaled(this._size);
     }
 
-    // -----
-
-    // -----
+    // ----- --------------------- -----
+    // -----       Selection       -----
+    // ----- --------------------- -----
 
     hoverSocket(s?: Socket) {
         this.hover = s;
@@ -270,7 +270,6 @@ export class NodesController {
     selectSocket(s?: Socket) {
         this.selected = s;
     }
-
  
     trySelect(gridPos: Vector2) : Socket | undefined {
         for (let [key, value] of this.graph.nodes) {
@@ -301,9 +300,9 @@ export class NodesController {
         
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graph.addNode(this.catalogue.createSelectedNode(gp)!);
+            this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("shift")) {
-                this.catalogue.select();
+                this.catalogue.deselect();
             }
         } else {
             // we clicked at some spot. 
@@ -365,17 +364,13 @@ export class NodesController {
     }
 
         
-    onSidePanelButtonPressed(idx: number, isGizmo: boolean) {
+    onSidePanelButtonPressed(idx: number, type: CoreType) {
 
-        if (isGizmo) {
-            console.log("TODO!");
-        } else {
-            this.catalogue.select(idx);
-            this.selectSocket();
-            // we must focus on the canvas after interacting with the html UI.
-            // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
-            this.input.canvas.focus();
-        }
+        this.catalogue.select(idx, type);
+        this.selectSocket();
+        // we must focus on the canvas after interacting with the html UI.
+        // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
+        this.input.canvas.focus();
     }
 
 

@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../engine/src/lib";
-import { OperationCore } from "../operations/operation";
+import { OperationCore } from "../operations/operation-core";
 import { SocketIdx } from "./socket";
 
 

@@ -1,21 +1,21 @@
 import { GizmoNode } from "../gizmos/_gizmo";
 import { Socket } from "./socket";
 
-export class Cable {
+export class Variable {
 
     private constructor(
         public from: Socket, 
         public gizmos: GizmoNode[],
         public _to: Map<string, Socket>) {}
 
-    static new(a: Socket, b: Socket) : Cable {
+    static new(a: Socket, b: Socket) : Variable {
         if (a.idx < b.idx) {
-            return Cable.new(b, a);
+            return Variable.new(b, a);
         } else {
             let map = new Map<string, Socket>();
             let gizmos: GizmoNode[] = [];
             map.set(b.toString(), b);
-            return new Cable(a, gizmos, map);
+            return new Variable(a, gizmos, map);
         }
     }
 

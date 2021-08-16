@@ -1,6 +1,6 @@
 import { UI } from "../../../engine/src/lib";
-import { OperationCore } from "../operations/operation";
-import { Catalogue } from "../operations/catalogue";
+import { OperationCore } from "../operations/operation-core";
+import { Catalogue, CoreType } from "../operations/catalogue";
 
 /**
  * All UI besides the canvas itself
@@ -21,22 +21,24 @@ export class NodesSidePanel {
     /**
      * Create buttons for each operation
      */
-    renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number, isGizmo: boolean) => void) {
+    renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number, type: CoreType) => void) {
         let ops = catalogue.operations;
         let giz = catalogue.gizmos;
 
         this.ui.clear();
 
+        // operations 
         for (let i = 0 ; i < ops.length; i++) {
             let div = this.ui.addButton(ops[i].name, () => {
-                onPress(i, false);
+                onPress(i, CoreType.Operation);
             })
             // div.classList.add("create-node-button");
         }
 
+        // gizmo's
         for (let i = 0 ; i < giz.length; i++) {
             let div = this.ui.addButton(giz[i].name, () => {
-                onPress(i, true);
+                onPress(i, CoreType.Gizmo);
             })
             div.classList.add("create-gizmo-button-wrapper");
         }

@@ -37,14 +37,13 @@ export class GizmoCore {
 export class GizmoNode {
 
     private constructor(
-        public cable: string,
         public state: boolean,
-        public type: GizmoCore,
+        public core: GizmoCore,
         public position: Vector2) {}
 
-    static new(cable: string, position: Vector2, kind: GizmoCore) : GizmoNode {
+    static new(position: Vector2, kind: GizmoCore) : GizmoNode {
         let size = Vector2.new(1,1);
         let state = false;
-        return new GizmoNode(cable, state, kind, position);
+        return new GizmoNode(state, kind, position);
     }
 }

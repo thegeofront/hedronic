@@ -20,7 +20,8 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 - Only acceptable parameter: boolean 
 - Simple gates (AND, OR, NOT, XOR), just like that video
 - Dragging & clicking, deleting, etc... 
-- Drawing using HTML canvas / or webgl, not sure which is better at this point
+- Drawing using HTML, 2d canvas, or webgl, not sure which is better at this point
+
 > Chose canvas API. introduces some inefficiencies, but it does the job. 
 > we *COULD* also hack html to create nodes and cables, and make them stylable using regular css...
 > hmmmmm...

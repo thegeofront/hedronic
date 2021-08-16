@@ -9,7 +9,7 @@ export class Socket {
         public readonly node: string, 
         public readonly idx: SocketIdx,
         public readonly side: SocketSide) {}
-
+ 
     static new(node: string, idx: SocketIdx) {
         return new Socket(node, idx, Socket.getSide(idx));
     }

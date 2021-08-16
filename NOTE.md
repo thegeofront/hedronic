@@ -1,14 +1,20 @@
+# ARCHITECTURE 
 
 
+| Graph | Normal Programming   |
+|-------|----------------------|        
+| Cable | Variable             | 
+| Gizmo | Method on 1 variable | 
+| Node  | Pure Function        | 
 
-# Why from top to bottom?
+
+# top to bottom?
+Maybe im gonna make the graph from top to bottom instead of from left to right. 
 3 reasons: 
 - Readability: of the names of nodes
 - Visualization: easy to have nodes & visualization side by side.
 - Analogy to regular code (function header states input, return statement at the bottom)
 (- Mobile devices)
-
-
 
 
 # Why the grid & line style?

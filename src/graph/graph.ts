@@ -1,11 +1,11 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
-import { Cable } from "./cable";
+import { Variable } from "./cable";
 import { GizmoNode } from "../gizmos/_gizmo";
 import { OpNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 
 /**
- * A Collection of Nodes & Cables. 
+ * A Collection of Nodes, Gizmo's & Cables. 
  * These are doubly linked. (Nodes point to cables, cables point to nodes).
  * The Graph makes sure these links remain correct
  */
@@ -13,12 +13,12 @@ export class NodesGraph {
 
     private constructor(
         public nodes: Map<string, OpNode>, 
-        public cables: Map<string, Cable>,
+        public cables: Map<string, Variable>,
         public gizmos: Map<string, GizmoNode>) {}
 
     static new() {
         let nodes = new Map<string, OpNode>();
-        let cables = new Map<string, Cable>();
+        let cables = new Map<string, Variable>();
         let gizmos = new Map<string, GizmoNode>();
         return new NodesGraph(nodes, cables, gizmos);
     }
@@ -33,9 +33,13 @@ export class NodesGraph {
 
     // ---- Node Management 
 
-    addNode(node: OpNode) {
+    addNode(node: OpNode | GizmoNode) {
         let key = createRandomGUID();
-        this.nodes.set(key, node);
+        if (node instanceof GizmoNode) {
+            this.gizmos.set(key, node);
+        } else {
+            this.nodes.set(key, node);
+        }
         return key;
     }
 
@@ -109,7 +113,7 @@ export class NodesGraph {
     addLink(a: Socket, b: Socket) {
 
         // before we create the cable, make sure the sockets are free
-        let cable = Cable.new(a, b);
+        let cable = Variable.new(a, b);
 
         // If a cable exist at the start of this cable, do not add a new cable.
         // but add an additional output to this one

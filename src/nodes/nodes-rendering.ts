@@ -2,11 +2,11 @@
 
 import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { OpNode } from "../graph/node";
-import { OperationCore } from "../operations/operation";
+import { OperationCore } from "../operations/operation-core";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
-import { Cable } from "../graph/cable";
+import { Variable } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
 import { GizmoNode } from "../gizmos/_gizmo";
 
@@ -23,7 +23,16 @@ export enum DrawState {
     GizmoPlacement,
 }
 
-export function drawNode(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
+export function drawNode(ctx: CTX, node: OpNode | GizmoNode, canvas: NodesController, component: number, style: DrawState) {
+    if (node instanceof OpNode) {
+        drawOperation(ctx, node, canvas, component, style);
+    } else {
+        drawGizmo(ctx, node, canvas);
+    }
+        
+}
+
+export function drawOperation(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
 
     let max = Math.max(node.operation.inputs, node.operation.outputs);
     let pos = canvas.toWorld(node.position);
@@ -80,7 +89,7 @@ export function drawNode(ctx: CTX, node: OpNode, canvas: NodesController, compon
     ctx.restore();
 }
 
-export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
+export function drawCable(ctx: CTX, cable: Variable, controller: NodesController) {
 
     // line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
 
@@ -142,7 +151,7 @@ export function drawGizmo(ctx: CTX, gizmo: GizmoNode, canvas: NodesController) {
     ctx.fillStyle = "white";
 
     let pos = gizmo.position;
-    let size = gizmo.type.size;
+    let size = gizmo.core.size;
     
     ctx.translate(pos.x, pos.y);
     ctx.fillRect(0,0, size.x, size.y);
