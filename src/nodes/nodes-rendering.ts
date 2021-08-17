@@ -109,22 +109,19 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
         let toNode = graph.nodes.get(to.node)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
         let d = controller.toWorld(toGridPos).addn(hgs, hgs);
-    
-        let gridDelta = toGridPos.subbed(fromGridPos);
         let something = controller.toWorld(Vector2.new(1,0));
+        
         let delta = d.subbed(a);
-        let half = delta.scaled(0.5);
-        
-        // make sure things are alligned to the grid nicely
-        
-        // if (gridDelta.x % 2 != 0) {
-        //     half.x -= hgs;
-        // }
+    
+        if (delta.x > 3 * size) {
+            something.x += size;
+        } else if (delta.x > 2 * size) {
+            something.x += hgs
+        }
 
-        // determine b and c 
         let b = a.clone();
         b.x += something.x;
-        
+
         let c = a.clone();
         c.x += something.x;
         c.y += delta.y;
@@ -148,17 +145,6 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
         drawPolyline(ctx, line);
     }
 }
-
-export function drawGizmo(ctx: CTX, gizmo: GeonNode, canvas: NodesController) {
-    
-    gizmo.position
-    ctx.fillStyle = "white";
-
-    let pos = gizmo.position;
-    // let size = gizmo.core.size;
-    gizmoShape(ctx, pos, false, false, Vector2.new(1,1), canvas.size);
-}
-
 
 function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {
 
