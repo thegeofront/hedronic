@@ -2,7 +2,7 @@ import { defaultOperations } from "./default-catalogue";
 import { FN, Operation } from "../graph/operation";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
-import { Widget, WidgetType } from "../graph/widget";
+import { Widget, WidgetSide } from "../graph/widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -35,9 +35,10 @@ export class Catalogue {
     static newDefault() {
         let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
         let widgets: Widget[] = [
-            Widget.new("input", WidgetType.Input),
-            Widget.new("keeper", WidgetType.Middle),
-            Widget.new("output", WidgetType.Output),
+            Widget.new("button", WidgetSide.Input, false, Vector2.new(1,1)),
+            Widget.new("text", WidgetSide.Input, false, Vector2.new(4,1)),
+            Widget.new("output", WidgetSide.Output, false, Vector2.new(1,1)),
+            Widget.new("display", WidgetSide.Output, false, Vector2.new(3,3)),
         ]
         return Catalogue.new(operations, widgets);
     }
@@ -60,7 +61,6 @@ export class Catalogue {
      * Spawn an instance of the selected node at a location 
      */
     spawn(gp: Vector2) {
-        console.log("create");
         if (this.selected instanceof Operation) {
             return GeonNode.new(gp, this.selected);
         } else if (this.selected instanceof Widget) {

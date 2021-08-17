@@ -56,10 +56,19 @@ export class GeonNode {
 
     trySelect(gp: Vector2) : number | undefined {
         let max = Math.max(this.operation.inputs, this.operation.outputs);
+        let local = gp.subbed(this.position);
+
+        // check if we select the widget
+        if (this.operation instanceof Widget) {
+            let result = this.operation.trySelect(local);
+            if (result) {
+                return result;
+            }
+        }
 
         // see if this vector lands on an input socket, an output socket, or the body
-        let local = gp.subbed(this.position);
         if (local.y < 0 || local.y >= max) {
+            // quickly return if we dont even come close
             return undefined;
         } else if (local.x == 0) {
             if (local.y < this.operation.inputs) {
@@ -71,13 +80,12 @@ export class GeonNode {
             return 0; // selected body
         } else if (local.x == 2) {
             if (local.y < this.operation.outputs) {
-                return local.y + 1 // selected input
+                return local.y + 1 // selected output
             } else {
                 return 0; // selected body
             }
         }
         return undefined;
-        
     }
 
     // ---- Connection
@@ -92,15 +100,5 @@ export class GeonNode {
 
     removeConnection() {
 
-    }
-
-    // ---- Create Special properties
-
-    attach() {
-        // input something like: 
-        // html.onclick() => node.run()
-        
-        // output something like:
-        // node.afterRun() => html.switch colors 
     }
 }

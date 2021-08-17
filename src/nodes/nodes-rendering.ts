@@ -55,16 +55,17 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
     ctx.stroke();
 
     // draw operation text
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.font = '20px courier new';
-    // ctx.rotate
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    let op_center = textCenters.get(0);
-    // ctx.translate(op_center.x, op_center.y);
-    // ctx.rotate(Math.PI*-0.5);
-    ctx.fillText(node.operation.name, op_center.x, op_center.y);
-    
+    if (!isWidget) {
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.font = '20px courier new';
+        // ctx.rotate
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        let op_center = textCenters.get(0);
+        // ctx.translate(op_center.x, op_center.y);
+        // ctx.rotate(Math.PI*-0.5);
+        ctx.fillText(node.operation.name, op_center.x, op_center.y);
+    }
 
     // draw input text
     ctx.font = '12px courier new';
@@ -83,13 +84,12 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
         // ctx.fillText('|', vec.x, vec.y);
     }
 
-    // ctx.fillStyle = '#222222';
-    // ctx.fillRect(0, 0, rec.x.size(), rec.y.size());
-    // ctx.strokeStyle = '#ffffff';
-    // ctx.lineCap = "square";
-    // ctx.lineWidth = 1;
-    // ctx.strokeRect(0, 0, rec.x.size(), rec.y.size());
-    // ctx.restore();
+    // render widget
+    if (isWidget) {
+        let widget = node.operation as Widget;
+        setStyle(ctx, style, component, 0, isWidget);
+        widget.render(ctx, pos, component, canvas.size);
+    }
 }
 
 export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {

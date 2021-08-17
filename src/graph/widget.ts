@@ -11,12 +11,13 @@
 //              also, only gizmo's are allowed to hold state. 
 //            
 
+import { Domain, Domain2, Vector2 } from "../../../engine/src/lib";
+import { CTX } from "../ctx/ctx-helpers";
 import { Operation } from "./operation";
 import { State } from "./state";
 
-export enum WidgetType {
+export enum WidgetSide {
     Input, // static input or UI 
-    Middle, // store / look at data
     Output // output: save file, or rendering...
 }
 
@@ -41,16 +42,35 @@ export class Widget {
         public readonly name: string,
         public readonly inputs: number, 
         public readonly outputs: number,
-        public readonly type: WidgetType,
-        public readonly state: State,
+        public readonly side: WidgetSide,
+        public bounds: Domain2,
+        public state: State,
     ) {}
 
-    static new(name: string, type: WidgetType, state?: State) {
+    static new(name: string, side: WidgetSide, state?: State, size?: Vector2) {
+
+        // sry for this dumb code
+        let rec;
+        if (!size) {
+            if (side == WidgetSide.Input) {
+                rec = Domain2.fromWH(0,0,1,1);
+            } else {
+                rec = Domain2.fromWH(2,0,1,1);
+            }
+        } else {
+            if (side == WidgetSide.Input) {
+                rec = Domain2.fromWH(-(size.x-1), 0, size.x, size.y);
+            } else {
+                rec = Domain2.fromWH(2, 0, size.x, size.y);
+            }
+        }
+    
         return new Widget(
             name, 
-            1,
-            1,
-            type,
+            side == WidgetSide.Input ? 0 : 1, 
+            side == WidgetSide.Output ? 0 : 1, 
+            side,
+            rec,
             state ? state : false,
             );
     }
@@ -64,8 +84,57 @@ export class Widget {
     }
 
     clone() {
-        return Widget.new(this.name, this.type, this.state);
+        return Widget.new(this.name, this.side, this.state, this.bounds.size());
     }
 
+    trySelect(local: Vector2) : number | undefined {
+   
+        if (this.bounds.includesEx(local)) {
+            return Infinity;
+        }
+        return undefined;
+    }
+
+    render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
+
+        let size = this.bounds.size().scaled(cellSize);
+        pos = pos.clone();
+        pos.x += this.bounds.x.t0 * cellSize;
+        pos.y += this.bounds.y.t0 * cellSize;
+
+        ctx.fillRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
+        ctx.strokeRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
+        
+        if (component == Infinity) {
+            ctx.fillStyle = "grey";
+        } else {
+            ctx.fillStyle = this.state ? "green" : "#222222";
+        }
+
+        ctx.fillRect(pos.x+4, pos.y+4, size.x-8, size.y-8);
+
+        // let hs = size / 2;
+        // ctx.beginPath();
+        // ctx.arc(pos.x + hs, pos.y + hs, hs, 0, Math.PI*2);
+        // ctx.fill();
+    }
+
+    // ---- Create Special properties
+
+    attach() {
+        // input something like: 
+        // html.onclick() => node.run()
+        
+        // output something like:
+        // node.afterRun() => html.switch colors 
+    }
+
+    /**
+     * What to do when the widget actually gets clicked
+     */
+    onClick() {
+        console.log("click!");
+        this.state = this.state!;
+    }
     // TODO : customize the heck out of this thing: onLoad, onRun, afterRun, spawnHTML, whatever!
 }

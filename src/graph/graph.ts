@@ -2,6 +2,7 @@ import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/r
 import { Cable } from "./cable";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
+import { Widget } from "./widget";
 
 /**
  * A Collection of Nodes, Gizmo's & Cables. 
@@ -12,12 +13,14 @@ export class NodesGraph {
 
     private constructor(
         public nodes: Map<string, GeonNode>, 
-        public cables: Map<string, Cable>) {}
+        public cables: Map<string, Cable>,
+        public widgets: Map<string, Widget>) {}
 
     static new() {
         let nodes = new Map<string, GeonNode>();
         let cables = new Map<string, Cable>();
-        return new NodesGraph(nodes, cables);
+        let widgets = new Map<string, Widget>();
+        return new NodesGraph(nodes, cables, widgets);
     }
 
     static fromHash() {
@@ -32,8 +35,9 @@ export class NodesGraph {
 
     addNode(node: GeonNode) {
         let key = createRandomGUID();
-        if (node instanceof GeonNode) {
-            this.nodes.set(key, node);
+        this.nodes.set(key, node);
+        if (node.operation instanceof Widget) {
+            this.widgets.set(key, node.operation);
         }
         return key;
     }
