@@ -1,20 +1,21 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { Operation } from "./operation";
-import { Widget } from "../widgets/_widget";
+import { Widget } from "./widget";
 import { SocketIdx } from "./socket";
-
 
 export class GeonNode {
 
     private constructor(
         public position: Vector2, 
-        public operation: Operation, // slot for an operation
-        public widget: Widget | undefined,
+        public operation: Operation | Widget, // slot for an operation
         public connections: Map<SocketIdx, string>) {}
 
     static new(gridpos: Vector2, op: Operation) {
-        let connections = new Map();
-        return new GeonNode(gridpos, op, undefined, connections);
+        return new GeonNode(gridpos, op, new Map());
+    }
+
+    static newWidget(gridPos: Vector2, widget: Widget) {
+        return new GeonNode(gridPos, widget, new Map())
     }
 
     run(...args: boolean[]) {

@@ -80,20 +80,20 @@ export class NodesController {
     }
 
     testGraph() {
-        let INPUT = this.catalogue.operations[0];
-        let OUTPUT = this.catalogue.operations[1];
-        let AND = this.catalogue.operations[2];
-        let OR = this.catalogue.operations[3];
-        let NOT = this.catalogue.operations[4];
+        let INPUT = this.catalogue.widgets[0];
+        let OUTPUT = this.catalogue.widgets[2];
+        let AND = this.catalogue.operations[0];
+        let OR = this.catalogue.operations[1];
+        let NOT = this.catalogue.operations[2];
 
         INPUT.log();
         
         let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
         let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
         let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
-        let i1 = this.graph.addNode(GeonNode.new(Vector2.new(5,1), INPUT));
-        let i2 = this.graph.addNode(GeonNode.new(Vector2.new(5,3), INPUT));
-        let o1 = this.graph.addNode(GeonNode.new(Vector2.new(20,0), OUTPUT));
+        let i1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,1), INPUT.clone()));
+        let i2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,3), INPUT.clone()));
+        let o1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,0), OUTPUT.clone()));
 
         this.graph.addLinkBetween(i1, 0, not, 0);
         this.graph.addLinkBetween(i1, 0, or, 0);

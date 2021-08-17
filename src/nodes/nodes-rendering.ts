@@ -8,6 +8,7 @@ import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
+import { Widget } from "../graph/widget";
 
 const NODE_GRID_WIDTH = 3;
 
@@ -16,40 +17,45 @@ export enum DrawState {
     OpHover,
     OpSelected,
     OpPlacement,
-    Gizmo,
-    GizmoHover,
-    GizmoSelected,
-    GizmoPlacement,
+}
+
+export class StyleSet {
+    
+    constructor(
+        text: string,
+        stroke: string,
+        fill: string,
+        line: number
+    ) {}
+
+    static new(
+        text: string,
+        stroke: string,
+        fill: string,
+        line: number) {
+        return new StyleSet(text, stroke, fill, line);
+    }
+
 }
 
 export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
-    if (node instanceof GeonNode) {
-        drawOperation(ctx, node, canvas, component, style);
-    } else {
-        drawGizmo(ctx, node, canvas);
-    }
-}
 
-export function drawOperation(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
+    // convert style 
+    let isWidget = node.operation instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
-    
     const BAR_WIDTH = 5;
-
-    // ctx.save();
-
-    // draw body
-    // ctx.translate(pos.x, pos.y);
     ctx.beginPath();
 
-    setStyle(ctx, style, component, 0);
+    // draw body
+    setStyle(ctx, style, component, 0, isWidget);
 
     let textCenters = nodeShape(ctx, pos, node.operation.inputs, node.operation.outputs, canvas.size);
     ctx.fill();
     ctx.stroke();
 
     // draw operation text
-    ctx.fillStyle = "white";
+    ctx.fillStyle = ctx.strokeStyle;
     ctx.font = '20px courier new';
     // ctx.rotate
     ctx.textAlign = 'center';
@@ -63,7 +69,7 @@ export function drawOperation(ctx: CTX, node: GeonNode, canvas: NodesController,
     // draw input text
     ctx.font = '12px courier new';
     for (let i = 0 ; i < node.operation.inputs; i++) {
-        setStyle(ctx, style, component, -1 - i); // -1 signals input1, -2 signals input2, etc...
+        setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillText('|', vec.x, vec.y);
         ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
@@ -71,7 +77,7 @@ export function drawOperation(ctx: CTX, node: GeonNode, canvas: NodesController,
 
     // draw output text
     for (let i = 0 ; i < node.operation.outputs; i++) {
-        setStyle(ctx, style, component, i + 1);
+        setStyle(ctx, style, component, i + 1, isWidget);
         let vec = textCenters.get(1 + node.operation.inputs + i);
         ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         // ctx.fillText('|', vec.x, vec.y);
@@ -204,28 +210,52 @@ function drawPolyline(ctx: CTX, pl: MultiVector2) {
 }
 
 
-function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number) {
+function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
-    ctx.strokeStyle = "#aaaaaa";
+    ctx.strokeStyle = "#ffffff";
     ctx.fillStyle = "#222222";
     ctx.lineWidth = 1;
 
-    if (state == DrawState.OpSelected && component == componentDrawn) {
+    if (state == DrawState.OpSelected   && component == componentDrawn) {
         ctx.strokeStyle = "#ff0000";
         ctx.fillStyle = "#332222";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 4;
     } else if (state == DrawState.OpHover && component == componentDrawn) {
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = "#dd0000";
         ctx.lineWidth = 2;
     } else if (state == DrawState.OpPlacement) {
         ctx.lineWidth = 0.5;
+        ctx.strokeStyle = ctx.strokeStyle + "44"
     }
 
     if (componentDrawn != 0) {
         ctx.fillStyle = ctx.strokeStyle;
     }
+
+    if (isWidget) {
+        let temp = ctx.fillStyle;
+        ctx.fillStyle = ctx.strokeStyle
+        ctx.strokeStyle = temp;
+    }
 }
 
+
+function getStyle(state: DrawState) {
+    // ctx.strokeStyle = "#aaaaaa";
+    // ctx.fillStyle = "#222222";
+    // ctx.lineWidth = 1;
+
+    switch (state) {
+        case DrawState.Op:
+            return new StyleSet("white", "#aaaaaa", "#222222", 1);
+        case DrawState.OpHover:
+            return new StyleSet("white", "#aaaaaa", "#222222", 1);
+        case DrawState.OpSelected:
+            return new StyleSet("white", "#aaaaaa", "#222222", 1);
+        case DrawState.OpPlacement:
+            return new StyleSet("white", "#aaaaaa", "#222222", 1);
+    }
+}
 
 function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh: Vector2, size: number) {
     let part = 5;

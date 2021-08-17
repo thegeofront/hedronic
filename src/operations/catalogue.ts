@@ -2,6 +2,7 @@ import { defaultGizmos, defaultOperations } from "./default-catalogue";
 import { FN, Operation } from "../graph/operation";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
+import { Widget, WidgetType } from "../graph/widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -21,20 +22,24 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: Operation
+    public selected?: Operation | Widget
 
-    constructor(public operations: Operation[], public gizmos: Operation[]) {
+    constructor(public operations: Operation[], public widgets: Widget[]) {
 
     }
 
-    static new(ops: Operation[], giz: Operation[]) : Catalogue {
+    static new(ops: Operation[], giz: Widget[]) : Catalogue {
         return new Catalogue(ops, giz);
     }
 
     static newDefault() {
         let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
-        let gizmos: Operation[] = defaultGizmos.map(fn => Operation.new(fn));
-        return Catalogue.new(operations, gizmos);
+        let widgets: Widget[] = [
+            Widget.new("input", WidgetType.Input),
+            Widget.new("keeper", WidgetType.Middle),
+            Widget.new("output", WidgetType.Output),
+        ]
+        return Catalogue.new(operations, widgets);
     }
 
     select(idx: number, type: CoreType) {
@@ -43,7 +48,7 @@ export class Catalogue {
         if (type == CoreType.Operation) {
             this.selected = this.operations[idx];
         } else {
-            this.selected = this.gizmos[idx];
+            this.selected = this.widgets[idx];
         }
     }
 
@@ -58,6 +63,8 @@ export class Catalogue {
         console.log("create");
         if (this.selected instanceof Operation) {
             return GeonNode.new(gp, this.selected);
-        } 
+        } else if (this.selected instanceof Widget) {
+            return GeonNode.newWidget(gp, this.selected.clone());
+        }
     }
 }

@@ -23,7 +23,7 @@ export class NodesSidePanel {
      */
     renderCatalogue(catalogue: Catalogue, onPress: (opIdx: number, type: CoreType) => void) {
         let ops = catalogue.operations;
-        let giz = catalogue.gizmos;
+        let giz = catalogue.widgets;
 
         this.ui.clear();
 
