@@ -6,48 +6,45 @@ import { OperationCore } from "../operations/operation-core";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
-import { Variable } from "../graph/cable";
+import { Cable } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
-import { GizmoNode } from "../gizmos/_gizmo";
 
 const NODE_GRID_WIDTH = 3;
 
 export enum DrawState {
-    Normal,
-    Hover,
-    Selected,
-    Placement,
+    Op,
+    OpHover,
+    OpSelected,
+    OpPlacement,
     Gizmo,
     GizmoHover,
     GizmoSelected,
     GizmoPlacement,
 }
 
-export function drawNode(ctx: CTX, node: OpNode | GizmoNode, canvas: NodesController, component: number, style: DrawState) {
+export function drawNode(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
     if (node instanceof OpNode) {
         drawOperation(ctx, node, canvas, component, style);
     } else {
         drawGizmo(ctx, node, canvas);
     }
-        
 }
 
 export function drawOperation(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
 
-    let max = Math.max(node.operation.inputs, node.operation.outputs);
     let pos = canvas.toWorld(node.position);
     
     const BAR_WIDTH = 5;
 
-    ctx.save();
+    // ctx.save();
 
     // draw body
-    ctx.translate(pos.x, pos.y);
+    // ctx.translate(pos.x, pos.y);
     ctx.beginPath();
 
     setStyle(ctx, style, component, 0);
 
-    let textCenters = nodeShape(ctx, node.operation.inputs, node.operation.outputs, canvas.size);
+    let textCenters = nodeShape(ctx, pos, node.operation.inputs, node.operation.outputs, canvas.size);
     ctx.fill();
     ctx.stroke();
 
@@ -86,10 +83,10 @@ export function drawOperation(ctx: CTX, node: OpNode, canvas: NodesController, c
     // ctx.lineCap = "square";
     // ctx.lineWidth = 1;
     // ctx.strokeRect(0, 0, rec.x.size(), rec.y.size());
-    ctx.restore();
+    // ctx.restore();
 }
 
-export function drawCable(ctx: CTX, cable: Variable, controller: NodesController) {
+export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
 
     // line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
 
@@ -146,16 +143,14 @@ export function drawCable(ctx: CTX, cable: Variable, controller: NodesController
     }
 }
 
-export function drawGizmo(ctx: CTX, gizmo: GizmoNode, canvas: NodesController) {
-    ctx.save();
+export function drawGizmo(ctx: CTX, gizmo: OpNode, canvas: NodesController) {
+    
+    gizmo.position
     ctx.fillStyle = "white";
 
     let pos = gizmo.position;
-    let size = gizmo.core.size;
-    
-    ctx.translate(pos.x, pos.y);
-    ctx.fillRect(0,0, size.x, size.y);
-    ctx.restore();
+    // let size = gizmo.core.size;
+    gizmoShape(ctx, pos, false, false, Vector2.new(1,1), canvas.size);
 }
 
 
@@ -198,10 +193,8 @@ function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {
 
 function drawPolyline(ctx: CTX, pl: MultiVector2) {
     ctx.beginPath();
-    for (let i = 0 ; i < 1; i++) {
-        let v = pl.get(i);
-        ctx.moveTo(v.x, v.y);
-    }
+    let v = pl.get(0);
+    ctx.moveTo(v.x, v.y);
 
     for (let i = 1 ; i < pl.count; i++) {
         let v = pl.get(i);
@@ -217,14 +210,14 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
     ctx.fillStyle = "#222222";
     ctx.lineWidth = 1;
 
-    if (state == DrawState.Selected && component == componentDrawn) {
+    if (state == DrawState.OpSelected && component == componentDrawn) {
         ctx.strokeStyle = "#ff0000";
         ctx.fillStyle = "#332222";
         ctx.lineWidth = 2;
-    } else if (state == DrawState.Hover && component == componentDrawn) {
+    } else if (state == DrawState.OpHover && component == componentDrawn) {
         ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 2;
-    } else if (state == DrawState.Placement) {
+    } else if (state == DrawState.OpPlacement) {
         ctx.lineWidth = 0.5;
     }
 
@@ -234,13 +227,25 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
 }
 
 
-
+function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh: Vector2, size: number) {
+    let part = 5;
+    let step = size / part;
+    let coord = (x: number,y: number) => {
+        return Vector2.new(pos.x + y*step, pos.y + x*step);
+    }
+    let moveTo = (x: number, y: number) => {
+        ctx.moveTo(pos.x + y*step, pos.y + x*step);
+    }
+    let lineTo = (x: number, y: number) => {
+        ctx.lineTo(pos.x + y*step, pos.y + x*step);
+    }
+}
 
 /**
  * Draw the chip shape
  * returns 
  */
- function nodeShape(ctx: CTX, inputs: number, outputs: number, size: number) : MultiVector2 {
+function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size: number) : MultiVector2 {
     let max = Math.max(inputs, outputs);
     let part = 5;
     let step = size / part;
@@ -254,13 +259,13 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
     let colf = 5 + 9.5;
 
     let coord = (x: number,y: number) => {
-        return Vector2.new(y*step, x*step);
+        return Vector2.new(pos.x + y*step, pos.y + x*step);
     }
     let moveTo = (x: number, y: number) => {
-        ctx.moveTo(y*step, x*step);
+        ctx.moveTo(pos.x + y*step, pos.y + x*step);
     }
     let lineTo = (x: number, y: number) => {
-        ctx.lineTo(y*step, x*step);
+        ctx.lineTo(pos.x + y*step, pos.y + x*step);
     }
 
     // calculate coorindates of input, output, and body centers

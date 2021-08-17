@@ -1,6 +1,4 @@
-import { GizmoNode, GizmoCore } from "../gizmos/_gizmo";
 import { defaultGizmos, defaultOperations } from "./default-catalogue";
-import { NodeCore } from "../graph/node-core";
 import { FN, OperationCore } from "./operation-core";
 import { OpNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
@@ -8,8 +6,7 @@ import { Vector2 } from "../../../engine/src/lib";
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
 
-export type AnyCore = OperationCore | GizmoCore;
-export type AnyNode = OpNode | GizmoNode;
+
 export enum CoreType {
     Operation,
     Gizmo
@@ -24,19 +21,19 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: NodeCore
+    public selected?: OperationCore
 
-    constructor(public operations: OperationCore[], public gizmos: GizmoCore[]) {
+    constructor(public operations: OperationCore[], public gizmos: OperationCore[]) {
 
     }
 
-    static new(ops: OperationCore[], giz: GizmoCore[]) : Catalogue {
+    static new(ops: OperationCore[], giz: OperationCore[]) : Catalogue {
         return new Catalogue(ops, giz);
     }
 
     static newDefault() {
         let operations: OperationCore[] = defaultOperations.map(fn => OperationCore.new(fn));
-        let gizmos: GizmoCore[] = defaultGizmos;
+        let gizmos: OperationCore[] = defaultGizmos.map(fn => OperationCore.new(fn));
         return Catalogue.new(operations, gizmos);
     }
 
@@ -61,10 +58,6 @@ export class Catalogue {
         console.log("create");
         if (this.selected instanceof OperationCore) {
             return OpNode.new(gp, this.selected);
-        } else if (this.selected instanceof GizmoCore) {
-            return GizmoNode.new(gp, this.selected);
-        } else {
-            return undefined;
-        }
+        } 
     }
 }

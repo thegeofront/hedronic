@@ -7,10 +7,6 @@
 //                L  
 // 
 
-import { NodeCore } from "../graph/node-core";
-
-
-
 export type FN = (...args: boolean[]) => boolean[]
 
 /**
@@ -18,7 +14,7 @@ export type FN = (...args: boolean[]) => boolean[]
  * This is needed, so we can reason about the functionalities of chips
  * Not the same as a Node : Multiple Different Nodes will point to the same Operations
  */
-export class OperationCore implements NodeCore {
+export class OperationCore {
 
     private constructor(
         private func: FN,

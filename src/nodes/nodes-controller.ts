@@ -187,11 +187,11 @@ export class NodesController {
             
             // TODO: fix the fact we cannot hover the node of the socket we are selecting...
             if (this.selected && key == this.selected!.node) {
-                drawNode(ctx, node, this, this.selected.idx, DrawState.Selected);
+                drawNode(ctx, node, this, this.selected.idx, DrawState.OpSelected);
             } else if (this.hover && key == this.hover!.node) {
-                drawNode(ctx, node, this, this.hover.idx, DrawState.Hover);
+                drawNode(ctx, node, this, this.hover.idx, DrawState.OpHover);
             } else {
-                drawNode(ctx, node, this, 0, DrawState.Normal);
+                drawNode(ctx, node, this, 0, DrawState.Op);
             }
         }
 
@@ -202,7 +202,7 @@ export class NodesController {
         let g = this.toGrid(this.camera.mousePos);
         if (this.catalogue.selected) {
             let fakeNode = this.catalogue.spawn(g)!;
-            drawNode(ctx, fakeNode, this, 0, DrawState.Placement);
+            drawNode(ctx, fakeNode, this, 0, DrawState.OpPlacement);
         }
 
         // done drawing

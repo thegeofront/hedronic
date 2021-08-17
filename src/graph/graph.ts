@@ -1,6 +1,5 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
-import { Variable } from "./cable";
-import { GizmoNode } from "../gizmos/_gizmo";
+import { Cable } from "./cable";
 import { OpNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 
@@ -13,14 +12,12 @@ export class NodesGraph {
 
     private constructor(
         public nodes: Map<string, OpNode>, 
-        public cables: Map<string, Variable>,
-        public gizmos: Map<string, GizmoNode>) {}
+        public cables: Map<string, Cable>) {}
 
     static new() {
         let nodes = new Map<string, OpNode>();
-        let cables = new Map<string, Variable>();
-        let gizmos = new Map<string, GizmoNode>();
-        return new NodesGraph(nodes, cables, gizmos);
+        let cables = new Map<string, Cable>();
+        return new NodesGraph(nodes, cables);
     }
 
     static fromHash() {
@@ -33,11 +30,9 @@ export class NodesGraph {
 
     // ---- Node Management 
 
-    addNode(node: OpNode | GizmoNode) {
+    addNode(node: OpNode) {
         let key = createRandomGUID();
-        if (node instanceof GizmoNode) {
-            this.gizmos.set(key, node);
-        } else {
+        if (node instanceof OpNode) {
             this.nodes.set(key, node);
         }
         return key;
@@ -113,7 +108,7 @@ export class NodesGraph {
     addLink(a: Socket, b: Socket) {
 
         // before we create the cable, make sure the sockets are free
-        let cable = Variable.new(a, b);
+        let cable = Cable.new(a, b);
 
         // If a cable exist at the start of this cable, do not add a new cable.
         // but add an additional output to this one

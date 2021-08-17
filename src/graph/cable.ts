@@ -1,21 +1,21 @@
-import { GizmoNode } from "../gizmos/_gizmo";
+import { OperationCore } from "../operations/operation-core";
 import { Socket } from "./socket";
 
-export class Variable {
+export class Cable {
 
     private constructor(
         public from: Socket, 
-        public gizmos: GizmoNode[],
+        public gizmos: OperationCore[],
         public _to: Map<string, Socket>) {}
 
-    static new(a: Socket, b: Socket) : Variable {
+    static new(a: Socket, b: Socket) : Cable {
         if (a.idx < b.idx) {
-            return Variable.new(b, a);
+            return Cable.new(b, a);
         } else {
             let map = new Map<string, Socket>();
-            let gizmos: GizmoNode[] = [];
+            let gizmos: OperationCore[] = [];
             map.set(b.toString(), b);
-            return new Variable(a, gizmos, map);
+            return new Cable(a, gizmos, map);
         }
     }
 
