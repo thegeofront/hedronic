@@ -1,4 +1,4 @@
-import { defaultGizmos, defaultOperations } from "./default-catalogue";
+import { defaultOperations } from "./default-catalogue";
 import { FN, Operation } from "../graph/operation";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
