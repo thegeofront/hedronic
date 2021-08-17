@@ -7,7 +7,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 # Demo
 
-[Here](https://josfeenstra.nl/wip/nodes)
+[Here](https://josfeenstra.nl/project/nodes)
 
 # Roadmap
 > this is a sketch, nothing is final
