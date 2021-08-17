@@ -1,18 +1,20 @@
 import { Vector2 } from "../../../engine/src/lib";
-import { OperationCore } from "../operations/operation-core";
+import { Operation } from "./operation";
+import { Widget } from "../widgets/_widget";
 import { SocketIdx } from "./socket";
 
 
-export class OpNode {
+export class GeonNode {
 
     private constructor(
         public position: Vector2, 
-        public operation: OperationCore,
+        public operation: Operation, // slot for an operation
+        public widget: Widget | undefined,
         public connections: Map<SocketIdx, string>) {}
 
-    static new(gridpos: Vector2, op: OperationCore) {
+    static new(gridpos: Vector2, op: Operation) {
         let connections = new Map();
-        return new OpNode(gridpos, op, connections);
+        return new GeonNode(gridpos, op, undefined, connections);
     }
 
     run(...args: boolean[]) {

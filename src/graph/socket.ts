@@ -1,4 +1,4 @@
-import { OpNode } from "./node";
+import { GeonNode } from "./node";
 
 //ni < 0 : inputs | ni == 0 : node body | ni > 0 : outputs
 export type SocketIdx = number; 

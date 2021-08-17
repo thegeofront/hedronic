@@ -1,5 +1,5 @@
 import { UI } from "../../../engine/src/lib";
-import { OperationCore } from "../operations/operation-core";
+import { Operation } from "../graph/operation";
 import { Catalogue, CoreType } from "../operations/catalogue";
 
 /**

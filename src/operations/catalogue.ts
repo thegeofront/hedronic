@@ -1,6 +1,6 @@
 import { defaultGizmos, defaultOperations } from "./default-catalogue";
-import { FN, OperationCore } from "./operation-core";
-import { OpNode } from "../graph/node";
+import { FN, Operation } from "../graph/operation";
+import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
 
 // TODO rename CORE to TYPE
@@ -21,19 +21,19 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: OperationCore
+    public selected?: Operation
 
-    constructor(public operations: OperationCore[], public gizmos: OperationCore[]) {
+    constructor(public operations: Operation[], public gizmos: Operation[]) {
 
     }
 
-    static new(ops: OperationCore[], giz: OperationCore[]) : Catalogue {
+    static new(ops: Operation[], giz: Operation[]) : Catalogue {
         return new Catalogue(ops, giz);
     }
 
     static newDefault() {
-        let operations: OperationCore[] = defaultOperations.map(fn => OperationCore.new(fn));
-        let gizmos: OperationCore[] = defaultGizmos.map(fn => OperationCore.new(fn));
+        let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
+        let gizmos: Operation[] = defaultGizmos.map(fn => Operation.new(fn));
         return Catalogue.new(operations, gizmos);
     }
 
@@ -56,8 +56,8 @@ export class Catalogue {
      */
     spawn(gp: Vector2) {
         console.log("create");
-        if (this.selected instanceof OperationCore) {
-            return OpNode.new(gp, this.selected);
+        if (this.selected instanceof Operation) {
+            return GeonNode.new(gp, this.selected);
         } 
     }
 }

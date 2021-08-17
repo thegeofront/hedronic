@@ -1,8 +1,8 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
-import { OpNode } from "../graph/node";
-import { OperationCore } from "../operations/operation-core";
+import { GeonNode } from "../graph/node";
+import { Operation } from "../graph/operation";
 import { CTX, NodesController } from "./nodes-controller";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
@@ -22,15 +22,15 @@ export enum DrawState {
     GizmoPlacement,
 }
 
-export function drawNode(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
-    if (node instanceof OpNode) {
+export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
+    if (node instanceof GeonNode) {
         drawOperation(ctx, node, canvas, component, style);
     } else {
         drawGizmo(ctx, node, canvas);
     }
 }
 
-export function drawOperation(ctx: CTX, node: OpNode, canvas: NodesController, component: number, style: DrawState) {
+export function drawOperation(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
 
     let pos = canvas.toWorld(node.position);
     
@@ -143,7 +143,7 @@ export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
     }
 }
 
-export function drawGizmo(ctx: CTX, gizmo: OpNode, canvas: NodesController) {
+export function drawGizmo(ctx: CTX, gizmo: GeonNode, canvas: NodesController) {
     
     gizmo.position
     ctx.fillStyle = "white";
@@ -329,11 +329,11 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
 }
 
 function test() {
-    let and_operation = OperationCore.new(OPS.AND);
-    let not_operation = OperationCore.new(OPS.NOT);
+    let and_operation = Operation.new(OPS.AND);
+    let not_operation = Operation.new(OPS.NOT);
 
-    let and_chip = OpNode.new(Vector2.new(6,10), and_operation);
-    let or_chip = OpNode.new(Vector2.new(1,1), not_operation);
+    let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
+    let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);
 
     and_chip.log();
     or_chip.log();

@@ -1,7 +1,7 @@
 // purpose:     the hardcoded default cores 
 
 import { AND, EXPAND, IN, MULTI, NOT, OR, OUT } from "./functions";
-import { FN } from "./operation-core";
+import { FN } from "../graph/operation";
 
 export const defaultGizmos: FN[] = [
     IN,

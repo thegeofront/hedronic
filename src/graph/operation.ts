@@ -14,7 +14,7 @@ export type FN = (...args: boolean[]) => boolean[]
  * This is needed, so we can reason about the functionalities of chips
  * Not the same as a Node : Multiple Different Nodes will point to the same Operations
  */
-export class OperationCore {
+export class Operation {
 
     private constructor(
         private func: FN,
@@ -23,10 +23,10 @@ export class OperationCore {
         public readonly outputs: number) {}
 
     static new(func: FN) {
-        let inCount = OperationCore.countInputs(func);
-        let outCount = OperationCore.countOutputs(func);
+        let inCount = Operation.countInputs(func);
+        let outCount = Operation.countOutputs(func);
         let name = func.name;
-        return new OperationCore(func, name, inCount, outCount);
+        return new Operation(func, name, inCount, outCount);
     }
 
     run(...args: boolean[]) {

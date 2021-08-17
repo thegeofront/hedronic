@@ -1,11 +1,10 @@
-import { OperationCore } from "../operations/operation-core";
+import { Operation } from "./operation";
 import { Socket } from "./socket";
 
 export class Cable {
 
     private constructor(
-        public from: Socket, 
-        public gizmos: OperationCore[],
+        public from: Socket,
         public _to: Map<string, Socket>) {}
 
     static new(a: Socket, b: Socket) : Cable {
@@ -13,9 +12,8 @@ export class Cable {
             return Cable.new(b, a);
         } else {
             let map = new Map<string, Socket>();
-            let gizmos: OperationCore[] = [];
             map.set(b.toString(), b);
-            return new Cable(a, gizmos, map);
+            return new Cable(a, map);
         }
     }
 

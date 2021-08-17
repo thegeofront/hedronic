@@ -5,7 +5,7 @@ import { CtxCamera } from "../ctx/ctx-camera";
 import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
-import { OpNode } from "../graph/node";
+import { GeonNode } from "../graph/node";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue, CoreType } from "../operations/catalogue";
@@ -88,12 +88,12 @@ export class NodesController {
 
         INPUT.log();
         
-        let not = this.graph.addNode(OpNode.new(Vector2.new(10,0), NOT));
-        let or = this.graph.addNode(OpNode.new(Vector2.new(10,2), OR));
-        let and = this.graph.addNode(OpNode.new(Vector2.new(15,0), AND));
-        let i1 = this.graph.addNode(OpNode.new(Vector2.new(5,1), INPUT));
-        let i2 = this.graph.addNode(OpNode.new(Vector2.new(5,3), INPUT));
-        let o1 = this.graph.addNode(OpNode.new(Vector2.new(20,0), OUTPUT));
+        let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
+        let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
+        let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
+        let i1 = this.graph.addNode(GeonNode.new(Vector2.new(5,1), INPUT));
+        let i2 = this.graph.addNode(GeonNode.new(Vector2.new(5,3), INPUT));
+        let o1 = this.graph.addNode(GeonNode.new(Vector2.new(20,0), OUTPUT));
 
         this.graph.addLinkBetween(i1, 0, not, 0);
         this.graph.addLinkBetween(i1, 0, or, 0);
