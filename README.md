@@ -77,7 +77,7 @@ could be used to represent basicly anything. It will be the function's problem t
 
 
 # Status
-In phase 1 right now. Blocks can be created, connected and destroyed, an internally, a graph datamodel is maintained. Now the fun part begins, when we will actually compute something!
+In phase 1 is done! It still crashes often, cyclical patterns are not guarded against yet, but the script is finally alive in a way! Now on to phase 2
 
 
 
