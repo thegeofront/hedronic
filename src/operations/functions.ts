@@ -1,13 +1,5 @@
 import { State } from "../graph/state";
 
-export function IN() : State[] { 
-    return [true];
-}
-
-export function OUT(a: State) : State[] { 
-    return [];
-}
-
 export function AND(a: State, b: State) : State[] { 
     return [a && b];
 }

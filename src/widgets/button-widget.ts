@@ -36,7 +36,6 @@ export class ButtonWidget extends Widget {
     }
 
     clone() {
-        console.log("clone");
         return ButtonWidget.new(this.name, this.side, this.state, this.bounds.size());
     }
 

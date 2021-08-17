@@ -42,13 +42,39 @@ export class NodesGraph {
         console.log("finally! calculations!");
 
         let cache = new Map<string, State>();
-        let nodes = this.kahn();
+        let orderedNodeKeys = this.kahn();
 
-        console.log(this.getNode(nodes[5])?.operation.name);
+        //start at the widgets (widget keys are the same as the corresponding node)
+        for (let key of orderedNodeKeys) {
+   
+            let node = this.getNode(key)!;
 
-        // start at the widgets (widget keys are the same as the corresponding node)
-        for (let node in nodes) {
+            // calculate in several ways, depending on the node
+            if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
+                
+                let inputs = [];
+                for (let cable of node.inputs()) { // TODO multiple inputs!!
+                    inputs.push(cache.get(cable)!);
+                }
 
+                let outputs = node.operation.run(...inputs);
+
+                let outCables = node.outputs()
+                for (let i = 0 ; i < node.operation.outputs; i++) {
+                    cache.set(outCables[i], outputs[i]);
+                }
+
+            } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
+                for (let cable of node.outputs()) {
+                    cache.set(cable, node.widget!.state);
+                }
+            } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
+                for (let cable of node.inputs()) { // TODO multiple inputs!!
+                    node.widget!.state = cache.get(cable)!;
+                }
+            } else {
+                throw new Error("should never happen");
+            }
         }
     }
 
@@ -64,7 +90,7 @@ export class NodesGraph {
 
         // use the widgets to identify the starting point
         for (let [key, _] of this.widgets) {
-            let widget = this.getNode(key)!.widget;
+            let widget = this.getNode(key)!.widget!;
             if (widget.side != WidgetSide.Input) 
                 continue; 
             S.push(key);
@@ -78,7 +104,7 @@ export class NodesGraph {
             L.push(node);
 
             // for each node m with an edge e from n to m do
-            for (let cable of this.getNode(node)!.outputs) {
+            for (let cable of this.getNode(node)!.outputs()) {
                 
                 // 'remove' edge e from the graph
                 if (visitedCables.has(cable))
@@ -90,7 +116,7 @@ export class NodesGraph {
                 for (let nb of this.getCable(cable)!.to) {
                     let m = nb.node;
                     let allVisited = true;
-                    for (let c of this.getNode(m)!.inputs) {
+                    for (let c of this.getNode(m)!.inputs()) {
                         if (!visitedCables.has(c)) {
                             allVisited = false;
                             break;

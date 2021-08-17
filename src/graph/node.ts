@@ -31,28 +31,40 @@ export class GeonNode {
 
     // ---- Getters
 
-    get operation() : Operation {
-        return this.core as Operation
+    get operation() : Operation | undefined {
+        if (this.core instanceof Operation) {
+            return this.core as Operation
+        } else {
+            return undefined;
+        }
     }
 
-    get widget() : Widget {
-        return this.core as Widget
+    get widget() : Widget | undefined {
+        if (this.core instanceof Widget) {
+            return this.core as Widget
+        } else {
+            return undefined;
+        }
     }
 
-    get outputs() : string[] {
+    outputs() : string[] {
         let count = this.core.outputs;
         let cables: string[] = [];
         for (let i = 0; i < count; i++) {
-            cables.push(this.connections.get(i+1)!);
+            let cable = this.connections.get(i+1);
+            if (cable)
+                cables.push(cable);
         }
         return cables;
     }
 
-    get inputs() : string[] {
+    inputs() : string[] {
         let count = this.core.inputs;
         let cables: string[] = [];
         for (let i = 0; i < count; i++) {
-            cables.push(this.connections.get(-(i+1))!);
+            let cable = this.connections.get(-(i+1));
+            if (cable)
+                cables.push(cable);
         }
         return cables;
     }

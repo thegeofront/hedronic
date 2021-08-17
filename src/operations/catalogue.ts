@@ -65,7 +65,6 @@ export class Catalogue {
         if (this.selected instanceof Operation) {
             return GeonNode.new(gp, this.selected);
         } else if (this.selected instanceof Widget) {
-            console.log(this.selected instanceof ButtonWidget);
             return GeonNode.newWidget(gp, this.selected.clone());
         }
     }

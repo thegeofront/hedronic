@@ -31,7 +31,7 @@ export class Operation {
         return new Operation(func, name, inCount, outCount);
     }
 
-    run(...args: boolean[]) {
+    run(...args: State[]) {
         return this.func(...args); 
     }
 
