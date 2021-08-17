@@ -12,7 +12,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 # Roadmap
 > this is a sketch, nothing is final
 
-##  Phase 1 - Flowchart
+##  Phase 1 - Flowchart ✔️
 - Create a web 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
   - Inspired by https://www.youtube.com/watch?v=QZwneRb-zqA
 - This will get the gui basics down
@@ -27,7 +27,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 > hmmmmm...
 
 
-##  Phase 2 - Utility
+##  Phase 2 - Utility ⚙️
 - Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`.
 - Figure out how to `compile` the flowchart to javascript.
 - Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
