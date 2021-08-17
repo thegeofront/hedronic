@@ -1,6 +1,6 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
-import { NodesController } from "./nodes/nodes-controller";
+import { NodesCanvas } from "./nodes/nodes-canvas";
 
 function main() {
 
@@ -9,7 +9,7 @@ function main() {
     const ui = document.getElementById("nodes-panel") as HTMLDivElement;
     
     // nodes
-    const nodes = NodesController.new(html_canvas, ui)!;
+    const nodes = NodesCanvas.new(html_canvas, ui)!;
     nodes.start();
 
     // timing

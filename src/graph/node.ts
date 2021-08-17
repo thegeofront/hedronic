@@ -7,7 +7,7 @@ export class GeonNode {
 
     private constructor(
         public position: Vector2, 
-        public operation: Operation | Widget, // slot for an operation
+        public core: Operation | Widget, // slot for an operation
         public connections: Map<SocketIdx, string>) {}
 
     static new(gridpos: Vector2, op: Operation) {
@@ -19,14 +19,42 @@ export class GeonNode {
     }
 
     run(...args: boolean[]) {
-        return this.operation.run(...args);
+        return this.core.run(...args);
     }
 
     log() {
         console.log(`chip at ${this.position}`);
         // this.operation.name
         console.log("operation: ")
-        this.operation.log();
+        this.core.log();
+    }
+
+    // ---- Getters
+
+    get operation() : Operation {
+        return this.core as Operation
+    }
+
+    get widget() : Widget {
+        return this.core as Widget
+    }
+
+    get outputs() : string[] {
+        let count = this.core.outputs;
+        let cables: string[] = [];
+        for (let i = 0; i < count; i++) {
+            cables.push(this.connections.get(i+1)!);
+        }
+        return cables;
+    }
+
+    get inputs() : string[] {
+        let count = this.core.inputs;
+        let cables: string[] = [];
+        for (let i = 0; i < count; i++) {
+            cables.push(this.connections.get(-(i+1))!);
+        }
+        return cables;
     }
 
     // ---- Selection
@@ -41,11 +69,11 @@ export class GeonNode {
 
     GetComponentLocalGridPosition(c: SocketIdx) {
         
-        if (c + 1 > -this.operation.inputs && c < 0) {
+        if (c + 1 > -this.core.inputs && c < 0) {
             // input
             let input = (c * -1) - 1;
             return Vector2.new(0, input);
-        } else if (c > 0 && c-1 < this.operation.outputs) {
+        } else if (c > 0 && c-1 < this.core.outputs) {
             // output 
             let output = c - 1;
             return Vector2.new(2, output);
@@ -55,12 +83,12 @@ export class GeonNode {
     }
 
     trySelect(gp: Vector2) : number | undefined {
-        let max = Math.max(this.operation.inputs, this.operation.outputs);
+        let max = Math.max(this.core.inputs, this.core.outputs);
         let local = gp.subbed(this.position);
 
         // check if we select the widget
-        if (this.operation instanceof Widget) {
-            let result = this.operation.trySelect(local);
+        if (this.core instanceof Widget) {
+            let result = this.core.trySelect(local);
             if (result) {
                 return result;
             }
@@ -71,7 +99,7 @@ export class GeonNode {
             // quickly return if we dont even come close
             return undefined;
         } else if (local.x == 0) {
-            if (local.y < this.operation.inputs) {
+            if (local.y < this.core.inputs) {
                 return -(local.y + 1) // selected input
             } else {
                 return 0; // selected body
@@ -79,7 +107,7 @@ export class GeonNode {
         } else if (local.x == 1) {
             return 0; // selected body
         } else if (local.x == 2) {
-            if (local.y < this.operation.outputs) {
+            if (local.y < this.core.outputs) {
                 return local.y + 1 // selected output
             } else {
                 return 0; // selected body

@@ -11,6 +11,7 @@ import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
+import { Widget } from "../graph/widget";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -20,14 +21,14 @@ export type CTX = CanvasRenderingContext2D;
  * - Controls what happens with the nodes (creation / selection / deletion)
  * - Draws the nodes
  */
-export class NodesController {
+export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 30;
+    private _size = 40;
     get size() { return this._size; }
 
     // selection state 
-    private selected?: Socket;
+    private selectedSocket?: Socket;
     private hover?: Socket;
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
@@ -38,7 +39,7 @@ export class NodesController {
         private readonly panel: NodesSidePanel,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
-        public readonly graph: NodesGraph,
+        public graph: NodesGraph,
 
         public catalogue: Catalogue,
         ) {}
@@ -58,7 +59,7 @@ export class NodesController {
         const catalogue = Catalogue.newDefault();
         const panel = NodesSidePanel.new(ui);
 
-        return new NodesController(ctx, panel, camera, state, graph, catalogue);
+        return new NodesCanvas(ctx, panel, camera, state, graph, catalogue);
     }
 
     start() {
@@ -86,7 +87,7 @@ export class NodesController {
         let OR = this.catalogue.operations[1];
         let NOT = this.catalogue.operations[2];
 
-        INPUT.log();
+        this.graph = NodesGraph.new();
         
         let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
         let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
@@ -94,6 +95,8 @@ export class NodesController {
         let i1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,1), INPUT.clone()));
         let i2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,3), INPUT.clone()));
         let o1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,0), OUTPUT.clone()));
+
+        (this.graph.getNode(i1)?.core as Widget).state = true;
 
         this.graph.addLinkBetween(i1, 0, not, 0);
         this.graph.addLinkBetween(i1, 0, or, 0);
@@ -132,9 +135,9 @@ export class NodesController {
         }
 
         if (this.input.IsKeyPressed("delete")) {
-            if (this.selected) {
-                this.graph.deleteNode(this.selected.node);
-                this.selected = undefined;
+            if (this.selectedSocket) {
+                this.graph.deleteNode(this.selectedSocket.node);
+                this.selectedSocket = undefined;
                 this.requestRedraw();
             }
         }
@@ -186,8 +189,8 @@ export class NodesController {
         for (let [key, node] of this.graph.nodes) {
             
             // TODO: fix the fact we cannot hover the node of the socket we are selecting...
-            if (this.selected && key == this.selected!.node) {
-                drawNode(ctx, node, this, this.selected.idx, DrawState.OpSelected);
+            if (this.selectedSocket && key == this.selectedSocket!.node) {
+                drawNode(ctx, node, this, this.selectedSocket.idx, DrawState.OpSelected);
             } else if (this.hover && key == this.hover!.node) {
                 drawNode(ctx, node, this, this.hover.idx, DrawState.OpHover);
             } else {
@@ -268,9 +271,13 @@ export class NodesController {
     }
 
     selectSocket(s?: Socket) {
-        this.selected = s;
+        this.selectedSocket = s;
     }
  
+    deselectSocket() {
+        this.selectedSocket = undefined;
+    }
+
     trySelect(gridPos: Vector2) : Socket | undefined {
         for (let [key, value] of this.graph.nodes) {
             let res = value.trySelect(gridPos);
@@ -305,8 +312,13 @@ export class NodesController {
                 this.catalogue.deselect();
             }
         } else {
-            // we clicked at some spot. 
-            this.selectSocket(this.trySelect(gp));
+            // we clicked at some spot. try to select something 
+            let socket = this.trySelect(gp);
+            this.selectSocket(socket);
+            if (socket?.side == SocketSide.Widget) {
+                // we just clicked a widget! let the widget figure out what to do
+                (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
+            } 
         } 
 
         this.requestRedraw();
@@ -319,12 +331,12 @@ export class NodesController {
 
         // possibly create a line
         // see if the line drawn is indeed from input to output, or vise versa
-        if (this.selected && this.hover) {
-            if ((this.selected.side == SocketSide.Input && this.hover.side == SocketSide.Output) || 
-            (this.selected.side == SocketSide.Output && this.hover.side == SocketSide.Input)) {
+        if (this.selectedSocket && this.hover) {
+            if ((this.selectedSocket.side == SocketSide.Input && this.hover.side == SocketSide.Output) || 
+            (this.selectedSocket.side == SocketSide.Output && this.hover.side == SocketSide.Input)) {
             
                 console.log("adding cable...")
-                this.graph.addLink(this.selected, this.hover);
+                this.graph.addLink(this.selectedSocket, this.hover);
                 this.selectSocket();
                 this.requestRedraw();
             }
@@ -347,10 +359,10 @@ export class NodesController {
         this.requestRedraw();
 
         // if mouse is down and we are selecting a node 
-        if (this.mgpStart && this.selected) {
-            if (this.selected.side == SocketSide.Body) {
+        if (this.mgpStart && this.selectedSocket) {
+            if (this.selectedSocket.side == SocketSide.Body) {
                 // dragging node
-                let node = this.graph.nodes.get(this.selected.node);
+                let node = this.graph.nodes.get(this.selectedSocket.node);
                 node?.position.add(gp.subbed(this.mgpEnd!))
             } else {
                 // dragging line

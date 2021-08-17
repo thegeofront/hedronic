@@ -7,7 +7,9 @@
 //                L  
 // 
 
-export type FN = (...args: boolean[]) => boolean[]
+import { State } from "./state";
+
+export type FN = (...args: State[]) => State[]
 
 /**
  * Wraps a function, and delivers some useful information

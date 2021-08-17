@@ -3,7 +3,7 @@
 import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
-import { CTX, NodesController } from "./nodes-controller";
+import { CTX, NodesCanvas } from "./nodes-canvas";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable } from "../graph/cable";
@@ -38,10 +38,10 @@ export class StyleSet {
 
 }
 
-export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, component: number, style: DrawState) {
+export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, component: number, style: DrawState) {
 
     // convert style 
-    let isWidget = node.operation instanceof Widget;
+    let isWidget = node.core instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
     const BAR_WIDTH = 5;
@@ -50,7 +50,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
     // draw body
     setStyle(ctx, style, component, 0, isWidget);
 
-    let textCenters = nodeShape(ctx, pos, node.operation.inputs, node.operation.outputs, canvas.size);
+    let textCenters = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, canvas.size);
     ctx.fill();
     ctx.stroke();
 
@@ -64,12 +64,12 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
         let op_center = textCenters.get(0);
         // ctx.translate(op_center.x, op_center.y);
         // ctx.rotate(Math.PI*-0.5);
-        ctx.fillText(node.operation.name, op_center.x, op_center.y);
+        ctx.fillText(node.core.name, op_center.x, op_center.y);
     }
 
     // draw input text
     ctx.font = '12px courier new';
-    for (let i = 0 ; i < node.operation.inputs; i++) {
+    for (let i = 0 ; i < node.core.inputs; i++) {
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillText('|', vec.x, vec.y);
@@ -77,22 +77,22 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesController, comp
     }
 
     // draw output text
-    for (let i = 0 ; i < node.operation.outputs; i++) {
+    for (let i = 0 ; i < node.core.outputs; i++) {
         setStyle(ctx, style, component, i + 1, isWidget);
-        let vec = textCenters.get(1 + node.operation.inputs + i);
+        let vec = textCenters.get(1 + node.core.inputs + i);
         ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         // ctx.fillText('|', vec.x, vec.y);
     }
 
     // render widget
     if (isWidget) {
-        let widget = node.operation as Widget;
+        let widget = node.core as Widget;
         setStyle(ctx, style, component, 0, isWidget);
         widget.render(ctx, pos, component, canvas.size);
     }
 }
 
-export function drawCable(ctx: CTX, cable: Cable, controller: NodesController) {
+export function drawCable(ctx: CTX, cable: Cable, controller: NodesCanvas) {
 
     // line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
 
@@ -355,3 +355,10 @@ function test() {
     or_chip.log();
 }
 
+
+function drawCicle(ctx: CTX, pos: Vector2, size: number) {
+    let hs = size / 2;
+    ctx.beginPath();
+    ctx.arc(pos.x + hs, pos.y + hs, hs, 0, Math.PI*2);
+    ctx.fill();
+}

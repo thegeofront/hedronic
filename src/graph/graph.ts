@@ -2,7 +2,8 @@ import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/r
 import { Cable } from "./cable";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
-import { Widget } from "./widget";
+import { State } from "./state";
+import { Widget, WidgetSide } from "./widget";
 
 /**
  * A Collection of Nodes, Gizmo's & Cables. 
@@ -31,13 +32,87 @@ export class NodesGraph {
         throw new Error("TODO");
     }
 
+    // ---- True Graph Business 
+
+    /**
+     * TODO: build something that can recalculate parts of the graph
+     */
+    calculate() {
+
+        console.log("finally! calculations!");
+
+        let cache = new Map<string, State>();
+        let nodes = this.kahn();
+
+        console.log(this.getNode(nodes[5])?.operation.name);
+
+        // start at the widgets (widget keys are the same as the corresponding node)
+        for (let node in nodes) {
+
+        }
+    }
+
+    /**
+     * An implementation of kahn's algorithm: 
+     * https://en.wikipedia.org/wiki/Topological_sorting
+     */
+    kahn() {
+        // fill starting lists
+        let L: string[] = [];
+        let S: string[] = [];
+        let visitedCables: Set<string> = new Set<string>();
+
+        // use the widgets to identify the starting point
+        for (let [key, _] of this.widgets) {
+            let widget = this.getNode(key)!.widget;
+            if (widget.side != WidgetSide.Input) 
+                continue; 
+            S.push(key);
+        }
+
+        while (true) {
+
+            let node = S.pop();
+            if (node == undefined) 
+                break;
+            L.push(node);
+
+            // for each node m with an edge e from n to m do
+            for (let cable of this.getNode(node)!.outputs) {
+                
+                // 'remove' edge e from the graph
+                if (visitedCables.has(cable))
+                    continue;
+                visitedCables.add(cable);
+
+                // if m has no other incoming edges then
+                //    insert m into S
+                for (let nb of this.getCable(cable)!.to) {
+                    let m = nb.node;
+                    let allVisited = true;
+                    for (let c of this.getNode(m)!.inputs) {
+                        if (!visitedCables.has(c)) {
+                            allVisited = false;
+                            break;
+                        }
+                    }
+                    if (allVisited) {
+                        S.push(m);
+                    }
+                }
+            }
+        }
+
+        return L;
+    }
+
     // ---- Node Management 
 
     addNode(node: GeonNode) {
         let key = createRandomGUID();
         this.nodes.set(key, node);
-        if (node.operation instanceof Widget) {
-            this.widgets.set(key, node.operation);
+        if (node.core instanceof Widget) {
+            this.widgets.set(key, node.core);
         }
         return key;
     }
@@ -81,7 +156,7 @@ export class NodesGraph {
     private emptySocket(ckey: string, c: Socket) {
         let cable = this.cables.get(ckey)!;
 
-        console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.operation.name)
+        console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.core.name)
         if (c.side == SocketSide.Output) {
             // if connection is input, delete the entire cable
             // console.log("EMPTY Output...");
@@ -176,7 +251,7 @@ export class NodesGraph {
         for (let [nkey, node] of this.nodes) {
             console.log(" node");
             console.log(" L key : ", nkey);
-            console.log(" L name: ", node.operation.name);
+            console.log(" L name: ", node.core.name);
             console.log(" L connections: ");
             for (let [k, v] of node.connections) {
                 console.log(`   L key: ${k} | value: ${v}`);

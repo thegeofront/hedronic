@@ -13,6 +13,7 @@
 
 import { Domain, Domain2, Vector2 } from "../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
+import { NodesCanvas } from "../nodes/nodes-canvas";
 import { Operation } from "./operation";
 import { State } from "./state";
 
@@ -105,18 +106,12 @@ export class Widget {
         ctx.fillRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
         ctx.strokeRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
         
+        ctx.fillStyle = this.state ? "#33dd33" : "#222222";
         if (component == Infinity) {
-            ctx.fillStyle = "grey";
-        } else {
-            ctx.fillStyle = this.state ? "green" : "#222222";
-        }
+            ctx.fillStyle += "88";
+        } 
 
         ctx.fillRect(pos.x+4, pos.y+4, size.x-8, size.y-8);
-
-        // let hs = size / 2;
-        // ctx.beginPath();
-        // ctx.arc(pos.x + hs, pos.y + hs, hs, 0, Math.PI*2);
-        // ctx.fill();
     }
 
     // ---- Create Special properties
@@ -132,9 +127,9 @@ export class Widget {
     /**
      * What to do when the widget actually gets clicked
      */
-    onClick() {
-        console.log("click!");
-        this.state = this.state!;
+    onClick(canvas: NodesCanvas) {
+        canvas.deselectSocket();
     }
+
     // TODO : customize the heck out of this thing: onLoad, onRun, afterRun, spawnHTML, whatever!
 }

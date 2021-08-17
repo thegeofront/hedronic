@@ -3,6 +3,7 @@ import { FN, Operation } from "../graph/operation";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";
+import { ButtonWidget } from "../widgets/button-widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -35,7 +36,7 @@ export class Catalogue {
     static newDefault() {
         let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
         let widgets: Widget[] = [
-            Widget.new("button", WidgetSide.Input, false, Vector2.new(1,1)),
+            ButtonWidget.new("button", WidgetSide.Input, false, Vector2.new(1,1)),
             Widget.new("text", WidgetSide.Input, false, Vector2.new(4,1)),
             Widget.new("output", WidgetSide.Output, false, Vector2.new(1,1)),
             Widget.new("display", WidgetSide.Output, false, Vector2.new(3,3)),
@@ -64,6 +65,7 @@ export class Catalogue {
         if (this.selected instanceof Operation) {
             return GeonNode.new(gp, this.selected);
         } else if (this.selected instanceof Widget) {
+            console.log(this.selected instanceof ButtonWidget);
             return GeonNode.newWidget(gp, this.selected.clone());
         }
     }

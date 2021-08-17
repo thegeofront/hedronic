@@ -1,27 +1,29 @@
-export function IN() : boolean[] { 
+import { State } from "../graph/state";
+
+export function IN() : State[] { 
     return [true];
 }
 
-export function OUT(a: boolean) : boolean[] { 
+export function OUT(a: State) : State[] { 
     return [];
 }
 
-export function AND(a: boolean, b: boolean) : boolean[] { 
+export function AND(a: State, b: State) : State[] { 
     return [a && b];
 }
 
-export function OR(a: boolean, b: boolean) : boolean[] { 
+export function OR(a: State, b: State) : State[] { 
     return [a || b];
 }
 
-export function NOT(a: boolean) : boolean[] {
+export function NOT(a: State) : State[] {
     return [!a];
 }
 
-export function MULTI(a: boolean, b: boolean, c: boolean) : boolean[] {
+export function MULTI(a: State, b: State, c: State) : State[] {
     return [a, b];
 }
 
-export function EXPAND(a: boolean) : boolean[] {
+export function EXPAND(a: State) : State[] {
     return [a, a, a, a, a, a];
 }

@@ -2,7 +2,7 @@ import { GeonNode } from "./node";
 
 //ni < 0 : inputs | ni == 0 : node body | ni > 0 : outputs
 export type SocketIdx = number; 
-export const enum SocketSide { Input=-1, Body=0, Output=1};
+export const enum SocketSide { Input=-1, Body=0, Output=1, Widget=1000};
 export class Socket {
     
     private constructor(
@@ -41,7 +41,9 @@ export class Socket {
     }
 
     static getSide(idx: number) : SocketSide {
-        if (idx < 0) {
+        if (idx == 1000 || idx == Infinity) {
+            return SocketSide.Widget
+        } else if (idx < 0) {
             return SocketSide.Input;
         } else if (idx > 0) {
             return SocketSide.Output;
