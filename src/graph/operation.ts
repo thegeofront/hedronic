@@ -19,7 +19,7 @@ export type FN = (...args: State[]) => State[]
 export class Operation {
 
     private constructor(
-        private func: FN,
+        public readonly func: FN,
         public readonly name: string,
         public readonly inputs: number, 
         public readonly outputs: number) {}

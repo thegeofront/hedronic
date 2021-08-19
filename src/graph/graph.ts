@@ -44,10 +44,57 @@ export class NodesGraph {
 
     /**
      * Convert the calculation done by this graph to plain JS
+     * ```js
+     * 
+     * fNot(a) {
+     *      //
+     * }
+     * 
+     * fOr(a, b) {
+     *      //
+     * }
+     * 
+     * fAnd(a, b) {
+     *      // 
+     * }
+     * 
+     * function(a, b) {
+     *      let c = fNot(a);
+     *      let d = fOr(a, b);
+     *      let e = fAnd(c, d);
+     *      return e;
+     * }
+     * 
+     * ```
+     * 
      */
     toJs() {
-        let js = "";
+        let js = `function() {
 
+        }`;
+
+        console.log("rendering html...")
+        
+        let orderedNodeKeys = this.kahn();
+
+        //start at the widgets (widget keys are the same as the corresponding node)
+        for (let key of orderedNodeKeys) {
+   
+            let node = this.getNode(key)!;
+
+            // calculate in several ways, depending on the node
+            if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
+                console.log("Process: ", node.operation.func);
+            } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
+                console.log("Input: ", node.widget!.name);
+            } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
+                console.log("Output: ", node.widget!.name);
+            } else {
+                throw new Error("should never happen");
+            }
+        }
+
+        console.log(js);
         return js;
     }
 

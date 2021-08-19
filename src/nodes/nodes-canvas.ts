@@ -97,13 +97,13 @@ export class NodesCanvas {
         let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
         let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
 
-        let or2 = this.graph.addNode(GeonNode.new(Vector2.new(10,5), OR));
-        let and2 = this.graph.addNode(GeonNode.new(Vector2.new(10,8), AND));
+        // let or2 = this.graph.addNode(GeonNode.new(Vector2.new(10,5), OR));
+        // let and2 = this.graph.addNode(GeonNode.new(Vector2.new(10,8), AND));
 
         
         let o1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,0), OUTPUT.clone()));
-        let o2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,5), OUTPUT.clone()));
-        let o3 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,8), OUTPUT.clone()));
+        // let o2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,5), OUTPUT.clone()));
+        // let o3 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,8), OUTPUT.clone()));
 
         // press a button 
         (this.graph.getNode(i1)?.core as Widget).state = true; 
@@ -113,17 +113,20 @@ export class NodesCanvas {
         this.graph.addCableBetween(i1, 0, or, 0);
         this.graph.addCableBetween(i2, 0, or, 1);
 
-        this.graph.addCableBetween(i1, 0, or2, 0);
-        this.graph.addCableBetween(i2, 0, or2, 1);
+        // this.graph.addCableBetween(i1, 0, or2, 0);
+        // this.graph.addCableBetween(i2, 0, or2, 1);
 
-        this.graph.addCableBetween(i1, 0, and2, 0);
-        this.graph.addCableBetween(i2, 0, and2, 1);
+        // this.graph.addCableBetween(i1, 0, and2, 0);
+        // this.graph.addCableBetween(i2, 0, and2, 1);
 
         this.graph.addCableBetween(or, 0, and, 1);
         this.graph.addCableBetween(not, 0, and, 0);
+
         this.graph.addCableBetween(and, 0, o1, 0);
-        this.graph.addCableBetween(or2, 0, o2, 0);
-        this.graph.addCableBetween(and2, 0, o3, 0);
+        // this.graph.addCableBetween(or2, 0, o2, 0);
+        // this.graph.addCableBetween(and2, 0, o3, 0);
+
+        this.graph.toJs();
     }
 
     /**
