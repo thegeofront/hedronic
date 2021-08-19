@@ -12,15 +12,15 @@ import { Widget, WidgetSide } from "./widget";
  */
 export class NodesGraph {
 
-    private constructor(
+    constructor(
         public nodes: Map<string, GeonNode>, 
         public cables: Map<string, Cable>,
         public widgets: Map<string, Widget>) {}
 
-    static new() {
-        let nodes = new Map<string, GeonNode>();
-        let cables = new Map<string, Cable>();
-        let widgets = new Map<string, Widget>();
+    static new(
+        nodes = new Map<string, GeonNode>(),
+        cables = new Map<string, Cable>(),
+        widgets = new Map<string, Widget>()) {
         return new NodesGraph(nodes, cables, widgets);
     }
 
@@ -34,70 +34,6 @@ export class NodesGraph {
         return NodesGraph.new();
     }
 
-    /**
-     * Create a new Graph from a js function. This function must be a pure function, and can only call other pure functions.
-     */
-     static fromJs(js: string) {
-        // TODO
-        return NodesGraph.new();
-    }
-
-    /**
-     * Convert the calculation done by this graph to plain JS
-     * ```js
-     * 
-     * fNot(a) {
-     *      //
-     * }
-     * 
-     * fOr(a, b) {
-     *      //
-     * }
-     * 
-     * fAnd(a, b) {
-     *      // 
-     * }
-     * 
-     * function(a, b) {
-     *      let c = fNot(a);
-     *      let d = fOr(a, b);
-     *      let e = fAnd(c, d);
-     *      return e;
-     * }
-     * 
-     * ```
-     * 
-     */
-    toJs() {
-        let js = `function() {
-
-        }`;
-
-        console.log("rendering html...")
-        
-        let orderedNodeKeys = this.kahn();
-
-        //start at the widgets (widget keys are the same as the corresponding node)
-        for (let key of orderedNodeKeys) {
-   
-            let node = this.getNode(key)!;
-
-            // calculate in several ways, depending on the node
-            if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
-                console.log("Process: ", node.operation.func);
-            } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-                console.log("Input: ", node.widget!.name);
-            } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-                console.log("Output: ", node.widget!.name);
-            } else {
-                throw new Error("should never happen");
-            }
-        }
-
-        console.log(js);
-        return js;
-    }
-
     // ---- True Graph Business 
 
     /**
@@ -108,8 +44,6 @@ export class NodesGraph {
      * TODO: build something that can recalculate parts of the graph
      */
     calculate() {
-
-        console.log("finally! calculations!");
 
         let cache = new Map<string, State>();
         let orderedNodeKeys = this.kahn();

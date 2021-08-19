@@ -12,6 +12,7 @@ import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
 import { Widget } from "../graph/widget";
+import { graphToJs } from "../graph/graph-conversion";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -126,7 +127,7 @@ export class NodesCanvas {
         // this.graph.addCableBetween(or2, 0, o2, 0);
         // this.graph.addCableBetween(and2, 0, o3, 0);
 
-        this.graph.toJs();
+        let js = graphToJs(this.graph);
     }
 
     /**
