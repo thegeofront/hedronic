@@ -1,8 +1,10 @@
 // author:  Jos Feenstra
 // note:    since this graph->js business is very specific and weird, I thought it best to split it away from `graph.ts`
 
+import { Catalogue } from "../operations/catalogue";
 import { Casing, Permutator } from "../util/permutator";
 import { NodesGraph } from "./graph";
+import { GeonNode } from "./node";
 import { WidgetSide } from "./widget";
 
 /**
@@ -48,18 +50,29 @@ export function jsToGraph(js: string) {
  * 
  * 
  */
-export function graphToJs(graph: NodesGraph) {
-
-    let js = `function() {
-
-    }`;
+export function graphToFunction(graph: NodesGraph, name: string) {
 
     console.log("rendering html...")
     
     let orderedNodeKeys = graph.kahn();
 
+    let inputs: string[] = [];
+    let processes: string[] = [];
+    let outputs: string[] = [];
+    
+    // this is a setup to convert the long cable hashes into names like `a`, `b`, `c`, `aa` etc. 
     let lowernames = Permutator.newAlphabetPermutator(Casing.lower);
-    let uppernames = Permutator.newAlphabetPermutator(Casing.upper);
+    let mapping = new Map<string, string>(); // key -> cable key. value -> newly generated name
+    let toEasyNames = (hashes: string[]) => {
+        let names: string[] = [];
+        for (let hash of hashes) {
+            if (!mapping.has(hash)) {
+                mapping.set(hash, lowernames.next());
+            } 
+            names.push(mapping.get(hash)!);
+        }
+        return names;
+    }
 
     //start at the widgets (widget keys are the same as the corresponding node)
     for (let key of orderedNodeKeys) {
@@ -68,16 +81,45 @@ export function graphToJs(graph: NodesGraph) {
 
         // calculate in several ways, depending on the node
         if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
-            console.log("pros: ", uppernames.next());
+            processes.push(`[${toEasyNames(node.outputs()).join(", ")}] = GEON.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")});`);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-            console.log("Input: ", lowernames.next());
-            
+            inputs.push(...toEasyNames(node.outputs()));
         } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-            console.log("output: ", lowernames.next());
+            outputs.push(...toEasyNames(node.inputs()));
         } else {
             throw new Error("should never happen");
         }
     }
 
-    return js;
+    // finally, create everything
+    //     let js = `
+    // /**
+    //  * note: this function was auto generated
+    //  */ 
+    // function (${inputs.join(", ")}) {
+    //     ${processes.join("\n        ")}
+    //     return [${outputs.join(", ")}];
+    // }
+    //     `;
+
+    let fn = Function(...inputs, `
+        ${processes.join("\n        ")}
+        return [${outputs.join(", ")}];
+    `);
+
+    Object.defineProperty(fn, "name", { value: name });
+    return fn;
+}
+
+/**
+ * To make sure nested operations work, we need to publish the catalogue globally. 
+ */
+export function makeOperationsGlobal(catalogue: Catalogue, namespace="GEON") {
+    
+    let space = {};
+    Object.defineProperty(window, namespace, { value: space, configurable: true});
+
+    for (let op of catalogue.operations) {
+        Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
+    }
 }

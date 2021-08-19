@@ -155,7 +155,7 @@ export class NodesGraph {
         let node = this.nodes.get(nkey)!;
 
         // pull all connections at connectors
-        for(let [idx, cable] of node.connections) {
+        for (let [idx, cable] of node.connections) {
             this.emptySocket(cable, Socket.new(nkey, idx))
         }
 

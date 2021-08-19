@@ -12,7 +12,9 @@ import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
 import { Widget } from "../graph/widget";
-import { graphToJs } from "../graph/graph-conversion";
+import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
+import { Operation } from "../graph/operation";
+import { OR, NOT, AND, } from "../operations/functions";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -74,11 +76,11 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-        // hook up UI 
-        this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
-
         // DEBUG add a standard graph
         this.testGraph();
+
+        // publish catalogue and ui 
+        this.publish();
     }
 
     testGraph() {
@@ -127,7 +129,31 @@ export class NodesCanvas {
         // this.graph.addCableBetween(or2, 0, o2, 0);
         // this.graph.addCableBetween(and2, 0, o3, 0);
 
-        let js = graphToJs(this.graph);
+        let GRAPH = graphToFunction(this.graph, "GRAPH");
+        
+        // @ts-ignore;
+        let graphOp = Operation.new(GRAPH);
+        
+        this.catalogue.operations.push(graphOp);
+    }
+
+    // TODO make this nicer...
+    collapseCounter = 1;
+    collapseGraphToOperation() {
+        let GRAPH = graphToFunction(this.graph, "GRAPH" + this.collapseCounter);
+        this.collapseCounter += 1;
+        
+        // @ts-ignore;
+        let graphOp = Operation.new(GRAPH);
+        this.catalogue.operations.push(graphOp);
+        this.publish();
+    }
+
+    publish() {
+        
+        // hook up UI 
+        this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
+        makeOperationsGlobal(this.catalogue);
     }
 
     /**
@@ -164,6 +190,10 @@ export class NodesCanvas {
                 this.selectedSocket = undefined;
                 this.requestRedraw();
             }
+        }
+
+        if (this.input.IsKeyPressed(" ")) {
+            this.collapseGraphToOperation(); 
         }
 
         if (this.input.IsKeyPressed("p")) {
