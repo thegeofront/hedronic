@@ -158,6 +158,12 @@ export class NodesGraph {
         for(let [idx, cable] of node.connections) {
             this.emptySocket(cable, Socket.new(nkey, idx))
         }
+
+        // remove the widget pointer
+        if (node.core instanceof Widget) {
+            this.widgets.delete(nkey);
+        }
+
         return this.nodes.delete(nkey);
     }
 
