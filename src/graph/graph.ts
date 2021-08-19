@@ -25,16 +25,39 @@ export class NodesGraph {
     }
 
     static fromHash() {
-        throw new Error("TODO");
+        // TODO
+        return NodesGraph.new();
     }
     
     static fromJson() {
-        throw new Error("TODO");
+        // TODO
+        return NodesGraph.new();
+    }
+
+    /**
+     * Create a new Graph from a js function. This function must be a pure function, and can only call other pure functions.
+     */
+     static fromJs(js: string) {
+        // TODO
+        return NodesGraph.new();
+    }
+
+    /**
+     * Convert the calculation done by this graph to plain JS
+     */
+    toJs() {
+        let js = "";
+
+        return js;
     }
 
     // ---- True Graph Business 
 
     /**
+     * Calculate the entire graph:
+     * - start with the data from input widgets
+     * - calculate all operations 
+     * - store results in output widgets
      * TODO: build something that can recalculate parts of the graph
      */
     calculate() {
@@ -210,7 +233,7 @@ export class NodesGraph {
 
     // ---- Cable Management
 
-    addLink(a: Socket, b: Socket) {
+    addCable(a: Socket, b: Socket) {
 
         // before we create the cable, make sure the sockets are free
         let cable = Cable.new(a, b);
@@ -238,10 +261,10 @@ export class NodesGraph {
         return cableKey;
     }
     
-    addLinkBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
+    addCableBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
         let aComp: SocketIdx = outputIndex + 1;
         let bComp: SocketIdx = (inputIndex + 1) * -1;
-        this.addLink(Socket.new(a,aComp), Socket.new(b, bComp));
+        this.addCable(Socket.new(a,aComp), Socket.new(b, bComp));
     }
 
     // ---- Connection Management

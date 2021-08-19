@@ -89,6 +89,7 @@ export class NodesCanvas {
 
         this.graph = NodesGraph.new();
         
+        // generate nodes
         let i1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,0), INPUT.clone()));
         let i2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(3,3), INPUT.clone()));
 
@@ -104,24 +105,25 @@ export class NodesCanvas {
         let o2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,5), OUTPUT.clone()));
         let o3 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,8), OUTPUT.clone()));
 
+        // press a button 
+        (this.graph.getNode(i1)?.core as Widget).state = true; 
 
-        (this.graph.getNode(i1)?.core as Widget).state = true;
+        // generate cables
+        this.graph.addCableBetween(i1, 0, not, 0);
+        this.graph.addCableBetween(i1, 0, or, 0);
+        this.graph.addCableBetween(i2, 0, or, 1);
 
-        this.graph.addLinkBetween(i1, 0, not, 0);
-        this.graph.addLinkBetween(i1, 0, or, 0);
-        this.graph.addLinkBetween(i2, 0, or, 1);
+        this.graph.addCableBetween(i1, 0, or2, 0);
+        this.graph.addCableBetween(i2, 0, or2, 1);
 
-        this.graph.addLinkBetween(i1, 0, or2, 0);
-        this.graph.addLinkBetween(i2, 0, or2, 1);
+        this.graph.addCableBetween(i1, 0, and2, 0);
+        this.graph.addCableBetween(i2, 0, and2, 1);
 
-        this.graph.addLinkBetween(i1, 0, and2, 0);
-        this.graph.addLinkBetween(i2, 0, and2, 1);
-
-        this.graph.addLinkBetween(or, 0, and, 1);
-        this.graph.addLinkBetween(not, 0, and, 0);
-        this.graph.addLinkBetween(and, 0, o1, 0);
-        this.graph.addLinkBetween(or2, 0, o2, 0);
-        this.graph.addLinkBetween(and2, 0, o3, 0);
+        this.graph.addCableBetween(or, 0, and, 1);
+        this.graph.addCableBetween(not, 0, and, 0);
+        this.graph.addCableBetween(and, 0, o1, 0);
+        this.graph.addCableBetween(or2, 0, o2, 0);
+        this.graph.addCableBetween(and2, 0, o3, 0);
     }
 
     /**
@@ -354,7 +356,7 @@ export class NodesCanvas {
             (this.selectedSocket.side == SocketSide.Output && this.hover.side == SocketSide.Input)) {
             
                 console.log("adding cable...")
-                this.graph.addLink(this.selectedSocket, this.hover);
+                this.graph.addCable(this.selectedSocket, this.hover);
                 this.selectSocket();
                 this.requestRedraw();
             }

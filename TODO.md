@@ -29,10 +29,10 @@
   - [ ] clickable & selectable
   - [ ] deletable when selected
 
-[ ] gizmos
-  - [ ] create and render an unconnected gizmo
-  - [ ] create and render a gizmo which shows the state of the cable
-  - [ ] create and render a gizmo with the ability to be pressed, like a switch button
+[X] gizmos
+  - [X] create and render an unconnected gizmo
+  - [X] create and render a gizmo which shows the state of the cable
+  - [X] create and render a gizmo with the ability to be pressed, like a switch button
 
 
 
@@ -42,13 +42,13 @@
 > - inputs & outputs
 > NOTE: I named this type of node: gizmo
 
-[ ] special nodes
-    [ ] input nodes -> buttons
-    [ ] output nodes -> lamps
+[X] special nodes
+    [X] input nodes -> buttons
+    [X] output nodes -> lamps
 
-[ ] run it!
-  - [ ] sort operations last to first
-  - [ ] run it, one way or another, using a list of callback functions.
+[X] run it!
+  - [X] sort operations last to first
+  - [X] run it, one way or another, using a list of callback functions.
   - [ ] print it out as javascript 
 
 
