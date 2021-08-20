@@ -114,34 +114,104 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     let hgs = canvas.size / 2;
 
     let a = canvas.toWorld(fromGridPos).addn(hgs, hgs);
-    let d = canvas.toWorld(toGridPos).addn(hgs, hgs);
-    
-    // figure out b and c 
-    let something = canvas.toWorld(Vector2.new(1,0));
-    let delta = d.subbed(a);
+    let f = canvas.toWorld(toGridPos).addn(hgs, hgs);
 
-    if (delta.x > 3 * size) {
-        something.x += size;
-    } else if (delta.x > 2 * size) {
-        something.x += hgs
+    let delta = toGridPos.subbed(fromGridPos);
+    let distanceFromSocket = Vector2.new(0, 0);
+    let distanceToSocket = Vector2.new(0, 0);
+
+    let fillet = size * 0.5;
+
+    if (delta.x == 0 && delta.y == 0) {
+        return;
     }
 
-    let b = a.clone();
-    let c = a.clone();
-    b.x += Math.abs(something.x);
+    // make the horizontal line break move correctly 
+    let xBreak = 1;
+    if (delta.x < 1) {
+        xBreak = 1; 
+    } else if (delta.x == 1) {
+        console.log("laas")
+        fillet = 0.25;
+        // xBreak = 0.5;
+    } else if (delta.x <= 4) {
+        xBreak = delta.x / 2;
+    } else if (delta.x > 4) {
+        xBreak = 2;
+    }
 
-    // let d = a.clone();
-    c.x += something.x;
-    c.y += delta.y;
+    // make the vertical line break move correctly  
+    let yBreak = 1;
+    let line;
 
-    let line = MultiVector2.fromList([
-        a,
-        b,
-        c,
-        d
-    ]);
+    // apply horizontal line break
+    distanceFromSocket.x = xBreak;
+    distanceToSocket.x = -(delta.x - xBreak);
+    if (delta.x == 1) {
+        distanceFromSocket.x = 0.5;
+        distanceToSocket.x = -0.5;
+    } else if (delta.x < 2) {
+        distanceToSocket.x = -xBreak;
+    }  
 
-    let fillet = hgs;
+    // apply vertical line break
+    if (delta.x < 1) {
+
+        fillet = size *0.25;
+        if (delta.y == -1 || delta.y == 1) {
+            yBreak = 0.5;
+        }    
+
+        if (delta.y < 0) {
+            yBreak *= -1;
+        }
+        distanceFromSocket.y = yBreak;
+        distanceToSocket.y = -delta.y + yBreak;
+
+        // distanceFromSocket.y = delta.y - yBreak;
+        // distanceToSocket.y = -yBreak;
+
+        // 
+        let b = a.clone();
+        let c = a.clone();
+
+        let d = f.clone();
+        let e = f.clone();
+
+        // figure out b and c 
+        b.x += distanceFromSocket.x * size;
+        c.x += distanceFromSocket.x * size;
+        c.y += distanceFromSocket.y * size;
+
+        d.x += distanceToSocket.x * size;
+        d.y += distanceToSocket.y * size;
+        e.x += distanceToSocket.x * size;
+
+        line = MultiVector2.fromList([
+            a,
+            b,
+            c,
+            d,
+            e,
+            f,
+        ]);
+    } else {
+        // 
+        let b = a.clone();
+        let e = f.clone();
+
+        // figure out b and c 
+        b.x += distanceFromSocket.x * size;
+        e.x += distanceToSocket.x * size;
+
+        line = MultiVector2.fromList([
+            a,
+            b,
+            e,
+            f,
+        ]);
+    }
+
     line = filletPolyline(line, fillet);
 
     ctx.strokeStyle = "white";
@@ -151,7 +221,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
     
     ctx.lineCap = "round";
-    ctx.lineJoin = "bevel";
+    // ctx.lineJoin = "bevel";
     ctx.lineWidth = 8;
     drawPolyline(ctx, line);
 }
