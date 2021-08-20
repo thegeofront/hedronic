@@ -9,12 +9,13 @@ import { GeonNode } from "../graph/node";
 import { Random } from "../../../engine/src/math/random";
 import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue, CoreType } from "../operations/catalogue";
-import { drawCable, drawNode, DrawState } from "./nodes-rendering";
+import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
 import { Widget } from "../graph/widget";
 import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
 import { Operation } from "../graph/operation";
 import { OR, NOT, AND, } from "../operations/functions";
+import { Cable } from "../graph/cable";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -129,7 +130,7 @@ export class NodesCanvas {
         // this.graph.addCableBetween(or2, 0, o2, 0);
         // this.graph.addCableBetween(and2, 0, o3, 0);
 
-        let GRAPH = graphToFunction(this.graph, "GRAPH");
+        let GRAPH = graphToFunction(this.graph, "GRAPH", "GEON");
         
         // @ts-ignore;
         let graphOp = Operation.new(GRAPH);
@@ -140,7 +141,7 @@ export class NodesCanvas {
     // TODO make this nicer...
     collapseCounter = 1;
     collapseGraphToOperation() {
-        let GRAPH = graphToFunction(this.graph, "GRAPH" + this.collapseCounter);
+        let GRAPH = graphToFunction(this.graph, "GRAPH" + this.collapseCounter, "GEON");
         this.collapseCounter += 1;
         
         // @ts-ignore;
@@ -230,6 +231,7 @@ export class NodesCanvas {
         ctx.save();
         ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
         camera.moveCtxToState(ctx);
+        let g = this.toGrid(this.camera.mousePos);
 
         // draw grid 
         this.drawGrid(ctx);
@@ -237,6 +239,19 @@ export class NodesCanvas {
         // draw cables 
         for (let [key, cable] of this.graph.cables) {
             drawCable(ctx, cable, this);
+        }
+
+        // draw a cable if we are dragging a new cable
+        if (this.mgpStart && this.selectedSocket) {
+
+            let fromNode = this.graph.nodes.get(this.selectedSocket.node)!;
+            let p = fromNode.getConnectorGridPosition(this.selectedSocket.idx)!;
+
+            if (this.selectedSocket.side == SocketSide.Input) {
+                drawCableBetween(ctx, g, p, this, true);
+            } else if (this.selectedSocket.side == SocketSide.Output) {
+                drawCableBetween(ctx, p, g, this, true);
+            }
         }
 
         // draw nodes 
@@ -256,10 +271,11 @@ export class NodesCanvas {
 
 
         // draw node if we are placing a new node
-        let g = this.toGrid(this.camera.mousePos);
         if (this.catalogue.selected) {
             let fakeNode = this.catalogue.spawn(g)!;
             drawNode(ctx, fakeNode, this, 0, DrawState.OpPlacement);
+        } else {
+
         }
 
         // done drawing

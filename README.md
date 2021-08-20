@@ -28,12 +28,13 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 
 ##  Phase 2 - Utility ⚙️
-- Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`.
-- Figure out how to `compile` the flowchart to javascript.
-- Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
-- Try to make some javascript library, external, and figure out how it can be loaded like a plugin
+- [ ] Figure out how to `save` and `load` the flowchart to a `flowchart.json` or even a `flowchart hash`.
+- [X] Figure out how to `compile` the flowchart to javascript.
+- [X] Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
+    - [ ] Do the same, but now generate multiple components, one for each element of the script.
+- [ ] Try to make some javascript library, external, and figure out how it can be loaded like a plugin
     - still, only booleans as in and output at this point. 
-- (keep this tool around as-it-is right now, could be useful as an educational tool)
+- [ ] (keep this tool around as-it-is right now, could be useful as an educational tool)
 
 
 ## Phase 3 - Geometry 

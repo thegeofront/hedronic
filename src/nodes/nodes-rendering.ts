@@ -92,58 +92,68 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     }
 }
 
-export function drawCable(ctx: CTX, cable: Cable, controller: NodesCanvas) {
-
-    // line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
+export function drawCable(ctx: CTX, cable: Cable, canvas: NodesCanvas) {
 
     // use the components in the graph to figure out the from and to position
-    let size = controller.size; 
-    let hgs = controller.size / 2 // half grid size
-    let graph = controller.graph;
-    let fromNode = graph.nodes.get(cable.from.node)!;
+    let fromNode = canvas.graph.nodes.get(cable.from.node)!;
     let fromGridPos = fromNode.getConnectorGridPosition(cable.from.idx)!;
-    let a = controller.toWorld(fromGridPos).addn(hgs, hgs);
 
-    // fromNode?.getComponentGridPosition()
     for (let to of cable.to) {
-        let toNode = graph.nodes.get(to.node)!;
+        let toNode = canvas.graph.nodes.get(to.node)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-        let d = controller.toWorld(toGridPos).addn(hgs, hgs);
-        let something = controller.toWorld(Vector2.new(1,0));
-        
-        let delta = d.subbed(a);
-    
-        if (delta.x > 3 * size) {
-            something.x += size;
-        } else if (delta.x > 2 * size) {
-            something.x += hgs
-        }
-
-        let b = a.clone();
-        b.x += something.x;
-
-        let c = a.clone();
-        c.x += something.x;
-        c.y += delta.y;
-
-        let line = MultiVector2.fromList([
-            a,
-            b,
-            c,
-            d
-        ]);
-
-
-        // let smallest = Math.min(Math.abs(gridDelta.x), Math.abs(gridDelta.y));
-        // let fillet = Math.max(smallest * hgs, hgs);
-        let fillet = hgs;
-        line = filletPolyline(line, fillet);
-
-        ctx.strokeStyle = "white";
-        ctx.lineCap = "round";
-        ctx.lineWidth = 8;
-        drawPolyline(ctx, line);
+        drawCableBetween(ctx, fromGridPos, toGridPos, canvas);
     }
+}
+
+/**
+ *  line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
+ */
+export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, ghost=false) {
+
+    let size = canvas.size;
+    let hgs = canvas.size / 2;
+
+    let a = canvas.toWorld(fromGridPos).addn(hgs, hgs);
+    let d = canvas.toWorld(toGridPos).addn(hgs, hgs);
+    
+    // figure out b and c 
+    let something = canvas.toWorld(Vector2.new(1,0));
+    let delta = d.subbed(a);
+
+    if (delta.x > 3 * size) {
+        something.x += size;
+    } else if (delta.x > 2 * size) {
+        something.x += hgs
+    }
+
+    let b = a.clone();
+    let c = a.clone();
+    b.x += Math.abs(something.x);
+
+    // let d = a.clone();
+    c.x += something.x;
+    c.y += delta.y;
+
+    let line = MultiVector2.fromList([
+        a,
+        b,
+        c,
+        d
+    ]);
+
+    let fillet = hgs;
+    line = filletPolyline(line, fillet);
+
+    ctx.strokeStyle = "white";
+    if (ghost) {
+        ctx.strokeStyle = "grey";
+    }
+
+    
+    ctx.lineCap = "round";
+    ctx.lineJoin = "bevel";
+    ctx.lineWidth = 8;
+    drawPolyline(ctx, line);
 }
 
 function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {

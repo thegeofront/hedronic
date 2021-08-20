@@ -31,26 +31,8 @@ export function jsToGraph(js: string) {
 
 /**
  * Convert the calculation done by this graph to plain JS
- * 
- * What it should look like 
- * ```js
- * 
- * function(a, b) {
- *      let c = fNot(a);
- *      let d = fOr(a, b);
- *      let e = fAnd(c, d);
- *      return e;
- * }
- * 
- * ```
- * subcomponents
- * - turn an operation into an actual function call  
- * - generate names
- * - 
- * 
- * 
  */
-export function graphToFunction(graph: NodesGraph, name: string) {
+export function graphToFunction(graph: NodesGraph, name: string, namespace: string) {
 
     console.log("rendering html...")
     
@@ -78,29 +60,23 @@ export function graphToFunction(graph: NodesGraph, name: string) {
     for (let key of orderedNodeKeys) {
 
         let node = graph.getNode(key)!;
-
-        // calculate in several ways, depending on the node
-        if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
-            processes.push(`[${toEasyNames(node.outputs()).join(", ")}] = GEON.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")});`);
-        } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-            inputs.push(...toEasyNames(node.outputs()));
-        } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-            outputs.push(...toEasyNames(node.inputs()));
+        if (node.operation) { // A | operation 
+            let str = `[${toEasyNames(node.outputs()).join(", ")}] = ${namespace}.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")}); /* x: ${node.position.x} | y: ${node.position.x} */`;
+            processes.push(str);
+        } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
+            for (let str of toEasyNames(node.outputs())) {
+                str += ` /* widget: ${node.widget?.name}  x: ${node.position.x} | y: ${node.position.x} */`;
+                inputs.push(str);
+            }
+        } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget 
+            for (let str of toEasyNames(node.inputs())) {
+                str += ` /* widget: ${node.widget?.name}  x: ${node.position.x} | y: ${node.position.x} */`;
+                outputs.push(str);
+            }
         } else {
             throw new Error("should never happen");
         }
     }
-
-    // finally, create everything
-    //     let js = `
-    // /**
-    //  * note: this function was auto generated
-    //  */ 
-    // function (${inputs.join(", ")}) {
-    //     ${processes.join("\n        ")}
-    //     return [${outputs.join(", ")}];
-    // }
-    //     `;
 
     let fn = Function(...inputs, `
         ${processes.join("\n        ")}
@@ -108,6 +84,7 @@ export function graphToFunction(graph: NodesGraph, name: string) {
     `);
 
     Object.defineProperty(fn, "name", { value: name });
+    console.log(fn.toString());
     return fn;
 }
 
