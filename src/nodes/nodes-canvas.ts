@@ -14,7 +14,7 @@ import { Socket, SocketSide } from "../graph/socket";
 import { Widget } from "../graph/widget";
 import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
 import { Operation } from "../graph/operation";
-import { OR, NOT, AND, } from "../operations/functions";
+import { OR, NOT, AND, } from "../operations/standard-functions";
 import { Cable, CableState } from "../graph/cable";
 
 // shorthands
@@ -67,6 +67,7 @@ export class NodesCanvas {
     }
 
     start() {
+
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
         this.onResize();
@@ -77,11 +78,36 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
+        this.setupCopyPasteFunctionalities();
+
         // DEBUG add a standard graph
         this.testGraph();
 
         // publish catalogue and ui 
         this.publish();
+    }
+
+    setupCopyPasteFunctionalities() {
+        document.addEventListener("paste", (event) => {
+            console.log("recieved a paste ");
+
+            if (!event.clipboardData) {
+                alert("I would like a string, please");
+                return;
+            }
+            if (event.clipboardData.items.length != 1) {
+                alert("I would like just one string, please");
+                return;
+            }
+
+            event.clipboardData.items[0].getAsString(this.newGraphFromJs.bind(this));
+        });
+    }
+
+    newGraphFromJs(js: string) {
+        let graph = NodesGraph.fromJs(js)!;
+        this.graph = graph;
+        this.graph.calculate();
     }
 
     testGraph() {

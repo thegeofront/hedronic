@@ -4,7 +4,6 @@ import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../..
 import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
 import { CTX, NodesCanvas } from "./nodes-canvas";
-import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable, CableState } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
@@ -423,18 +422,6 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
     lineTo(width-0.5, 10); // cold
     return vecs;
 }
-
-function test() {
-    let and_operation = Operation.new(OPS.AND);
-    let not_operation = Operation.new(OPS.NOT);
-
-    let and_chip = GeonNode.new(Vector2.new(6,10), and_operation);
-    let or_chip = GeonNode.new(Vector2.new(1,1), not_operation);
-
-    and_chip.log();
-    or_chip.log();
-}
-
 
 function drawCicle(ctx: CTX, pos: Vector2, size: number) {
     let hs = size / 2;

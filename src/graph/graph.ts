@@ -1,5 +1,6 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable, CableState } from "./cable";
+import { jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
@@ -23,15 +24,10 @@ export class NodesGraph {
         widgets = new Map<string, Widget>()) {
         return new NodesGraph(nodes, cables, widgets);
     }
-
-    static fromHash() {
-        // TODO
-        return NodesGraph.new();
-    }
     
-    static fromJson() {
+    static fromJs(js: string) {
         // TODO
-        return NodesGraph.new();
+        return jsToGraph(js);
     }
 
     // ---- True Graph Business 
@@ -50,6 +46,9 @@ export class NodesGraph {
 
         let setCache = (key: string, value: State) => {
             let cable = this.getCable(key)!;
+            if (!cable) {
+                return;
+            }
             if (value) {
                 cable.state = CableState.On;
             } else {

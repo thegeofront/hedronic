@@ -1,4 +1,4 @@
-import { defaultOperations } from "./default-catalogue";
+import { StandardFunctions } from "./standard-functions";
 import { FN, Operation } from "../graph/operation";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
@@ -34,7 +34,7 @@ export class Catalogue {
     }
 
     static newDefault() {
-        let operations: Operation[] = defaultOperations.map(fn => Operation.new(fn));
+        let operations: Operation[] = StandardFunctions.map(fn => Operation.new(fn));
         let widgets: Widget[] = [
             ButtonWidget.new("button", WidgetSide.Input, false, Vector2.new(1,1)),
             Widget.new("text", WidgetSide.Input, false, Vector2.new(4,1)),

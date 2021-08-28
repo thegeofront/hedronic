@@ -22,9 +22,9 @@ import { WidgetSide } from "./widget";
  * - turn inputs into input variables
  * - turn output into output variables
  */
-export function jsToGraph(js: string) {
+export function jsToGraph(js: string) : NodesGraph | undefined {
     
-    
+    console.log(js);
     // TODO
     return NodesGraph.new();
 }
