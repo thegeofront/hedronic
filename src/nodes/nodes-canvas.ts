@@ -88,8 +88,15 @@ export class NodesCanvas {
     }
 
     setupCopyPasteFunctionalities() {
+
+        document.addEventListener("copy", (event) => {
+            console.log("copy | save");
+            event.clipboardData!.setData("text/plain", this.onCopy());
+            event.preventDefault();
+        })
+
         document.addEventListener("paste", (event) => {
-            console.log("recieved a paste ");
+            console.log("paste | load");
 
             if (!event.clipboardData) {
                 alert("I would like a string, please");
@@ -100,11 +107,15 @@ export class NodesCanvas {
                 return;
             }
 
-            event.clipboardData.items[0].getAsString(this.newGraphFromJs.bind(this));
+            event.clipboardData.items[0].getAsString(this.onPaste.bind(this));
         });
     }
 
-    newGraphFromJs(js: string) {
+    onCopy() : string {
+        return this.graph.toJs("GRAPH", "GEON").toString();
+    }
+
+    onPaste(js: string) {
         let graph = NodesGraph.fromJs(js)!;
         this.graph = graph;
         this.graph.calculate();
@@ -168,7 +179,7 @@ export class NodesCanvas {
     // TODO make this nicer...
     collapseCounter = 1;
     collapseGraphToOperation() {
-        let GRAPH = graphToFunction(this.graph, "GRAPH" + this.collapseCounter, "GEON");
+        let GRAPH = this.graph.toJs("GRAPH" + this.collapseCounter, "GEON");
         this.collapseCounter += 1;
         
         // @ts-ignore;

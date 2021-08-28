@@ -1,6 +1,6 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Cable, CableState } from "./cable";
-import { jsToGraph } from "./graph-conversion";
+import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
@@ -28,6 +28,10 @@ export class NodesGraph {
     static fromJs(js: string) {
         // TODO
         return jsToGraph(js);
+    }
+
+    toJs(name: string, namespace: string) {
+        return graphToFunction(this, name, namespace);
     }
 
     // ---- True Graph Business 

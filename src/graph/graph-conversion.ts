@@ -84,7 +84,7 @@ export function graphToFunction(graph: NodesGraph, name: string, namespace: stri
     `);
 
     Object.defineProperty(fn, "name", { value: name });
-    console.log(fn.toString());
+    // console.log(fn.toString());
     return fn;
 }
 
