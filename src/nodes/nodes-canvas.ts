@@ -15,7 +15,7 @@ import { Widget } from "../graph/widget";
 import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
 import { Operation } from "../graph/operation";
 import { OR, NOT, AND, } from "../operations/functions";
-import { Cable } from "../graph/cable";
+import { Cable, CableState } from "../graph/cable";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -136,6 +136,7 @@ export class NodesCanvas {
         let graphOp = Operation.new(GRAPH);
         
         this.catalogue.operations.push(graphOp);
+        this.graph.calculate();
     }
 
     // TODO make this nicer...
@@ -248,9 +249,9 @@ export class NodesCanvas {
             let p = fromNode.getConnectorGridPosition(this.selectedSocket.idx)!;
 
             if (this.selectedSocket.side == SocketSide.Input) {
-                drawCableBetween(ctx, g, p, this, true);
+                drawCableBetween(ctx, g, p, this, CableState.Selected);
             } else if (this.selectedSocket.side == SocketSide.Output) {
-                drawCableBetween(ctx, p, g, this, true);
+                drawCableBetween(ctx, p, g, this, CableState.Selected);
             }
         }
 

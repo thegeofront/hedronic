@@ -1,5 +1,5 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
-import { Cable } from "./cable";
+import { Cable, CableState } from "./cable";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
@@ -48,6 +48,16 @@ export class NodesGraph {
         let cache = new Map<string, State>();
         let orderedNodeKeys = this.kahn();
 
+        let setCache = (key: string, value: State) => {
+            let cable = this.getCable(key)!;
+            if (value) {
+                cable.state = CableState.On;
+            } else {
+                cable.state = CableState.Off;
+            }
+            cache.set(key, value);
+        }
+
         //start at the widgets (widget keys are the same as the corresponding node)
         for (let key of orderedNodeKeys) {
    
@@ -64,15 +74,15 @@ export class NodesGraph {
                 let outputs = node.operation.run(...inputs);
                 let outCables = node.outputs();
                 if (typeof outputs !== "object") {
-                    cache.set(outCables[0], outputs);
+                    setCache(outCables[0], outputs);
                 } else {
                     for (let i = 0 ; i < node.operation.outputs; i++) {
-                        cache.set(outCables[i], outputs[i]);
+                        setCache(outCables[i], outputs[i]);
                     }
                 }
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
                 for (let cable of node.outputs()) {
-                    cache.set(cable, node.widget!.state);
+                    setCache(cable, node.widget!.state);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
                 for (let cable of node.inputs()) { // TODO multiple inputs!!

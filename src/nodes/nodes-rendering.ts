@@ -6,7 +6,7 @@ import { Operation } from "../graph/operation";
 import { CTX, NodesCanvas } from "./nodes-canvas";
 import * as OPS from "../operations/functions";
 import { CtxCamera } from "../ctx/ctx-camera";
-import { Cable } from "../graph/cable";
+import { Cable, CableState } from "../graph/cable";
 import { NodesGraph } from "../graph/graph";
 import { Widget } from "../graph/widget";
 
@@ -101,14 +101,14 @@ export function drawCable(ctx: CTX, cable: Cable, canvas: NodesCanvas) {
     for (let to of cable.to) {
         let toNode = canvas.graph.nodes.get(to.node)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-        drawCableBetween(ctx, fromGridPos, toGridPos, canvas);
+        drawCableBetween(ctx, fromGridPos, toGridPos, canvas, cable.state);
     }
 }
 
 /**
  *  line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
  */
-export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, ghost=false) {
+export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, state: CableState) {
 
     let size = canvas.size;
     let hgs = canvas.size / 2;
@@ -211,9 +211,12 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
     line = filletPolyline(line, fillet);
 
-    ctx.strokeStyle = "grey";
-    if (ghost) {
+    if (state == CableState.On) {
+        ctx.strokeStyle = "#33dd33";
+    } else if (state == CableState.Selected) {
         ctx.strokeStyle = "white";
+    } else {
+        ctx.strokeStyle = "#222222";
     }
 
     
