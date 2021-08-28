@@ -9,7 +9,7 @@
 
 import { State } from "./state";
 
-export type FN = (...args: State[]) => State[]
+export type FN = (...args: State[]) => State[];
 
 /**
  * Wraps a function, and delivers some useful information
@@ -55,6 +55,9 @@ export class Operation {
         let getOutput = /return.*(\[.*\]).*/
         let match = getOutput.exec(operation.toString()) || "";
         let output = match[1];
+        if (!output) {
+            return 1;
+        }
         if (output == "[]") {
             return 0;
         }

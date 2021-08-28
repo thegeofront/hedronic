@@ -61,7 +61,7 @@ export function graphToFunction(graph: NodesGraph, name: string, namespace: stri
 
         let node = graph.getNode(key)!;
         if (node.operation) { // A | operation 
-            let str = `[${toEasyNames(node.outputs()).join(", ")}] = ${namespace}.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")}); /* x: ${node.position.x} | y: ${node.position.x} */`;
+            let str = `let [${toEasyNames(node.outputs()).join(", ")}] = ${namespace}.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")}); /* x: ${node.position.x} | y: ${node.position.x} */`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
             for (let str of toEasyNames(node.outputs())) {

@@ -131,7 +131,6 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     if (delta.x < 1) {
         xBreak = 1; 
     } else if (delta.x == 1) {
-        console.log("laas")
         fillet = 0.25;
         // xBreak = 0.5;
     } else if (delta.x <= 4) {
@@ -156,20 +155,18 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
     // apply vertical line break
     if (delta.x < 1) {
-
         fillet = size *0.25;
         if (delta.y == -1 || delta.y == 1) {
             yBreak = 0.5;
         }    
-
         if (delta.y < 0) {
             yBreak *= -1;
         }
-        distanceFromSocket.y = yBreak;
-        distanceToSocket.y = -delta.y + yBreak;
+        // distanceFromSocket.y = yBreak;
+        // distanceToSocket.y = -delta.y + yBreak;
 
-        // distanceFromSocket.y = delta.y - yBreak;
-        // distanceToSocket.y = -yBreak;
+        distanceFromSocket.y = delta.y - yBreak;
+        distanceToSocket.y = -yBreak;
 
         // 
         let b = a.clone();
@@ -214,9 +211,9 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
     line = filletPolyline(line, fillet);
 
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = "grey";
     if (ghost) {
-        ctx.strokeStyle = "grey";
+        ctx.strokeStyle = "white";
     }
 
     

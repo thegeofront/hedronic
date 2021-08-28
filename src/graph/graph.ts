@@ -62,12 +62,14 @@ export class NodesGraph {
                 }
 
                 let outputs = node.operation.run(...inputs);
-
-                let outCables = node.outputs()
-                for (let i = 0 ; i < node.operation.outputs; i++) {
-                    cache.set(outCables[i], outputs[i]);
+                let outCables = node.outputs();
+                if (typeof outputs !== "object") {
+                    cache.set(outCables[0], outputs);
+                } else {
+                    for (let i = 0 ; i < node.operation.outputs; i++) {
+                        cache.set(outCables[i], outputs[i]);
+                    }
                 }
-
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
                 for (let cable of node.outputs()) {
                     cache.set(cable, node.widget!.state);

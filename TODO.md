@@ -49,10 +49,14 @@
 [X] run it!
   - [X] sort operations last to first
   - [X] run it, one way or another, using a list of callback functions.
-  - [ ] print it out as javascript 
+  - [X] print it out as javascript 
 
 
-
+[ ] Cable Niceties
+  - [ ] Colors indicating On, Off, Changed, and whatnot
+  - [X] Dragging visual
+  - [X] ZigZag for cable management 
+  - [ ] Beads for cable management
 
 # phase 2 
 
