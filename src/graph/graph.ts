@@ -1,4 +1,5 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
+import { Catalogue } from "../operations/catalogue";
 import { Cable, CableState } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
@@ -25,9 +26,15 @@ export class NodesGraph {
         return new NodesGraph(nodes, cables, widgets);
     }
     
-    static fromJs(js: string) {
+    static fromJs(js: string, catalogue: Catalogue) {
         // TODO
-        return jsToGraph(js);
+        let graph = jsToGraph(js, catalogue);
+        if (!graph) {
+            console.warn("could not create graph from js");
+            return NodesGraph.new();
+        } else {
+            return graph;
+        }
     }
 
     toJs(name: string, namespace: string) {
@@ -266,6 +273,7 @@ export class NodesGraph {
     addCableBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
         let aComp: SocketIdx = outputIndex + 1;
         let bComp: SocketIdx = (inputIndex + 1) * -1;
+        console.log({a, outputIndex, b, inputIndex });
         this.addCable(Socket.new(a,aComp), Socket.new(b, bComp));
     }
 

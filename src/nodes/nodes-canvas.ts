@@ -98,12 +98,14 @@ export class NodesCanvas {
         document.addEventListener("paste", (event) => {
             console.log("paste | load");
 
+            console.log(event);
+
             if (!event.clipboardData) {
-                alert("I would like a string, please");
+                // alert("I would like a string, please");
                 return;
             }
             if (event.clipboardData.items.length != 1) {
-                alert("I would like just one string, please");
+                // alert("I would like just one string, please");
                 return;
             }
 
@@ -116,8 +118,9 @@ export class NodesCanvas {
     }
 
     onPaste(js: string) {
-        let graph = NodesGraph.fromJs(js)!;
+        let graph = NodesGraph.fromJs(js, this.catalogue)!;
         this.graph = graph;
+        this.requestRedraw();
         this.graph.calculate();
     }
 

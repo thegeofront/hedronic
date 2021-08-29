@@ -11,7 +11,7 @@ import { ButtonWidget } from "../widgets/button-widget";
 
 export enum CoreType {
     Operation,
-    Gizmo
+    Widget
 }
 
 /**
@@ -23,14 +23,14 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: Operation | Widget
+    public selected?: Operation | Widget;
 
-    constructor(public operations: Operation[], public widgets: Widget[]) {
+    constructor(public name: string, public operations: Operation[], public widgets: Widget[]) {
 
     }
 
-    static new(ops: Operation[], giz: Widget[]) : Catalogue {
-        return new Catalogue(ops, giz);
+    static new(name: string, ops: Operation[], giz: Widget[]) : Catalogue {
+        return new Catalogue(name, ops, giz);
     }
 
     static newDefault() {
@@ -41,17 +41,34 @@ export class Catalogue {
             Widget.new("output", WidgetSide.Output, false, Vector2.new(1,1)),
             Widget.new("display", WidgetSide.Output, false, Vector2.new(3,3)),
         ]
-        return Catalogue.new(operations, widgets);
+        return Catalogue.new("GEON", operations, widgets);
+    }
+
+    trySelect(key: string, type: CoreType) {
+        if (type == CoreType.Operation) {
+            for (let i = 0 ; i < this.operations.length; i++) {
+                if (key == this.operations[i].name) {
+                    return this.select(i, type);
+                }
+            }
+        } else {
+            for (let i = 0 ; i < this.widgets.length; i++) {
+                if (key == this.widgets[i].name) {
+                    return this.select(i, type);
+                }
+            }
+        }
+        return undefined;
     }
 
     select(idx: number, type: CoreType) {
-        
         console.log(`select id: ${idx} type: ${type}`);
         if (type == CoreType.Operation) {
             this.selected = this.operations[idx];
         } else {
             this.selected = this.widgets[idx];
         }
+        return this.selected;
     }
 
     deselect() {

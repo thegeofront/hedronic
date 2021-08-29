@@ -38,7 +38,7 @@ export class NodesSidePanel {
         // gizmo's
         for (let i = 0 ; i < giz.length; i++) {
             let div = this.ui.addButton(giz[i].name, () => {
-                onPress(i, CoreType.Gizmo);
+                onPress(i, CoreType.Widget);
             })
             div.classList.add("create-gizmo-button-wrapper");
         }
