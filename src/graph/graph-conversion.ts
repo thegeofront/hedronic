@@ -203,10 +203,8 @@ export function graphToFunction(graph: NodesGraph, name: string, namespace: stri
         }
     }
 
-    let fn = Function(...inputs, `
-        ${processes.join("\n        ")}
-        return [${outputs.join(", ")}];
-    `);
+    let fn = Function(...inputs, `    ${processes.join("\n    ")}
+    return [${outputs.join(", ")}];`);
 
     Object.defineProperty(fn, "name", { value: name });
     // console.log(fn.toString());
