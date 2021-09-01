@@ -7,7 +7,7 @@ import { renderTextInWidget } from "./text-widget";
 export class DisplayWidget extends Widget {
 
     static new(state: State) {
-        return new DisplayWidget("display", WidgetSide.Output, Vector2.new(5,5), state);
+        return new DisplayWidget("display", WidgetSide.Output, Vector2.new(5,1), state);
     }
 
     clone() {

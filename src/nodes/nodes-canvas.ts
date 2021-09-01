@@ -16,6 +16,7 @@ import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion
 import { Operation } from "../graph/operation";
 import { OR, NOT, AND, } from "../operations/standard-functions";
 import { Cable, CableState } from "../graph/cable";
+import { promptDownload } from "../util/domwrappers";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -78,7 +79,8 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-        this.setupCopyPasteFunctionalities();
+        this.setupLoadSave();
+        this.setupCopyPaste();
 
         // DEBUG add a standard graph
         this.testGraph();
@@ -87,8 +89,18 @@ export class NodesCanvas {
         this.publish();
     }
 
-    setupCopyPasteFunctionalities() {
+    setupLoadSave() {
+        document.addEventListener("keydown", (e) => {
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+              e.preventDefault();
 
+              let text = this.onCopy();
+              promptDownload("save.js", text);
+            }
+          }, false);
+    }
+
+    setupCopyPaste() {
         document.addEventListener("copy", (event) => {
             console.log("copy | save");
             event.clipboardData!.setData("text/plain", this.onCopy());
