@@ -214,7 +214,7 @@ export class NodesGraph {
     private emptySocket(ckey: string, c: Socket) {
         let cable = this.cables.get(ckey)!;
 
-        console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.core.name)
+        // console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.core.name)
         if (c.side == SocketSide.Output) {
             // if connection is input, delete the entire cable
             // console.log("EMPTY Output...");
@@ -251,7 +251,7 @@ export class NodesGraph {
         // but add an additional output to this one
         let existingFrom = this.getCableAtConnector(cable.from);
         if (existingFrom) {
-            console.log("adding to existing...");
+            // console.log("adding to existing...");
             for(let to of cable.to) {
                 this.fillSocket(existingFrom, to);
             }
@@ -273,7 +273,7 @@ export class NodesGraph {
     addCableBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
         let aComp: SocketIdx = outputIndex + 1;
         let bComp: SocketIdx = (inputIndex + 1) * -1;
-        console.log({a, outputIndex, b, inputIndex });
+        // console.log({a, outputIndex, b, inputIndex });
         this.addCable(Socket.new(a,aComp), Socket.new(b, bComp));
     }
 

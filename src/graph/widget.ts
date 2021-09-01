@@ -39,45 +39,36 @@ export enum WidgetSide {
  */
 export class Widget {
 
+    bounds: Domain2;
+    inputs: number;
+    outputs: number
+
     public constructor(
         public readonly name: string,
-        public readonly inputs: number, 
-        public readonly outputs: number,
         public readonly side: WidgetSide,
-        public bounds: Domain2,
+        public readonly size: Vector2,
         public state: State,
-    ) {}
+    ) {
+        this.inputs = side == WidgetSide.Input ? 0 : 1;
+        this.outputs = side == WidgetSide.Output ? 0 : 1;
+        this.bounds = Widget.determineWidgetSize(this.side, this.size);
+    }
 
-    static new(name: string, side: WidgetSide, state?: State, size?: Vector2) {
-
+    static determineWidgetSize(side: WidgetSide, size?: Vector2) {
         // sry for this dumb code
-        let rec;
         if (!size) {
             if (side == WidgetSide.Input) {
-                rec = Domain2.fromWH(0,0,1,1);
+                return Domain2.fromWH(0,0,1,1);
             } else {
-                rec = Domain2.fromWH(2,0,1,1);
+                return Domain2.fromWH(2,0,1,1);
             }
         } else {
             if (side == WidgetSide.Input) {
-                rec = Domain2.fromWH(-(size.x-1), 0, size.x, size.y);
+                return Domain2.fromWH(-(size.x-1), 0, size.x, size.y);
             } else {
-                rec = Domain2.fromWH(2, 0, size.x, size.y);
+                return Domain2.fromWH(2, 0, size.x, size.y);
             }
         }
-    
-        return new Widget(
-            name, 
-            side == WidgetSide.Input ? 0 : 1, 
-            side == WidgetSide.Output ? 0 : 1, 
-            side,
-            rec,
-            state ? state : false,
-            );
-    }
-
-    run(...args: boolean[]) {
-        console.log("RUNNING!");
     }
 
     log() {
@@ -85,7 +76,7 @@ export class Widget {
     }
 
     clone() {
-        return Widget.new(this.name, this.side, this.state, this.bounds.size());
+        return new Widget(this.name, this.side, this.size, this.state);
     }
 
     trySelect(local: Vector2) : number | undefined {
@@ -115,14 +106,6 @@ export class Widget {
     }
 
     // ---- Create Special properties
-
-    attach() {
-        // input something like: 
-        // html.onclick() => node.run()
-        
-        // output something like:
-        // node.afterRun() => html.switch colors 
-    }
 
     /**
      * What to do when the widget actually gets clicked

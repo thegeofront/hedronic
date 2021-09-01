@@ -450,6 +450,8 @@ export class NodesCanvas {
                 this.graph.addCable(this.selectedSocket, this.hover);
                 this.selectSocket();
                 this.requestRedraw();
+                // new line means recalculation
+                this.graph.calculate();
             }
         }
 

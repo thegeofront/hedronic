@@ -1,1 +1,2 @@
-export type State = boolean;
+export type State = boolean | string;
+

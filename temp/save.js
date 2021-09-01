@@ -9,3 +9,16 @@ function something(a /* "widget": "button" | "x": 3 | "y": 4 */,c /* "widget": "
     let [] = GEON.GRAPH(j) /* "x": 18 | "y": 9 */;
     return [b /* "widget": "output" | "x": 20 | "y": 0 */, h /* "widget": "display" | "x": 21 | "y": 4 */];
 }
+
+function anonymous(a, d, i ,j) {
+    let [b] = GEON.NOT(a) 
+    let [c] = GEON.NOT(b) 
+    let [e] = GEON.OR(a, d) 
+    let [f] = GEON.AND(c, e) 
+    let [g] = GEON.TEST(a, d)
+    let [h] = GEON.AND(f, g) 
+    let [k] = GEON.XOR(j, i) 
+    let [l] = GEON.TEST(k, c)
+    let [m] = GEON.XOR(l, f) 
+    return [h, m];
+}

@@ -7,6 +7,7 @@ import { Casing, Permutator } from "../util/permutator";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";
 import { Socket } from "./socket";
+import { State } from "./state";
 import { WidgetSide } from "./widget";
 
 /**
@@ -42,10 +43,14 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
     let graph = NodesGraph.new();
     let cableStarts = new Map<String, Socket>();
 
-    let trySpawnNode = (name: string, type: CoreType, x: number, y: number, lib = "GEON") => {
+    let trySpawnNode = (name: string, type: CoreType, x: number, y: number, lib = "GEON", state?: State) => {
         // TODO: catalogue.name == lib;
         if (catalogue.trySelect(name, type)) {
             let node = catalogue.spawn(Vector2.new(x, y))!;
+            if (type == CoreType.Widget) {
+                // @ts-ignore
+                node.core.state = state!;
+            }
             let key = graph.addNode(node);
             catalogue.deselect();
             return key;
@@ -66,16 +71,19 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
     }
 
     // ---------
-
-    // console.log(f);
     
     for (let i = 0 ; i < f.inputs.length; i++) {
         let line = f.inputs[i];
         let l = extractComment(line)!;
-        if (!l) continue;
+        if (!l) {
+            console.warn("bad input!");
+            continue;
+        };
         let name = l.rest;
         let json = commentToJson(l.comment);
-        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y)!;
+        let state = stringToState(json.state);
+        console.log("state", state);
+        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "GEON", state)!;
         createCable(name, nodeKey, 0);
     }
 
@@ -111,6 +119,15 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
     // graph.log();
 
     return graph;
+}
+
+function stringToState(stateString: string) : State {
+    let s = stateString;
+    if (s === "true") 
+        return true;
+    if (s === "false") 
+        return false;
+    return s;
 }
 
 function extractComment(str: string) {
@@ -186,11 +203,13 @@ export function graphToFunction(graph: NodesGraph, name: string, namespace: stri
 
         let node = graph.getNode(key)!;
         if (node.operation) { // A | operation 
-            let str = `let [${toEasyNames(node.outputs()).join(", ")}] = ${namespace}.${node.operation.name}(${toEasyNames(node.inputs()).join(", ")}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
+            let inputs = toEasyNames(node.outputs()).join(", ");
+            let outputs = toEasyNames(node.inputs()).join(", ");
+            let str = `let [${inputs}] = ${namespace}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
             for (let str of toEasyNames(node.outputs())) {
-                str += ` /* "widget": "${node.widget?.name}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
+                str += ` /* "widget": "${node.widget!.name}" | "state": "${node.widget!.state}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                 inputs.push(str);
             }
         } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget 
