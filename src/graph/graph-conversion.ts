@@ -12,6 +12,9 @@ import { WidgetSide } from "./widget";
 /**
  * Create a new Graph from a js function. This function must be a pure function, and can only call other pure functions.
  * 
+ * TODO
+ * - make sure that this could work even without comments
+ * 
  * subcomponents:
  * - figure out the difference between variable and function
  * - figure out which functions are called, and the content of those methods
