@@ -1,7 +1,7 @@
 import { Domain2, Vector2 } from "../../../engine/src/lib";
 import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";
-import { NodesCanvas } from "../nodes/nodes-canvas";
+import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
 export class ButtonWidget extends Widget {
 

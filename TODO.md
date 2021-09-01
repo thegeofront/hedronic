@@ -1,4 +1,5 @@
 # Frontier 1 : Canvas
+[ ] shift select
 [ ] Box Select & move
 [ ] Copy paste parts 
 

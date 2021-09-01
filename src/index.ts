@@ -1,6 +1,6 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
-import { NodesCanvas } from "./nodes/nodes-canvas";
+import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
 
 function main() {
 

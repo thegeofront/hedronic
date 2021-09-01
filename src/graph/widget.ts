@@ -13,7 +13,7 @@
 
 import { Domain, Domain2, Vector2 } from "../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
-import { NodesCanvas } from "../nodes/nodes-canvas";
+import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Operation } from "./operation";
 import { State } from "./state";
 
