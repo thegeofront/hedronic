@@ -4,14 +4,14 @@ import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";
 import { renderTextInWidget } from "./text-widget";
 
-export class DisplayWidget extends Widget {
+export class ConsoleWidget extends Widget {
 
     static new(state: State) {
-        return new DisplayWidget("display", WidgetSide.Output, Vector2.new(5,1), state);
+        return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), state);
     }
 
     clone() {
-        return DisplayWidget.new(this.state);
+        return ConsoleWidget.new(this.state);
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {

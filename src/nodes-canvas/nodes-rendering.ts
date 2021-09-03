@@ -56,7 +56,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw operation text
     if (!isWidget) {
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.font = '20px courier new';
+        ctx.font = '15px courier new';
         // ctx.rotate
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -120,7 +120,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     let distanceToSocket = Vector2.new(0, 0);
 
     let fillet = size * 0.5;
-
+ 
     if (delta.x == 0 && delta.y == 0) {
         return;
     }
@@ -130,7 +130,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     if (delta.x < 1) {
         xBreak = 1; 
     } else if (delta.x == 1) {
-        fillet = 0.25;
+        fillet = size * 0.25;
         // xBreak = 0.5;
     } else if (delta.x <= 4) {
         xBreak = delta.x / 2;
@@ -154,7 +154,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
     // apply vertical line break
     if (delta.x < 1) {
-        fillet = size *0.25;
+        fillet = size * 0.25;
         if (delta.y == -1 || delta.y == 1) {
             yBreak = 0.5;
         }    
@@ -344,14 +344,15 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
     let max = Math.max(inputs, outputs);
     let part = 5;
     let step = size / part;
-    let width = max * part;
-    
-    let cola = 0.5
-    let colb = 1;
-    let colc = 1.5;
-    let cold = 5 + 8.5;
-    let cole = 5 + 9;
-    let colf = 5 + 9.5;
+    let height = max * part;
+    let width = 15;
+
+    let cola = 2.5;
+    let colb = 3;
+    let colc = 3.5;
+    let cold = 11.5;
+    let cole = 12;
+    let colf = 12.5;
 
     let coord = (x: number,y: number) => {
         return Vector2.new(pos.x + y*step, pos.y + x*step);
@@ -365,7 +366,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
 
     // calculate coorindates of input, output, and body centers
     let vecs = MultiVector2.new(inputs + outputs + 1);
-    vecs.set(0, coord(width/2, colf/2));
+    vecs.set(0, coord(height/2, width/2));
 
     // top
     moveTo(0.5, cole);
@@ -395,8 +396,8 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
 
     // bottom
     // lineTo(width-0.5, 4); // colb
-    lineTo(width-0.5, 5); // colc
-    lineTo(width-0.5, 10); // cold
+    lineTo(height-0.5, 5); // colc
+    lineTo(height-0.5, 10); // cold
     // lineTo(width-0.5, 6); // cole
 
     // draw outputs
@@ -419,7 +420,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
             // lineTo(offset+4.5,cole);
         }
     }
-    lineTo(width-0.5, 10); // cold
+    lineTo(height-0.5, 10); // cold
     return vecs;
 }
 

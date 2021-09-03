@@ -29,12 +29,12 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 30;
+    private _size = 35;
     get size() { return this._size; }
 
     // selection state 
-    private selectedSocket?: Socket;
-    private hover?: Socket;
+    private selectedSockets: Socket[] = [];
+    private hoverSocket?: Socket;
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
     private mgpHover = Vector2.new(); // mouse grid point hover
@@ -234,15 +234,17 @@ export class NodesCanvas {
 
         if (cancelPresed) {
             this.catalogue.deselect();
-            this.selectSocket();
+            this.deselect();
             this.requestRedraw();
         }
 
         if (this.input.IsKeyPressed("delete")) {
-            if (this.selectedSocket) {
-                this.graph.deleteNode(this.selectedSocket.node);
-                this.selectedSocket = undefined;
-                this.requestRedraw();
+            if (this.selectedSockets.length > 0) {
+                for (let socket of this.selectedSockets) {
+                    this.graph.deleteNode(socket.node);
+                    this.requestRedraw();
+                }
+                this.deselect();
             }
         }
 
@@ -295,15 +297,16 @@ export class NodesCanvas {
         }
 
         // draw a cable if we are dragging a new cable
-        if (this.mgpStart && this.selectedSocket) {
-
-            let fromNode = this.graph.nodes.get(this.selectedSocket.node)!;
-            let p = fromNode.getConnectorGridPosition(this.selectedSocket.idx)!;
-
-            if (this.selectedSocket.side == SocketSide.Input) {
-                drawCableBetween(ctx, g, p, this, CableState.Selected);
-            } else if (this.selectedSocket.side == SocketSide.Output) {
-                drawCableBetween(ctx, p, g, this, CableState.Selected);
+        if (this.mgpStart) {
+            for (let socket of this.selectedSockets) {
+                let fromNode = this.graph.nodes.get(socket.node)!;
+                let p = fromNode.getConnectorGridPosition(socket.idx)!;
+    
+                if (socket.side == SocketSide.Input) {
+                    drawCableBetween(ctx, g, p, this, CableState.Selected);
+                } else if (socket.side == SocketSide.Output) {
+                    drawCableBetween(ctx, p, g, this, CableState.Selected);
+                }
             }
         }
 
@@ -311,10 +314,11 @@ export class NodesCanvas {
         for (let [key, node] of this.graph.nodes) {
             
             // TODO: fix the fact we cannot hover the node of the socket we are selecting...
-            if (this.selectedSocket && key == this.selectedSocket!.node) {
-                drawNode(ctx, node, this, this.selectedSocket.idx, DrawState.OpSelected);
-            } else if (this.hover && key == this.hover!.node) {
-                drawNode(ctx, node, this, this.hover.idx, DrawState.OpHover);
+            let selectedSocket = this.tryGetSelectedSocket(key);
+            if (selectedSocket) {
+                drawNode(ctx, node, this, selectedSocket.idx, DrawState.OpSelected);
+            } else if (this.hoverSocket && key == this.hoverSocket!.node) {
+                drawNode(ctx, node, this, this.hoverSocket.idx, DrawState.OpHover);
             } else {
                 drawNode(ctx, node, this, 0, DrawState.Op);
             }
@@ -389,16 +393,31 @@ export class NodesCanvas {
     // -----       Selection       -----
     // ----- --------------------- -----
 
-    hoverSocket(s?: Socket) {
-        this.hover = s;
+    hover(s?: Socket) {
+        this.hoverSocket = s;
     }
 
-    selectSocket(s?: Socket) {
-        this.selectedSocket = s;
+    dehover() {
+        this.hoverSocket = undefined;
+    }
+
+    select(s: Socket) {
+        if (!this.tryGetSelectedSocket(s.node)) {
+            this.selectedSockets.push(s);
+        }
     }
  
-    deselectSocket() {
-        this.selectedSocket = undefined;
+    deselect() {
+        this.selectedSockets = [];
+    }
+
+    tryGetSelectedSocket(key: string) : Socket | undefined {
+        for (let socket of this.selectedSockets) {
+            if (socket.node == key) {
+                return socket;
+            }
+        }
+        return undefined;
     }
 
     trySelect(gridPos: Vector2) : Socket | undefined {
@@ -431,13 +450,23 @@ export class NodesCanvas {
         if (this.catalogue.selected) {
             // we are placing a new node
             this.graph.addNode(this.catalogue.spawn(gp)!);
-            if (!this.input.IsKeyDown("shift")) {
+            if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();
             }
         } else {
             // we clicked at some spot. try to select something 
             let socket = this.trySelect(gp);
-            this.selectSocket(socket);
+            if (!socket) {
+                // nothing happend
+                this.deselect();
+                return;
+            }
+
+            // we clicked on a socket! 
+            if (!this.input.IsKeyDown("shift")) {
+                this.deselect();
+            }
+            this.select(socket);
             if (socket?.side == SocketSide.Widget) {
                 // we just clicked a widget! let the widget figure out what to do
                 (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
@@ -454,13 +483,14 @@ export class NodesCanvas {
 
         // possibly create a line
         // see if the line drawn is indeed from input to output, or vise versa
-        if (this.selectedSocket && this.hover) {
-            if ((this.selectedSocket.side == SocketSide.Input && this.hover.side == SocketSide.Output) || 
-            (this.selectedSocket.side == SocketSide.Output && this.hover.side == SocketSide.Input)) {
+        if (this.selectedSockets.length == 1 && this.hoverSocket) {
+            let selectedSocket = this.selectedSockets[0];
+            if ((selectedSocket.side == SocketSide.Input && this.hoverSocket.side == SocketSide.Output) || 
+            (selectedSocket.side == SocketSide.Output && this.hoverSocket.side == SocketSide.Input)) {
             
                 console.log("adding cable...")
-                this.graph.addCable(this.selectedSocket, this.hover);
-                this.selectSocket();
+                this.graph.addCable(selectedSocket, this.hoverSocket);
+                this.deselect();
                 this.requestRedraw();
                 // new line means recalculation
                 this.graph.calculate();
@@ -480,18 +510,21 @@ export class NodesCanvas {
         // console.log("move!");
 
         // hovering
-        this.hoverSocket(this.trySelect(gp));
+        this.hover(this.trySelect(gp));
         this.requestRedraw();
 
         // if mouse is down and we are selecting a node 
-        if (this.mgpStart && this.selectedSocket) {
-            if (this.selectedSocket.side == SocketSide.Body) {
-                // dragging node
-                let node = this.graph.nodes.get(this.selectedSocket.node);
-                node?.position.add(gp.subbed(this.mgpEnd!))
-            } else {
-                // dragging line
-                // console.log("drag line");
+        if (this.mgpStart && this.selectedSockets.length > 0) {
+            let delta = gp.subbed(this.mgpEnd!);
+            for (let socket of this.selectedSockets) {
+                if (socket.side == SocketSide.Body) {
+                    // dragging node
+                    let node = this.graph.nodes.get(socket.node);
+                    node?.position.add(delta);
+                } else {
+                    // dragging line
+                    // console.log("drag line");
+                }
             }
         }
 
@@ -504,7 +537,7 @@ export class NodesCanvas {
     onSidePanelButtonPressed(idx: number, type: CoreType) {
 
         this.catalogue.select(idx, type);
-        this.selectSocket();
+        this.deselect();
         // we must focus on the canvas after interacting with the html UI.
         // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...
         this.input.canvas.focus();

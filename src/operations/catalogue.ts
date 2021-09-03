@@ -4,7 +4,7 @@ import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";
 import { ButtonWidget } from "../widgets/button-widget";
-import { DisplayWidget } from "../widgets/display-widget";
+import { ConsoleWidget } from "../widgets/display-widget";
 import { LampWidget } from "../widgets/lamp-widget";
 import { TextWidget } from "../widgets/text-widget";
 
@@ -42,7 +42,7 @@ export class Catalogue {
             ButtonWidget.new(false),
             TextWidget.new("hello world"),
             LampWidget.new(false),
-            DisplayWidget.new(false),
+            ConsoleWidget.new(false),
         ]
         return Catalogue.new("GEON", operations, widgets);
     }

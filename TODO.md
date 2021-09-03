@@ -1,3 +1,6 @@
+# MAJOR FRONTEER: LIBRARIES
+- we need a way to auto-include libraries
+
 # Frontier 1 : Canvas
 [ ] shift select
 [ ] Box Select & move

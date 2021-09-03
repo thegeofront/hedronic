@@ -16,7 +16,7 @@ export class ButtonWidget extends Widget {
 
     onClick(canvas: NodesCanvas) {
         this.state = !this.state;
-        canvas.deselectSocket();
+        canvas.deselect();
         canvas.graph.calculate();
     }
 }

@@ -71,6 +71,10 @@ export class Widget {
         }
     }
 
+    run() {
+        
+    }
+
     log() {
         console.log(`widget: ${this.name}`);    
     }
@@ -111,7 +115,7 @@ export class Widget {
      * What to do when the widget actually gets clicked
      */
     onClick(canvas: NodesCanvas) {
-        canvas.deselectSocket();
+        canvas.deselect();
     }
 
     // TODO : customize the heck out of this thing: onLoad, onRun, afterRun, spawnHTML, whatever!

@@ -23,7 +23,7 @@ export class TextWidget extends Widget {
         if (text) {
             this.state = text;
         }
-        canvas.deselectSocket();
+        canvas.deselect();
         canvas.graph.calculate();
     }
 }

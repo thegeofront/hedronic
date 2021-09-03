@@ -5,11 +5,12 @@ export const StandardFunctions = [
     NAND,
     XOR,
     TEST,
-    ADD,
+    ALERT,
 ]
 
-export function ADD(a, b) {
-    return [a + b];
+export function ALERT(message) {
+    alert(message);
+    return [];
 }
 
 export function AND(a, b) { 
