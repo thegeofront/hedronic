@@ -251,8 +251,13 @@ export class NodesGraph {
         // but add an additional output to this one
         let existingFrom = this.getCableAtConnector(cable.from);
         if (existingFrom) {
-            // console.log("adding to existing...");
+            console.log("adding to existing...");
             for(let to of cable.to) {
+                if (existingFrom == this.getCableAtConnector(to)) {
+                    console.log("this full cable exist already");
+                    // if the current 'to' socket is occupied by the same cable, this is meaningless
+                    return existingFrom;
+                }
                 this.fillSocket(existingFrom, to);
             }
             return existingFrom;

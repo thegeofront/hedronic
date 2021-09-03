@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack'); //to access built-in plugins
 const TerserPlugin = require("terser-webpack-plugin");
 
 // setup webpack using the ts-loader
@@ -52,6 +53,11 @@ module.exports = (env) => {
               }),
             ],
         },
+        plugins: [
+            new webpack.IgnorePlugin({
+                resourceRegExp: /geon-modules|kaas\.js/,
+              }),
+        ]
     }
 
     if (env.eval === "dev") {

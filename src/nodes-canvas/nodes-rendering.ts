@@ -349,8 +349,8 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
 
     let cola = 2.5;
     let colb = 3;
-    let colc = 3.5;
-    let cold = 11.5;
+    let colc = 3;
+    let cold = 12;
     let cole = 12;
     let colf = 12.5;
 
@@ -380,7 +380,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
         if (i < inputs) {
 
             // store center
-            vecs.set(1 + i, coord(offset+ 2.5, colb))
+            vecs.set(1 + i, coord(offset+ 2.5, colc))
 
             // draw zig-zag
             lineTo(offset+1  , cola);
@@ -407,7 +407,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
         if (i < outputs) {
 
             // store center
-            vecs.set(1 + inputs + i, coord(offset+ 2.5, cole))
+            vecs.set(1 + inputs + i, coord(offset+ 2.5, cold))
 
             // draw zig-zag
             lineTo(offset+1  , colf);

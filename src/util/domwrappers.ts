@@ -150,12 +150,3 @@ function loadImageHelper2(image: HTMLImageElement): ImageData {
     canvas.parentNode?.removeChild(canvas);
     return data;
 }
-
-export function promptDownload(file: string, text: string) {
-    var element = document.createElement("a");
-    element.setAttribute("href", "data:text/plain;charset=utf-8, " + encodeURIComponent(text));
-    element.setAttribute("download", file);
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-}
