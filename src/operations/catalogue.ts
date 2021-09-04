@@ -92,5 +92,6 @@ export class Catalogue {
         for (let op of mod.operations.values()) {
             this.operations.push(op);
         }
+        mod.publishGlobally();
     } 
 }

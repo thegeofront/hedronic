@@ -35,10 +35,10 @@ export class NodesModule {
     publishGlobally() {
         
         let space = {};
-        Object.defineProperty(window, this.name, { value: space, configurable: true});
 
         for (let op of this.operations.values()) {
-            Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
+            Object.defineProperty(space, op.name, { value: op.func, configurable: true});
         }
+        Object.defineProperty(window, this.name, { value: space, configurable: true});
     }
 }
