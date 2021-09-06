@@ -11,8 +11,10 @@ type Div = HTMLDivElement;
  */
 export class NodesSidePanel {
 
+    ui: UI
+
     private constructor(private div: Div) {
-        UI
+        this.ui = new UI(div);
     }
 
     public static new(context: Div) : NodesSidePanel {
