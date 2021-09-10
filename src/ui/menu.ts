@@ -11,18 +11,20 @@ export class Menu {
     readonly container: HTMLDivElement;
     selected: string;
     categories: MenuCategory[];
+    canvas: HTMLCanvasElement;
 
-    constructor(container: HTMLDivElement, catalogue: Catalogue) {
+    constructor(container: HTMLDivElement, catalogue: Catalogue, canvas: HTMLCanvasElement) {
             this.container = container;
             this.selected = "";
+            this.canvas = canvas;
             this.categories = this.gererateCategories(catalogue);
     }
 
-    static new(parent: HTMLDivElement, catalogue: Catalogue) {
-        return new Menu(parent, catalogue);
+    static new(parent: HTMLDivElement, catalogue: Catalogue, canvas: HTMLCanvasElement) {
+        return new Menu(parent, catalogue, canvas);
     }
 
-    fillCategories(catalogue: Catalogue) {
+    updateCategories(catalogue: Catalogue) {
         this.categories = this.gererateCategories(catalogue);
         this.renderNav();
     }
@@ -37,7 +39,7 @@ export class Menu {
                 ops.push(op);
             }
             // let content = renderCores(ops, [], onPress)
-            items.push(new MenuCategory(mod.name, "box", false, new MenuContentModule(catalogue, mod)));
+            items.push(new MenuCategory(mod.name, "box", false, new MenuContentModule(catalogue, mod, this.canvas)));
         }
 
         items.push(new MenuCategory("settings", "gear", true, new MenuContentSettings()));
@@ -60,6 +62,7 @@ export class Menu {
                 for(let cat of this.categories) {
                     let f = (ev: Event) => {
                         this.select(cat.name)
+                        this.canvas.focus();
                         ev.stopPropagation();
                     }
                     d.addButton(`menu-category ${cat.name}`, f).style("width: 100%; height: 60px");

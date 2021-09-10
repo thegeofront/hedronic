@@ -66,7 +66,7 @@ export class NodesCanvas {
 
         const catalogue = Catalogue.newDefault();
         const panel = NodesSidePanel.new(ui);
-        const menu = Menu.new(ui, catalogue);
+        const menu = Menu.new(ui, catalogue, htmlCanvas);
 
         return new NodesCanvas(ctx, panel, camera, state, graph, menu, catalogue);
     }
@@ -152,7 +152,7 @@ export class NodesCanvas {
 
     async testGraph() {
         await this.loadModules();
-        this.menu.fillCategories(this.catalogue);
+        this.menu.updateCategories(this.catalogue);
         let js = `
         function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
         ) {
@@ -177,16 +177,20 @@ export class NodesCanvas {
         this.collapseCounter += 1;
         
         // @ts-ignore;
-        let graphOp = Operation.new(GRAPH);
-        this.catalogue.addModule(NodesModule.new("graphs", [graphOp], [], this.catalogue));
+        let graph = Operation.new(GRAPH);
+        if (this.catalogue.modules.has("graphs")) {
+            this.catalogue.modules.get("graphs")!.operations.push(graph);
+        } else {
+            this.catalogue.addModule(NodesModule.new("graphs", [graph], [], this.catalogue));
+        }
         this.ui();
     }
 
     ui() {
         
         // hook up UI 
+        this.menu.updateCategories(this.catalogue);
         this.menu.renderNav();
-        // this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
         makeOperationsGlobal(this.catalogue);
     }
 
