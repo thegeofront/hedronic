@@ -7,6 +7,7 @@ import { ConsoleWidget } from "../widgets/display-widget";
 import { LampWidget } from "../widgets/lamp-widget";
 import { TextWidget } from "../widgets/text-widget";
 import { NodesModule } from "./module";
+import { Module } from "webpack";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -28,48 +29,45 @@ export class Catalogue {
 
     public selected?: Operation | Widget;
 
-    constructor(public operations: Operation[], public widgets: Widget[], public modules: Map<string, NodesModule>) {}
+    constructor(public modules: Map<string, NodesModule>) {}
 
-    static new(ops: Operation[], giz: Widget[]) : Catalogue {
-        return new Catalogue(ops, giz, new Map());
+    static new() : Catalogue {
+        return new Catalogue(new Map());
     }
 
     static newDefault() {
-        let operations: Operation[] = [];
+        
         let widgets: Widget[] = [
             ButtonWidget.new(false),
             TextWidget.new("hello world"),
             LampWidget.new(false),
             ConsoleWidget.new(false),
         ]
-        return Catalogue.new(operations, widgets);
+
+        let wmap = new Map<string, Widget>();
+        for (let w of widgets) {
+            wmap.set(w.name, w);
+        }
+
+        let cat = Catalogue.new();
+        let widMod = new NodesModule("widgets", new Map(), wmap, cat);
+        return Catalogue.new();
     }
 
-    trySelect(key: string, type: CoreType) {
-        if (type == CoreType.Operation) {
-            for (let i = 0 ; i < this.operations.length; i++) {
-                if (key == this.operations[i].name) {
-                    return this.select(i, type);
-                }
-            }
-        } else {
-            for (let i = 0 ; i < this.widgets.length; i++) {
-                if (key == this.widgets[i].name) {
-                    return this.select(i, type);
-                }
-            }
-        }
-        return undefined;
+    allOperations() {
+
     }
 
-    select(idx: number, type: CoreType) {
-        console.log(`select id: ${idx} type: ${type}`);
-        if (type == CoreType.Operation) {
-            this.selected = this.operations[idx];
-        } else {
-            this.selected = this.widgets[idx];
-        }
-        return this.selected;
+    trySelect(lib: string, key: string, type: CoreType) {
+        this.modules.get(lib)?.select(key, type);
+    }
+
+    selectCore(core: Operation | Widget | undefined) {
+        this.selected = core;
+    }
+
+    select(lib: string, key: string, type: CoreType) {
+        this.modules.get(lib)!.select(key, type);
     }
 
     deselect() {
@@ -89,9 +87,6 @@ export class Catalogue {
 
     addModule(mod: NodesModule) {
         this.modules.set(mod.name, mod);
-        for (let op of mod.operations.values()) {
-            this.operations.push(op);
-        }
         mod.publishGlobally();
     } 
 }

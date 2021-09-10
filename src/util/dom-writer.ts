@@ -2,7 +2,7 @@
 // purpose: sort of jquery 
 
 
-export type ElementType = "div" | "h1" | "h2" | "a" | "p" | "img" | "span"; 
+export type ElementType = "div" | "h1" | "h2" | "a" | "p" | "img" | "span" | "button" | "ul" | "li" | "i"; 
 
 export class DomHead {
     
@@ -37,7 +37,6 @@ export class DomHead {
     }
 }
 
-// TODO add some more jquery functionalities
 /**
  * A class to write DOM with. 
  * It is created as a hierarchical writer: use `down` and `up` to traverse the DOM. 
@@ -99,6 +98,10 @@ export class DomWriter {
         return this;
     }
 
+    get() {
+        return this.cursor as HTMLElement;
+    }
+
     to(obj: HTMLElement | Document) {
         this.cursor = obj;
         return this;
@@ -109,7 +112,7 @@ export class DomWriter {
         return this;
     }
 
-    toQuerySelector(selector: string) {
+    toQuery(selector: string) {
         this.cursor = document.querySelector(selector)! as HTMLElement;
         return this;
     }
@@ -123,6 +126,16 @@ export class DomWriter {
         return this
     }
 
+    show() {
+        this.style("");
+        return this.attr("hidden", "false");
+
+    }
+
+    hide() {
+        return this.attr("hidden", "true");
+    }
+
     attr(attribute: string, value: string) {
         if (this.cursor instanceof Document) {
             throw new Error("not possible with document selected!")
@@ -131,25 +144,37 @@ export class DomWriter {
         return this;
     }
 
-    get inner() {
+    get innerHTML() {
         if (this.cursor instanceof Document) {
             throw new Error("not possible with document selected!")
         } 
         return this.cursor.innerHTML;
     }
 
-    set inner(str: string) {
+    set innerHTML(str: string) {
         if (this.cursor instanceof Document) {
             throw new Error("not possible with document selected!")
         } 
         this.cursor.innerHTML = str;
     }
 
-    get classes() {
+    get innerText() {
         if (this.cursor instanceof Document) {
             throw new Error("not possible with document selected!")
         } 
-        return this.cursor.classList;
+        return this.cursor.innerText;
+    }
+
+
+    set innerText(str: string) {
+        if (this.cursor instanceof Document) {
+            throw new Error("not possible with document selected!")
+        } 
+        this.cursor.innerText = str;
+    }
+
+    style(str: string) {
+        return this.attr("style", str);
     }
 
     // ---- various adders ----
@@ -161,13 +186,13 @@ export class DomWriter {
     }
 
     add(type : ElementType, classes="", content="") {
-        let el = document.createElement(type)
+        let el = document.createElement(type);
         el.innerText = content;
         el.className = classes;
         return this.append(el);
     }
 
-    AddLink(ref="#", inner="link", classes = "") {
+    addLink(ref="#", inner="link", classes = "") {
         let el = document.createElement("a");
         el.href = ref;
         el.className = classes;
@@ -175,13 +200,13 @@ export class DomWriter {
         return this.append(el);
     }
 
-    AddDiv(classes = "") {
+    addDiv(classes = "") {
         let el = document.createElement("div");
         el.className = classes;
         return this.append(el);
     }
 
-    AddH1(inner : string, classes = "") {
+    addH1(inner : string, classes = "") {
         let el = document.createElement("h1");
         el.innerText = inner;
         el.className = classes;
@@ -201,6 +226,25 @@ export class DomWriter {
         let text = document.createTextNode(message);
         el.appendChild(text);
         return this.append(el);
+    }
+
+    addButton(classes = "", callback: (...any: any) => void)  {
+        this.add("button", classes);
+        this.cursor.addEventListener("click", callback);
+        return this;
+    }
+
+    addComponentButton(name="button", classes : string = "", callback: (...any: any) => void)  {
+        this.addDiv("control").add("button", "control-button");
+        this.innerText = name;
+        this.cursor.addEventListener("click", callback);
+        this.up().add("p", "control-text");
+        return this;
+    }
+
+    addBoostrapIcon(icon: string) {
+        this.add('i', `bi bi-${icon}`);
+        return this;
     }
 }
 

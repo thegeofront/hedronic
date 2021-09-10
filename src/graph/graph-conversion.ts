@@ -238,7 +238,7 @@ export function makeOperationsGlobal(catalogue: Catalogue, namespace="GEON") {
     let space = {};
     Object.defineProperty(window, namespace, { value: space, configurable: true});
 
-    for (let op of catalogue.operations) {
+    for (let op of catalogue.allOperations()) {
         Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
     }
 }

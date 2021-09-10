@@ -17,6 +17,8 @@ import { Operation } from "../graph/operation";
 import { Cable, CableState } from "../graph/cable";
 import { IO } from "../util/io";
 import { NodesModule } from "../operations/module";
+import { Menu } from "../ui/menu";
+import { dom } from "../util/dom-writer";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -45,6 +47,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
+        public menu: Menu,
 
         public catalogue: Catalogue,
         ) {}
@@ -63,8 +66,9 @@ export class NodesCanvas {
 
         const catalogue = Catalogue.newDefault();
         const panel = NodesSidePanel.new(ui);
+        const menu = Menu.new(ui, catalogue);
 
-        return new NodesCanvas(ctx, panel, camera, state, graph, catalogue);
+        return new NodesCanvas(ctx, panel, camera, state, graph, menu, catalogue);
     }
 
     start() {
@@ -86,7 +90,7 @@ export class NodesCanvas {
         this.testGraph();
 
         // publish catalogue and ui 
-        this.publish();
+        this.ui();
     }
 
     setupLoadSave() {
@@ -140,14 +144,15 @@ export class NodesCanvas {
         for (let name of std) {
             let path = `geon-modules/${name}.js`;
             let lib = await IO.importLibrary(path);
-            let mod = NodesModule.fromJsObject(name, path, lib);
+            let mod = NodesModule.fromJsObject(name, path, lib, this.catalogue);
             this.catalogue.addModule(mod);
         }
-        this.publish();
+        this.ui();
     }
 
     async testGraph() {
         await this.loadModules();
+        this.menu.fillCategories(this.catalogue);
         let js = `
         function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
         ) {
@@ -230,12 +235,13 @@ export class NodesCanvas {
         // @ts-ignore;
         let graphOp = Operation.new(GRAPH);
         this.catalogue.operations.push(graphOp);
-        this.publish();
+        this.ui();
     }
 
-    publish() {
+    ui() {
         
         // hook up UI 
+        this.menu.renderNav();
         this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
         makeOperationsGlobal(this.catalogue);
     }
