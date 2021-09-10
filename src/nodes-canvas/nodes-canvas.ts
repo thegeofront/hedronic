@@ -140,7 +140,7 @@ export class NodesCanvas {
         this.graph.calculate();
     }
 
-    async loadModules(std=["bool", "math"]) {
+    async loadModules(std=["boolean", "math"]) {
         for (let name of std) {
             let path = `geon-modules/${name}.js`;
             let lib = await IO.importLibrary(path);
@@ -156,9 +156,9 @@ export class NodesCanvas {
         let js = `
         function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
         ) {
-            let [b] = bool.NOT(a) /* "x": 8 | "y": 0 */;
-            let [d] = bool.OR(a, c) /* "x": 8 | "y": 1 */;
-            let [e] = bool.AND(b, d) /* "x": 11 | "y": 0 */;
+            let [b] = boolean.NOT(a) /* "x": 8 | "y": 0 */;
+            let [d] = boolean.OR(a, c) /* "x": 8 | "y": 1 */;
+            let [e] = boolean.AND(b, d) /* "x": 11 | "y": 0 */;
             return [e /* "widget": "lamp" | "x": 14 | "y": -1 */];
         }
         `;
@@ -170,62 +170,6 @@ export class NodesCanvas {
         return;
     }
 
-    // defineGraphTheHardWay() {
-        
-    //     let INPUT = this.catalogue.widgets[0];
-    //     let OUTPUT = this.catalogue.widgets[2];
-    //     let AND = this.catalogue.operations[0];
-    //     let OR = this.catalogue.operations[1];
-    //     let NOT = this.catalogue.operations[2];
-
-    //     this.graph = NodesGraph.new();
-        
-    //     // generate nodes
-    //     let i1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(5,0), INPUT.clone()));
-    //     let i2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(3,3), INPUT.clone()));
-
-    //     let not = this.graph.addNode(GeonNode.new(Vector2.new(10,0), NOT));
-    //     let or = this.graph.addNode(GeonNode.new(Vector2.new(10,2), OR));
-    //     let and = this.graph.addNode(GeonNode.new(Vector2.new(15,0), AND));
-
-    //     // let or2 = this.graph.addNode(GeonNode.new(Vector2.new(10,5), OR));
-    //     // let and2 = this.graph.addNode(GeonNode.new(Vector2.new(10,8), AND));
-
-        
-    //     let o1 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,0), OUTPUT.clone()));
-    //     // let o2 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,5), OUTPUT.clone()));
-    //     // let o3 = this.graph.addNode(GeonNode.newWidget(Vector2.new(20,8), OUTPUT.clone()));
-
-    //     // press a button 
-    //     (this.graph.getNode(i1)?.core as Widget).state = true; 
-
-    //     // generate cables
-    //     this.graph.addCableBetween(i1, 0, not, 0);
-    //     this.graph.addCableBetween(i1, 0, or, 0);
-    //     this.graph.addCableBetween(i2, 0, or, 1);
-
-    //     // this.graph.addCableBetween(i1, 0, or2, 0);
-    //     // this.graph.addCableBetween(i2, 0, or2, 1);
-
-    //     // this.graph.addCableBetween(i1, 0, and2, 0);
-    //     // this.graph.addCableBetween(i2, 0, and2, 1);
-
-    //     this.graph.addCableBetween(or, 0, and, 1);
-    //     this.graph.addCableBetween(not, 0, and, 0);
-
-    //     this.graph.addCableBetween(and, 0, o1, 0);
-    //     // this.graph.addCableBetween(or2, 0, o2, 0);
-    //     // this.graph.addCableBetween(and2, 0, o3, 0);
-
-    //     let GRAPH = graphToFunction(this.graph, "GRAPH", "GEON");
-        
-    //     // @ts-ignore;
-    //     let graphOp = Operation.new(GRAPH);
-        
-    //     this.catalogue.operations.push(graphOp);
-    //     this.graph.calculate();
-    // }
-
     // TODO make this nicer...
     collapseCounter = 1;
     collapseGraphToOperation() {
@@ -234,7 +178,7 @@ export class NodesCanvas {
         
         // @ts-ignore;
         let graphOp = Operation.new(GRAPH);
-        this.catalogue.addModule(NodesModule.fromLists("graphs", [graphOp], [], this.catalogue));
+        this.catalogue.addModule(NodesModule.new("graphs", [graphOp], [], this.catalogue));
         this.ui();
     }
 

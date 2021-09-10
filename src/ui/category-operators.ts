@@ -14,7 +14,7 @@ export class MenuContentOperations implements MenuContent {
     }
     
     render(dom: DomWriter): void {
-        renderCores(dom, this.mod.getAll(), this.mod.getAllWidgets(), this.mod.select.bind(this.mod));
+        renderCores(dom, this.mod.operations, this.mod.widgets, this.mod.select.bind(this.mod));
     }
 }
 

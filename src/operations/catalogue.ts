@@ -50,7 +50,7 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = NodesModule.fromLists("widgets", [], widgets, cat);
+        let widMod = NodesModule.new("widgets", [], widgets, cat);
         cat.addModule(widMod);
         return cat;
     }
