@@ -10,7 +10,7 @@ export class NodesSidePanel {
     private constructor(private ui: UI) {
 
     }
-
+    
     public static new(context: HTMLDivElement) : NodesSidePanel {
 
         let ui: UI = UI.new(context);
