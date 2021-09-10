@@ -45,7 +45,7 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
 
     let trySpawnNode = (name: string, type: CoreType, x: number, y: number, lib = "GEON", state?: State) => {
         // TODO: catalogue.name == lib;
-        if (catalogue.trySelect(name, type)) {
+        if (catalogue.trySelect(lib, name, type)) {
             let node = catalogue.spawn(Vector2.new(x, y))!;
             if (type == CoreType.Widget) {
                 // @ts-ignore
@@ -55,6 +55,7 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
             catalogue.deselect();
             return key;
         }
+        console.warn({name, type, lib}, "is undefined!!");
         return undefined;
     }
 
@@ -83,7 +84,7 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
         let json = commentToJson(l.comment);
         let state = stringToState(json.state);
         console.log("state", state);
-        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "GEON", state)!;
+        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "widgets", state)!;
         createCable(name, nodeKey, 0);
     }
 
@@ -95,6 +96,7 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
         let json = commentToJson(l.comment);
         // console.log({rest, json});
         let call = extractCallFunctionElements(rest)!;
+        console.log(call.lib)
         let nodeKey = trySpawnNode(call.name, CoreType.Operation, json.x, json.y, call.lib)!;
 
         for (let j = 0 ; j < call.outputs.length; j++) {
@@ -112,7 +114,7 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
         if (!l) continue;
         let name = l.rest;
         let json = commentToJson(l.comment);
-        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y)!;
+        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "widgets")!;
         hookupCable(name, nodeKey, 0);
     }
   
@@ -174,7 +176,7 @@ function extractDeclareFunctionElements(str: string) {
 /**
  * Convert the calculation done by this graph to plain JS
  */
-export function graphToFunction(graph: NodesGraph, name: string, namespace: string) {
+export function graphToFunction(graph: NodesGraph, name: string) {
 
     console.log("rendering html...")
     
@@ -205,7 +207,7 @@ export function graphToFunction(graph: NodesGraph, name: string, namespace: stri
         if (node.operation) { // A | operation 
             let inputs = toEasyNames(node.outputs()).join(", ");
             let outputs = toEasyNames(node.inputs()).join(", ");
-            let str = `let [${inputs}] = ${namespace}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
+            let str = `let [${inputs}] = ${node.operation.namespace}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
             for (let str of toEasyNames(node.outputs())) {
@@ -238,7 +240,7 @@ export function makeOperationsGlobal(catalogue: Catalogue, namespace="GEON") {
     let space = {};
     Object.defineProperty(window, namespace, { value: space, configurable: true});
 
-    for (let op of catalogue.allOperations()) {
-        Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
-    }
+    // for (let op of catalogue.allOperations()) {
+    //     Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
+    // }
 }

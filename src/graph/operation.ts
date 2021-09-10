@@ -22,13 +22,14 @@ export class Operation {
         public readonly func: FN,
         public readonly name: string,
         public readonly inputs: number, 
-        public readonly outputs: number) {}
+        public readonly outputs: number,
+        public readonly namespace: string) {}
 
-    static new(func: FN) {
+    static new(func: FN, namespace: string) {
         let inCount = Operation.countInputs(func);
         let outCount = Operation.countOutputs(func);
         let name = func.name;
-        return new Operation(func, name, inCount, outCount);
+        return new Operation(func, name, inCount, outCount, namespace);
     }
 
     run(...args: State[]) {

@@ -130,7 +130,7 @@ export class NodesCanvas {
     }
 
     onCopy() : string {
-        return this.graph.toJs("GRAPH", "GEON").toString();
+        return this.graph.toJs("GRAPH").toString();
     }
 
     onPaste(js: string) {
@@ -156,9 +156,9 @@ export class NodesCanvas {
         let js = `
         function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
         ) {
-            let [b] = GEON.NOT(a) /* "x": 8 | "y": 0 */;
-            let [d] = GEON.OR(a, c) /* "x": 8 | "y": 1 */;
-            let [e] = GEON.AND(b, d) /* "x": 11 | "y": 0 */;
+            let [b] = bool.NOT(a) /* "x": 8 | "y": 0 */;
+            let [d] = bool.OR(a, c) /* "x": 8 | "y": 1 */;
+            let [e] = bool.AND(b, d) /* "x": 11 | "y": 0 */;
             return [e /* "widget": "lamp" | "x": 14 | "y": -1 */];
         }
         `;
@@ -229,12 +229,12 @@ export class NodesCanvas {
     // TODO make this nicer...
     collapseCounter = 1;
     collapseGraphToOperation() {
-        let GRAPH = this.graph.toJs("GRAPH" + this.collapseCounter, "GEON");
+        let GRAPH = this.graph.toJs("GRAPH" + this.collapseCounter);
         this.collapseCounter += 1;
         
         // @ts-ignore;
         let graphOp = Operation.new(GRAPH);
-        this.catalogue.operations.push(graphOp);
+        this.catalogue.addModule(NodesModule.fromLists("graphs", [graphOp], [], this.catalogue));
         this.ui();
     }
 
@@ -242,7 +242,7 @@ export class NodesCanvas {
         
         // hook up UI 
         this.menu.renderNav();
-        this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
+        // this.panel.renderCatalogue(this.catalogue, this.onSidePanelButtonPressed.bind(this));
         makeOperationsGlobal(this.catalogue);
     }
 
@@ -572,7 +572,8 @@ export class NodesCanvas {
         
     onSidePanelButtonPressed(idx: number, type: CoreType) {
 
-        this.catalogue.select(idx, type);
+        // THIS NEEDS TO BE HOOKED UP AGAIN
+        // this.catalogue.select(idx, type);
         this.deselect();
         // we must focus on the canvas after interacting with the html UI.
         // NOTE: this is another reason why we might want to hack HTML instead of this ctx canvas approach...

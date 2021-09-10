@@ -37,8 +37,8 @@ export class NodesGraph {
         }
     }
 
-    toJs(name: string, namespace: string) {
-        return graphToFunction(this, name, namespace);
+    toJs(name: string) {
+        return graphToFunction(this, name);
     }
 
     // ---- True Graph Business 

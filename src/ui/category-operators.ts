@@ -14,9 +14,8 @@ export class MenuContentOperations implements MenuContent {
     }
     
     render(dom: DomWriter): void {
-        renderCores(dom, this.mod.getAll(), [], this.mod.select.bind(this.mod));
+        renderCores(dom, this.mod.getAll(), this.mod.getAllWidgets(), this.mod.select.bind(this.mod));
     }
-
 }
 
 
@@ -34,10 +33,11 @@ function renderCores(d: DomWriter, ops: Operation[], wid: Widget[], onPress: (op
 
     // gizmo's
     for (let i = 0 ; i < wid.length; i++) {
-        let div = d.addButton("create-gizmo-button-wrapper", () => {
-            onPress(ops[i].name, CoreType.Widget);
+        d.addDiv("create-gizmo-button-wrapper");
+        d.addButton("button", () => {
+            onPress(wid[i].name, CoreType.Widget);
         }).addText(wid[i].name);
-        d.up();
+        d.up().up().up();
     }   
     d.up();
     return d;

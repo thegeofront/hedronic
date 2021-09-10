@@ -23,6 +23,16 @@ export class NodesModule {
         return ops;
     }
 
+    getAllWidgets() {
+        let wids = new Array<Widget>();
+        
+        let keys = this.widgets.keys();
+        for (let i = 0 ; i < this.widgets.size; i++) {
+            wids[i] = this.widgets.get(keys.next().value)!;
+        }
+        return wids;
+    }
+
     select(key: string, type: CoreType) {
         console.log(`select name: ${key} type: ${type}`);
         let core;
@@ -38,6 +48,20 @@ export class NodesModule {
         return new NodesModule(name, operations, widgets, catalogue);
     }
 
+    static fromLists(name: string, operations: Operation[], widgets: Widget[], catalogue: Catalogue) {
+
+        let opMap = new Map();
+        for(let op of operations) {
+            opMap.set(op.name, op);
+        }
+
+        let widMap = new Map();
+        for(let wid of widgets) {
+            widMap.set(wid.name, wid);
+        }
+        return new NodesModule(name, opMap, widMap, catalogue);
+    }
+
     /**
      * extract the object. If it contains defined functions, fill it
      */
@@ -47,7 +71,7 @@ export class NodesModule {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = Operation.new(f);
+                let op = Operation.new(f, name);
                 ops.set(op.name, op);
             }
         }

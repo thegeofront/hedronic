@@ -50,8 +50,9 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = new NodesModule("widgets", new Map(), wmap, cat);
-        return Catalogue.new();
+        let widMod = NodesModule.fromLists("widgets", [], widgets, cat);
+        cat.addModule(widMod);
+        return cat;
     }
 
     allOperations() {
@@ -59,7 +60,12 @@ export class Catalogue {
     }
 
     trySelect(lib: string, key: string, type: CoreType) {
-        this.modules.get(lib)?.select(key, type);
+        let mod = this.modules.get(lib);
+        if (!mod) {
+            throw new Error(`no module is called: ${lib}`);
+        }
+        mod.select(key, type);
+        return this.selected;
     }
 
     selectCore(core: Operation | Widget | undefined) {
