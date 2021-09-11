@@ -6,12 +6,18 @@ export const enum SocketSide { Input=-1, Body=0, Output=1, Widget=1000};
 export class Socket {
     
     private constructor(
-        public readonly node: string, 
-        public readonly idx: SocketIdx,
-        public readonly side: SocketSide) {}
+        public node: string, 
+        public idx: SocketIdx,
+        public side: SocketSide) {}
  
     static new(node: string, idx: SocketIdx) {
         return new Socket(node, idx, Socket.getSide(idx));
+    }
+
+    cloneFrom(other: Socket) {
+        this.node = other.node;
+        this.idx = other.idx;
+        this.side = other.side;
     }
 
     static fromNode(node: string, normalIndex: number, side: SocketSide) {

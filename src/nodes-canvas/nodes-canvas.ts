@@ -7,7 +7,6 @@ import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
 import { Random } from "../../../engine/src/math/random";
-import { NodesSidePanel } from "./nodes-ui";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
@@ -46,7 +45,6 @@ export class NodesCanvas {
 
     private constructor(
         private readonly ctx: CTX,
-        private readonly panel: NodesSidePanel,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
@@ -69,10 +67,9 @@ export class NodesCanvas {
         const graph = NodesGraph.new();
 
         const catalogue = Catalogue.newFromStd();
-        const panel = NodesSidePanel.new(ui);
         const menu = Menu.new(ui, catalogue, htmlCanvas);
 
-        return new NodesCanvas(ctx, panel, camera, state, graph, menu, catalogue, stdPath);
+        return new NodesCanvas(ctx, camera, state, graph, menu, catalogue, stdPath);
     }
 
     async start() {
@@ -398,8 +395,11 @@ export class NodesCanvas {
     }
 
     select(s: Socket) {
-        if (!this.tryGetSelectedSocket(s.node)) {
+        let ex = this.tryGetSelectedSocket(s.node);
+        if (!ex) {
             this.selectedSockets.push(s);
+        } else {
+            ex.cloneFrom(s);
         }
     }
  
@@ -482,7 +482,8 @@ export class NodesCanvas {
                 return;
             } else {
                 // we clicked on a socket! 
-                if (this.tryGetSelectedSocket(socket.node)) {
+                let sock = this.tryGetSelectedSocket(socket.node)
+                if (sock) {
                     // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
                 } else if (!this.input.IsKeyDown("shift")) {
                     this.deselect();

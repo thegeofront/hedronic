@@ -71,7 +71,7 @@ export class Menu {
                     d.up()
                 }
                 d.up();
-                d.addDiv("category-panel col-6")
+                d.addDiv("container category-panel col-6").style("height: max-content;")
                 d.up();
             d.up()
         d.up();
