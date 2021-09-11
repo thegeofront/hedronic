@@ -1,6 +1,8 @@
 #nodes-panel {
     position: absolute;
-    /* padding-left: 10px; */
+    height: 100vh;
+    display: flex;
+    align-items: center;
 }
 
 #nodes-panel button {

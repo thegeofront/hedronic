@@ -2,7 +2,7 @@
 // purpose: wrapper for dealing with the 'whole of nodes'
 
 import { CtxCamera } from "../ctx/ctx-camera";
-import { Domain2, Graph, InputState, MultiLine, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
+import { Domain2, Graph, InputState, MultiLine, MultiVector2, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
 import { resizeCanvas } from "../ctx/ctx-helpers";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
@@ -24,7 +24,7 @@ import { dom } from "../util/dom-writer";
 export type CTX = CanvasRenderingContext2D; 
 
 /**
- * Represents the entire body of nodes.
+ * Represents the entire canvas of nodes.
  * - Controls what happens with the nodes (creation / selection / deletion)
  * - Draws the nodes
  */
@@ -40,6 +40,9 @@ export class NodesCanvas {
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
     private mgpHover = Vector2.new(); // mouse grid point hover
+
+    // used to box select
+    private boxStart: Vector2 | undefined;
 
     private constructor(
         private readonly ctx: CTX,
@@ -242,7 +245,8 @@ export class NodesCanvas {
 
         // refresh when placing new operation / node
         if (this.catalogue.selected) {
-            this.requestRedraw();
+
+            // this.requestRedraw();
         }
 
         this.input.postUpdate();
@@ -308,8 +312,13 @@ export class NodesCanvas {
             }
         }
 
-        // draw selection 
-
+        // draw selection box
+        if (this.boxStart) {
+            let a = this.toWorld(this.boxStart);
+            let b = this.toWorld(this.mgpHover);
+            ctx.fillStyle = "#ffffff44"
+            ctx.fillRect(a.x, a.y, b.x - a.x, b.y - a.y);
+        }
 
         // draw node if we are placing a new node
         if (this.catalogue.selected) {
@@ -423,6 +432,30 @@ export class NodesCanvas {
 
     }
 
+    startBox(gp: Vector2) {
+        this.boxStart = gp.clone();
+    }
+
+    stopBox() {
+        if (!this.boxStart!) {
+            return;
+        }
+
+        // if a node falls in the box space, select it
+        let a = this.boxStart;
+        let b = this.mgpHover;
+        let box = Domain2.fromBounds(a.x, b.x, a.y, b.y);
+        for (let [key, node] of this.graph.nodes) {
+            
+            if (box.includesEx(node.position)) {
+                console.log(node.position, "is included");
+                this.select(Socket.new(key, 0));
+            }
+        }
+        // reset the box
+        this.boxStart = undefined;
+    }
+
     // ------ Events
 
     onMouseDown(gp: Vector2) {
@@ -441,25 +474,27 @@ export class NodesCanvas {
             // we clicked at some spot. try to select something 
             let socket = this.trySelect(gp);
             if (!socket) {
-                // nothing happend
+                // we clicked an empty spot: deselect and draw a box
                 this.deselect();
+                this.startBox(gp);
                 return;
-            }
+            } else {
+                // we clicked on a socket! 
+                if (this.tryGetSelectedSocket(socket.node)) {
+                    // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
+                } else if (!this.input.IsKeyDown("shift")) {
+                    this.deselect();
+                }
 
-            // we clicked on a socket! 
-            if (!this.input.IsKeyDown("shift")) {
-                this.deselect();
+                this.select(socket);
+                if (socket?.side == SocketSide.Widget) {
+                    // we just clicked a widget! let the widget figure out what to do
+                    (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
+                } 
             }
-            this.select(socket);
-            if (socket?.side == SocketSide.Widget) {
-                // we just clicked a widget! let the widget figure out what to do
-                (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
-            } 
         } 
 
         this.requestRedraw();
-        // this.graph.addNode(GeonNode.new(g, this.catalogue.ops[value]));
-        
     }
 
     onMouseUp(gp: Vector2) {
@@ -482,8 +517,10 @@ export class NodesCanvas {
         }
 
         // reset
+        this.stopBox();
         this.mgpStart = undefined;
         this.mgpEnd = undefined;
+        this.requestRedraw();
     }
 
     /**
