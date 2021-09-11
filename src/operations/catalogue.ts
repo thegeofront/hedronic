@@ -35,7 +35,7 @@ export class Catalogue {
         return new Catalogue(new Map());
     }
 
-    static newDefault() {
+    static newFromStd() {
         
         let widgets: Widget[] = [
             ButtonWidget.new(false),
@@ -50,7 +50,7 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = NodesModule.new("widgets", [], widgets, cat);
+        let widMod = NodesModule.new("widgets", "lightning-charge-fill", "", [], widgets, cat);
         cat.addModule(widMod);
         return cat;
     }

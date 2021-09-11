@@ -51,11 +51,12 @@ export class NodesCanvas {
         private readonly input: InputState,
         public graph: NodesGraph,
         public menu: Menu,
-
+        
         public catalogue: Catalogue,
+        public stdPath: string,
         ) {}
 
-    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement) {
+    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, stdPath: string) {
 
         const ctx = htmlCanvas.getContext('2d');
         if (!ctx || ctx == null) {
@@ -67,14 +68,14 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
 
-        const catalogue = Catalogue.newDefault();
+        const catalogue = Catalogue.newFromStd();
         const panel = NodesSidePanel.new(ui);
         const menu = Menu.new(ui, catalogue, htmlCanvas);
 
-        return new NodesCanvas(ctx, panel, camera, state, graph, menu, catalogue);
+        return new NodesCanvas(ctx, panel, camera, state, graph, menu, catalogue, stdPath);
     }
 
-    start() {
+    async start() {
 
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
@@ -90,6 +91,7 @@ export class NodesCanvas {
         this.setupCopyPaste();
 
         // DEBUG add a standard graph
+        await this.loadModules(this.stdPath);
         this.testGraph();
 
         // publish catalogue and ui 
@@ -143,25 +145,26 @@ export class NodesCanvas {
         this.graph.calculate();
     }
 
-    async loadModules(std=["boolean", "math"]) {
-        for (let name of std) {
-            let path = `geon-modules/${name}.js`;
-            let lib = await IO.importLibrary(path);
-            let mod = NodesModule.fromJsObject(name, path, lib, this.catalogue);
+    async loadModules(stdPath: string) {
+
+        // TODO move this to Catalogue, its catalogue's responsibility to manage modules
+        let json = await IO.fetchJson(stdPath);
+        for (let config of json.std) {
+            let lib = await IO.importLibrary(config.path);
+            let mod = NodesModule.fromJsObject(config.name, config.icon, config.fullPath, config.path, lib, this.catalogue);
             this.catalogue.addModule(mod);
         }
         this.ui();
+        this.menu.updateCategories(this.catalogue);
     }
 
     async testGraph() {
-        await this.loadModules();
-        this.menu.updateCategories(this.catalogue);
         let js = `
         function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
         ) {
-            let [b] = boolean.NOT(a) /* "x": 8 | "y": 0 */;
-            let [d] = boolean.OR(a, c) /* "x": 8 | "y": 1 */;
-            let [e] = boolean.AND(b, d) /* "x": 11 | "y": 0 */;
+            let [b] = bool.NOT(a) /* "x": 8 | "y": 0 */;
+            let [d] = bool.OR(a, c) /* "x": 8 | "y": 1 */;
+            let [e] = bool.AND(b, d) /* "x": 11 | "y": 0 */;
             return [e /* "widget": "lamp" | "x": 14 | "y": -1 */];
         }
         `;
@@ -184,7 +187,7 @@ export class NodesCanvas {
         if (this.catalogue.modules.has("graphs")) {
             this.catalogue.modules.get("graphs")!.operations.push(graph);
         } else {
-            this.catalogue.addModule(NodesModule.new("graphs", [graph], [], this.catalogue));
+            this.catalogue.addModule(NodesModule.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }
@@ -448,7 +451,6 @@ export class NodesCanvas {
         for (let [key, node] of this.graph.nodes) {
             
             if (box.includesEx(node.position)) {
-                console.log(node.position, "is included");
                 this.select(Socket.new(key, 0));
             }
         }

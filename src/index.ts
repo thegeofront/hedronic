@@ -1,15 +1,17 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
 import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
+import { IO } from "./util/io";
 
-function main() {
+async function main() {
 
     // get references of all items on the canvas
     const html_canvas = document.getElementById("nodes-canvas")! as HTMLCanvasElement;
     const ui = document.getElementById("nodes-panel") as HTMLDivElement;
-    
+    const stdPath = "./geon-modules/std.json";
+
     // nodes
-    const nodes = NodesCanvas.new(html_canvas, ui)!;
+    const nodes = NodesCanvas.new(html_canvas, ui, stdPath)!;
     nodes.start();
 
     // timing

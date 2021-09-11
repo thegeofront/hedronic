@@ -10,6 +10,8 @@ import { Catalogue, CoreType } from "./catalogue";
 export class NodesModule {
     constructor(
         public name: string,
+        public icon: string,
+        public fullPath: string,
         public operations: Operation[],
         public widgets: Widget[],
         public catalogue: Catalogue,
@@ -26,14 +28,14 @@ export class NodesModule {
         this.catalogue.selectCore(core);
     }
 
-    static new(name: string, operations: Operation[], widgets: Widget[], catalogue: Catalogue) {
-        return new NodesModule(name, operations, widgets, catalogue);
+    static new(name: string, icon: string, fullPath: string, operations: Operation[], widgets: Widget[], catalogue: Catalogue) {
+        return new NodesModule(name, icon, fullPath, operations, widgets, catalogue);
     }
 
     /**
      * extract the object. If it contains defined functions, fill it
      */
-    static fromJsObject(name: string, origin: string, obj: any, catalogue: Catalogue) {
+    static fromJsObject(name: string, icon: string, fullPath: string, origin: string, obj: any, catalogue: Catalogue) {
         let ops = [];
         for (const key in obj) {
             let value = obj[key];
@@ -43,7 +45,7 @@ export class NodesModule {
                 ops.push(op);
             }
         }
-        return new NodesModule(name, ops, [], catalogue);
+        return new NodesModule(name, icon, fullPath, ops, [], catalogue);
     }
 
     /**

@@ -26,6 +26,11 @@ export class IO {
         return await response.text();  
     }
 
+    static async fetchJson(path: string) {
+        const response = await fetch(location + path);
+        return await response.json();  
+    }
+
     static promptDownload(file: string, text: string) {
         var element = document.createElement("a");
         element.setAttribute("href", "data:text/plain;charset=utf-8, " + encodeURIComponent(text));

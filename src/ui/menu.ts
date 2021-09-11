@@ -39,7 +39,7 @@ export class Menu {
                 ops.push(op);
             }
             // let content = renderCores(ops, [], onPress)
-            items.push(new MenuCategory(mod.name, "box", false, new MenuContentModule(catalogue, mod, this.canvas)));
+            items.push(new MenuCategory(mod.name, mod.icon, false, new MenuContentModule(catalogue, mod, this.canvas)));
         }
 
         items.push(new MenuCategory("settings", "gear", true, new MenuContentSettings()));
