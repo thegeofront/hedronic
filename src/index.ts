@@ -8,7 +8,7 @@ async function main() {
     // get references of all items on the canvas
     const html_canvas = document.getElementById("nodes-canvas")! as HTMLCanvasElement;
     const ui = document.getElementById("nodes-panel") as HTMLDivElement;
-    const stdPath = "./geon-modules/std.json";
+    const stdPath = "./std.json";
 
     // nodes
     const nodes = NodesCanvas.new(html_canvas, ui, stdPath)!;
