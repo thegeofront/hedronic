@@ -1,7 +1,9 @@
 export function mapToJson<K, V>(map: Map<K, V>, toJson: (obj: V) => any) {
     let json = Object();
     for (let [k, v] of map) {
-        json[k] = toJson(v);
+
+        // @ts-ignore
+        json[k.toString()] = toJson(v);
     }
     return json;
 }

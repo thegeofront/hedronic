@@ -73,9 +73,8 @@ export class Widget {
 
     toJson() {
         return {
-            type: "widget",
-            namespace: "widget",
-            name: "string",
+            namespace: "widgets",
+            name: this.name,
             state: this.state,
         }
     }

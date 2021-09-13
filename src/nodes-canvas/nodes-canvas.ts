@@ -125,6 +125,12 @@ export class NodesCanvas {
 
         }, false);
 
+        document.addEventListener("cut", (event) => {
+            console.log("cutting...");
+            event.clipboardData!.setData("text/plain", this.onCut());
+            event.preventDefault();
+        })
+
         // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
         document.addEventListener("copy", (event) => {
             console.log("copying...");
@@ -147,6 +153,13 @@ export class NodesCanvas {
         });
     }
 
+    // Ctrl + X
+    onCut() : string {
+        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        console.log(str);
+        return str; 
+    }
+
     // Ctrl + C
     onCopy() : string {
         // let str = this.graph.toJs("GRAPH").toString();
@@ -156,8 +169,8 @@ export class NodesCanvas {
     }
 
     // Ctrl + V
-    onPaste(js: string) {
-        let graph = NodesGraph.fromJs(js, this.catalogue)!;
+    onPaste(str: string) {
+        let graph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
         this.graph.addGraph(graph);
 
         // select all new nodes

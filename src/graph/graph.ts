@@ -38,13 +38,28 @@ export class NodesGraph {
         }
     }
 
-    static fromJson(json: any) : NodesGraph {
+    static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph {
+        let json = JSON.parse(str);
+        console.log(json);
         let graph = NodesGraph.new();
-        // for (let jsonNode of json.nodes) {
-        //     graph.addNode(GeonNode.fromJson(jsonNode));
-        // }
+        for (let key in json.nodes) {
+            let value = json.nodes[key];
+            let lib = value.core.namespace;
+            let name = value.core.name;
+            let type = value.type;
 
-        for (let v of json.cables) {
+            let core = catalogue.trySelect(lib, name, type);
+            if (!core) {
+                console.error(`core: ${lib}, ${name}, ${type} cannot be created. The library is probably missing from this project`);
+            } else {
+                graph.nodes.set(key, GeonNode.fromJson(value, core));
+            }
+        }
+
+        catalogue.deselect();
+
+        for (let key in json.cables) {
+            graph.cables.set(key, Cable.fromJson(json.cables[key]))
         }
 
         return graph;
@@ -184,9 +199,15 @@ export class NodesGraph {
 
     addGraph(other: NodesGraph) { 
         for (let [key, value] of other.nodes) {
+            if (this.nodes.has(key)) {
+                console.warn("double!!");
+            } 
             this.nodes.set(key, value);
         }
         for (let [key, value] of other.cables) {
+            if (this.cables.has(key)) {
+                console.warn("double!!");
+            } 
             this.cables.set(key, value);
         }
         return this;

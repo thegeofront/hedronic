@@ -3,7 +3,8 @@ import { Operation } from "./operation";
 import { Widget } from "./widget";
 import { SocketIdx } from "./socket";
 import { State } from "./state";
-import { mapToJson } from "../util/serializable";
+import { mapFromJson, mapToJson } from "../util/serializable";
+import { CoreType } from "../operations/catalogue";
 
 export class GeonNode {
 
@@ -12,16 +13,21 @@ export class GeonNode {
         public core: Operation | Widget, // slot for an operation
         public connections: Map<SocketIdx, string>) {}
 
-    static new(gridpos: Vector2, core: Operation | Widget) {
+    static new(gridpos: Vector2, core: Operation | Widget, map = new Map()) {
         if (core instanceof Widget) {
             core = core.clone(); // Widgets contain unique state, while Operations are prototypes 
         }
-        return new GeonNode(gridpos, core, new Map());
+        return new GeonNode(gridpos, core, map);
     }
 
-    // static fromJson(json: any) : GeonNode {
-    //     return GeonNode.new(Vector2.new(0,0), )
-    // }
+    static fromJson(data: any, core: Operation | Widget) {
+
+        let con = new Map<SocketIdx, string>();
+        for (let k in data.connections) {
+            con.set(Number(k), data.connections[k]);
+        }
+        return GeonNode.new(Vector2.new(data.position.x, data.position.y), core, con);
+    }
 
     static toJson(node: GeonNode) {
         return {
@@ -29,6 +35,7 @@ export class GeonNode {
                 x: node.position.x,
                 y: node.position.y,
             },
+            type: node.type,
             core: node.core.toJson(),
             connections: mapToJson(node.connections, (s: string) => {return s })
         }
@@ -39,7 +46,7 @@ export class GeonNode {
     }
 
     log() {
-        console.log(`chip at ${this.position}`);
+        console.log(`node at ${this.position}`);
         // this.operation.name
         console.log("operation: ")
         this.core.log();
@@ -61,6 +68,14 @@ export class GeonNode {
             return this.core as Widget
         } else {
             return undefined;
+        }
+    }
+
+    get type() : CoreType {
+        if (this.core instanceof Widget) {
+            return CoreType.Widget
+        } else {
+            return CoreType.Operation
         }
     }
 

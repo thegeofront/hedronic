@@ -45,7 +45,6 @@ export class Operation {
 
     toJson() {
         return {
-            type: "operation",
             namespace: this.namespace,
             name: this.name,
         }
