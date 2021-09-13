@@ -158,6 +158,20 @@ export class NodesGraph {
         return L;
     }
 
+    clone() {
+
+    }
+
+    addGraph(other: NodesGraph) { 
+        for (let [key, value] of other.nodes) {
+            this.nodes.set(key, value);
+        }
+        for (let [key, value] of other.cables) {
+            this.cables.set(key, value);
+        }
+        return this;
+    }
+
     // ---- Node Management 
 
     addNode(node: GeonNode) {

@@ -2,14 +2,14 @@
 - we need a way to auto-include libraries
 
 # Frontier 1 : Canvas
-[ ] shift select
-[ ] Box Select & move
+[X] shift select
+[X] Box Select & move
 [ ] Copy paste parts 
 
 
 
 # Frontier 2 : UI
-[ ] create a formal ui that is not too overwhelming
+[X] create a formal ui that is not too overwhelming
 [ ] save button
 [ ] load button
 

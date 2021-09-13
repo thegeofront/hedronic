@@ -18,6 +18,7 @@ import { IO } from "../util/io";
 import { NodesModule } from "../operations/module";
 import { Menu } from "../ui/menu";
 import { dom } from "../util/dom-writer";
+import { GraphDecoupler } from "../actions/graph-decoupler";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -48,6 +49,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
+        public graphDecoupler: GraphDecoupler,
         public menu: Menu,
         
         public catalogue: Catalogue,
@@ -65,11 +67,13 @@ export class NodesCanvas {
         const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
+        const graphDecoupler = GraphDecoupler.new(graph);
 
         const catalogue = Catalogue.newFromStd();
+        
         const menu = Menu.new(ui, catalogue, htmlCanvas);
 
-        return new NodesCanvas(ctx, camera, state, graph, menu, catalogue, stdPath);
+        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
     }
 
     async start() {
@@ -84,8 +88,7 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-        this.setupLoadSave();
-        this.setupCopyPaste();
+        this.setupControlKeyActions();
 
         // DEBUG add a standard graph
         await this.loadModules(this.stdPath);
@@ -95,29 +98,43 @@ export class NodesCanvas {
         this.ui();
     }
 
-    setupLoadSave() {
+    /**
+     * This also defines wrapper functions to handle the Dom Events 
+     * TODO: add an overview of all avaiable Ctrl + [abc] shortcuts, make this scalable, etc...
+     */
+    setupControlKeyActions() {
+
         document.addEventListener("keydown", (e) => {
-            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-              e.preventDefault();
+            
+            let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
+            let shift = e.shiftKey;      
+            var key = e.key.toLowerCase(); 
 
-              let text = this.onCopy();
-              IO.promptDownload("save.js", text);
-            }
-          }, false);
-    }
+            if (control && key == 'a')
+                this.onSelectAll();
+            else if (control && key == 's')
+                this.onSave();
+            else if (control && key == 'z') 
+                this.onUndo();
+            else if (control && key == 'y') 
+                this.onRedo();
+            else    
+                return;
+            
+            e.preventDefault();
 
-    setupCopyPaste() {
+        }, false);
+
+        // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
         document.addEventListener("copy", (event) => {
-            console.log("copy | save");
+            console.log("copying...");
             event.clipboardData!.setData("text/plain", this.onCopy());
             event.preventDefault();
         })
 
         document.addEventListener("paste", (event) => {
-            console.log("paste | load");
-
+            console.log("paste");
             console.log(event);
-
             if (!event.clipboardData) {
                 // alert("I would like a string, please");
                 return;
@@ -126,20 +143,57 @@ export class NodesCanvas {
                 // alert("I would like just one string, please");
                 return;
             }
-
             event.clipboardData.items[0].getAsString(this.onPaste.bind(this));
         });
     }
 
+    // Ctrl + C
     onCopy() : string {
         return this.graph.toJs("GRAPH").toString();
     }
 
+    // Ctrl + V
     onPaste(js: string) {
         let graph = NodesGraph.fromJs(js, this.catalogue)!;
-        this.graph = graph;
-        this.requestRedraw();
+        this.graph.addGraph(graph);
+
+        // select all new nodes
+        this.deselect();
+        for (let [k, v] of graph.nodes) {
+            v.position.add(Vector2.new(1, 1));
+            this.select(Socket.new(k, 0));
+        }
+
         this.graph.calculate();
+        this.requestRedraw();
+    }
+
+    // Ctrl + S
+    onSave() {
+        console.log("saving...");
+        let text = this.onCopy();
+        IO.promptDownload("save.js", text);
+    }
+
+    // Ctrl + A
+    onSelectAll() {
+        console.log("selecting all...");
+        for (let [k,v] of this.graph.nodes) {
+            this.select(Socket.new(k, 0));
+        }
+        this.requestRedraw();
+    }
+
+    // Ctrl + Z
+    onUndo() {
+        console.log("undoing...");      
+        this.graphDecoupler.undo();
+    }
+
+    // Ctrl + Y
+    onRedo() {
+        console.log("redoing..."); 
+        this.graphDecoupler.redo();
     }
 
     async loadModules(stdPath: string) {
