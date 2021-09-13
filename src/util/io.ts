@@ -32,6 +32,9 @@ export class IO {
     }
 
     static promptSaveFile(filename: string, content: string, type="text/plain") {
+
+        // https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js maybe this is needed
+
         var element = document.createElement("a");
         element.setAttribute("href", `data:${type};charset=utf-8, ` + encodeURIComponent(content));
         element.setAttribute("download", filename);
