@@ -114,6 +114,8 @@ export class NodesCanvas {
                 this.onSelectAll();
             else if (control && key == 's')
                 this.onSave();
+            else if (control && key == 'l')
+                this.onLoad();
             else if (control && key == 'z') 
                 this.onUndo();
             else if (control && key == 'y') 
@@ -188,7 +190,15 @@ export class NodesCanvas {
     onSave() {
         console.log("saving...");
         let text = this.onCopy();
-        IO.promptDownload("save.js", text);
+        IO.promptSaveFile("save.js", text);
+    }
+
+    // Ctrl + L
+    onLoad() {
+        console.log("loading...");
+        IO.promptLoadFile((file) => {
+            console.log(file.name);
+        });
     }
 
     // Ctrl + A

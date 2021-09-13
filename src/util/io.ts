@@ -31,10 +31,28 @@ export class IO {
         return await response.json();  
     }
 
-    static promptDownload(file: string, text: string) {
+    static promptSaveFile(file: string, text: string) {
         var element = document.createElement("a");
         element.setAttribute("href", "data:text/plain;charset=utf-8, " + encodeURIComponent(text));
         element.setAttribute("download", file);
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    static promptLoadFile(fileLoader: (file: File) => void) {
+
+        // <input type="file" onchange="showFile(this)">
+        var element = document.createElement("input") as HTMLInputElement;
+        element.setAttribute("type", "file");
+        element.addEventListener("change", () => {
+            if (!element.files) {
+                return;
+            }
+            for (let file of element.files) {
+                fileLoader(file);
+            }
+        })
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
