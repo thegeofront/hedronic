@@ -31,10 +31,10 @@ export class IO {
         return await response.json();  
     }
 
-    static promptSaveFile(file: string, text: string) {
+    static promptSaveFile(filename: string, content: string, type="text/plain") {
         var element = document.createElement("a");
-        element.setAttribute("href", "data:text/plain;charset=utf-8, " + encodeURIComponent(text));
-        element.setAttribute("download", file);
+        element.setAttribute("href", `data:${type};charset=utf-8, ` + encodeURIComponent(content));
+        element.setAttribute("download", filename);
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
@@ -56,6 +56,21 @@ export class IO {
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+    }
+
+    static loadFileAsText(textFile: File, callback: (str: string | ArrayBuffer | null) => void) {
+        
+        var reader = new FileReader();
+        reader.addEventListener("load", (r)=> {
+            callback(r.target!.result);
+        });
+        reader.readAsText(textFile); // start reading the file data.
+    }
+
+    static promptLoadTextFile(callback: (str: string | ArrayBuffer | null) => void) {
+        IO.promptLoadFile((f) => {
+            IO.loadFileAsText(f, callback);
+        })
     }
 }
 

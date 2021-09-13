@@ -1,4 +1,5 @@
 import { Operation } from "../graph/operation";
+import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
 import { MenuCategory } from "./category";
@@ -10,28 +11,28 @@ export class Menu {
 
     readonly container: HTMLDivElement;
     selected: string;
-    categories: MenuCategory[];
+    categories: MenuCategory[] = [];
     canvas: HTMLCanvasElement;
 
-    constructor(container: HTMLDivElement, catalogue: Catalogue, canvas: HTMLCanvasElement) {
+    constructor(container: HTMLDivElement, canvas: HTMLCanvasElement) {
             this.container = container;
             this.selected = "";
             this.canvas = canvas;
-            this.categories = this.gererateCategories(catalogue);
     }
 
-    static new(parent: HTMLDivElement, catalogue: Catalogue, canvas: HTMLCanvasElement) {
-        return new Menu(parent, catalogue, canvas);
+    static new(parent: HTMLDivElement, canvas: HTMLCanvasElement) {
+        return new Menu(parent, canvas);
     }
 
-    updateCategories(catalogue: Catalogue) {
-        this.categories = this.gererateCategories(catalogue);
+    updateCategories(nodesCanvas: NodesCanvas) {
+        this.categories = this.gererateCategories(nodesCanvas);
         this.renderNav();
     }
 
-    gererateCategories(catalogue: Catalogue) {
+    private gererateCategories(nodesCanvas: NodesCanvas) {
         let items: MenuCategory[] = [];
-        items.push(new MenuCategory("geofront", "globe2", true, new MenuContentMain()));
+        let catalogue = nodesCanvas.catalogue;
+        items.push(new MenuCategory("geofront", "globe2", true, new MenuContentMain(nodesCanvas)));
 
         for (let mod of catalogue.modules.values()) {
             let ops: Operation[] = [];

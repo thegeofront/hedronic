@@ -71,7 +71,7 @@ export class NodesCanvas {
 
         const catalogue = Catalogue.newFromStd();
         
-        const menu = Menu.new(ui, catalogue, htmlCanvas);
+        const menu = Menu.new(ui, htmlCanvas);
 
         return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
     }
@@ -142,7 +142,6 @@ export class NodesCanvas {
 
         document.addEventListener("paste", (event) => {
             console.log("paste");
-            console.log(event);
             if (!event.clipboardData) {
                 // alert("I would like a string, please");
                 return;
@@ -155,10 +154,61 @@ export class NodesCanvas {
         });
     }
 
+    onNew() {
+        console.log("new...");
+        this.graph = NodesGraph.new();
+    }
+
+    // Ctrl + S
+    onSave() {
+        console.log("saving...");
+        let text = this.onCopy();
+        IO.promptSaveFile("graph.json", text);
+    }
+
+    // Ctrl + L
+    onLoad() {
+        console.log("loading...");
+        IO.promptLoadTextFile((str) => {
+            
+            // TODO check if valid. etc. etc. 
+            if (!str) {
+                return;
+            }
+            this.onNew();
+            this.graph = NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!; 
+            this.graph.calculate();
+            this.requestRedraw();
+        })
+    }
+
+    onLoadJs() {
+        console.log("loading from javascript...");
+        IO.promptLoadTextFile((str) => {
+            
+            // TODO check if valid. etc. etc. 
+            if (!str) {
+                return;
+            }
+            this.onNew();
+            this.graph = NodesGraph.fromJs(str.toString(), this.catalogue)!; 
+            this.graph.calculate();
+            this.requestRedraw();
+        })
+    }
+
+    onSaveJs() {
+        console.log("saving as javascript...");
+        let text = this.graph.toJs("graph").toString();
+        IO.promptSaveFile("graph.js", text, "text/js");
+    }
+
+
+
     // Ctrl + X
     onCut() : string {
+        
         let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
-        console.log(str);
         return str; 
     }
 
@@ -166,13 +216,17 @@ export class NodesCanvas {
     onCopy() : string {
         // let str = this.graph.toJs("GRAPH").toString();
         let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
-        console.log(str);
         return str; 
     }
 
     // Ctrl + V
-    onPaste(str: string) {
-        let graph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
+    onPaste(str: string, fromJs=false) {
+        let graph;
+        if (fromJs) {
+            graph = NodesGraph.fromJs(str, this.catalogue)!;
+        } else {
+            graph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
+        }
         this.graph.addGraph(graph);
 
         // select all new nodes
@@ -184,21 +238,6 @@ export class NodesCanvas {
 
         this.graph.calculate();
         this.requestRedraw();
-    }
-
-    // Ctrl + S
-    onSave() {
-        console.log("saving...");
-        let text = this.onCopy();
-        IO.promptSaveFile("save.js", text);
-    }
-
-    // Ctrl + L
-    onLoad() {
-        console.log("loading...");
-        IO.promptLoadFile((file) => {
-            console.log(file.name);
-        });
     }
 
     // Ctrl + A
@@ -232,7 +271,7 @@ export class NodesCanvas {
             this.catalogue.addModule(mod);
         }
         this.ui();
-        this.menu.updateCategories(this.catalogue);
+        this.menu.updateCategories(this);
     }
 
     async testGraph() {
@@ -272,7 +311,7 @@ export class NodesCanvas {
     ui() {
         
         // hook up UI 
-        this.menu.updateCategories(this.catalogue);
+        this.menu.updateCategories(this);
         this.menu.renderNav();
         makeOperationsGlobal(this.catalogue);
     }
