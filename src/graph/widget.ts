@@ -71,6 +71,15 @@ export class Widget {
         }
     }
 
+    toJson() {
+        return {
+            type: "widget",
+            namespace: "widget",
+            name: "string",
+            state: this.state,
+        }
+    }
+
     run() {
         
     }

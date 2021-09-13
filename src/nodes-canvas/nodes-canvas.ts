@@ -149,7 +149,10 @@ export class NodesCanvas {
 
     // Ctrl + C
     onCopy() : string {
-        return this.graph.toJs("GRAPH").toString();
+        // let str = this.graph.toJs("GRAPH").toString();
+        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        console.log(str);
+        return str; 
     }
 
     // Ctrl + V
@@ -222,8 +225,8 @@ export class NodesCanvas {
 
         let graph = NodesGraph.fromJs(js, this.catalogue)!;
         this.graph = graph;
-        this.requestRedraw();
         this.graph.calculate();
+        this.requestRedraw();
         return;
     }
 

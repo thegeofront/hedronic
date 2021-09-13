@@ -1,5 +1,6 @@
 import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
 import { Catalogue } from "../operations/catalogue";
+import { mapFromJson, mapToJson } from "../util/serializable";
 import { Cable, CableState } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
@@ -17,12 +18,12 @@ export class NodesGraph {
     constructor(
         public nodes: Map<string, GeonNode>, 
         public cables: Map<string, Cable>,
-        public widgets: Map<string, Widget>) {}
+        private widgets: Set<string>) {}
 
     static new(
         nodes = new Map<string, GeonNode>(),
         cables = new Map<string, Cable>(),
-        widgets = new Map<string, Widget>()) {
+        widgets = new Set<string>()) {
         return new NodesGraph(nodes, cables, widgets);
     }
     
@@ -34,6 +35,25 @@ export class NodesGraph {
             return NodesGraph.new();
         } else {
             return graph;
+        }
+    }
+
+    static fromJson(json: any) : NodesGraph {
+        let graph = NodesGraph.new();
+        // for (let jsonNode of json.nodes) {
+        //     graph.addNode(GeonNode.fromJson(jsonNode));
+        // }
+
+        for (let v of json.cables) {
+        }
+
+        return graph;
+    }
+
+    static toJson(graph: NodesGraph) {
+        return {
+                nodes: mapToJson(graph.nodes, GeonNode.toJson),
+                cables: mapToJson(graph.cables, Cable.toJson),
         }
     }
 
@@ -115,7 +135,7 @@ export class NodesGraph {
         let visitedCables: Set<string> = new Set<string>();
 
         // use the widgets to identify the starting point
-        for (let [key, _] of this.widgets) {
+        for (let key of this.widgets) {
             let widget = this.getNode(key)!.widget!;
             if (widget.side != WidgetSide.Input) 
                 continue; 
@@ -178,7 +198,7 @@ export class NodesGraph {
         let key = createRandomGUID();
         this.nodes.set(key, node);
         if (node.core instanceof Widget) {
-            this.widgets.set(key, node.core);
+            this.widgets.add(key);
         }
         return key;
     }

@@ -24,6 +24,14 @@ export class Socket {
         return Socket.new(node, this.normalIndexToSocketIndex(normalIndex, side));
     }
 
+    static toJson(s: Socket) {
+        return {node: s.node, index: s.idx} 
+    }
+
+    static fromJson(data: any) {
+        return Socket.new(data.node, data.index); 
+    }
+
     static normalIndexToSocketIndex(normalIndex: number, side: SocketSide) {
         if (side == SocketSide.Input) {
             return (normalIndex + 1) * -1;

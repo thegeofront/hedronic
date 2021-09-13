@@ -2,6 +2,8 @@ import { Vector2 } from "../../../engine/src/lib";
 import { Operation } from "./operation";
 import { Widget } from "./widget";
 import { SocketIdx } from "./socket";
+import { State } from "./state";
+import { mapToJson } from "../util/serializable";
 
 export class GeonNode {
 
@@ -10,15 +12,29 @@ export class GeonNode {
         public core: Operation | Widget, // slot for an operation
         public connections: Map<SocketIdx, string>) {}
 
-    static new(gridpos: Vector2, op: Operation) {
-        return new GeonNode(gridpos, op, new Map());
+    static new(gridpos: Vector2, core: Operation | Widget) {
+        if (core instanceof Widget) {
+            core = core.clone(); // Widgets contain unique state, while Operations are prototypes 
+        }
+        return new GeonNode(gridpos, core, new Map());
     }
 
-    static newWidget(gridPos: Vector2, widget: Widget) {
-        return new GeonNode(gridPos, widget, new Map())
+    // static fromJson(json: any) : GeonNode {
+    //     return GeonNode.new(Vector2.new(0,0), )
+    // }
+
+    static toJson(node: GeonNode) {
+        return {
+            position: {
+                x: node.position.x,
+                y: node.position.y,
+            },
+            core: node.core.toJson(),
+            connections: mapToJson(node.connections, (s: string) => {return s })
+        }
     }
 
-    run(...args: boolean[]) {
+    run(...args: State[]) {
         return this.core.run(...args);
     }
 
@@ -28,6 +44,7 @@ export class GeonNode {
         console.log("operation: ")
         this.core.log();
     }
+
 
     // ---- Getters
 
@@ -69,7 +86,7 @@ export class GeonNode {
         return cables;
     }
 
-    // ---- Selection
+    // ---- Selection Management
 
     getConnectorGridPosition(c: SocketIdx) {
         let gp = this.GetComponentLocalGridPosition(c); 
@@ -126,19 +143,5 @@ export class GeonNode {
             }
         }
         return undefined;
-    }
-
-    // ---- Connection
-
-    addConnection() {
-
-    }
-
-    hasConnection() {
-        
-    }
-
-    removeConnection() {
-
     }
 }

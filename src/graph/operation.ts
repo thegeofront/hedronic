@@ -43,6 +43,14 @@ export class Operation {
         console.log(`outputs: ${this.outputs}`);    
     }
 
+    toJson() {
+        return {
+            type: "operation",
+            namespace: this.namespace,
+            name: this.name,
+        }
+    }
+
     // ---- util
 
     static countInputs(operation: FN) {

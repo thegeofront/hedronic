@@ -84,10 +84,10 @@ export class Catalogue {
      * Spawn an instance of the selected node at a location 
      */
     spawn(gp: Vector2) {
-        if (this.selected instanceof Operation) {
+        if (this.selected) {
             return GeonNode.new(gp, this.selected);
-        } else if (this.selected instanceof Widget) {
-            return GeonNode.newWidget(gp, this.selected.clone());
+        } else {
+            return undefined;
         }
     }
 
