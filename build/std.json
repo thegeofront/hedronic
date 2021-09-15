@@ -4,19 +4,25 @@
             "name": "bool",
             "path": "./geon-modules/bool.js",
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/bool.js",
-            "icon": "toggles"
+            "icon": "bi-toggles"
         },
         {
             "name": "math",
             "path": "./geon-modules/math.js",
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/math.js",
-            "icon": "calculator-fill"
+            "icon": "bi-calculator-fill"
+        },
+        {
+            "name": "point-wip",
+            "path": "./geon-modules/point-wip.js",
+            "fullPath": "josfeenstra.nl/project/nodes/geon-modules/test.js",
+            "icon": "bi-bullseye"
         },
         {
             "name": "test",
             "path": "./geon-modules/test.js",
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/test.js",
-            "icon": "box"
+            "icon": "bi-box"
         }
     ]
 }

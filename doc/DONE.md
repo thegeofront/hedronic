@@ -1,3 +1,7 @@
+# `DONE.md`
+
+This is a dumping ground for TODO's which clutter the `readme.md` too much.
+
 # Phase 1
 [X] create a barebones canvas
 [X] create a pannable camera 

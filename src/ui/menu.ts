@@ -32,7 +32,7 @@ export class Menu {
     private gererateCategories(nodesCanvas: NodesCanvas) {
         let items: MenuCategory[] = [];
         let catalogue = nodesCanvas.catalogue;
-        items.push(new MenuCategory("geofront", "globe2", true, new MenuContentMain(nodesCanvas)));
+        items.push(new MenuCategory("geofront", "bi-globe2", true, new MenuContentMain(nodesCanvas)));
 
         for (let mod of catalogue.modules.values()) {
             let ops: Operation[] = [];
@@ -43,7 +43,7 @@ export class Menu {
             items.push(new MenuCategory(mod.name, mod.icon, false, new MenuContentModule(catalogue, mod, this.canvas)));
         }
 
-        items.push(new MenuCategory("settings", "gear", true, new MenuContentSettings()));
+        items.push(new MenuCategory("settings", "bi-gear", true, new MenuContentSettings()));
         return items;
     }
 

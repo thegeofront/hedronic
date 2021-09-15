@@ -79,6 +79,14 @@ export class GeonNode {
         }
     }
 
+    getHeight() {
+        if (this.type == CoreType.Widget) {
+            return this.widget!.size.y;
+        } else {
+            return Math.max(this.core.inputs, this.core.outputs);
+        }
+    }
+
     outputs() : string[] {
         let count = this.core.outputs;
         let cables: string[] = [];
@@ -127,7 +135,7 @@ export class GeonNode {
     }
 
     trySelect(gp: Vector2) : number | undefined {
-        let max = Math.max(this.core.inputs, this.core.outputs);
+        let height = this.getHeight();
         let local = gp.subbed(this.position);
 
         // check if we select the widget
@@ -139,7 +147,7 @@ export class GeonNode {
         }
 
         // see if this vector lands on an input socket, an output socket, or the body
-        if (local.y < 0 || local.y >= max) {
+        if (local.y < 0 || local.y >= height) {
             // quickly return if we dont even come close
             return undefined;
         } else if (local.x == 0) {

@@ -49,7 +49,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw body
     setStyle(ctx, style, component, 0, isWidget);
 
-    let textCenters = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, canvas.size);
+    let textCenters = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, node.getHeight(), canvas.size);
     ctx.fill();
     ctx.stroke();
 
@@ -340,11 +340,10 @@ function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh:
  * Draw the chip shape
  * returns 
  */
-function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size: number) : MultiVector2 {
-    let max = Math.max(inputs, outputs);
+function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, nodeHeight: number, size: number) : MultiVector2 {
     let part = 5;
     let step = size / part;
-    let height = max * part;
+    let height = nodeHeight * part;
     let width = 15;
 
     let cola = 2.5;
@@ -375,7 +374,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
     lineTo(0.5, colb);
 
     // draw inputs
-    for(let i = 0; i < max; i++) {
+    for(let i = 0; i < nodeHeight; i++) {
         let offset = i * 5;
         if (i < inputs) {
 
@@ -386,7 +385,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
             lineTo(offset+1  , cola);
             lineTo(offset+4  , cola);
             lineTo(offset+4.5, colb);
-            if (i != max-1)
+            if (i != nodeHeight-1)
                 lineTo(offset+5.5, colb);
         } else {
             // draw straight line
@@ -402,7 +401,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
 
     // draw outputs
     moveTo(0.5, cole);
-    for(let i = 0; i < max; i++) {
+    for(let i = 0; i < nodeHeight; i++) {
         let offset = i * 5;
         if (i < outputs) {
 
@@ -413,7 +412,7 @@ function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size
             lineTo(offset+1  , colf);
             lineTo(offset+4  , colf);
             lineTo(offset+4.5, cole);
-            if (i != max-1)
+            if (i != nodeHeight-1)
                 lineTo(offset+5.5, cole);
         } else {
             // draw straight line

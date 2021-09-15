@@ -1,6 +1,5 @@
 # ARCHITECTURE 
 
-
 | Graph | Normal Programming   |
 |-------|----------------------|        
 | Cable | Variable             | 
@@ -20,3 +19,12 @@ Maybe im gonna make the graph from top to bottom instead of from left to right.
 # Why the grid & line style?
 - Cartography inspired: The designers of metro network maps have discovered, over the years, that maps where **connectivity** is the most important information to convey, a certain abstract depiction with as many straight lines as possible is advantageous over maps with curves. Since both this flowchart and metro railway maps are essentially just depicting a graph, using this style seemed very appropriate. 
 
+
+# frontier 5: actual Geodata business 
+- how to store?
+- layers? 
+- how to do QGIS-like interactions? 
+
+
+
+> custom gizmo's: doe iets met hoe de GEON actergrond nu werkt op je website

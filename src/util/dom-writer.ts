@@ -243,7 +243,7 @@ export class DomWriter {
     }
 
     addBoostrapIcon(icon: string) {
-        this.add('i', `bi bi-${icon}`);
+        this.add('i', `bi ${icon}`);
         return this;
     }
 }

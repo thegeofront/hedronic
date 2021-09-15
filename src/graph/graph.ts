@@ -198,18 +198,25 @@ export class NodesGraph {
     }
 
     addGraph(other: NodesGraph) { 
-        for (let [key, value] of other.nodes) {
+        for (let [key, node] of other.nodes) {
             if (this.nodes.has(key)) {
                 console.warn("double!!");
+                key = createRandomGUID();
+                for (let [k, v] of node.connections) {
+                    if (k < 0) {
+                        continue;
+                    }
+                    node.connections.delete(k);
+                }   
             } 
-            this.nodes.set(key, value);
+            this.nodes.set(key, node);
         }
-        for (let [key, value] of other.cables) {
-            if (this.cables.has(key)) {
-                console.warn("double!!");
-            } 
-            this.cables.set(key, value);
-        }
+        // for (let [key, value] of other.cables) {
+        //     if (this.cables.has(key)) {
+        //         console.warn("double!!");
+        //     } 
+        //     this.cables.set(key, value);
+        // }
         return this;
     }
 
