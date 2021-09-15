@@ -5,7 +5,7 @@ import { Widget, WidgetSide } from "../graph/widget";
 import { ButtonWidget } from "../widgets/button-widget";
 import { ConsoleWidget } from "../widgets/console-widget";
 import { LampWidget } from "../widgets/lamp-widget";
-import { TextWidget } from "../widgets/text-widget";
+import { InputWidget } from "../widgets/input-widget";
 import { NodesModule } from "./module";
 import { Module } from "webpack";
 import { ImageWidget } from "../widgets/image-widget";
@@ -40,7 +40,7 @@ export class Catalogue {
         
         let widgets: Widget[] = [
             ButtonWidget.new(false),
-            TextWidget.new("hello world"),
+            InputWidget.new("hello world"),
             LampWidget.new(false),
             ConsoleWidget.new(false),
             ImageWidget.new("<image>")

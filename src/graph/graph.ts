@@ -95,12 +95,16 @@ export class NodesGraph {
             if (!cable) {
                 return;
             }
-            if (value === false || value == 0) {
+            if (value === false || value === 0) {
                 cable.state = CableState.Null;
+            } else if (value === true) {
+                cable.state = CableState.Boolean;
+            } else if (value instanceof Number) {
+                cable.state = CableState.Number;
             } else if (value instanceof Object) {
                 cable.state = CableState.Object;
             } else {
-                cable.state = CableState.Boolean;
+                cable.state = CableState.String;
             }
 
             // else if (value instanceof Number) {

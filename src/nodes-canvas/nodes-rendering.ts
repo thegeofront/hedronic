@@ -219,11 +219,11 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     } else if (state == CableState.Boolean) {
         ctx.strokeStyle = "#08FD4E";
     } else if (state == CableState.Number) {
-        ctx.strokeStyle = "#083DFD";
+        ctx.strokeStyle = "#FD08B7";
     } else if (state == CableState.String) {
         ctx.strokeStyle = "#FDC908";
     } else if (state == CableState.Object) {
-        ctx.strokeStyle = "#FD08B7";
+        ctx.strokeStyle = "#083DFD";
     } else if (state == CableState.Selected) {
         ctx.strokeStyle = "white";
     } else {

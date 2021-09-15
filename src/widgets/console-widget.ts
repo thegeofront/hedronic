@@ -2,7 +2,7 @@ import { Domain2, Vector2 } from "../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
 import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";
-import { renderTextInWidget } from "./text-widget";
+import { renderTextInWidget } from "./input-widget";
 
 export class ConsoleWidget extends Widget {
 
@@ -15,7 +15,7 @@ export class ConsoleWidget extends Widget {
     run(...args: State[]) : State[] {
         this.state = args[0];
         try {
-            this.str = JSON.stringify(this.state);
+            this.str = JSON.stringify(this.state, null, 2);
         } catch(error) {
             this.str = `<Error: Could not parse json. \nReason: ${(error as Error).message}>`
         }

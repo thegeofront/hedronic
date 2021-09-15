@@ -1,4 +1,4 @@
-export function newPoint3(x, y, z) {
+export function Point(x, y, z) {
     let res = {x,y,z};
     return [res];
 }
