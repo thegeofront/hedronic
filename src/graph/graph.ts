@@ -95,11 +95,24 @@ export class NodesGraph {
             if (!cable) {
                 return;
             }
-            if (value) {
-                cable.state = CableState.On;
+            if (value === false || value == 0) {
+                cable.state = CableState.Null;
+            } else if (value instanceof Object) {
+                cable.state = CableState.Object;
             } else {
-                cable.state = CableState.Off;
+                cable.state = CableState.Boolean;
             }
+
+            // else if (value instanceof Number) {
+            //     cable.state = CableState.Number;
+            // } else if (value instanceof String) {
+            //     cable.state = CableState.String;
+            // } else if (value instanceof Object) {
+            //     cable.state = CableState.Object;
+            // } else {
+            //     cable.state = CableState.Null;
+            // }
+     
             cache.set(key, value);
         }
 
@@ -115,8 +128,16 @@ export class NodesGraph {
                 for (let cable of node.inputs()) { // TODO multiple inputs!!
                     inputs.push(cache.get(cable)!);
                 }
+                let outputs;
+                try {
+                    outputs = node.operation.run(inputs);
+                } catch(e) {
+                    let error = e as Error;
+                    node.errorState = error.message;
+                    console.warn("NODE-ERROR: \n", node.errorState);
+                    continue;
+                }
 
-                let outputs = node.operation.run(...inputs);
                 let outCables = node.outputs();
                 if (typeof outputs !== "object") {
                     setCache(outCables[0], outputs);
@@ -131,7 +152,7 @@ export class NodesGraph {
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
                 for (let cable of node.inputs()) { // TODO multiple inputs!!
-                    node.widget!.state = cache.get(cable)!;
+                    node.widget!.run(cache.get(cable)!);
                 }
             } else {
                 throw new Error("should never happen");

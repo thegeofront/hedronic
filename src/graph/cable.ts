@@ -1,11 +1,15 @@
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { Operation } from "./operation";
 import { Socket } from "./socket";
+import { State } from "./state";
 
 export enum CableState {
-    On,
-    Off,
+    Null,
     Selected,
+    Object,
+    String,
+    Number,
+    Boolean,
 }
 
 export class Cable {
@@ -19,7 +23,7 @@ export class Cable {
         if (a.idx < b.idx) {
             return Cable.new(b, a);
         } else {
-            let c = new Cable(a, new Map(), CableState.Off);
+            let c = new Cable(a, new Map(), CableState.Null);
             c.add(b)
             return c;
         }
@@ -28,8 +32,7 @@ export class Cable {
     static fromJson(json: any) {
         let from = Socket.fromJson(json.from);
         let map = mapFromJson(json.to, Socket.fromJson);
-        let state = json.state;
-        return new Cable(from, map, state);
+        return new Cable(from, map, CableState.Null);
     }
 
     static toJson(c: Cable) {
@@ -47,6 +50,4 @@ export class Cable {
     add(s: Socket) {
         this._to.set(s.toString(), s);
     }
-
-
 }

@@ -1,2 +1,2 @@
-export type State = boolean | string | number;
+export type State = Boolean | String | Number | Object;
 

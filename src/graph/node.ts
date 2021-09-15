@@ -8,10 +8,13 @@ import { CoreType } from "../operations/catalogue";
 
 export class GeonNode {
 
+    errorState = "";
+
     private constructor(
         public position: Vector2, 
         public core: Operation | Widget, // slot for an operation
-        public connections: Map<SocketIdx, string>) {}
+        public connections: Map<SocketIdx, string>) {
+        }
 
     static new(gridpos: Vector2, core: Operation | Widget, map = new Map()) {
         if (core instanceof Widget) {
@@ -41,8 +44,8 @@ export class GeonNode {
         }
     }
 
-    run(...args: State[]) {
-        return this.core.run(...args);
+    run(args: State[]) {
+        return this.core.run(args);
     }
 
     log() {
@@ -51,7 +54,6 @@ export class GeonNode {
         console.log("operation: ")
         this.core.log();
     }
-
 
     // ---- Getters
 

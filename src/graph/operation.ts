@@ -32,8 +32,8 @@ export class Operation {
         return new Operation(func, name, inCount, outCount, namespace);
     }
 
-    run(...args: State[]) {
-        return this.func(...args); 
+    run(args: State[]) {
+        return this.func(...args);
     }
 
     log() {

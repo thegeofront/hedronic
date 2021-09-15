@@ -79,8 +79,9 @@ export class Widget {
         }
     }
 
-    run() {
-        
+    run(...args: State[]) : State[] {
+        // something
+        return [];
     }
 
     log() {

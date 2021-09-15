@@ -48,6 +48,11 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 
     // draw body
     setStyle(ctx, style, component, 0, isWidget);
+    
+    if (node.errorState != "") {
+        ctx.fillStyle = "orangered"
+    }
+    
 
     let textCenters = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, node.getHeight(), canvas.size);
     ctx.fill();
@@ -209,9 +214,16 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     }
 
     line = filletPolyline(line, fillet);
-
-    if (state == CableState.On) {
-        ctx.strokeStyle = "#33dd33";
+    if (state == CableState.Null) {
+        ctx.strokeStyle = "#222222";
+    } else if (state == CableState.Boolean) {
+        ctx.strokeStyle = "#08FD4E";
+    } else if (state == CableState.Number) {
+        ctx.strokeStyle = "#083DFD";
+    } else if (state == CableState.String) {
+        ctx.strokeStyle = "#FDC908";
+    } else if (state == CableState.Object) {
+        ctx.strokeStyle = "#FD08B7";
     } else if (state == CableState.Selected) {
         ctx.strokeStyle = "white";
     } else {

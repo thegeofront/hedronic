@@ -21,7 +21,7 @@ export class TextWidget extends Widget {
     onClick(canvas: NodesCanvas) {
         let text = prompt("Input:", "data");
         if (text) {
-            this.state = text;
+            this.state = JSON.parse(text);
         }
         canvas.deselect();
         canvas.graph.calculate();
