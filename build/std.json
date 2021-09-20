@@ -4,7 +4,7 @@
             "name": "bool",
             "path": "./geon-modules/bool.js",
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/bool.js",
-            "icon": "bi-toggles"
+            "icon": "bi-toggle-on"
         },
         {
             "name": "math",

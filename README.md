@@ -195,3 +195,4 @@ In phase 2 is done!
 # Notes
 > NOTE: we probably need a completely unrelated name for this whole project, like `scorpi`
 
+> why not just use a type property in the json
