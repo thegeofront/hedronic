@@ -1,12 +1,13 @@
 # DESIGN 
 
+- Augmented coding!
+
 ## Fundamendal design idea of the flowchart: 
 - functional programming ❤️ wasm containerization 
   - Oversight: Closed reasoning of individual components 
-  - Error handling 
   - Memory savety
   - Serves as debugging environment
-    - You can throw an error on one component 
+    - Error handling : You can throw an error on one component 
     - You can visually indicate a component is busy calculating, or fetching some data online.
     - This is VERY helpful when integrating tools from multiple sources, you can easily reason about misbehaving components
   
