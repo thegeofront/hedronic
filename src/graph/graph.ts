@@ -1,4 +1,4 @@
-import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
+import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/Random";
 import { Catalogue } from "../operations/catalogue";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { Cable, CableState } from "./cable";

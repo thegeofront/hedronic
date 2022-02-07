@@ -31,7 +31,7 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 35;
+    private _size = 45;
     get size() { return this._size; }
 
     // selection state 

@@ -1,6 +1,6 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
-import { Context, MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
+import { MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
 import { CTX, NodesCanvas } from "./nodes-canvas";

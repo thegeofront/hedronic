@@ -1,7 +1,7 @@
 // author:  Jos Feenstra
 // note:    since this graph->js business is very specific and weird, I thought it best to split it away from `graph.ts`
 
-import { GraphDebugShader, Vector2 } from "../../../engine/src/lib";
+import { Vector2 } from "../../../engine/src/lib";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { Casing, Permutator } from "../util/permutator";
 import { NodesGraph } from "./graph";

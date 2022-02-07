@@ -68,6 +68,18 @@ The Utilities are still not completely done:
   - To preview or delete  
 - [ ] cable hooks / beads for cable management / preview.
 
+- [ ] right click menu
+  - [ ] on empty
+  - [ ] on cable
+  - [ ] on block
+  - [ ] on selection
+
+- [ ] NO UI idea: lets try to do everything with drop downs, and context-aware menu's. 
+    - One settings page, nothing more
+
+- [ ] Paint / Visualize area 
+
+- [ ] CSS based rendering
 
 <br>
 
@@ -115,6 +127,7 @@ At this point (phase 2.5) we have already overcome a number of challenging techn
 
 - [ ] how to loop on the canvas?
 - [ ] is a `[x,y,z]` point the same as a [2.0,3.0,4.0] list? how 'low-level' will we make our data?
+- [ ] Loop Box
 
 > Lists and looping, these are things visual programming languages struggle to do / represent. every VPL does this a little differently. We require a solution which:
 > Enables us to preview in-between results clearly
