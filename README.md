@@ -18,7 +18,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 <br>
 
-##  Phase 1 - Flowchart ✔️
+## 1 Flowchart ✔️
 - Create a web 'logic gate' app. Could be used stand-alone to teach about how to build a computer from first principles (AND, OR, XOR)
   - Inspired by https://www.youtube.com/watch?v=QZwneRb-zqA
 - This will get the gui basics down
@@ -34,7 +34,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 <br>
 
-##  Phase 2 - Utility ✔️
+## 2 Utility ✔️
 - [✔️] Figure out how to `save` and `load` the flowchart to a `flowchart.json`.
 - [✔️] Figure out how to `save` the flowchart to `flowchart.js`.
 - [✔️] Figure out how to write a normal javascript function, and `publish` it like a flowchart component.
@@ -77,7 +77,7 @@ The Utilities are still not completely done:
 - [ ] NO UI idea: lets try to do everything with drop downs, and context-aware menu's. 
     - One settings page, nothing more
 
-- [ ] Paint / Visualize area 
+- [ ] Paint / Visualize window
 
 - [ ] CSS based rendering
 
@@ -94,10 +94,7 @@ Immediately going to geometry seems a step too far from pretty much only boolean
 - [ ] json creation / input
 - [ ] json traversal
 - [ ] json editing 
-
 - [ ] type checking / conversion ?
-- [ ] WFS / WMS loading 
-  - Async operations? 
 
 <br>
 
