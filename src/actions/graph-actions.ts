@@ -24,6 +24,7 @@ export class GraphMoveNodeAction implements GraphAction {
     undo(graph: NodesGraph) {
         for (let node of this.nodes) {
             console.log(node);
+            console.log(graph);
             let geonNode = graph.nodes.get(node);
             console.log(geonNode);
             geonNode!.position.sub(this.delta);

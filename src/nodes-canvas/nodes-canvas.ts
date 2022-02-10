@@ -31,7 +31,7 @@ export type CTX = CanvasRenderingContext2D;
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 45;
+    private _size = 35;
     get size() { return this._size; }
 
     // selection state 
@@ -171,9 +171,22 @@ export class NodesCanvas {
 
     onNew() {
         console.log("new...");
-        this.graph = NodesGraph.new();
+        this.reset();
     }
 
+
+    reset(graph= NodesGraph.new()) {
+        this.graph = graph;
+        this.graphHistory.reset(graph);
+        this.graph.calculate();
+        this.requestRedraw();
+    }
+
+
+    onChange() {
+        this.graph.calculate();
+        this.requestRedraw();
+    }
 
     // Ctrl + S
     onSave() {
@@ -192,10 +205,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.onNew();
-            this.graph = NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!; 
-            this.graph.calculate();
-            this.requestRedraw();
+            this.reset(NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!);
         })
     }
 
@@ -208,10 +218,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.onNew();
-            this.graph = NodesGraph.fromJs(str.toString(), this.catalogue)!; 
-            this.graph.calculate();
-            this.requestRedraw();
+            this.reset(NodesGraph.fromJs(str.toString(), this.catalogue)!);
         })
     }
 
@@ -241,17 +248,17 @@ export class NodesCanvas {
 
     // Ctrl + V
     onPaste(str: string, fromJs=false) {
-        let graph;
+        let newGraph;
         if (fromJs) {
-            graph = NodesGraph.fromJs(str, this.catalogue)!;
+            newGraph = NodesGraph.fromJs(str, this.catalogue)!;
         } else {
-            graph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
+            newGraph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
         }
-        this.graph.addGraph(graph);
+        this.graph.addGraph(newGraph);
 
         // select all new nodes
         this.deselect();
-        for (let [k, v] of graph.nodes) {
+        for (let [k, v] of newGraph.nodes) {
             v.position.add(Vector2.new(1, 1));
             this.select(Socket.new(k, 0));
         }
@@ -264,7 +271,7 @@ export class NodesCanvas {
     // Ctrl + A
     onSelectAll() {
         console.log("selecting all...");
-        for (let [k,v] of this.graph.nodes) {
+        for (let [k,_] of this.graph.nodes) {
             this.select(Socket.new(k, 0));
         }
         this.requestRedraw();
@@ -273,13 +280,15 @@ export class NodesCanvas {
     // Ctrl + Z
     onUndo() {
         console.log("undoing...");      
-        this.graphHistory.undo();
+        let change = this.graphHistory.undo(); 
+        if (change) this.onChange();
     }
 
     // Ctrl + Y
     onRedo() {
         console.log("redoing..."); 
-        this.graphHistory.redo();
+        let change = this.graphHistory.redo(); 
+        if (change) this.onChange();
     }
 
     async loadModules(stdPath: string) {
@@ -306,10 +315,7 @@ export class NodesCanvas {
         }
         `;
 
-        let graph = NodesGraph.fromJs(js, this.catalogue)!;
-        this.graph = graph;
-        this.graph.calculate();
-        this.requestRedraw();
+        this.reset(NodesGraph.fromJs(js, this.catalogue)!);
         return;
     }
 
@@ -664,6 +670,7 @@ export class NodesCanvas {
         if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd)) {
             // record history
             let keys = this.selectedSockets.map(s => s.node);
+            console.log(keys);
             this.graphHistory.recordMove(keys, this.mgpEnd.subbed(this.mgpStart));
         }
 

@@ -29,7 +29,7 @@ import { WidgetSide } from "./widget";
  * - turn inputs into input variables
  * - turn output into output variables
  */
-export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undefined {
+export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.new()) : NodesGraph | undefined {
     
     // NOTE: this procedure also heavely relies on regex. Not foolproof!
     let lines = js.split('\n');
@@ -40,7 +40,6 @@ export function jsToGraph(js: string, catalogue: Catalogue) : NodesGraph | undef
         return undefined;
     }
 
-    let graph = NodesGraph.new();
     let cableStarts = new Map<String, Socket>();
 
     let trySpawnNode = (name: string, type: CoreType, x: number, y: number, lib = "GEON", state?: State) => {

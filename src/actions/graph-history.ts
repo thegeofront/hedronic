@@ -17,6 +17,12 @@ export class GraphHistory {
         return new GraphHistory(graph, []);
     }
 
+    reset(graph: NodesGraph) {
+        this.graph = graph;
+        this.actions = [];
+        this.redoActions = []; 
+    }
+
     doMove(nodes: string[], delta: Vector2) {
         return this.do(new GraphMoveNodeAction(nodes, delta));
     }
@@ -27,6 +33,7 @@ export class GraphHistory {
      * We want to update the position continuously, but only store one 'move' event, without actually moving the object
      */
     recordMove(nodes: string[], delta: Vector2) {
+        this.redoActions = [];
         return this.record(new GraphMoveNodeAction(nodes, delta))
     }
 
