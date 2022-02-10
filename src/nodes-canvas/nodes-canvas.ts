@@ -302,7 +302,7 @@ export class NodesCanvas {
             let [b] = bool.NOT(a) /* "x": 8 | "y": -1 */;
             let [d] = bool.OR(a, c) /* "x": 8 | "y": 2 */;
             let [e] = bool.AND(b, d) /* "x": 13 | "y": 0 */;
-            return [e /* "widget": "lamp" | "x": 18 | "y": -1 */];
+            return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
         }
         `;
 

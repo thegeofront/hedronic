@@ -76,9 +76,13 @@ export class StyleSet {
     vecs.push(coord(height / 2, width / 2)); // the center of the thing
 
     // we will repeat this step twice
-    let drawBlockShape = (height: number, numItems: number, ga: number, gb: number, gc: number, gd: number, ge: number) => {
+    let drawBlockShape = (height: number, numItems: number, ga: number, gb: number, gc: number, gd: number, ge: number, gf: number) => {
         if (numItems == 0) return;
-        moveTo(0.5, gb);
+        moveTo(1.0, gf);
+        lineTo(1.0, ge);
+        lineTo(0.5, gd);
+        lineTo(0.5, gb);        
+        
         for(let i = 0; i < height; i++) {
             let offset = i * 5;
             if (i < numItems) {
@@ -99,16 +103,15 @@ export class StyleSet {
         }
 
         // bottom line 
+        lineTo(height-0.5, (gd + gb) / 2);
         lineTo(height-0.5, gd);
         lineTo(height-1.0, ge);
-        lineTo(1.0, ge);
-        lineTo(0.5, gd);
-        lineTo(0.5, gb);
+        lineTo(height-1.0, gf);
         // lineTo(0.5, gb);
     }
 
-    drawBlockShape(height, numInputs,  is, is + fillet, is + fillet, ie - fillet, ie);
-    drawBlockShape(height, numOutputs, os, os - fillet, os - fillet, oe + fillet, oe);
+    drawBlockShape(height, numInputs,  is, is + fillet, is + fillet, ie - fillet, ie, oe);
+    drawBlockShape(height, numOutputs, os, os - fillet, os - fillet, oe + fillet, oe, ie);
 
     let polygon = MultiVector2.fromList([
         coord(fillet*2, ie),
@@ -131,19 +134,20 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     ctx.beginPath();
 
     // draw body
-    setStyle(ctx, style, component, 0, isWidget);
+    setStyle(ctx, style, component, 0, false); // isWidget
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
     let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, node.getHeight(), canvas.size);
     ctx.fill();
-    // ctx.stroke();
-    
+    ctx.stroke();
+    ctx.fill();
     // draw thing in the middle
     ctx.beginPath();
     drawPolygon(ctx, centerPolygon);
-    // ctx.fillStyle = "black";
+    ctx.fillStyle = "#222211";
     ctx.fill();
+    // ctx.stroke();
 
     // draw operation text
     if (!isWidget) {
@@ -341,7 +345,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
 function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#cecdd1";
     ctx.fillStyle = "#222222";
     ctx.lineWidth = 1;
 
