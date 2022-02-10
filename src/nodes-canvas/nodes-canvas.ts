@@ -10,7 +10,7 @@ import { Random } from "../../../engine/src/math/random";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
-import { Widget } from "../graph/widget";
+import { Widget, WidgetSide } from "../graph/widget";
 import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
 import { Operation } from "../graph/operation";
 import { Cable, CableState } from "../graph/cable";
@@ -630,36 +630,47 @@ export class NodesCanvas {
         
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graph.addNode(this.catalogue.spawn(gp)!);
+            this.graphHistory.doAddNode(this.catalogue.selected!, gp);
+            // this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();
             }
-        } else {
-            // we clicked at some spot. try to select something 
-            let socket = this.trySelect(gp);
-            if (!socket) {
-                // we clicked an empty spot: deselect and draw a box
-                this.deselect();
-                this.startBox(gp);
-                return;
-            } else {
-                // we clicked on a socket! 
-                let sock = this.tryGetSelectedSocket(socket.node)
-                if (sock) {
-                    // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
-                } else if (!this.input.IsKeyDown("shift")) {
-                    this.deselect();
-                }
-
-                this.select(socket);
-                if (socket?.side == SocketSide.Widget) {
-                    // we just clicked a widget! let the widget figure out what to do
-                    (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
-                } 
-            }
+            this.requestRedraw();
+            return;
+        } 
+        
+        // we clicked at some spot. try to select something 
+        let socket = this.trySelect(gp);
+        if (!socket) {
+            // we clicked an empty spot: deselect and draw a box
+            this.deselect();
+            this.startBox(gp);
+            this.requestRedraw();
+            return;
         } 
 
-        this.requestRedraw();
+        // we clicked on a socket!
+        let shift = this.input.IsKeyDown("shift") 
+        let sock = this.tryGetSelectedSocket(socket.node)
+        if (shift) {
+            console.log("shift");
+            socket.idx = 0;
+        }
+        if (sock) {
+            // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
+            console.log("when")
+        } else if (!shift) {
+            this.deselect();
+        }
+
+        this.select(socket);
+        if (socket?.side == SocketSide.Widget) {
+            // we just clicked a widget! let the widget figure out what to do
+            (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
+        } 
+        
+        this.requestRedraw();   
+        return;   
     }
 
 
@@ -667,7 +678,8 @@ export class NodesCanvas {
         // console.log("up!");
 
         // possibly create a move event for undo-ing
-        if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd)) {
+        if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd) && 
+            this.selectedSockets.length > 0 && (this.selectedSockets.length > 1 || this.selectedSockets[0].side == SocketSide.Body)) {
             // record history
             let keys = this.selectedSockets.map(s => s.node);
             console.log(keys);
@@ -688,7 +700,7 @@ export class NodesCanvas {
                 // new line means recalculation
                 this.graph.calculate();
             }
-        }
+        } 
 
         // reset
         this.stopBox();
@@ -705,7 +717,13 @@ export class NodesCanvas {
         // console.log("move!");
 
         // hovering
-        this.hover(this.trySelect(gp));
+        let s = this.trySelect(gp);
+        if (s && this.input.IsKeyDown("shift")) {
+            console.log("shift when move");
+            s.idx = 0;
+            console.log(s);
+        }
+        this.hover(s);
         this.requestRedraw();
 
         // if mouse is down and we are selecting a node 

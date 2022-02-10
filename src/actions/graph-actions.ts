@@ -1,13 +1,15 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
+import { Operation } from "../graph/operation";
+import { Widget } from "../graph/widget";
 
 export abstract class GraphAction {
     abstract do(graph: NodesGraph): void;
     abstract undo(graph: NodesGraph): void;
 }
 
-export class GraphMoveNodeAction implements GraphAction {
+export class GraphMoveNodesAction implements GraphAction {
     
     constructor(
         public nodes: string[],
@@ -23,27 +25,26 @@ export class GraphMoveNodeAction implements GraphAction {
     
     undo(graph: NodesGraph) {
         for (let node of this.nodes) {
-            console.log(node);
-            console.log(graph);
             let geonNode = graph.nodes.get(node);
-            console.log(geonNode);
             geonNode!.position.sub(this.delta);
         }
     }
 }
 
-export class GraphAddNodeAction implements GraphAction {
+export class GraphAddNodesAction implements GraphAction {
     
     constructor(
-        public node: GeonNode,
+        public blueprint: Operation | Widget,
+        public gridPosition: Vector2,
+        private key = "",
     ) {}
 
     do(graph: NodesGraph) {
-        
+        this.key = graph.addNode(GeonNode.new(this.gridPosition, this.blueprint));
     }
     
     undo(graph: NodesGraph) {
-        // graph.deleteNode()
+        graph.deleteNode(this.key);
     }
 }
 
@@ -62,11 +63,13 @@ export class GraphAddCableAction implements GraphAction {
     }
 }
 
-export class GraphDeleteNodeAction implements GraphAction {
+export class GraphDeleteNodesAction implements GraphAction {
     
+    private blueprint!: Operation | Widget;
+    private gridPosition!: Vector2;
+
     constructor(
-        public from: Vector2,
-        public to: Vector2,
+        private key: string,
     ) {}
 
     do(graph: NodesGraph) {

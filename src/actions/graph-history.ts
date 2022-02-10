@@ -1,6 +1,9 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { NodesGraph } from "../graph/graph";
-import { GraphAction, GraphMoveNodeAction } from "./graph-actions";
+import { GeonNode } from "../graph/node";
+import { Operation } from "../graph/operation";
+import { Widget } from "../graph/widget";
+import { GraphAction, GraphAddNodesAction, GraphMoveNodesAction } from "./graph-actions";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
@@ -23,8 +26,16 @@ export class GraphHistory {
         this.redoActions = []; 
     }
 
+    doAddNode(selected: Operation | Widget, gp: Vector2) {
+        return this.do(new GraphAddNodesAction(selected, gp))
+    }
+
+    doDeleteNode() {
+
+    }
+
     doMove(nodes: string[], delta: Vector2) {
-        return this.do(new GraphMoveNodeAction(nodes, delta));
+        return this.do(new GraphMoveNodesAction(nodes, delta));
     }
 
     /**
@@ -34,7 +45,7 @@ export class GraphHistory {
      */
     recordMove(nodes: string[], delta: Vector2) {
         this.redoActions = [];
-        return this.record(new GraphMoveNodeAction(nodes, delta))
+        return this.record(new GraphMoveNodesAction(nodes, delta))
     }
 
     /**

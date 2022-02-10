@@ -7,17 +7,19 @@ export class Socket {
     
     private constructor(
         public node: string, 
-        public idx: SocketIdx,
-        public side: SocketSide) {}
+        public idx: SocketIdx) {}
  
+    get side() {
+        return Socket.getSide(this.idx);
+    }
+
     static new(node: string, idx: SocketIdx) {
-        return new Socket(node, idx, Socket.getSide(idx));
+        return new Socket(node, idx, );
     }
 
     cloneFrom(other: Socket) {
         this.node = other.node;
         this.idx = other.idx;
-        this.side = other.side;
     }
 
     static fromNode(node: string, normalIndex: number, side: SocketSide) {
