@@ -39,6 +39,9 @@ export class NodesGraph {
     }
 
     static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph {
+
+        console.log("from json...")
+
         let json = JSON.parse(str);
         console.log(json);
         let graph = NodesGraph.new();

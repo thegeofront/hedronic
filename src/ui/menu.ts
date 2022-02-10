@@ -57,9 +57,9 @@ export class Menu {
         d.to(this.container);
         d.clear();
        
-        d.addDiv("container px-0 mx-0").style("width: 200px;'")
+        d.addDiv("container px-0 mx-0").style("width: 60px;'")
             d.addDiv("row")
-                d.addDiv("col-6 d-flex flex-column");
+                d.addDiv("col-12 p-0 d-flex flex-column");
                 for(let cat of this.categories) {
                     let f = (ev: Event) => {
                         this.select(cat.name)

@@ -1,0 +1,167 @@
+{
+    "nodes": {
+      "da033043-1456-4cda-9714-562b05481427": {
+        "position": {
+          "x": 4,
+          "y": -1
+        },
+        "type": 1,
+        "core": {
+          "namespace": "widgets",
+          "name": "button",
+          "state": true
+        },
+        "connections": {
+          "1": "58b5854d-c906-43bd-91dc-85412c77887b"
+        }
+      },
+      "71e469b2-7efd-40b5-a834-097e773549b0": {
+        "position": {
+          "x": 4,
+          "y": 1
+        },
+        "type": 1,
+        "core": {
+          "namespace": "widgets",
+          "name": "button",
+          "state": false
+        },
+        "connections": {
+          "1": "62a51743-a453-465c-a9e8-4de71b6406c3"
+        }
+      },
+      "5e53e416-ec1c-49b5-89ff-647ce5dc74fd": {
+        "position": {
+          "x": 8,
+          "y": 0
+        },
+        "type": 0,
+        "core": {
+          "namespace": "bool",
+          "name": "NOT"
+        },
+        "connections": {
+          "1": "aa88befa-4c6c-4f0f-a350-375393a4df21",
+          "-1": "58b5854d-c906-43bd-91dc-85412c77887b"
+        }
+      },
+      "1daf4c4f-3507-44be-8ac4-9deee9ae5171": {
+        "position": {
+          "x": 8,
+          "y": 1
+        },
+        "type": 0,
+        "core": {
+          "namespace": "bool",
+          "name": "OR"
+        },
+        "connections": {
+          "1": "73b97e63-56c6-48e0-8aa6-bedf778c21f5",
+          "-1": "58b5854d-c906-43bd-91dc-85412c77887b",
+          "-2": "62a51743-a453-465c-a9e8-4de71b6406c3"
+        }
+      },
+      "05843a4f-4763-4ffc-9cb7-bc7ec457d5ea": {
+        "position": {
+          "x": 11,
+          "y": 0
+        },
+        "type": 0,
+        "core": {
+          "namespace": "bool",
+          "name": "AND"
+        },
+        "connections": {
+          "1": "8ccaee56-3e90-4b86-bd8b-3f5fb650f01b",
+          "-1": "aa88befa-4c6c-4f0f-a350-375393a4df21",
+          "-2": "73b97e63-56c6-48e0-8aa6-bedf778c21f5"
+        }
+      },
+      "f01c7889-f88e-4372-bd5f-ae19a71c4918": {
+        "position": {
+          "x": 14,
+          "y": -1
+        },
+        "type": 1,
+        "core": {
+          "namespace": "widgets",
+          "name": "lamp",
+          "state": false
+        },
+        "connections": {
+          "-1": "8ccaee56-3e90-4b86-bd8b-3f5fb650f01b"
+        }
+      }
+    },
+    "cables": {
+      "58b5854d-c906-43bd-91dc-85412c77887b": {
+        "from": {
+          "node": "da033043-1456-4cda-9714-562b05481427",
+          "index": 1
+        },
+        "to": {
+          "idx: -1 | node: 5e53e416-ec1c-49b5-89ff-647ce5dc74fd": {
+            "node": "5e53e416-ec1c-49b5-89ff-647ce5dc74fd",
+            "index": -1
+          },
+          "idx: -1 | node: 1daf4c4f-3507-44be-8ac4-9deee9ae5171": {
+            "node": "1daf4c4f-3507-44be-8ac4-9deee9ae5171",
+            "index": -1
+          }
+        },
+        "state": 5
+      },
+      "62a51743-a453-465c-a9e8-4de71b6406c3": {
+        "from": {
+          "node": "71e469b2-7efd-40b5-a834-097e773549b0",
+          "index": 1
+        },
+        "to": {
+          "idx: -2 | node: 1daf4c4f-3507-44be-8ac4-9deee9ae5171": {
+            "node": "1daf4c4f-3507-44be-8ac4-9deee9ae5171",
+            "index": -2
+          }
+        },
+        "state": 0
+      },
+      "aa88befa-4c6c-4f0f-a350-375393a4df21": {
+        "from": {
+          "node": "5e53e416-ec1c-49b5-89ff-647ce5dc74fd",
+          "index": 1
+        },
+        "to": {
+          "idx: -1 | node: 05843a4f-4763-4ffc-9cb7-bc7ec457d5ea": {
+            "node": "05843a4f-4763-4ffc-9cb7-bc7ec457d5ea",
+            "index": -1
+          }
+        },
+        "state": 0
+      },
+      "73b97e63-56c6-48e0-8aa6-bedf778c21f5": {
+        "from": {
+          "node": "1daf4c4f-3507-44be-8ac4-9deee9ae5171",
+          "index": 1
+        },
+        "to": {
+          "idx: -2 | node: 05843a4f-4763-4ffc-9cb7-bc7ec457d5ea": {
+            "node": "05843a4f-4763-4ffc-9cb7-bc7ec457d5ea",
+            "index": -2
+          }
+        },
+        "state": 5
+      },
+      "8ccaee56-3e90-4b86-bd8b-3f5fb650f01b": {
+        "from": {
+          "node": "05843a4f-4763-4ffc-9cb7-bc7ec457d5ea",
+          "index": 1
+        },
+        "to": {
+          "idx: -1 | node: f01c7889-f88e-4372-bd5f-ae19a71c4918": {
+            "node": "f01c7889-f88e-4372-bd5f-ae19a71c4918",
+            "index": -1
+          }
+        },
+        "state": 0
+      }
+    }
+  }

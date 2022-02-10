@@ -44,6 +44,7 @@ export class NodesCanvas {
     // used to box select
     private boxStart: Vector2 | undefined;
 
+
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
@@ -55,6 +56,7 @@ export class NodesCanvas {
         public catalogue: Catalogue,
         public stdPath: string,
         ) {}
+
 
     static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, stdPath: string) {
 
@@ -76,10 +78,14 @@ export class NodesCanvas {
         return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
     }
 
+
     async start() {
 
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
+        this.ctx.canvas.addEventListener("blur", () => console.log("blur")); 
+        this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
+        this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
         this.onResize();
         this.camera.onMouseDown = (worldPos: Vector2) => {
             this.onMouseDown(this.toGrid(worldPos));
@@ -98,6 +104,7 @@ export class NodesCanvas {
         this.ui();
     }
 
+    
     /**
      * This also defines wrapper functions to handle the Dom Events 
      * TODO: add an overview of all avaiable Ctrl + [abc] shortcuts, make this scalable, etc...
@@ -120,6 +127,8 @@ export class NodesCanvas {
                 this.onUndo();
             else if (control && key == 'y') 
                 this.onRedo();
+            else if (control && key == ' ') 
+                this.test();
             else    
                 return;
             
@@ -127,37 +136,44 @@ export class NodesCanvas {
 
         }, false);
 
-        document.addEventListener("cut", (event) => {
+        document.addEventListener("cut", (e) => {
             console.log("cutting...");
-            event.clipboardData!.setData("text/plain", this.onCut());
-            event.preventDefault();
+            e.clipboardData!.setData("text/plain", this.onCut());
+            e.preventDefault();
         })
 
         // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
-        document.addEventListener("copy", (event) => {
+        document.addEventListener("copy", (e) => {
             console.log("copying...");
-            event.clipboardData!.setData("text/plain", this.onCopy());
-            event.preventDefault();
+            e.clipboardData!.setData("text/plain", this.onCopy());
+            e.preventDefault();
         })
 
-        document.addEventListener("paste", (event) => {
+        document.addEventListener("paste", (e) => {
             console.log("paste");
-            if (!event.clipboardData) {
+            if (!e.clipboardData) {
                 // alert("I would like a string, please");
                 return;
             }
-            if (event.clipboardData.items.length != 1) {
+            if (e.clipboardData.items.length != 1) {
                 // alert("I would like just one string, please");
                 return;
             }
-            event.clipboardData.items[0].getAsString(this.onPaste.bind(this));
+            e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
         });
     }
+
+
+    test() {
+
+    }
+
 
     onNew() {
         console.log("new...");
         this.graph = NodesGraph.new();
     }
+
 
     // Ctrl + S
     onSave() {
@@ -165,6 +181,7 @@ export class NodesCanvas {
         let text = this.onCopy();
         IO.promptSaveFile("graph.json", text);
     }
+
 
     // Ctrl + L
     onLoad() {
@@ -182,6 +199,7 @@ export class NodesCanvas {
         })
     }
 
+
     onLoadJs() {
         console.log("loading from javascript...");
         IO.promptLoadTextFile((str) => {
@@ -197,6 +215,7 @@ export class NodesCanvas {
         })
     }
 
+    
     onSaveJs() {
         console.log("saving as javascript...");
         let text = this.graph.toJs("graph").toString();
@@ -204,20 +223,21 @@ export class NodesCanvas {
     }
 
 
-
     // Ctrl + X
-    onCut() : string {
-        
+    onCut() : string {  
         let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
         return str; 
     }
+
 
     // Ctrl + C
     onCopy() : string {
         // let str = this.graph.toJs("GRAPH").toString();
         let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        console.log(str);
         return str; 
     }
+
 
     // Ctrl + V
     onPaste(str: string, fromJs=false) {
@@ -239,6 +259,7 @@ export class NodesCanvas {
         this.graph.calculate();
         this.requestRedraw();
     }
+
 
     // Ctrl + A
     onSelectAll() {
@@ -276,12 +297,12 @@ export class NodesCanvas {
 
     async testGraph() {
         let js = `
-        function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
+        function anonymous(a /* "widget": "button" | "state": "true" | "x": 2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": 2 | "y": 1 */
         ) {
             let [b] = bool.NOT(a) /* "x": 8 | "y": 0 */;
             let [d] = bool.OR(a, c) /* "x": 8 | "y": 1 */;
-            let [e] = bool.AND(b, d) /* "x": 11 | "y": 0 */;
-            return [e /* "widget": "lamp" | "x": 14 | "y": -1 */];
+            let [e] = bool.AND(b, d) /* "x": 13 | "y": 0 */;
+            return [e /* "widget": "lamp" | "x": 18 | "y": -1 */];
         }
         `;
 
@@ -308,6 +329,7 @@ export class NodesCanvas {
         this.ui();
     }
 
+
     ui() {
         
         // hook up UI 
@@ -315,6 +337,7 @@ export class NodesCanvas {
         this.menu.renderNav();
         makeOperationsGlobal(this.catalogue);
     }
+
 
     /**
      * NOTE: this is sort of the main loop of the whole node canvas
@@ -371,9 +394,11 @@ export class NodesCanvas {
         this.input.postUpdate();
     }
 
+
     requestRedraw() {
         this.redrawAll = true;
     }
+
 
     draw() {
    
@@ -451,6 +476,7 @@ export class NodesCanvas {
         ctx.restore();
     }
 
+
     drawGrid(ctx: CTX) {
  
         let cross = (x: number, y: number, s: number) => {
@@ -490,12 +516,14 @@ export class NodesCanvas {
 
     // -----
 
+
     toGrid(wv: Vector2) {
         return Vector2.new(
             Math.round((wv.x - (this._size/2)) / this._size),
             Math.round((wv.y - (this._size/2)) / this._size)
         )
     }
+
 
     toWorld(gv: Vector2) {
         return gv.scaled(this._size);
@@ -505,14 +533,17 @@ export class NodesCanvas {
     // -----       Selection       -----
     // ----- --------------------- -----
 
+
     hover(s?: Socket) {
         this.hoverSocket = s;
     }
+
 
     dehover() {
         this.hoverSocket = undefined;
     }
 
+    
     select(s: Socket) {
         let ex = this.tryGetSelectedSocket(s.node);
         if (!ex) {
@@ -522,9 +553,11 @@ export class NodesCanvas {
         }
     }
  
+
     deselect() {
         this.selectedSockets = [];
     }
+
 
     tryGetSelectedSocket(key: string) : Socket | undefined {
         for (let socket of this.selectedSockets) {
@@ -534,6 +567,7 @@ export class NodesCanvas {
         }
         return undefined;
     }
+
 
     trySelect(gridPos: Vector2) : Socket | undefined {
         for (let [key, value] of this.graph.nodes) {
@@ -545,6 +579,7 @@ export class NodesCanvas {
         return undefined;
     }
 
+
     updateMouse(worldPos: Vector2) {
 
         let g = this.toGrid(worldPos);
@@ -554,9 +589,11 @@ export class NodesCanvas {
 
     }
 
+
     startBox(gp: Vector2) {
         this.boxStart = gp.clone();
     }
+
 
     stopBox() {
         if (!this.boxStart!) {
@@ -618,6 +655,7 @@ export class NodesCanvas {
 
         this.requestRedraw();
     }
+
 
     onMouseUp(gp: Vector2) {
         // console.log("up!");

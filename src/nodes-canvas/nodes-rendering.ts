@@ -1,5 +1,9 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
+/**
+ * NOTE: maybe give this a svg-style overhaul...
+ */
+
 import { MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
 import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
