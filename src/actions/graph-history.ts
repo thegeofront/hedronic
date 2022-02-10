@@ -2,8 +2,9 @@ import { Vector2 } from "../../../engine/src/lib";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
+import { Socket } from "../graph/socket";
 import { Widget } from "../graph/widget";
-import { GraphAction, GraphAddNodesAction, GraphMoveNodesAction } from "./graph-actions";
+import { GraphAction, GraphAddNodesAction, GraphDeleteNodesAction, GraphMoveNodesAction } from "./graph-actions";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
@@ -26,27 +27,7 @@ export class GraphHistory {
         this.redoActions = []; 
     }
 
-    doAddNode(selected: Operation | Widget, gp: Vector2) {
-        return this.do(new GraphAddNodesAction(selected, gp))
-    }
-
-    doDeleteNode() {
-
-    }
-
-    doMove(nodes: string[], delta: Vector2) {
-        return this.do(new GraphMoveNodesAction(nodes, delta));
-    }
-
-    /**
-     * Store A move without doing a move
-     * We need to do this if we are dragging a node around. 
-     * We want to update the position continuously, but only store one 'move' event, without actually moving the object
-     */
-    recordMove(nodes: string[], delta: Vector2) {
-        this.redoActions = [];
-        return this.record(new GraphMoveNodesAction(nodes, delta))
-    }
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Should be called whenether we change the state of the graph
@@ -62,6 +43,7 @@ export class GraphHistory {
      */
     record(action: GraphAction) {
         console.log("recording something")
+        this.redoActions = [];
         this.actions.push(action);
     }
 
@@ -93,6 +75,24 @@ export class GraphHistory {
         a.do(this.graph);
         this.actions.push(a);
         return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////    
+
+    addNode(selected: Operation | Widget, gp: Vector2) {
+        return this.do(new GraphAddNodesAction(selected, gp))
+    }
+
+    deleteNodes(keys: string[]) {
+        return this.do(new GraphDeleteNodesAction(keys))
+    }
+
+    moveNodes(keys: string[], delta: Vector2) {
+        return this.do(new GraphMoveNodesAction(keys, delta));
+    }
+
+    recordMoveNodes(keys: string[], delta: Vector2) {
+        return this.record(new GraphMoveNodesAction(keys, delta))
     }
 }
 

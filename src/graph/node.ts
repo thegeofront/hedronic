@@ -15,8 +15,7 @@ export class GeonNode {
     private constructor(
         public position: Vector2, 
         public core: Operation | Widget, // slot for an operation
-        public connections: Map<SocketIdx, string>) {
-        }
+        public connections: Map<SocketIdx, string>) {}
 
     static new(gridpos: Vector2, core: Operation | Widget, map = new Map()) {
         if (core instanceof Widget) {

@@ -83,9 +83,9 @@ export class NodesCanvas {
 
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
-        this.ctx.canvas.addEventListener("blur", () => console.log("blur")); 
-        this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
-        this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
+        // this.ctx.canvas.addEventListener("blur", () => console.log("blur")); 
+        // this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
+        // this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
         this.onResize();
         this.camera.onMouseDown = (worldPos: Vector2) => {
             this.onMouseDown(this.toGrid(worldPos));
@@ -375,11 +375,9 @@ export class NodesCanvas {
 
         if (this.input.IsKeyPressed("delete")) {
             if (this.selectedSockets.length > 0) {
-                for (let socket of this.selectedSockets) {
-                    this.graph.deleteNode(socket.node);
-                    this.requestRedraw();
-                }
+                this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.node));
                 this.deselect();
+                this.requestRedraw();
             }
         }
 
@@ -630,7 +628,7 @@ export class NodesCanvas {
         
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graphHistory.doAddNode(this.catalogue.selected!, gp);
+            this.graphHistory.addNode(this.catalogue.selected!, gp);
             // this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();
@@ -683,7 +681,7 @@ export class NodesCanvas {
             // record history
             let keys = this.selectedSockets.map(s => s.node);
             console.log(keys);
-            this.graphHistory.recordMove(keys, this.mgpEnd.subbed(this.mgpStart));
+            this.graphHistory.recordMoveNodes(keys, this.mgpEnd.subbed(this.mgpStart));
         }
 
         // possibly create a line
@@ -719,7 +717,6 @@ export class NodesCanvas {
         // hovering
         let s = this.trySelect(gp);
         if (s && this.input.IsKeyDown("shift")) {
-            console.log("shift when move");
             s.idx = 0;
             console.log(s);
         }

@@ -250,8 +250,10 @@ export class NodesGraph {
 
     // ---- Node Management 
 
-    addNode(node: GeonNode) {
-        let key = createRandomGUID();
+    addNode(node: GeonNode, key?: string) {
+        if (key == "" || key == undefined) {
+            key = createRandomGUID();
+        }
         this.nodes.set(key, node);
         if (node.core instanceof Widget) {
             this.widgets.add(key);
