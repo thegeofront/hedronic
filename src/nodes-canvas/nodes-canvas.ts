@@ -18,7 +18,7 @@ import { IO } from "../util/io";
 import { NodesModule } from "../operations/module";
 import { Menu } from "../ui/menu";
 import { dom } from "../util/dom-writer";
-import { GraphDecoupler } from "../actions/graph-decoupler";
+import { GraphHistory as GraphHistory } from "../actions/graph-history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -50,7 +50,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
-        public graphDecoupler: GraphDecoupler,
+        public graphHistory: GraphHistory,
         public menu: Menu,
         
         public catalogue: Catalogue,
@@ -69,7 +69,7 @@ export class NodesCanvas {
         const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
-        const graphDecoupler = GraphDecoupler.new(graph);
+        const graphDecoupler = GraphHistory.new(graph);
 
         const catalogue = Catalogue.newFromStd();
         
@@ -273,13 +273,13 @@ export class NodesCanvas {
     // Ctrl + Z
     onUndo() {
         console.log("undoing...");      
-        this.graphDecoupler.undo();
+        this.graphHistory.undo();
     }
 
     // Ctrl + Y
     onRedo() {
         console.log("redoing..."); 
-        this.graphDecoupler.redo();
+        this.graphHistory.redo();
     }
 
     async loadModules(stdPath: string) {
@@ -659,6 +659,13 @@ export class NodesCanvas {
 
     onMouseUp(gp: Vector2) {
         // console.log("up!");
+
+        // possibly create a move event for undo-ing
+        if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd)) {
+            // record history
+            let keys = this.selectedSockets.map(s => s.node);
+            this.graphHistory.recordMove(keys, this.mgpEnd.subbed(this.mgpStart));
+        }
 
         // possibly create a line
         // see if the line drawn is indeed from input to output, or vise versa

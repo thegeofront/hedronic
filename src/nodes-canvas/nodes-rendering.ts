@@ -162,7 +162,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         }
         
 
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#cecdd1';
         ctx.font = `small-caps bold 14px sans-serif`;
         // ctx.rotate
         ctx.textAlign = 'center';
