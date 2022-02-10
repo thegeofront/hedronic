@@ -6,6 +6,8 @@ import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../operations/catalogue";
 
+export const NODE_WIDTH = 4;
+
 export class GeonNode {
 
     errorState = "";
@@ -85,7 +87,7 @@ export class GeonNode {
         if (this.type == CoreType.Widget) {
             return this.widget!.size.y;
         } else {
-            return Math.max(this.core.inputs, this.core.outputs);
+            return Math.max(2, this.core.inputs, this.core.outputs);
         }
     }
 
@@ -130,7 +132,7 @@ export class GeonNode {
         } else if (c > 0 && c-1 < this.core.outputs) {
             // output 
             let output = c - 1;
-            return Vector2.new(2, output);
+            return Vector2.new(NODE_WIDTH-1, output);
         } else {
             return undefined;
         }
@@ -158,9 +160,9 @@ export class GeonNode {
             } else {
                 return 0; // selected body
             }
-        } else if (local.x == 1) {
+        } else if (local.x > 0 && local.x < NODE_WIDTH-1) {
             return 0; // selected body
-        } else if (local.x == 2) {
+        } else if (local.x == NODE_WIDTH-1) {
             if (local.y < this.core.outputs) {
                 return local.y + 1 // selected output
             } else {
