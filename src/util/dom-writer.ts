@@ -159,18 +159,21 @@ export class DomWriter {
     }
 
     get innerText() {
-        if (this.cursor instanceof Document) {
-            throw new Error("not possible with document selected!")
-        } 
+        this.cursor = this.assertCursorAsHTMLElement();
         return this.cursor.innerText;
     }
 
 
     set innerText(str: string) {
+        this.cursor = this.assertCursorAsHTMLElement();
+        this.cursor.innerText = str;
+    }
+
+    assertCursorAsHTMLElement() {
         if (this.cursor instanceof Document) {
             throw new Error("not possible with document selected!")
-        } 
-        this.cursor.innerText = str;
+        }
+        return this.cursor as HTMLElement;
     }
 
     style(str: string) {

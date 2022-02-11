@@ -72,10 +72,18 @@ export class Menu {
                     d.up()
                 }
                 d.up();
-                d.addDiv("container category-panel col-6").style("height: max-content;")
+                    d.addDiv("container category-panel col-6").style("height: max-content;").up()
                 d.up();
             d.up()
         d.up();
+        
+        console.log("render render render")
+
+        d.addDiv("overlay")
+            d.addText("hello, world!")
+                .style("position: absolute; left: 10px; bottom: 10px")
+                .up();
+        d.up()
 
         // d.innerHTML = VerticalTabList.new(items).toHtml();
         // b.up();

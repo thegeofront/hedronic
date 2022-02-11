@@ -474,9 +474,9 @@ export class NodesCanvas {
         }
 
         // draw selection box
-        if (this.boxStart) {
+        if (this.boxStart && !this.boxStart.equals(this.mgpHover)) {
             let a = this.toWorld(this.boxStart);
-            let b = this.toWorld(this.mgpHover);
+            let b = this.toWorld(this.mgpHover.added(Vector2.new(1,1)));
             ctx.fillStyle = "#ffffff44"
             ctx.fillRect(a.x, a.y, b.x - a.x, b.y - a.y);
         }
@@ -613,14 +613,16 @@ export class NodesCanvas {
 
 
     stopBox() {
-        if (!this.boxStart!) {
+        if (!this.boxStart || this.boxStart.equals(this.mgpHover)) {
+            this.boxStart = undefined;
             return;
         }
 
         // if a node falls in the box space, select it
-        let a = this.boxStart;
-        let b = this.mgpHover;
-        let box = Domain2.fromBounds(a.x, b.x, a.y, b.y);
+        let box = Domain2.fromInclude(MultiVector2.fromList([this.boxStart, this.mgpHover]));
+        console.log(box.x.t0, box.x.t1, box.y.t0, box.y.t1);
+        box.offset([-2,1,-2,1])
+        console.log(box);
         for (let [key, node] of this.graph.nodes) {
             
             if (box.includesEx(node.position)) {
@@ -629,6 +631,7 @@ export class NodesCanvas {
         }
         // reset the box
         this.boxStart = undefined;
+        // this.mgpHover = undefined;
     }
 
     // ------ Events
@@ -736,18 +739,20 @@ export class NodesCanvas {
         this.hover(s);
         this.requestRedraw();
 
-        // if mouse is down and we are selecting a node 
-        if (this.mgpStart && this.selectedSockets.length > 0) {
+        // drag a line perhaps 
+        if (!this.mgpStart) {
+            return;
+        }
+        if (this.selectedSockets.length == 1 
+            && this.selectedSockets[0].side != SocketSide.Body) {
+            // dragging line
+            // console.log("drag line");
+        } else {
+            // we are dragging something
             let delta = gp.subbed(this.mgpEnd!);
             for (let socket of this.selectedSockets) {
-                if (socket.side == SocketSide.Body) {
-                    // dragging node
                     let node = this.graph.nodes.get(socket.node);
                     node?.position.add(delta);
-                } else {
-                    // dragging line
-                    // console.log("drag line");
-                }
             }
         }
 
