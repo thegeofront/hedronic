@@ -22,16 +22,18 @@ The Utilities are still not completely done:
 - [✔️] a basic menu
 - [✔️] a `new, load, save` tab 
 - [✔️] tabs with the `std`: the plugins which are loaded by default
-- [✔️] a settings tab.
+- [✔️] a settings tab
   - [ ] with content 
 - [ ] Copy & Paste parts of the flowchart 🚧
   - [✔️] create a json encoding of node instances
   - [✔️] make copy, paste, load & save use this encoding instead.
   - [✔️] hook up load, save, new, export, import buttons 
+  - [ ] implement the 'addgraph' method, and deal with things like overlapping connections
   - [ ] place them correctly, create new GUIDS if the old ones exist
   - [ ] figure out how cables should behave
-- [ ] Undo and Redo behaviour 🚧
-  - [ ] Create a stack of changes. Use a messaging pattern to make changes to the graph, and make these messages undoable
+- [✔️] Undo and Redo behaviour 🚧
+  - [✔️] Create a stack of changes. Use a messaging pattern to make changes to the graph, and make these messages undoable
+  - [ ] undo and redo cables
 - [ ] Improve the UI regarding connecting nodes 
 - [ ] Selectable Cables 
   - [ ] To preview or delete  
