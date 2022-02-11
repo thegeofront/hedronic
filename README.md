@@ -16,14 +16,24 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 > ✔️: Done 
 
 
-## Phase 2.5 - Utility part 2 🚧
+## Utility 🚧
 The Utilities are still not completely done: 
 
-- [✔️] a basic menu
-- [✔️] a `new, load, save` tab 
-- [✔️] tabs with the `std`: the plugins which are loaded by default
-- [✔️] a settings tab
-  - [ ] with content 
+- NO UI idea: lets try to do everything with drop downs, and context-aware menu's. 
+
+### Menu Overhaul
+- [ ] use lit or something
+- [ ] build homepage, tabs, settings page, dropdown menu's, etc.
+- [ ] double click -> add component functionality
+- [ ] right click menu
+  - [ ] on empty
+  - [ ] on cable
+  - [ ] on block
+  - [ ] on selection
+- [ ] One settings page, nothing more
+- [ ] Paint / Visualize window
+
+### Quality of Life Graph Editing
 - [ ] Copy & Paste parts of the flowchart 🚧
   - [✔️] create a json encoding of node instances
   - [✔️] make copy, paste, load & save use this encoding instead.
@@ -32,29 +42,25 @@ The Utilities are still not completely done:
   - [ ] place them correctly, create new GUIDS if the old ones exist
   - [ ] figure out how cables should behave
 - [✔️] Undo and Redo behaviour 🚧
-  - [✔️] Create a stack of changes. Use a messaging pattern to make changes to the graph, and make these messages undoable
+  - [✔️] Create a stack of changes. 
   - [ ] undo and redo cables
-- [ ] Improve the UI regarding connecting nodes 
+
+### Cables
 - [ ] Selectable Cables 
   - [ ] To preview or delete  
-- [ ] cable hooks / beads for cable management / preview.
+- [ ] cable hooks for cable management
 
-- [ ] right click menu
-  - [ ] on empty
-  - [ ] on cable
-  - [ ] on block
-  - [ ] on selection
+- [✔️] Fix box-selecting
 
-- [ ] NO UI idea: lets try to do everything with drop downs, and context-aware menu's. 
-    - [ ] One settings page, nothing more
 
-- [ ] Paint / Visualize window
-
+### Rendering Overhaul 
 - [ ] CSS based rendering
+
+
 
 <br>
 
-## Plase 3 - Create multiple nodes & std plugins 🚧
+## Create multiple nodes & std plugins 🚧
 Immediately going to geometry seems a step too far from pretty much only boolean operators. Lets create some in-between steps, some nodes we eventually want to use.
 
 ### widgets

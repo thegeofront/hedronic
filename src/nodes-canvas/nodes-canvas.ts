@@ -87,6 +87,9 @@ export class NodesCanvas {
         // this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
         // this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
         this.onResize();
+        this.camera.onMouseDoubleDown = (worldPos: Vector2) => {
+            this.onMouseDoubleDown(this.toGrid(worldPos));
+        }
         this.camera.onMouseDown = (worldPos: Vector2) => {
             this.onMouseDown(this.toGrid(worldPos));
         }
@@ -394,7 +397,7 @@ export class NodesCanvas {
             }
         }
 
-        if (this.input.IsKeyPressed(" ")) {
+        if (this.input.IsKeyPressed("m")) {
             this.collapseGraphToOperation(); 
         }
 
@@ -636,12 +639,27 @@ export class NodesCanvas {
 
     // ------ Events
 
+    onMouseDoubleDown(gp: Vector2) {
+        let text = prompt("add:", "bool.and");
+        if (text) {
+            
+            let parts = text.split('.');
+            let core = this.catalogue.find(parts[0], parts[1]);
+            if (core) {
+                this.graphHistory.addNodes(core, gp);
+                this.requestRedraw();
+            }
+        }
+    }
+
     onMouseDown(gp: Vector2) {
 
         // console.log("down!");
         this.mgpStart = gp;
         this.mgpEnd = gp;
         
+        
+
         if (this.catalogue.selected) {
             // we are placing a new node
             this.graphHistory.addNodes(this.catalogue.selected!, gp);

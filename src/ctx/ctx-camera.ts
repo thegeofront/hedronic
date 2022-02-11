@@ -8,6 +8,7 @@ export class CtxCamera {
     
     private scaleRange = Domain.new(0.3, 5)
     public onMouseDown?: (c: Vector2) => void;
+    public onMouseDoubleDown?: (c: Vector2) => void;
     public onMouseUp?: (c: Vector2) => void;
     public onMouseMove?: (c: Vector2) => void;
     public mousePos = Vector2.new();
@@ -40,6 +41,12 @@ export class CtxCamera {
         // clicking down
         if (state.mouseLeftPressed && this.onMouseDown) {
             this.onMouseDown(worldPos);
+        }
+
+        // double click 
+        if (state.mouseLeftDoubleDown && this.onMouseDoubleDown) {
+            this.onMouseDoubleDown(worldPos);
+            state.mouseLeftDoubleDown = false;
         }
 
         // click lift 

@@ -57,14 +57,26 @@ export class Catalogue {
         return cat;
     }
 
-    allOperations() {
-
+    find(lib: string, key: string) {  
+        let mod = this.modules.get(lib);
+        if (!mod) {
+            console.error(`no module is called: ${lib}`);
+            return undefined;
+        }      
+        for (let type of [CoreType.Operation, CoreType.Widget]) {
+            let res = this.trySelect(lib, key, type);
+            if (res) {
+                return res;
+            }
+        }
+        return undefined;
     }
 
     trySelect(lib: string, key: string, type: CoreType) {
         let mod = this.modules.get(lib);
         if (!mod) {
-            throw new Error(`no module is called: ${lib}`);
+            console.error(`no module is called: ${lib}`);
+            return undefined;
         }
         mod.select(key, type);
         return this.selected;
