@@ -1,4 +1,4 @@
-import { Random, createGUID, createRandomGUID } from "../../../engine/src/math/random";
+import { createRandomGUID } from "../../../engine/src/lib";
 import { Catalogue } from "../operations/catalogue";
 import { Cable, CableState } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
