@@ -653,18 +653,17 @@ export class NodesCanvas {
             return;
         } 
         
-        // we clicked at some spot. try to select something 
         let socket = this.trySelect(gp);
+        let shift = this.input.IsKeyDown("shift") 
         if (!socket) {
             // we clicked an empty spot: deselect and draw a box
-            this.deselect();
+            if (!shift) this.deselect();
             this.startBox(gp);
             this.requestRedraw();
             return;
         } 
 
         // we clicked on a socket!
-        let shift = this.input.IsKeyDown("shift") 
         let sock = this.tryGetSelectedSocket(socket.node)
         if (shift) {
             console.log("shift");
