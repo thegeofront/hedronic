@@ -4,13 +4,10 @@
  * NOTE: maybe give this a svg-style overhaul...
  */
 
-import { MultiVector2, MultiVector3, Polyline, Vector2 } from "../../../engine/src/lib";
+import { MultiVector2, Vector2 } from "../../../engine/src/lib";
 import { GeonNode, NODE_WIDTH } from "../graph/node";
-import { Operation } from "../graph/operation";
 import { CTX, NodesCanvas } from "./nodes-canvas";
-import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable, CableState } from "../graph/cable";
-import { NodesGraph } from "../graph/graph";
 import { Widget } from "../graph/widget";
 import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
 
