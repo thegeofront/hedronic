@@ -18,7 +18,7 @@ import { IO } from "../util/io";
 import { NodesModule } from "../operations/module";
 import { Menu } from "../ui/menu";
 import { dom } from "../util/dom-writer";
-import { GraphHistory as GraphHistory } from "../actions/graph-history";
+import { History } from "../action/history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -50,7 +50,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
-        public graphHistory: GraphHistory,
+        public graphHistory: History,
         public menu: Menu,
         
         public catalogue: Catalogue,
@@ -69,7 +69,7 @@ export class NodesCanvas {
         const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
-        const graphDecoupler = GraphHistory.new(graph);
+        const graphDecoupler = History.new(graph);
 
         const catalogue = Catalogue.newFromStd();
         
@@ -113,6 +113,7 @@ export class NodesCanvas {
 
         document.addEventListener("keydown", (e) => {
             
+            // TODO: give these actions different files
             let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
             let shift = e.shiftKey;      
             var key = e.key.toLowerCase(); 
@@ -125,10 +126,12 @@ export class NodesCanvas {
                 this.onLoad();
             else if (control && key == 'z') 
                 this.onUndo();
+            else if (control && key == 'd') 
+                this.onDuplicate();
             else if (control && key == 'y') 
                 this.onRedo();
             else if (control && key == ' ') 
-                this.test();
+                this.onTest();
             else    
                 return;
             
@@ -163,11 +166,10 @@ export class NodesCanvas {
         });
     }
 
-
-    test() {
-
+    onChange() {
+        this.graph.calculate();
+        this.requestRedraw();
     }
-
 
     onNew() {
         console.log("new...");
@@ -182,11 +184,22 @@ export class NodesCanvas {
         this.requestRedraw();
     }
 
+    /////////////////////////////////////////////////////////////////
 
-    onChange() {
-        this.graph.calculate();
-        this.requestRedraw();
+    /**
+     * Ctrl + Spacebar
+     */
+    onTest() {
+
     }
+
+    /**
+     * Ctrl + D
+     */
+    onDuplicate() {
+
+    }
+
 
     // Ctrl + S
     onSave() {
@@ -628,7 +641,7 @@ export class NodesCanvas {
         
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graphHistory.addNode(this.catalogue.selected!, gp);
+            this.graphHistory.addNodes(this.catalogue.selected!, gp);
             // this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();

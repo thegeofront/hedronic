@@ -4,21 +4,25 @@ import { GeonNode } from "../graph/node";
 import { Operation } from "../graph/operation";
 import { Socket } from "../graph/socket";
 import { Widget } from "../graph/widget";
-import { GraphAction, GraphAddNodesAction, GraphDeleteNodesAction, GraphMoveNodesAction } from "./graph-actions";
+import { Action } from "./action";
+import { NodesAddAction } from "./c/nodes-add-action";
+import { NodesDeleteAction } from "./c/nodes-delete-action";
+import { NodesMoveAction } from "./c/nodes-move-action";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
+ * TODO: make all actions about a single node / cable, and then add something to group actions together
  */
-export class GraphHistory {
+export class History {
     
     constructor(
         private graph: NodesGraph,
-        private actions: GraphAction[] = [],
-        private redoActions: GraphAction[] = []) {
+        private actions: Action[] = [],
+        private redoActions: Action[] = []) {
     }
 
     static new(graph: NodesGraph) {
-        return new GraphHistory(graph, []);
+        return new History(graph, []);
     }
 
     reset(graph: NodesGraph) {
@@ -32,7 +36,7 @@ export class GraphHistory {
     /**
      * Should be called whenether we change the state of the graph
      */
-    do(action: GraphAction) {
+    do(action: Action) {
         console.log("doing something")
         action.do(this.graph);
         return this.record(action);
@@ -41,7 +45,7 @@ export class GraphHistory {
     /**
      * Called when we want to record a piece of history
      */
-    record(action: GraphAction) {
+    record(action: Action) {
         console.log("recording something")
         this.redoActions = [];
         this.actions.push(action);
@@ -79,20 +83,20 @@ export class GraphHistory {
 
     ///////////////////////////////////////////////////////////////////////////    
 
-    addNode(selected: Operation | Widget, gp: Vector2) {
-        return this.do(new GraphAddNodesAction(selected, gp))
+    addNodes(selected: Operation | Widget, gp: Vector2) {
+        return this.do(new NodesAddAction(selected, gp))
     }
 
     deleteNodes(keys: string[]) {
-        return this.do(new GraphDeleteNodesAction(keys))
+        return this.do(new NodesDeleteAction(keys))
     }
 
     moveNodes(keys: string[], delta: Vector2) {
-        return this.do(new GraphMoveNodesAction(keys, delta));
+        return this.do(new NodesMoveAction(keys, delta));
     }
 
     recordMoveNodes(keys: string[], delta: Vector2) {
-        return this.record(new GraphMoveNodesAction(keys, delta))
+        return this.record(new NodesMoveAction(keys, delta))
     }
 }
 
