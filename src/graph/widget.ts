@@ -110,12 +110,12 @@ export class Widget {
         pos.x += this.bounds.x.t0 * cellSize;
         pos.y += this.bounds.y.t0 * cellSize;
 
-        ctx.fillStyle = this.state ? "ffffff" : "#000000";
+        ctx.fillStyle = this.state ? "ffffff" : "#292C33";
 
         ctx.fillRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         ctx.strokeRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         
-        ctx.fillStyle = this.state ? "#33dd33" : "#222222";
+        ctx.fillStyle = this.state ? "#33dd33" : "#000000";
         if (component == Infinity) {
             ctx.fillStyle += "88";
         } 

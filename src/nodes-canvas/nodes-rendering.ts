@@ -142,7 +142,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw thing in the middle
     ctx.beginPath();
     drawPolygon(ctx, centerPolygon);
-    ctx.fillStyle = "#222211";
+    ctx.fillStyle = "#292C33";
     ctx.fill();
     // ctx.stroke();
 
@@ -343,7 +343,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
     ctx.strokeStyle = "#cecdd1";
-    ctx.fillStyle = "#222222";
+    ctx.fillStyle = "#1b1b1e";
     ctx.lineWidth = 1;
 
     if (state == DrawState.OpSelected   && component == componentDrawn) {
