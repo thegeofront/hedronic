@@ -31,13 +31,49 @@ export class IO {
         return await response.json();  
     }
 
-    static promptDownload(file: string, text: string) {
+    static promptSaveFile(filename: string, content: string, type="text/plain") {
+
+        // https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js maybe this is needed
+
         var element = document.createElement("a");
-        element.setAttribute("href", "data:text/plain;charset=utf-8, " + encodeURIComponent(text));
-        element.setAttribute("download", file);
+        element.setAttribute("href", `data:${type};charset=utf-8, ` + encodeURIComponent(content));
+        element.setAttribute("download", filename);
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+    }
+
+    static promptLoadFile(fileLoader: (file: File) => void) {
+
+        // <input type="file" onchange="showFile(this)">
+        var element = document.createElement("input") as HTMLInputElement;
+        element.setAttribute("type", "file");
+        element.addEventListener("change", () => {
+            if (!element.files) {
+                return;
+            }
+            for (let file of element.files) {
+                fileLoader(file);
+            }
+        })
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    static loadFileAsText(textFile: File, callback: (str: string | ArrayBuffer | null) => void) {
+        
+        var reader = new FileReader();
+        reader.addEventListener("load", (r)=> {
+            callback(r.target!.result);
+        });
+        reader.readAsText(textFile); // start reading the file data.
+    }
+
+    static promptLoadTextFile(callback: (str: string | ArrayBuffer | null) => void) {
+        IO.promptLoadFile((f) => {
+            IO.loadFileAsText(f, callback);
+        })
     }
 }
 

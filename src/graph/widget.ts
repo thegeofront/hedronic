@@ -64,15 +64,24 @@ export class Widget {
             }
         } else {
             if (side == WidgetSide.Input) {
-                return Domain2.fromWH(-(size.x-1), 0, size.x, size.y);
+                return Domain2.fromWH(-(size.x-2), 0, size.x, size.y);
             } else {
                 return Domain2.fromWH(2, 0, size.x, size.y);
             }
         }
     }
 
-    run() {
-        
+    toJson() {
+        return {
+            namespace: "widgets",
+            name: this.name,
+            state: this.state,
+        }
+    }
+
+    run(...args: State[]) : State[] {
+        // something
+        return [];
     }
 
     log() {
@@ -94,19 +103,24 @@ export class Widget {
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
 
         let size = this.bounds.size().scaled(cellSize);
+        const A = 4; // offset A
+        const B = 4; // offset B
+
         pos = pos.clone();
         pos.x += this.bounds.x.t0 * cellSize;
         pos.y += this.bounds.y.t0 * cellSize;
 
-        ctx.fillRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
-        ctx.strokeRect(pos.x+2, pos.y+2, size.x-4, size.y-4);
+        ctx.fillStyle = this.state ? "ffffff" : "#000000";
+
+        ctx.fillRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
+        ctx.strokeRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         
         ctx.fillStyle = this.state ? "#33dd33" : "#222222";
         if (component == Infinity) {
             ctx.fillStyle += "88";
         } 
 
-        ctx.fillRect(pos.x+4, pos.y+4, size.x-8, size.y-8);
+        ctx.fillRect(pos.x+A+B, pos.y+A+B, size.x-A*2-B*2, size.y-A*2-B*2);
     }
 
     // ---- Create Special properties

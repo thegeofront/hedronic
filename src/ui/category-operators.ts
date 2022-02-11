@@ -24,7 +24,6 @@ function renderCores(d: DomWriter, ops: Operation[], wid: Widget[], onPress: (op
     
     // operations
     d.add('div', "core-list");
-
     for (let i = 0 ; i < ops.length; i++) {
         d.addButton("create-node-button m-1", () => {
             onPress(ops[i].name, CoreType.Operation);

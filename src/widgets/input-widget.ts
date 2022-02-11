@@ -4,14 +4,14 @@ import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
-export class TextWidget extends Widget {
+export class InputWidget extends Widget {
 
     static new(state: State) {
-        return new TextWidget("text", WidgetSide.Input, Vector2.new(4,1), state);
+        return new InputWidget("Input", WidgetSide.Input, Vector2.new(4,1), state);
     }
 
     clone() {
-        return TextWidget.new(this.state);
+        return InputWidget.new(this.state);
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
@@ -21,7 +21,11 @@ export class TextWidget extends Widget {
     onClick(canvas: NodesCanvas) {
         let text = prompt("Input:", "data");
         if (text) {
-            this.state = text;
+            try {
+                this.state = JSON.parse(text);
+            } catch(error) {
+                this.state = (error as Error).message;
+            }
         }
         canvas.deselect();
         canvas.graph.calculate();

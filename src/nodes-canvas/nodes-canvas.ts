@@ -10,7 +10,7 @@ import { Random } from "../../../engine/src/math/random";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
-import { Widget } from "../graph/widget";
+import { Widget, WidgetSide } from "../graph/widget";
 import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
 import { Operation } from "../graph/operation";
 import { Cable, CableState } from "../graph/cable";
@@ -18,6 +18,7 @@ import { IO } from "../util/io";
 import { NodesModule } from "../operations/module";
 import { Menu } from "../ui/menu";
 import { dom } from "../util/dom-writer";
+import { GraphHistory as GraphHistory } from "../actions/graph-history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -43,16 +44,19 @@ export class NodesCanvas {
     // used to box select
     private boxStart: Vector2 | undefined;
 
+
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         public graph: NodesGraph,
+        public graphHistory: GraphHistory,
         public menu: Menu,
         
         public catalogue: Catalogue,
         public stdPath: string,
         ) {}
+
 
     static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, stdPath: string) {
 
@@ -65,17 +69,23 @@ export class NodesCanvas {
         const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
+        const graphDecoupler = GraphHistory.new(graph);
 
         const catalogue = Catalogue.newFromStd();
-        const menu = Menu.new(ui, catalogue, htmlCanvas);
+        
+        const menu = Menu.new(ui, htmlCanvas);
 
-        return new NodesCanvas(ctx, camera, state, graph, menu, catalogue, stdPath);
+        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
     }
+
 
     async start() {
 
         // hook up all functions & listeners
         window.addEventListener("resize", () => this.onResize());
+        // this.ctx.canvas.addEventListener("blur", () => console.log("blur")); 
+        // this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
+        // this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
         this.onResize();
         this.camera.onMouseDown = (worldPos: Vector2) => {
             this.onMouseDown(this.toGrid(worldPos));
@@ -84,8 +94,7 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-        this.setupLoadSave();
-        this.setupCopyPaste();
+        this.setupControlKeyActions();
 
         // DEBUG add a standard graph
         await this.loadModules(this.stdPath);
@@ -95,51 +104,191 @@ export class NodesCanvas {
         this.ui();
     }
 
-    setupLoadSave() {
+    
+    /**
+     * This also defines wrapper functions to handle the Dom Events 
+     * TODO: add an overview of all avaiable Ctrl + [abc] shortcuts, make this scalable, etc...
+     */
+    setupControlKeyActions() {
+
         document.addEventListener("keydown", (e) => {
-            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-              e.preventDefault();
+            
+            let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
+            let shift = e.shiftKey;      
+            var key = e.key.toLowerCase(); 
 
-              let text = this.onCopy();
-              IO.promptDownload("save.js", text);
-            }
-          }, false);
-    }
+            if (control && key == 'a')
+                this.onSelectAll();
+            else if (control && key == 's')
+                this.onSave();
+            else if (control && key == 'l')
+                this.onLoad();
+            else if (control && key == 'z') 
+                this.onUndo();
+            else if (control && key == 'y') 
+                this.onRedo();
+            else if (control && key == ' ') 
+                this.test();
+            else    
+                return;
+            
+            e.preventDefault();
 
-    setupCopyPaste() {
-        document.addEventListener("copy", (event) => {
-            console.log("copy | save");
-            event.clipboardData!.setData("text/plain", this.onCopy());
-            event.preventDefault();
+        }, false);
+
+        document.addEventListener("cut", (e) => {
+            console.log("cutting...");
+            e.clipboardData!.setData("text/plain", this.onCut());
+            e.preventDefault();
         })
 
-        document.addEventListener("paste", (event) => {
-            console.log("paste | load");
+        // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
+        document.addEventListener("copy", (e) => {
+            console.log("copying...");
+            e.clipboardData!.setData("text/plain", this.onCopy());
+            e.preventDefault();
+        })
 
-            console.log(event);
-
-            if (!event.clipboardData) {
+        document.addEventListener("paste", (e) => {
+            console.log("paste");
+            if (!e.clipboardData) {
                 // alert("I would like a string, please");
                 return;
             }
-            if (event.clipboardData.items.length != 1) {
+            if (e.clipboardData.items.length != 1) {
                 // alert("I would like just one string, please");
                 return;
             }
-
-            event.clipboardData.items[0].getAsString(this.onPaste.bind(this));
+            e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
         });
     }
 
-    onCopy() : string {
-        return this.graph.toJs("GRAPH").toString();
+
+    test() {
+
     }
 
-    onPaste(js: string) {
-        let graph = NodesGraph.fromJs(js, this.catalogue)!;
+
+    onNew() {
+        console.log("new...");
+        this.reset();
+    }
+
+
+    reset(graph= NodesGraph.new()) {
         this.graph = graph;
-        this.requestRedraw();
+        this.graphHistory.reset(graph);
         this.graph.calculate();
+        this.requestRedraw();
+    }
+
+
+    onChange() {
+        this.graph.calculate();
+        this.requestRedraw();
+    }
+
+    // Ctrl + S
+    onSave() {
+        console.log("saving...");
+        let text = this.onCopy();
+        IO.promptSaveFile("graph.json", text);
+    }
+
+
+    // Ctrl + L
+    onLoad() {
+        console.log("loading...");
+        IO.promptLoadTextFile((str) => {
+            
+            // TODO check if valid. etc. etc. 
+            if (!str) {
+                return;
+            }
+            this.reset(NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!);
+        })
+    }
+
+
+    onLoadJs() {
+        console.log("loading from javascript...");
+        IO.promptLoadTextFile((str) => {
+            
+            // TODO check if valid. etc. etc. 
+            if (!str) {
+                return;
+            }
+            this.reset(NodesGraph.fromJs(str.toString(), this.catalogue)!);
+        })
+    }
+
+    
+    onSaveJs() {
+        console.log("saving as javascript...");
+        let text = this.graph.toJs("graph").toString();
+        IO.promptSaveFile("graph.js", text, "text/js");
+    }
+
+
+    // Ctrl + X
+    onCut() : string {  
+        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        return str; 
+    }
+
+
+    // Ctrl + C
+    onCopy() : string {
+        // let str = this.graph.toJs("GRAPH").toString();
+        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        console.log(str);
+        return str; 
+    }
+
+
+    // Ctrl + V
+    onPaste(str: string, fromJs=false) {
+        let newGraph;
+        if (fromJs) {
+            newGraph = NodesGraph.fromJs(str, this.catalogue)!;
+        } else {
+            newGraph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
+        }
+        this.graph.addGraph(newGraph);
+
+        // select all new nodes
+        this.deselect();
+        for (let [k, v] of newGraph.nodes) {
+            v.position.add(Vector2.new(1, 1));
+            this.select(Socket.new(k, 0));
+        }
+
+        this.graph.calculate();
+        this.requestRedraw();
+    }
+
+
+    // Ctrl + A
+    onSelectAll() {
+        console.log("selecting all...");
+        for (let [k,_] of this.graph.nodes) {
+            this.select(Socket.new(k, 0));
+        }
+        this.requestRedraw();
+    }
+
+    // Ctrl + Z
+    onUndo() {
+        console.log("undoing...");      
+        let change = this.graphHistory.undo(); 
+        if (change) this.onChange();
+    }
+
+    // Ctrl + Y
+    onRedo() {
+        console.log("redoing..."); 
+        let change = this.graphHistory.redo(); 
+        if (change) this.onChange();
     }
 
     async loadModules(stdPath: string) {
@@ -152,24 +301,21 @@ export class NodesCanvas {
             this.catalogue.addModule(mod);
         }
         this.ui();
-        this.menu.updateCategories(this.catalogue);
+        this.menu.updateCategories(this);
     }
 
     async testGraph() {
         let js = `
-        function anonymous(a /* "widget": "button" | "state": "true" | "x": 4 | "y": -1 */,c /* "widget": "button" | "state": "false" | "x": 4 | "y": 1 */
+        function anonymous(a /* "widget": "button" | "state": "true" | "x": 2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": 2 | "y": 2 */
         ) {
-            let [b] = bool.NOT(a) /* "x": 8 | "y": 0 */;
-            let [d] = bool.OR(a, c) /* "x": 8 | "y": 1 */;
-            let [e] = bool.AND(b, d) /* "x": 11 | "y": 0 */;
-            return [e /* "widget": "lamp" | "x": 14 | "y": -1 */];
+            let [b] = bool.NOT(a) /* "x": 8 | "y": -1 */;
+            let [d] = bool.OR(a, c) /* "x": 8 | "y": 2 */;
+            let [e] = bool.AND(b, d) /* "x": 13 | "y": 0 */;
+            return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
         }
         `;
 
-        let graph = NodesGraph.fromJs(js, this.catalogue)!;
-        this.graph = graph;
-        this.requestRedraw();
-        this.graph.calculate();
+        this.reset(NodesGraph.fromJs(js, this.catalogue)!);
         return;
     }
 
@@ -189,13 +335,15 @@ export class NodesCanvas {
         this.ui();
     }
 
+
     ui() {
         
         // hook up UI 
-        this.menu.updateCategories(this.catalogue);
+        this.menu.updateCategories(this);
         this.menu.renderNav();
         makeOperationsGlobal(this.catalogue);
     }
+
 
     /**
      * NOTE: this is sort of the main loop of the whole node canvas
@@ -227,11 +375,9 @@ export class NodesCanvas {
 
         if (this.input.IsKeyPressed("delete")) {
             if (this.selectedSockets.length > 0) {
-                for (let socket of this.selectedSockets) {
-                    this.graph.deleteNode(socket.node);
-                    this.requestRedraw();
-                }
+                this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.node));
                 this.deselect();
+                this.requestRedraw();
             }
         }
 
@@ -252,9 +398,11 @@ export class NodesCanvas {
         this.input.postUpdate();
     }
 
+
     requestRedraw() {
         this.redrawAll = true;
     }
+
 
     draw() {
    
@@ -332,6 +480,7 @@ export class NodesCanvas {
         ctx.restore();
     }
 
+
     drawGrid(ctx: CTX) {
  
         let cross = (x: number, y: number, s: number) => {
@@ -371,12 +520,14 @@ export class NodesCanvas {
 
     // -----
 
+
     toGrid(wv: Vector2) {
         return Vector2.new(
             Math.round((wv.x - (this._size/2)) / this._size),
             Math.round((wv.y - (this._size/2)) / this._size)
         )
     }
+
 
     toWorld(gv: Vector2) {
         return gv.scaled(this._size);
@@ -386,14 +537,17 @@ export class NodesCanvas {
     // -----       Selection       -----
     // ----- --------------------- -----
 
+
     hover(s?: Socket) {
         this.hoverSocket = s;
     }
+
 
     dehover() {
         this.hoverSocket = undefined;
     }
 
+    
     select(s: Socket) {
         let ex = this.tryGetSelectedSocket(s.node);
         if (!ex) {
@@ -403,9 +557,11 @@ export class NodesCanvas {
         }
     }
  
+
     deselect() {
         this.selectedSockets = [];
     }
+
 
     tryGetSelectedSocket(key: string) : Socket | undefined {
         for (let socket of this.selectedSockets) {
@@ -415,6 +571,7 @@ export class NodesCanvas {
         }
         return undefined;
     }
+
 
     trySelect(gridPos: Vector2) : Socket | undefined {
         for (let [key, value] of this.graph.nodes) {
@@ -426,6 +583,7 @@ export class NodesCanvas {
         return undefined;
     }
 
+
     updateMouse(worldPos: Vector2) {
 
         let g = this.toGrid(worldPos);
@@ -435,9 +593,11 @@ export class NodesCanvas {
 
     }
 
+
     startBox(gp: Vector2) {
         this.boxStart = gp.clone();
     }
+
 
     stopBox() {
         if (!this.boxStart!) {
@@ -468,40 +628,61 @@ export class NodesCanvas {
         
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graph.addNode(this.catalogue.spawn(gp)!);
+            this.graphHistory.addNode(this.catalogue.selected!, gp);
+            // this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();
             }
-        } else {
-            // we clicked at some spot. try to select something 
-            let socket = this.trySelect(gp);
-            if (!socket) {
-                // we clicked an empty spot: deselect and draw a box
-                this.deselect();
-                this.startBox(gp);
-                return;
-            } else {
-                // we clicked on a socket! 
-                let sock = this.tryGetSelectedSocket(socket.node)
-                if (sock) {
-                    // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
-                } else if (!this.input.IsKeyDown("shift")) {
-                    this.deselect();
-                }
-
-                this.select(socket);
-                if (socket?.side == SocketSide.Widget) {
-                    // we just clicked a widget! let the widget figure out what to do
-                    (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
-                } 
-            }
+            this.requestRedraw();
+            return;
+        } 
+        
+        // we clicked at some spot. try to select something 
+        let socket = this.trySelect(gp);
+        if (!socket) {
+            // we clicked an empty spot: deselect and draw a box
+            this.deselect();
+            this.startBox(gp);
+            this.requestRedraw();
+            return;
         } 
 
-        this.requestRedraw();
+        // we clicked on a socket!
+        let shift = this.input.IsKeyDown("shift") 
+        let sock = this.tryGetSelectedSocket(socket.node)
+        if (shift) {
+            console.log("shift");
+            socket.idx = 0;
+        }
+        if (sock) {
+            // do nothing if we click on a node we already have selected. This is needed for click and dragging multiple nodes
+            console.log("when")
+        } else if (!shift) {
+            this.deselect();
+        }
+
+        this.select(socket);
+        if (socket?.side == SocketSide.Widget) {
+            // we just clicked a widget! let the widget figure out what to do
+            (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
+        } 
+        
+        this.requestRedraw();   
+        return;   
     }
+
 
     onMouseUp(gp: Vector2) {
         // console.log("up!");
+
+        // possibly create a move event for undo-ing
+        if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd) && 
+            this.selectedSockets.length > 0 && (this.selectedSockets.length > 1 || this.selectedSockets[0].side == SocketSide.Body)) {
+            // record history
+            let keys = this.selectedSockets.map(s => s.node);
+            console.log(keys);
+            this.graphHistory.recordMoveNodes(keys, this.mgpEnd.subbed(this.mgpStart));
+        }
 
         // possibly create a line
         // see if the line drawn is indeed from input to output, or vise versa
@@ -517,7 +698,7 @@ export class NodesCanvas {
                 // new line means recalculation
                 this.graph.calculate();
             }
-        }
+        } 
 
         // reset
         this.stopBox();
@@ -534,7 +715,12 @@ export class NodesCanvas {
         // console.log("move!");
 
         // hovering
-        this.hover(this.trySelect(gp));
+        let s = this.trySelect(gp);
+        if (s && this.input.IsKeyDown("shift")) {
+            s.idx = 0;
+            console.log(s);
+        }
+        this.hover(s);
         this.requestRedraw();
 
         // if mouse is down and we are selecting a node 

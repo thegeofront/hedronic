@@ -1,5 +1,6 @@
 import { createRandomGUID } from "../../../engine/src/lib";
 import { Catalogue } from "../operations/catalogue";
+import { mapFromJson, mapToJson } from "../util/serializable";
 import { Cable, CableState } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
@@ -17,12 +18,12 @@ export class NodesGraph {
     constructor(
         public nodes: Map<string, GeonNode>, 
         public cables: Map<string, Cable>,
-        public widgets: Map<string, Widget>) {}
+        private widgets: Set<string>) {}
 
     static new(
         nodes = new Map<string, GeonNode>(),
         cables = new Map<string, Cable>(),
-        widgets = new Map<string, Widget>()) {
+        widgets = new Set<string>()) {
         return new NodesGraph(nodes, cables, widgets);
     }
     
@@ -34,6 +35,43 @@ export class NodesGraph {
             return NodesGraph.new();
         } else {
             return graph;
+        }
+    }
+
+    static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph {
+
+        console.log("from json...")
+
+        let json = JSON.parse(str);
+        console.log(json);
+        let graph = NodesGraph.new();
+        for (let key in json.nodes) {
+            let value = json.nodes[key];
+            let lib = value.core.namespace;
+            let name = value.core.name;
+            let type = value.type;
+
+            let core = catalogue.trySelect(lib, name, type);
+            if (!core) {
+                console.error(`core: ${lib}, ${name}, ${type} cannot be created. The library is probably missing from this project`);
+            } else {
+                graph.nodes.set(key, GeonNode.fromJson(value, core));
+            }
+        }
+
+        catalogue.deselect();
+
+        for (let key in json.cables) {
+            graph.cables.set(key, Cable.fromJson(json.cables[key]))
+        }
+
+        return graph;
+    }
+
+    static toJson(graph: NodesGraph) {
+        return {
+                nodes: mapToJson(graph.nodes, GeonNode.toJson),
+                cables: mapToJson(graph.cables, Cable.toJson),
         }
     }
 
@@ -60,11 +98,28 @@ export class NodesGraph {
             if (!cable) {
                 return;
             }
-            if (value) {
-                cable.state = CableState.On;
+            if (value === false || value === 0) {
+                cable.state = CableState.Null;
+            } else if (value === true) {
+                cable.state = CableState.Boolean;
+            } else if (value instanceof Number) {
+                cable.state = CableState.Number;
+            } else if (value instanceof Object) {
+                cable.state = CableState.Object;
             } else {
-                cable.state = CableState.Off;
+                cable.state = CableState.String;
             }
+
+            // else if (value instanceof Number) {
+            //     cable.state = CableState.Number;
+            // } else if (value instanceof String) {
+            //     cable.state = CableState.String;
+            // } else if (value instanceof Object) {
+            //     cable.state = CableState.Object;
+            // } else {
+            //     cable.state = CableState.Null;
+            // }
+     
             cache.set(key, value);
         }
 
@@ -80,8 +135,16 @@ export class NodesGraph {
                 for (let cable of node.inputs()) { // TODO multiple inputs!!
                     inputs.push(cache.get(cable)!);
                 }
+                let outputs;
+                try {
+                    outputs = node.operation.run(inputs);
+                } catch(e) {
+                    let error = e as Error;
+                    node.errorState = error.message;
+                    console.warn("NODE-ERROR: \n", node.errorState);
+                    continue;
+                }
 
-                let outputs = node.operation.run(...inputs);
                 let outCables = node.outputs();
                 if (typeof outputs !== "object") {
                     setCache(outCables[0], outputs);
@@ -96,7 +159,7 @@ export class NodesGraph {
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
                 for (let cable of node.inputs()) { // TODO multiple inputs!!
-                    node.widget!.state = cache.get(cable)!;
+                    node.widget!.run(cache.get(cable)!);
                 }
             } else {
                 throw new Error("should never happen");
@@ -115,7 +178,7 @@ export class NodesGraph {
         let visitedCables: Set<string> = new Set<string>();
 
         // use the widgets to identify the starting point
-        for (let [key, _] of this.widgets) {
+        for (let key of this.widgets) {
             let widget = this.getNode(key)!.widget!;
             if (widget.side != WidgetSide.Input) 
                 continue; 
@@ -158,13 +221,42 @@ export class NodesGraph {
         return L;
     }
 
+    clone() {
+
+    }
+
+    addGraph(other: NodesGraph) { 
+        for (let [key, node] of other.nodes) {
+            if (this.nodes.has(key)) {
+                console.warn("double!!");
+                key = createRandomGUID();
+                for (let [k, v] of node.connections) {
+                    if (k < 0) {
+                        continue;
+                    }
+                    node.connections.delete(k);
+                }   
+            } 
+            this.nodes.set(key, node);
+        }
+        // for (let [key, value] of other.cables) {
+        //     if (this.cables.has(key)) {
+        //         console.warn("double!!");
+        //     } 
+        //     this.cables.set(key, value);
+        // }
+        return this;
+    }
+
     // ---- Node Management 
 
-    addNode(node: GeonNode) {
-        let key = createRandomGUID();
+    addNode(node: GeonNode, key?: string) {
+        if (key == "" || key == undefined) {
+            key = createRandomGUID();
+        }
         this.nodes.set(key, node);
         if (node.core instanceof Widget) {
-            this.widgets.set(key, node.core);
+            this.widgets.add(key);
         }
         return key;
     }

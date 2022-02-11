@@ -11,14 +11,14 @@ export function OR(a, b) {
 }
 
 export function NAND(a, b) { 
-    let [c] = boolean.AND(a, b);
-    let [d] = boolean.NOT(c);
+    let [c] = bool.AND(a, b);
+    let [d] = bool.NOT(c);
     return [d]; 
 }
 
 export function XOR(a, b) { 
-    let [c] = boolean.NAND(a, b);
-    let [d] = boolean.OR(a, b);
-    let [e] = boolean.AND(c, d); 
+    let [c] = bool.NAND(a, b);
+    let [d] = bool.OR(a, b);
+    let [e] = bool.AND(c, d); 
     return [e]; 
 }

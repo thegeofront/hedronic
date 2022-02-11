@@ -3,11 +3,12 @@ import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";
 import { ButtonWidget } from "../widgets/button-widget";
-import { ConsoleWidget } from "../widgets/display-widget";
+import { ConsoleWidget } from "../widgets/console-widget";
 import { LampWidget } from "../widgets/lamp-widget";
-import { TextWidget } from "../widgets/text-widget";
+import { InputWidget } from "../widgets/input-widget";
 import { NodesModule } from "./module";
 import { Module } from "webpack";
+import { ImageWidget } from "../widgets/image-widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -39,9 +40,10 @@ export class Catalogue {
         
         let widgets: Widget[] = [
             ButtonWidget.new(false),
-            TextWidget.new("hello world"),
+            InputWidget.new("hello world"),
             LampWidget.new(false),
             ConsoleWidget.new(false),
+            ImageWidget.new("<image>")
         ]
 
         let wmap = new Map<string, Widget>();
@@ -50,7 +52,7 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = NodesModule.new("widgets", "lightning-charge-fill", "", [], widgets, cat);
+        let widMod = NodesModule.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
         cat.addModule(widMod);
         return cat;
     }
@@ -84,10 +86,10 @@ export class Catalogue {
      * Spawn an instance of the selected node at a location 
      */
     spawn(gp: Vector2) {
-        if (this.selected instanceof Operation) {
+        if (this.selected) {
             return GeonNode.new(gp, this.selected);
-        } else if (this.selected instanceof Widget) {
-            return GeonNode.newWidget(gp, this.selected.clone());
+        } else {
+            return undefined;
         }
     }
 

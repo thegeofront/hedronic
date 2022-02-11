@@ -1,13 +1,15 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
+/**
+ * NOTE: maybe give this a svg-style overhaul...
+ */
+
 import { MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { GeonNode } from "../graph/node";
-import { Operation } from "../graph/operation";
+import { GeonNode, NODE_WIDTH } from "../graph/node";
 import { CTX, NodesCanvas } from "./nodes-canvas";
-import { CtxCamera } from "../ctx/ctx-camera";
 import { Cable, CableState } from "../graph/cable";
-import { NodesGraph } from "../graph/graph";
 import { Widget } from "../graph/widget";
+import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
 
 const NODE_GRID_WIDTH = 3;
 
@@ -37,6 +39,88 @@ export class StyleSet {
 
 }
 
+
+/**
+ * Draw the chip shape
+ * returns 
+ */
+ function nodeShape(ctx: CTX, pos: Vector2, numInputs: number, numOutputs: number, nodeHeight: number, size: number) : [MultiVector2, MultiVector2] {
+    const part = 5;
+    const step = size / part;
+    const height = nodeHeight * part;
+    const width = NODE_WIDTH * part;
+    
+    const is = 2; // input block start 
+    const ie = 8.5; // input block end 
+    const oe = 11.5; // output block end
+    const os = 18; // output block start
+
+    const fillet = 0.5;
+
+    // define a bunch of labda's to make life easier
+    let coord = (x: number,y: number) => {
+        return Vector2.new(pos.x + y*step, pos.y + x*step);
+    }
+    let moveTo = (x: number, y: number) => {
+        ctx.moveTo(pos.x + y*step, pos.y + x*step);
+    }
+    let lineTo = (x: number, y: number) => {
+        ctx.lineTo(pos.x + y*step, pos.y + x*step);
+    }
+
+    // calculate coorindates of input, output, and body centers
+    let vecs: Vector2[] = [];
+    vecs.push(coord(height / 2, width / 2)); // the center of the thing
+
+    // we will repeat this step twice
+    let drawBlockShape = (height: number, numItems: number, ga: number, gb: number, gc: number, gd: number, ge: number, gf: number) => {
+        if (numItems == 0) return;
+        moveTo(1.0, gf);
+        lineTo(1.0, ge);
+        lineTo(0.5, gd);
+        lineTo(0.5, gb);        
+        
+        for(let i = 0; i < height; i++) {
+            let offset = i * 5;
+            if (i < numItems) {
+    
+                // store center
+                vecs.push(coord(offset + 2.5, gc));
+    
+                // draw zig-zag
+                lineTo(offset+1  , ga);
+                lineTo(offset+4  , ga);
+                lineTo(offset+4.5, gb);
+                if (i != nodeHeight-1)
+                    lineTo(offset+5.5, gb);
+            } else {
+                // draw straight line
+                // lineTo(offset+4.5, colb);
+            }
+        }
+
+        // bottom line 
+        lineTo(height-0.5, (gd + gb) / 2);
+        lineTo(height-0.5, gd);
+        lineTo(height-1.0, ge);
+        lineTo(height-1.0, gf);
+        // lineTo(0.5, gb);
+    }
+
+    drawBlockShape(height, numInputs,  is, is + fillet, is + fillet, ie - fillet, ie, oe);
+    drawBlockShape(height, numOutputs, os, os - fillet, os - fillet, oe + fillet, oe, ie);
+
+    let polygon = MultiVector2.fromList([
+        coord(fillet*2, ie),
+        coord(height-fillet*2, ie),
+        coord(height-fillet*2, oe),
+        coord(fillet*2, oe),
+    ]);
+
+    return [MultiVector2.fromList(vecs), polygon];
+}
+
+
 export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, component: number, style: DrawState) {
 
     // convert style 
@@ -47,23 +131,45 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     ctx.beginPath();
 
     // draw body
-    setStyle(ctx, style, component, 0, isWidget);
-
-    let textCenters = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, canvas.size);
+    setStyle(ctx, style, component, 0, false); // isWidget
+    if (node.errorState != "") {
+        ctx.fillStyle = "orangered"
+    }
+    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, node.getHeight(), canvas.size);
     ctx.fill();
     ctx.stroke();
+    ctx.fill();
+    // draw thing in the middle
+    ctx.beginPath();
+    drawPolygon(ctx, centerPolygon);
+    ctx.fillStyle = "#222211";
+    ctx.fill();
+    // ctx.stroke();
 
     // draw operation text
     if (!isWidget) {
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.font = '15px courier new';
+        
+        // TODO: do somemthing smart with the name to make it fit
+        let name = node.core.name;
+        // name = "www";
+        let maxSize = 3 + (node.getHeight() -1) * 7;
+        if (name.length > maxSize) {
+            // console.log("too long!");
+            name = `${name.slice(0, maxSize-1)}..`;   
+        }
+        
+
+        ctx.fillStyle = '#cecdd1';
+        ctx.font = `small-caps bold 14px sans-serif`;
         // ctx.rotate
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         let op_center = textCenters.get(0);
-        // ctx.translate(op_center.x, op_center.y);
-        // ctx.rotate(Math.PI*-0.5);
-        ctx.fillText(node.core.name, op_center.x, op_center.y);
+        ctx.translate(op_center.x, op_center.y);
+        ctx.rotate(Math.PI*-0.5);
+        ctx.fillText(name, 0, 0);
+        ctx.rotate(Math.PI*0.5);
+        ctx.translate(-op_center.x, -op_center.y);
     }
 
     // draw input text
@@ -90,6 +196,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         widget.render(ctx, pos, component, canvas.size);
     }
 }
+
 
 export function drawCable(ctx: CTX, cable: Cable, canvas: NodesCanvas) {
 
@@ -209,9 +316,16 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     }
 
     line = filletPolyline(line, fillet);
-
-    if (state == CableState.On) {
-        ctx.strokeStyle = "#33dd33";
+    if (state == CableState.Null) {
+        ctx.strokeStyle = "#222222";
+    } else if (state == CableState.Boolean) {
+        ctx.strokeStyle = "#08FD4E";
+    } else if (state == CableState.Number) {
+        ctx.strokeStyle = "#FD08B7";
+    } else if (state == CableState.String) {
+        ctx.strokeStyle = "#FDC908";
+    } else if (state == CableState.Object) {
+        ctx.strokeStyle = "#083DFD";
     } else if (state == CableState.Selected) {
         ctx.strokeStyle = "white";
     } else {
@@ -222,62 +336,13 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     ctx.lineCap = "round";
     // ctx.lineJoin = "bevel";
     ctx.lineWidth = 8;
-    drawPolyline(ctx, line);
-}
-
-function filletPolyline(line: MultiVector2, radius: number) : MultiVector2 {
-
-    let count = line.count + (line.count - 2);
-    let verts = MultiVector2.new(count);
-
-    // set first and last
-    verts.set(0, line.get(0));
-    verts.set(count-1, line.get(Math.ceil((count-1) / 2)));
-
-    // set in betweens
-    for (let i = 1 ; i < count-1; i++) {
-
-        let half = i / 2;
-        let pointsToPrevious = (half % 1 != 0);
-        let j = Math.ceil(half) // index in original 
-        let vert = line.get(j);
-
-        // apply fillet
-        if (pointsToPrevious) {
-            // to 
-            let prev = line.get(j-1);
-            vert.add(prev.subbed(vert).setLength(radius));
-        } else {
-            let next = line.get(j+1);
-            vert.add(next.subbed(vert).setLength(radius));
-        }
-
-
-
-        verts.set(i, vert);
-    }
-
-    return verts;
-
-    
-}
-
-function drawPolyline(ctx: CTX, pl: MultiVector2) {
-    ctx.beginPath();
-    let v = pl.get(0);
-    ctx.moveTo(v.x, v.y);
-
-    for (let i = 1 ; i < pl.count; i++) {
-        let v = pl.get(i);
-        ctx.lineTo(v.x, v.y);
-    }
-    ctx.stroke();
+    strokePolyline(ctx, line);
 }
 
 
 function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#cecdd1";
     ctx.fillStyle = "#222222";
     ctx.lineWidth = 1;
 
@@ -322,6 +387,7 @@ function getStyle(state: DrawState) {
     }
 }
 
+
 function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh: Vector2, size: number) {
     let part = 5;
     let step = size / part;
@@ -334,99 +400,4 @@ function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh:
     let lineTo = (x: number, y: number) => {
         ctx.lineTo(pos.x + y*step, pos.y + x*step);
     }
-}
-
-/**
- * Draw the chip shape
- * returns 
- */
-function nodeShape(ctx: CTX, pos: Vector2, inputs: number, outputs: number, size: number) : MultiVector2 {
-    let max = Math.max(inputs, outputs);
-    let part = 5;
-    let step = size / part;
-    let height = max * part;
-    let width = 15;
-
-    let cola = 2.5;
-    let colb = 3;
-    let colc = 3;
-    let cold = 12;
-    let cole = 12;
-    let colf = 12.5;
-
-    let coord = (x: number,y: number) => {
-        return Vector2.new(pos.x + y*step, pos.y + x*step);
-    }
-    let moveTo = (x: number, y: number) => {
-        ctx.moveTo(pos.x + y*step, pos.y + x*step);
-    }
-    let lineTo = (x: number, y: number) => {
-        ctx.lineTo(pos.x + y*step, pos.y + x*step);
-    }
-
-    // calculate coorindates of input, output, and body centers
-    let vecs = MultiVector2.new(inputs + outputs + 1);
-    vecs.set(0, coord(height/2, width/2));
-
-    // top
-    moveTo(0.5, cole);
-    lineTo(0.5, cold);
-    lineTo(0.5, colc);
-    lineTo(0.5, colb);
-
-    // draw inputs
-    for(let i = 0; i < max; i++) {
-        let offset = i * 5;
-        if (i < inputs) {
-
-            // store center
-            vecs.set(1 + i, coord(offset+ 2.5, colc))
-
-            // draw zig-zag
-            lineTo(offset+1  , cola);
-            lineTo(offset+4  , cola);
-            lineTo(offset+4.5, colb);
-            if (i != max-1)
-                lineTo(offset+5.5, colb);
-        } else {
-            // draw straight line
-            // lineTo(offset+4.5, colb);
-        }
-    }
-
-    // bottom
-    // lineTo(width-0.5, 4); // colb
-    lineTo(height-0.5, 5); // colc
-    lineTo(height-0.5, 10); // cold
-    // lineTo(width-0.5, 6); // cole
-
-    // draw outputs
-    moveTo(0.5, cole);
-    for(let i = 0; i < max; i++) {
-        let offset = i * 5;
-        if (i < outputs) {
-
-            // store center
-            vecs.set(1 + inputs + i, coord(offset+ 2.5, cold))
-
-            // draw zig-zag
-            lineTo(offset+1  , colf);
-            lineTo(offset+4  , colf);
-            lineTo(offset+4.5, cole);
-            if (i != max-1)
-                lineTo(offset+5.5, cole);
-        } else {
-            // draw straight line
-            // lineTo(offset+4.5,cole);
-        }
-    }
-    lineTo(height-0.5, 10); // cold
-    return vecs;
-}
-
-function drawCicle(ctx: CTX, pos: Vector2, size: number) {
-    let hs = size / 2;
-    ctx.beginPath();
-    ctx.arc(pos.x + hs, pos.y + hs, hs, 0, Math.PI*2);
-    ctx.fill();
 }

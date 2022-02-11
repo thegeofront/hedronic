@@ -32,8 +32,8 @@ export class Operation {
         return new Operation(func, name, inCount, outCount, namespace);
     }
 
-    run(...args: State[]) {
-        return this.func(...args); 
+    run(args: State[]) {
+        return this.func(...args);
     }
 
     log() {
@@ -41,6 +41,13 @@ export class Operation {
         console.log(`name: ${this.func.name}`);
         console.log(`inputs: ${this.inputs}`);
         console.log(`outputs: ${this.outputs}`);    
+    }
+
+    toJson() {
+        return {
+            namespace: this.namespace,
+            name: this.name,
+        }
     }
 
     // ---- util
