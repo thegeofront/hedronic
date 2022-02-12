@@ -684,8 +684,20 @@ export class NodesCanvas {
         let initState = undefined;
 
         if (text.includes('//')) {
+            // something special for quick inputs
             name = "input";
+
+            // try to get the initstate.
             initState = text.split('// ')[1];
+            let float = Number.parseFloat(initState);
+            let int = Number.parseInt(initState);
+            if (float !== NaN && initState.includes('.')) {
+                initState = float;
+            } else if (int !== NaN) {
+                initState = int;
+            } else {
+                initState = initState;
+            }
         } else {
             parts = text.split('.');
             if (parts.length == 0) {
