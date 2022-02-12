@@ -87,11 +87,9 @@ export class NodesCanvas {
         // this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
         // this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
         this.onResize();
-        this.camera.onMouseDoubleDown = (worldPos: Vector2) => {
-            this.onMouseDoubleDown(this.toGrid(worldPos));
-        }
-        this.camera.onMouseDown = (worldPos: Vector2) => {
-            this.onMouseDown(this.toGrid(worldPos));
+
+        this.camera.onMouseDown = (worldPos, double) => {
+            this.onMouseDown(this.toGrid(worldPos), double);
         }
         this.camera.onMouseUp = (worldPos: Vector2) => {
             this.onMouseUp(this.toGrid(worldPos));
@@ -176,11 +174,11 @@ export class NodesCanvas {
 
     onNew() {
         console.log("new...");
-        this.reset();
+        this.resetGraph();
     }
 
 
-    reset(graph= NodesGraph.new()) {
+    resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
         this.graph.calculate();
@@ -221,7 +219,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.reset(NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!);
+            this.resetGraph(NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!);
         })
     }
 
@@ -234,7 +232,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.reset(NodesGraph.fromJs(str.toString(), this.catalogue)!);
+            this.resetGraph(NodesGraph.fromJs(str.toString(), this.catalogue)!);
         })
     }
 
@@ -312,9 +310,9 @@ export class NodesCanvas {
         // TODO move this to Catalogue, its catalogue's responsibility to manage modules
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
-            let lib = await IO.importLibrary(config.path);
-            let mod = BlueprintLibrary.fromJsObject(config.name, config.icon, config.fullPath, config.path, lib, this.catalogue);
-            this.catalogue.addModule(mod);
+            let libString = await IO.importLibrary(config.path);
+            let mod = BlueprintLibrary.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
+            this.catalogue.addLibrary(mod);
         }
         this.ui();
         this.menu.updateCategories(this);
@@ -331,7 +329,7 @@ export class NodesCanvas {
         }
         `;
 
-        this.reset(NodesGraph.fromJs(js, this.catalogue)!);
+        this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
         return;
     }
 
@@ -343,10 +341,10 @@ export class NodesCanvas {
         
         // @ts-ignore;
         let graph = Blueprint.new(GRAPH);
-        if (this.catalogue.modules.has("graphs")) {
-            this.catalogue.modules.get("graphs")!.operations.push(graph);
+        if (this.catalogue.blueprintLibraries.has("graphs")) {
+            this.catalogue.blueprintLibraries.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addModule(BlueprintLibrary.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addLibrary(BlueprintLibrary.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }
@@ -639,27 +637,51 @@ export class NodesCanvas {
 
     // ------ Events
 
-    onMouseDoubleDown(gp: Vector2) {
+    promptForNode(gp: Vector2) {
         let text = prompt("add:", "bool.and");
-        if (text) {
-            
-            let parts = text.split('.');
-            let libary = parts[0];
-            let name = parts[1];
+        if (!text) {
+            console.warn("no input!");
+            return;
+        }
+        
+        let parts = text.split('.');
+        let library = parts[0].toLowerCase();
+        let name = parts[1].toLowerCase();
 
-            for (let type of [CoreType.Operation, CoreType.Widget]) {
-                trySpawnNode(this.graph, this.catalogue, name, type, gp, libary);
+        let mod = this.catalogue.blueprintLibraries.get(library);        
+
+        if (!mod) {
+            console.warn(`lib ${mod} not found!`);
+        }
+
+        for (let bp of mod!.blueprints) {
+            console.log(bp.name);
+            if (name == bp.nameLower) {
+                this.graphHistory.addNodes(bp, gp);
+                this.requestRedraw();
+                return;
             }
         }
+
+        for (let wid of mod!.widgets) {
+            if (name == wid.name) {
+                console.log("found!")
+                this.graphHistory.addNodes(wid, gp);
+                this.requestRedraw();
+                return;
+            }
+        }
+
+        console.warn(`lib found, but function ${name} not found`);
     }
 
-    onMouseDown(gp: Vector2) {
+    onMouseDown(gp: Vector2, doubleClick: boolean) {
 
+        console.log(doubleClick);
+        
         // console.log("down!");
         this.mgpStart = gp;
         this.mgpEnd = gp;
-        
-        
 
         if (this.catalogue.selected) {
             // we are placing a new node
@@ -675,8 +697,15 @@ export class NodesCanvas {
         let socket = this.trySelect(gp);
         let shift = this.input.IsKeyDown("shift") 
         if (!socket) {
-            // we clicked an empty spot: deselect and draw a box
+            
+            // we clicked an empty spot: deselect
             if (!shift) this.deselect();
+            
+            if (doubleClick) {
+                this.promptForNode(gp);
+            }
+
+            // deselect and draw a box
             this.startBox(gp);
             this.requestRedraw();
             return;

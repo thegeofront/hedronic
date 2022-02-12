@@ -30,7 +30,7 @@ export class Catalogue {
 
     public selected?: Blueprint | Widget;
 
-    constructor(public modules: Map<string, BlueprintLibrary>) {}
+    constructor(public blueprintLibraries: Map<string, BlueprintLibrary>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map());
@@ -53,12 +53,12 @@ export class Catalogue {
 
         let cat = Catalogue.new();
         let widMod = BlueprintLibrary.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
-        cat.addModule(widMod);
+        cat.addLibrary(widMod);
         return cat;
     }
 
     find(lib: string, key: string) {  
-        let mod = this.modules.get(lib);
+        let mod = this.blueprintLibraries.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -73,7 +73,7 @@ export class Catalogue {
     }
 
     trySelect(lib: string, key: string, type: CoreType) {
-        let mod = this.modules.get(lib);
+        let mod = this.blueprintLibraries.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -87,7 +87,7 @@ export class Catalogue {
     }
 
     select(lib: string, key: string, type: CoreType) {
-        this.modules.get(lib)!.select(key, type);
+        this.blueprintLibraries.get(lib)!.select(key, type);
     }
 
     deselect() {
@@ -105,8 +105,8 @@ export class Catalogue {
         }
     }
 
-    addModule(mod: BlueprintLibrary) {
-        this.modules.set(mod.name, mod);
-        mod.publishGlobally();
+    addLibrary(lib: BlueprintLibrary) {
+        this.blueprintLibraries.set(lib.name, lib);
+        lib.publishGlobally();
     } 
 }

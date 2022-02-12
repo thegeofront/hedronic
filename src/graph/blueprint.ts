@@ -22,6 +22,7 @@ export class Blueprint {
     private constructor(
         public readonly func: FN,
         public readonly name: string,
+        public readonly nameLower: string,
         public readonly inputs: number, 
         public readonly outputs: number,
         public readonly namespace: string) {}
@@ -30,7 +31,8 @@ export class Blueprint {
         let inCount = Blueprint.countInputs(func);
         let outCount = Blueprint.countOutputs(func);
         let name = func.name;
-        return new Blueprint(func, name, inCount, outCount, namespace);
+        let nameLower = name.toLowerCase();
+        return new Blueprint(func, name, nameLower, inCount, outCount, namespace);
     }
 
     run(args: State[]) {

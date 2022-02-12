@@ -7,8 +7,7 @@ import { CTX } from "../nodes-canvas/nodes-canvas";
 export class CtxCamera {
     
     private scaleRange = Domain.new(0.3, 5)
-    public onMouseDown?: (c: Vector2) => void;
-    public onMouseDoubleDown?: (c: Vector2) => void;
+    public onMouseDown?: (c: Vector2, double: boolean) => void;
     public onMouseUp?: (c: Vector2) => void;
     public onMouseMove?: (c: Vector2) => void;
     public mousePos = Vector2.new();
@@ -29,7 +28,7 @@ export class CtxCamera {
     }
 
     setupEvents() {
-        window.addEventListener('dblclick', () => {
+        window.addEventListener('dblclick', (e) => {
             this.doubleClick = true;
         })
     }
@@ -48,13 +47,8 @@ export class CtxCamera {
         // we have to check these things every frame to make dragging consistent
 
         // clicking down
-        if (state.mouseLeftPressed && this.onMouseDown) {
-            this.onMouseDown(worldPos);
-        }
-
-        // consume double click 
-        if (this.doubleClick && this.onMouseDoubleDown) {
-            this.onMouseDoubleDown(worldPos);
+        if ((state.mouseLeftPressed || this.doubleClick) && this.onMouseDown) {
+            this.onMouseDown(worldPos, this.doubleClick);
             this.doubleClick = false;
         }
 

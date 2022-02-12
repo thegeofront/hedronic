@@ -34,9 +34,9 @@ export class Menu {
         let catalogue = nodesCanvas.catalogue;
         items.push(new MenuCategory("geofront", "bi-globe2", true, new MenuContentMain(nodesCanvas)));
 
-        for (let mod of catalogue.modules.values()) {
+        for (let mod of catalogue.blueprintLibraries.values()) {
             let ops: Blueprint[] = [];
-            for (let op of mod.operations.values()) {
+            for (let op of mod.blueprints.values()) {
                 ops.push(op);
             }
             // let content = renderCores(ops, [], onPress)

@@ -12,7 +12,8 @@ export class BlueprintLibrary {
         public name: string,
         public icon: string,
         public fullPath: string,
-        public operations: Blueprint[],
+
+        public blueprints: Blueprint[],
         public widgets: Widget[],
         public catalogue: Catalogue,
         ) {}
@@ -21,7 +22,7 @@ export class BlueprintLibrary {
         console.log(`select name: ${key} type: ${type}`);
         let core;
         if (type == CoreType.Operation) {
-            core = tryFilter(this.operations, (item) => {return item.name == key});
+            core = tryFilter(this.blueprints, (item) => {return item.name == key});
         } else {
             core = tryFilter(this.widgets, (item) => {return item.name == key});
         }
@@ -55,7 +56,7 @@ export class BlueprintLibrary {
         
         let space = {};
 
-        for (let op of this.operations) {
+        for (let op of this.blueprints) {
             Object.defineProperty(space, op.name, { value: op.func, configurable: true});
         }
         Object.defineProperty(window, this.name, { value: space, configurable: true});

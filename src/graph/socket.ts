@@ -1,8 +1,10 @@
 import { GeonNode } from "./node";
 
-//ni < 0 : inputs | ni == 0 : node body | ni > 0 : outputs
+//si < 0 : inputs | si == 0 : node body | si > 0 : outputs
 export type SocketIdx = number; 
+
 export const enum SocketSide { Input=-1, Body=0, Output=1, Widget=1000};
+
 export class Socket {
     
     private constructor(
