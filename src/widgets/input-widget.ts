@@ -7,7 +7,7 @@ import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 export class InputWidget extends Widget {
 
     static new(state: State) {
-        return new InputWidget("Input", WidgetSide.Input, Vector2.new(4,1), state);
+        return new InputWidget("input", WidgetSide.Input, Vector2.new(4,1), state);
     }
 
     clone() {

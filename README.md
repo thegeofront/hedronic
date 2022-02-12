@@ -16,12 +16,12 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 > 🚧: Busy
 > ✔️: Done 
 
-
 - UI
-  - [ ] double click menu
-     - [ ] MVP
-     - [ ]  
-     - [ ] autocomplete
+  - [✔️] double click menu
+     - [✔️] MVP
+     - [ ] _extra: nicer popup window_
+     - [ ] _extra: filters_
+     - [ ] _extra: autocomplete_
 
 - FUNCTIONALITY 
 

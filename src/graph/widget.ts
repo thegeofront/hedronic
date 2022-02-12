@@ -39,6 +39,7 @@ export enum WidgetSide {
  */
 export class Widget {
 
+    nameLower: string;
     bounds: Domain2;
     inputs: number;
     outputs: number
@@ -49,6 +50,7 @@ export class Widget {
         public readonly size: Vector2,
         public state: State,
     ) {
+        this.nameLower = name.toLowerCase();
         this.inputs = side == WidgetSide.Input ? 0 : 1;
         this.outputs = side == WidgetSide.Output ? 0 : 1;
         this.bounds = Widget.determineWidgetSize(this.side, this.size);

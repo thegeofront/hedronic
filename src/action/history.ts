@@ -1,8 +1,9 @@
 import { Vector2 } from "../../../engine/src/lib";
+import { Blueprint } from "../graph/blueprint";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
-import { Blueprint } from "../graph/blueprint";
 import { Socket } from "../graph/socket";
+import { State } from "../graph/state";
 import { Widget } from "../graph/widget";
 import { Action } from "./action";
 import { NodesAddAction } from "./c/nodes-add-action";
@@ -47,8 +48,9 @@ export class History {
      */
     record(action: Action) {
         console.log("recording something")
-        this.redoActions = [];
+        this.redoActions = []; // upon a new record, we must remove the redo list
         this.actions.push(action);
+        console.log(this.actions)
     }
 
     /**
@@ -83,8 +85,8 @@ export class History {
 
     ///////////////////////////////////////////////////////////////////////////    
 
-    addNodes(selected: Blueprint | Widget, gp: Vector2) {
-        return this.do(new NodesAddAction(selected, gp))
+    addNodes(selected: Blueprint | Widget, gp: Vector2, state?: State) {
+        return this.do(new NodesAddAction(selected, gp, state))
     }
 
     deleteNodes(keys: string[]) {

@@ -49,7 +49,10 @@ export class CtxCamera {
         // clicking down
         if ((state.mouseLeftPressed || this.doubleClick) && this.onMouseDown) {
             this.onMouseDown(worldPos, this.doubleClick);
-            this.doubleClick = false;
+            if (this.doubleClick && this.onMouseUp) {
+                this.onMouseUp(worldPos);    
+                this.doubleClick = false;
+            }
         }
 
         // click lift 

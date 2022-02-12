@@ -121,6 +121,8 @@ export class NodesCanvas {
 
             if (control && key == 'a')
                 this.onSelectAll();
+            else if (control && shift && 'p') 
+                this.onPrompt();
             else if (control && key == 's')
                 this.onSave();
             else if (control && key == 'l')
@@ -199,6 +201,10 @@ export class NodesCanvas {
      */
     onDuplicate() {
 
+    }
+
+    onPrompt() {
+        this.promptForNode(this.mgpHover);
     }
 
 
@@ -637,42 +643,86 @@ export class NodesCanvas {
 
     // ------ Events
 
+    
+    tryGetbpFromLibrary(library: string, name: string) {
+                
+        let lib = this.catalogue.blueprintLibraries.get(library);        
+
+        if (!lib) {
+            console.warn(`lib ${lib} not found!`);
+            return undefined
+        }
+
+        for (let bp of lib.blueprints) {
+            if (name == bp.nameLower) {
+                return bp;
+            }
+        }
+
+        for (let wid of lib.widgets) {
+            if (name == wid.nameLower) {
+                return wid;
+            }
+        }
+
+        // console.warn(`lib found, but function ${name} not found`);
+        return undefined;
+    }
+
     promptForNode(gp: Vector2) {
-        let text = prompt("add:", "bool.and");
+        let text = prompt("", "");
+        
         if (!text) {
             console.warn("no input!");
-            return;
+            return undefined;
         }
         
-        let parts = text.split('.');
-        let library = parts[0].toLowerCase();
-        let name = parts[1].toLowerCase();
+        // try to extract name & library from the input text
+        let name = undefined;
+        let library = undefined;
+        let parts = undefined;
+        let initState = undefined;
 
-        let mod = this.catalogue.blueprintLibraries.get(library);        
-
-        if (!mod) {
-            console.warn(`lib ${mod} not found!`);
+        if (text.includes('//')) {
+            name = "input";
+            initState = text.split('// ')[1];
+        } else {
+            parts = text.split('.');
+            if (parts.length == 0) {
+                console.warn("no input!");
+                return undefined;
+            } else if (parts.length == 1) {
+                name = parts[0].toLowerCase();
+            } else {
+                library = parts[0].toLowerCase();
+                name = parts[1].toLowerCase();
+            }  
         }
 
-        for (let bp of mod!.blueprints) {
-            console.log(bp.name);
-            if (name == bp.nameLower) {
-                this.graphHistory.addNodes(bp, gp);
-                this.requestRedraw();
-                return;
-            }
+        // if no library was detected, brute force!
+        if (!library) {
+            for (let lib of this.catalogue.blueprintLibraries.keys()) {
+                let blueprint = this.tryGetbpFromLibrary(lib, name);
+                if (blueprint) {
+                    this.graphHistory.addNodes(blueprint, gp, initState);
+                    this.requestRedraw();
+                    return "";
+                }
+            } 
+
+            console.warn("none of the libraries know this method!");
+            return undefined;
         }
 
-        for (let wid of mod!.widgets) {
-            if (name == wid.name) {
-                console.log("found!")
-                this.graphHistory.addNodes(wid, gp);
-                this.requestRedraw();
-                return;
-            }
+        // else, try to select something with library and name
+        let thing = this.tryGetbpFromLibrary(library, name);
+        if (!thing) {
+            console.warn("no blueprint found");
+            return undefined;
         }
-
-        console.warn(`lib found, but function ${name} not found`);
+        this.graphHistory.addNodes(thing, gp);
+        this.requestRedraw();
+        return "";
     }
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {
