@@ -12,11 +12,12 @@ import { State } from "./state";
 export type FN = (...args: State[]) => State[];
 
 /**
+ * Offers a blueprint for creating a new node
  * Wraps a function, and delivers some useful information
- * This is needed, so we can reason about the functionalities of chips
+ * This is needed, so we can reason about the functionalities of operations
  * Not the same as a Node : Multiple Different Nodes will point to the same Operations
  */
-export class Operation {
+export class Blueprint {
 
     private constructor(
         public readonly func: FN,
@@ -26,10 +27,10 @@ export class Operation {
         public readonly namespace: string) {}
 
     static new(func: FN, namespace: string) {
-        let inCount = Operation.countInputs(func);
-        let outCount = Operation.countOutputs(func);
+        let inCount = Blueprint.countInputs(func);
+        let outCount = Blueprint.countOutputs(func);
         let name = func.name;
-        return new Operation(func, name, inCount, outCount, namespace);
+        return new Blueprint(func, name, inCount, outCount, namespace);
     }
 
     run(args: State[]) {

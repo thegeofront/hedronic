@@ -1,4 +1,4 @@
-import { Operation } from "../graph/operation";
+import { Blueprint } from "../graph/blueprint";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
@@ -35,7 +35,7 @@ export class Menu {
         items.push(new MenuCategory("geofront", "bi-globe2", true, new MenuContentMain(nodesCanvas)));
 
         for (let mod of catalogue.modules.values()) {
-            let ops: Operation[] = [];
+            let ops: Blueprint[] = [];
             for (let op of mod.operations.values()) {
                 ops.push(op);
             }

@@ -1,7 +1,5 @@
 import { mapFromJson, mapToJson } from "../util/serializable";
-import { Operation } from "./operation";
 import { Socket } from "./socket";
-import { State } from "./state";
 
 export enum CableState {
     Null,

@@ -1,18 +1,18 @@
 // purpose: module, or library representation
 
-import { FN, Operation } from "../graph/operation";
+import { FN, Blueprint } from "../graph/blueprint";
 import { Widget } from "../graph/widget";
 import { tryFilter } from "../util/misc";
 import { Catalogue, CoreType } from "./catalogue";
 
 
 
-export class NodesModule {
+export class BlueprintLibrary {
     constructor(
         public name: string,
         public icon: string,
         public fullPath: string,
-        public operations: Operation[],
+        public operations: Blueprint[],
         public widgets: Widget[],
         public catalogue: Catalogue,
         ) {}
@@ -28,8 +28,8 @@ export class NodesModule {
         this.catalogue.selectCore(core);
     }
 
-    static new(name: string, icon: string, fullPath: string, operations: Operation[], widgets: Widget[], catalogue: Catalogue) {
-        return new NodesModule(name, icon, fullPath, operations, widgets, catalogue);
+    static new(name: string, icon: string, fullPath: string, operations: Blueprint[], widgets: Widget[], catalogue: Catalogue) {
+        return new BlueprintLibrary(name, icon, fullPath, operations, widgets, catalogue);
     }
 
     /**
@@ -41,11 +41,11 @@ export class NodesModule {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = Operation.new(f, name);
+                let op = Blueprint.new(f, name);
                 ops.push(op);
             }
         }
-        return new NodesModule(name, icon, fullPath, ops, [], catalogue);
+        return new BlueprintLibrary(name, icon, fullPath, ops, [], catalogue);
     }
 
     /**

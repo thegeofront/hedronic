@@ -9,16 +9,34 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 [Here](https://josfeenstra.nl/project/nodes)
 
-# Roadmap & TODO
+
+# Roadmap MVP
 > status 
-> 🛑: No work yet
+> 🛑: Won't do
 > 🚧: Busy
 > ✔️: Done 
 
 
+- UI
+  - [ ] double click menu
+     - [ ] MVP
+     - [ ]  
+     - [ ] autocomplete
+
+- FUNCTIONALITY 
+
+
+- QOL (quality of life)
+  - [ ] copy-pasting (parts of) the flowchart
+  - [✔️] history & ctrl Z & Y support 
+  - [ ] cable history
+
+
+# OTHER THINGS TO DO
+
+
 ## Utility 🚧
 The Utilities are still not completely done: 
-
 - NO UI idea: lets try to do everything with drop downs, and context-aware menu's. 
 
 ### Menu Overhaul

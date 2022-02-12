@@ -12,17 +12,26 @@ export class CtxCamera {
     public onMouseUp?: (c: Vector2) => void;
     public onMouseMove?: (c: Vector2) => void;
     public mousePos = Vector2.new();
+    public doubleClick = false;
 
     private constructor(
         private html_canvas: HTMLCanvasElement,
         public pos: Vector2, 
-        public scale: number) {}
+        public scale: number) {
+            this.setupEvents() 
+        }
 
     static new(
         html_canvas: HTMLCanvasElement, 
         startPos: Vector2, 
         startScale: number) {
         return new CtxCamera(html_canvas, startPos, startScale);
+    }
+
+    setupEvents() {
+        window.addEventListener('dblclick', () => {
+            this.doubleClick = true;
+        })
     }
 
     log() {
@@ -43,10 +52,10 @@ export class CtxCamera {
             this.onMouseDown(worldPos);
         }
 
-        // double click 
-        if (state.mouseLeftDoubleDown && this.onMouseDoubleDown) {
+        // consume double click 
+        if (this.doubleClick && this.onMouseDoubleDown) {
             this.onMouseDoubleDown(worldPos);
-            state.mouseLeftDoubleDown = false;
+            this.doubleClick = false;
         }
 
         // click lift 

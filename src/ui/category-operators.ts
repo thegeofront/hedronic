@@ -1,7 +1,7 @@
-import { Operation } from "../graph/operation";
+import { Blueprint } from "../graph/blueprint";
 import { Widget } from "../graph/widget";
 import { CoreType } from "../operations/catalogue";
-import { NodesModule } from "../operations/module";
+import { BlueprintLibrary } from "../operations/module";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
 import { Catalogue } from "./../operations/catalogue";
@@ -10,7 +10,7 @@ export class MenuContentOperations implements MenuContent {
     
     constructor(
         private cat: Catalogue, 
-        public mod: NodesModule,
+        public mod: BlueprintLibrary,
         private canvas: HTMLCanvasElement) {
     }
     
@@ -20,7 +20,7 @@ export class MenuContentOperations implements MenuContent {
 }
 
 
-function renderCores(d: DomWriter, ops: Operation[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
+function renderCores(d: DomWriter, ops: Blueprint[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
     
     // operations
     d.add('div', "core-list");

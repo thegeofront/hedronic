@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../engine/src/lib";
-import { Operation } from "./operation";
+import { Blueprint } from "./blueprint";
 import { Widget } from "./widget";
 import { SocketIdx } from "./socket";
 import { State } from "./state";
@@ -14,17 +14,17 @@ export class GeonNode {
 
     private constructor(
         public position: Vector2, 
-        public core: Operation | Widget, // slot for an operation
+        public core: Blueprint | Widget, // slot for an operation
         public connections: Map<SocketIdx, string>) {}
 
-    static new(gridpos: Vector2, core: Operation | Widget, map = new Map()) {
+    static new(gridpos: Vector2, core: Blueprint | Widget, map = new Map()) {
         if (core instanceof Widget) {
             core = core.clone(); // Widgets contain unique state, while Operations are prototypes 
         }
         return new GeonNode(gridpos, core, map);
     }
 
-    static fromJson(data: any, core: Operation | Widget) {
+    static fromJson(data: any, core: Blueprint | Widget) {
 
         let con = new Map<SocketIdx, string>();
         for (let k in data.connections) {
@@ -58,9 +58,9 @@ export class GeonNode {
 
     // ---- Getters
 
-    get operation() : Operation | undefined {
-        if (this.core instanceof Operation) {
-            return this.core as Operation
+    get operation() : Blueprint | undefined {
+        if (this.core instanceof Blueprint) {
+            return this.core as Blueprint
         } else {
             return undefined;
         }

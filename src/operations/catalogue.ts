@@ -1,4 +1,4 @@
-import { FN, Operation } from "../graph/operation";
+import { FN, Blueprint } from "../graph/blueprint";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";
@@ -6,7 +6,7 @@ import { ButtonWidget } from "../widgets/button-widget";
 import { ConsoleWidget } from "../widgets/console-widget";
 import { LampWidget } from "../widgets/lamp-widget";
 import { InputWidget } from "../widgets/input-widget";
-import { NodesModule } from "./module";
+import { BlueprintLibrary } from "./module";
 import { Module } from "webpack";
 import { ImageWidget } from "../widgets/image-widget";
 
@@ -28,9 +28,9 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: Operation | Widget;
+    public selected?: Blueprint | Widget;
 
-    constructor(public modules: Map<string, NodesModule>) {}
+    constructor(public modules: Map<string, BlueprintLibrary>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map());
@@ -52,7 +52,7 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = NodesModule.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        let widMod = BlueprintLibrary.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
         cat.addModule(widMod);
         return cat;
     }
@@ -82,7 +82,7 @@ export class Catalogue {
         return this.selected;
     }
 
-    selectCore(core: Operation | Widget | undefined) {
+    selectCore(core: Blueprint | Widget | undefined) {
         this.selected = core;
     }
 
@@ -105,7 +105,7 @@ export class Catalogue {
         }
     }
 
-    addModule(mod: NodesModule) {
+    addModule(mod: BlueprintLibrary) {
         this.modules.set(mod.name, mod);
         mod.publishGlobally();
     } 

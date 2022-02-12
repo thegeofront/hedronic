@@ -1,14 +1,14 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { NodesGraph } from "../../graph/graph";
 import { GeonNode } from "../../graph/node";
-import { Operation } from "../../graph/operation";
+import { Blueprint } from "../../graph/blueprint";
 import { Widget } from "../../graph/widget";
 import { Action } from "../action";
 
 export class NodesAddAction implements Action {
     
     constructor(
-        public blueprint: Operation | Widget,
+        public blueprint: Blueprint | Widget,
         public gridPosition: Vector2,
         private key?: string,
     ) {}

@@ -10,6 +10,22 @@ import { Socket } from "./socket";
 import { State } from "./state";
 import { WidgetSide } from "./widget";
 
+export function trySpawnNode(graph: NodesGraph, catalogue: Catalogue, name: string, type: CoreType, pos: Vector2, lib = "GEON", state?: State) {
+    // TODO: catalogue.name == lib;
+    if (catalogue.trySelect(lib, name, type)) {
+        let node = catalogue.spawn(pos)!;
+        if (type == CoreType.Widget) {
+            // @ts-ignore
+            node.core.state = state!;
+        }
+        let key = graph.addNode(node);
+        catalogue.deselect();
+        return key;
+    }
+    console.warn({name, type, lib}, "is undefined!!");
+    return undefined;
+}
+
 /**
  * Create a new Graph from a js function. This function must be a pure function, and can only call other pure functions.
  * 
@@ -42,22 +58,6 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
 
     let cableStarts = new Map<String, Socket>();
 
-    let trySpawnNode = (name: string, type: CoreType, x: number, y: number, lib = "GEON", state?: State) => {
-        // TODO: catalogue.name == lib;
-        if (catalogue.trySelect(lib, name, type)) {
-            let node = catalogue.spawn(Vector2.new(x, y))!;
-            if (type == CoreType.Widget) {
-                // @ts-ignore
-                node.core.state = state!;
-            }
-            let key = graph.addNode(node);
-            catalogue.deselect();
-            return key;
-        }
-        console.warn({name, type, lib}, "is undefined!!");
-        return undefined;
-    }
-
     let createCable = (key: string, nodeKey: string, idx: number) => {
         cableStarts.set(key.trim(), Socket.new(nodeKey, idx));
     }
@@ -83,7 +83,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         let json = commentToJson(l.comment);
         let state = stringToState(json.state);
         console.log("state", state);
-        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "widgets", state)!;
+        let nodeKey = trySpawnNode(graph, catalogue, json.widget, CoreType.Widget, Vector2.new(json.x, json.y), "widgets", state)!;
         createCable(name, nodeKey, 0);
     }
 
@@ -96,7 +96,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         // console.log({rest, json});
         let call = extractCallFunctionElements(rest)!;
         console.log(call.lib)
-        let nodeKey = trySpawnNode(call.name, CoreType.Operation, json.x, json.y, call.lib)!;
+        let nodeKey = trySpawnNode(graph, catalogue, call.name, CoreType.Operation, Vector2.new(json.x, json.y), call.lib)!;
 
         for (let j = 0 ; j < call.outputs.length; j++) {
             createCable(call.outputs[j], nodeKey, j);
@@ -113,7 +113,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         if (!l) continue;
         let name = l.rest;
         let json = commentToJson(l.comment);
-        let nodeKey = trySpawnNode(json.widget, CoreType.Widget, json.x, json.y, "widgets")!;
+        let nodeKey = trySpawnNode(graph, catalogue, json.widget, CoreType.Widget, Vector2.new(json.x, json.y), "widgets")!;
         hookupCable(name, nodeKey, 0);
     }
   

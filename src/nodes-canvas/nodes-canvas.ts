@@ -11,11 +11,11 @@ import { Catalogue, CoreType } from "../operations/catalogue";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
 import { Socket, SocketSide } from "../graph/socket";
 import { Widget, WidgetSide } from "../graph/widget";
-import { graphToFunction, makeOperationsGlobal } from "../graph/graph-conversion";
-import { Operation } from "../graph/operation";
+import { graphToFunction, makeOperationsGlobal, trySpawnNode } from "../graph/graph-conversion";
+import { Blueprint } from "../graph/blueprint";
 import { Cable, CableState } from "../graph/cable";
 import { IO } from "../util/io";
-import { NodesModule } from "../operations/module";
+import { BlueprintLibrary } from "../operations/module";
 import { Menu } from "../ui/menu";
 import { dom } from "../util/dom-writer";
 import { History } from "../action/history";
@@ -313,7 +313,7 @@ export class NodesCanvas {
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
             let lib = await IO.importLibrary(config.path);
-            let mod = NodesModule.fromJsObject(config.name, config.icon, config.fullPath, config.path, lib, this.catalogue);
+            let mod = BlueprintLibrary.fromJsObject(config.name, config.icon, config.fullPath, config.path, lib, this.catalogue);
             this.catalogue.addModule(mod);
         }
         this.ui();
@@ -342,11 +342,11 @@ export class NodesCanvas {
         this.collapseCounter += 1;
         
         // @ts-ignore;
-        let graph = Operation.new(GRAPH);
+        let graph = Blueprint.new(GRAPH);
         if (this.catalogue.modules.has("graphs")) {
             this.catalogue.modules.get("graphs")!.operations.push(graph);
         } else {
-            this.catalogue.addModule(NodesModule.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addModule(BlueprintLibrary.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }
@@ -623,9 +623,9 @@ export class NodesCanvas {
 
         // if a node falls in the box space, select it
         let box = Domain2.fromInclude(MultiVector2.fromList([this.boxStart, this.mgpHover]));
-        console.log(box.x.t0, box.x.t1, box.y.t0, box.y.t1);
+        // console.log(box.x.t0, box.x.t1, box.y.t0, box.y.t1);
         box.offset([-2,1,-2,1])
-        console.log(box);
+        // console.log(box);
         for (let [key, node] of this.graph.nodes) {
             
             if (box.includesEx(node.position)) {
@@ -644,10 +644,11 @@ export class NodesCanvas {
         if (text) {
             
             let parts = text.split('.');
-            let core = this.catalogue.find(parts[0], parts[1]);
-            if (core) {
-                this.graphHistory.addNodes(core, gp);
-                this.requestRedraw();
+            let libary = parts[0];
+            let name = parts[1];
+
+            for (let type of [CoreType.Operation, CoreType.Widget]) {
+                trySpawnNode(this.graph, this.catalogue, name, type, gp, libary);
             }
         }
     }

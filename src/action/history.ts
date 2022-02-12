@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../engine/src/lib";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
-import { Operation } from "../graph/operation";
+import { Blueprint } from "../graph/blueprint";
 import { Socket } from "../graph/socket";
 import { Widget } from "../graph/widget";
 import { Action } from "./action";
@@ -83,7 +83,7 @@ export class History {
 
     ///////////////////////////////////////////////////////////////////////////    
 
-    addNodes(selected: Operation | Widget, gp: Vector2) {
+    addNodes(selected: Blueprint | Widget, gp: Vector2) {
         return this.do(new NodesAddAction(selected, gp))
     }
 
