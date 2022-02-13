@@ -4,17 +4,17 @@
 import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
 import { CtxCamera } from "./ctx/ctx-camera";
 import { resizeCanvas } from "./ctx/ctx-helpers";
-import { CableState } from "./graph/cable";
-import { NodesGraph } from "./graph/graph";
-import { makeOperationsGlobal } from "./graph/graph-conversion";
-import { Socket, SocketSide } from "./graph/socket";
-import { Widget } from "./graph/widget";
+import { CableState } from "./components/cable";
+import { NodesGraph } from "./components/graph";
+import { makeOperationsGlobal } from "./components/graph-conversion";
+import { Socket, SocketSide } from "./components/socket";
+import { Widget } from "./components/widget";
 import { Catalogue, CoreType } from "./blueprints/catalogue";
 import { Library } from "./blueprints/library";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
-import { History } from "./graph/history";
+import { History } from "./components/history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 

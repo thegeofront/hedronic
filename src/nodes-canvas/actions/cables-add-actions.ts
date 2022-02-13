@@ -1,6 +1,6 @@
-import { Action } from "../graph/action";
-import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
+import { Action } from "../components/action";
+import { NodesGraph } from "../components/graph";
+import { GeonNode } from "../components/node";
 
 export class CablesAddAction implements Action {
 

@@ -1,4 +1,4 @@
-import { NodesGraph } from "../graph/graph";
+import { NodesGraph } from "./graph";
 
 export abstract class Action {
     // abstract binding: string[];

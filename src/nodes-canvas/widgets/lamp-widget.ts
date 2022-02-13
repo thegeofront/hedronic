@@ -1,6 +1,6 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { State } from "../graph/state";
-import { Widget, WidgetSide } from "../graph/widget";
+import { State } from "../components/state";
+import { Widget, WidgetSide } from "../components/widget";
 
 export class LampWidget extends Widget {
 

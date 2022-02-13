@@ -2,9 +2,9 @@
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
 import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
-import { Cable, CableState } from "../graph/cable";
-import { NODE_WIDTH, GeonNode } from "../graph/node";
-import { Widget } from "../graph/widget";
+import { Cable, CableState } from "../components/cable";
+import { NODE_WIDTH, GeonNode } from "../components/node";
+import { Widget } from "../components/widget";
 import { CTX, NodesCanvas } from "../nodes-canvas";
 
 /**

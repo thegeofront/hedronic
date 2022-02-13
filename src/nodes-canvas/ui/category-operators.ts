@@ -1,5 +1,5 @@
 import { Blueprint } from "../blueprints/blueprint";
-import { Widget } from "../graph/widget";
+import { Widget } from "../components/widget";
 import { CoreType } from "../blueprints/catalogue";
 import { Library } from "../blueprints/library";
 import { DomWriter } from "../util/dom-writer";

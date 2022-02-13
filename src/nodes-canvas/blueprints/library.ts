@@ -1,7 +1,7 @@
 // purpose: module, or library representation
 
 import { FN, Blueprint } from "./blueprint";
-import { Widget } from "../graph/widget";
+import { Widget } from "../components/widget";
 import { tryFilter } from "../util/misc";
 import { Catalogue, CoreType } from "./catalogue";
 

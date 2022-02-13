@@ -1,10 +1,10 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Action } from "../graph/action";
+import { Action } from "../components/action";
 import { Blueprint } from "../blueprints/blueprint";
-import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
-import { State } from "../graph/state";
-import { Widget } from "../graph/widget";
+import { NodesGraph } from "../components/graph";
+import { GeonNode } from "../components/node";
+import { State } from "../components/state";
+import { Widget } from "../components/widget";
 
 export class NodesAddAction implements Action {
     

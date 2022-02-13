@@ -1,9 +1,9 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Action } from "../graph/action";
+import { Action } from "../components/action";
 import { Blueprint } from "../blueprints/blueprint";
-import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
-import { Widget } from "../graph/widget";
+import { NodesGraph } from "../components/graph";
+import { GeonNode } from "../components/node";
+import { Widget } from "../components/widget";
 
 export class NodesDeleteAction implements Action {
 

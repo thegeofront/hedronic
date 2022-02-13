@@ -7,7 +7,7 @@
 //                L  
 // 
 
-import { State } from "../graph/state";
+import { State } from "../components/state";
 
 export type FN = (...args: State[]) => State[];
 
