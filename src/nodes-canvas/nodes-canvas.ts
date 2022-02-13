@@ -2,8 +2,8 @@
 // purpose: wrapper for dealing with the 'whole of nodes'
 
 import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
-import { CtxCamera } from "./ctx/ctx-camera";
-import { resizeCanvas } from "./ctx/ctx-helpers";
+import { CtxCamera } from "./rendering/ctx/ctx-camera";
+import { resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { CableState } from "./components/cable";
 import { NodesGraph } from "./components/graph";
 import { makeOperationsGlobal } from "./components/graph-conversion";

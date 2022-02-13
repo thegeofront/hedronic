@@ -1,5 +1,5 @@
-import {Domain, Domain2, InputState, Vector2} from "../../../../engine/src/lib";
-import { CTX } from "../../nodes-canvas/nodes-canvas";
+import {Domain, Domain2, InputState, Vector2} from "../../../../../engine/src/lib";
+import { CTX } from "../../nodes-canvas";
 
 /**
  * 2d camera for ctx context

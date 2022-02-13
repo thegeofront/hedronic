@@ -1,5 +1,5 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
-import { CTX } from "../ctx/ctx-helpers";
+import { CTX } from "../rendering/ctx/ctx-helpers";
 import { State } from "../components/state";
 import { Widget, WidgetSide } from "../components/widget";
 import { renderTextInWidget } from "./input-widget";

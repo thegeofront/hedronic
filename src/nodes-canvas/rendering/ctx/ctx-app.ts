@@ -1,4 +1,4 @@
-import { InputState, Vector2 } from "../../../../engine/src/lib";
+import { InputState, Vector2 } from "../../../../../engine/src/lib";
 import { CtxCamera } from "./ctx-camera";
 import { CTX } from "./ctx-helpers";
 

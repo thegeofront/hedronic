@@ -1,7 +1,7 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
-import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
+import { drawPolygon, filletPolyline, strokePolyline } from "./ctx/ctx-helpers";
 import { Cable, CableState } from "../components/cable";
 import { NODE_WIDTH, GeonNode } from "../components/node";
 import { Widget } from "../components/widget";

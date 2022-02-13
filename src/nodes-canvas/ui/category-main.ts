@@ -1,4 +1,4 @@
-import { drawPolygon } from "../ctx/ctx-helpers";
+import { drawPolygon } from "../rendering/ctx/ctx-helpers";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
