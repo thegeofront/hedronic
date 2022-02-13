@@ -1,4 +1,4 @@
-import { Domain2, Vector2 } from "../../../engine/src/lib";
+import { Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
 import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";

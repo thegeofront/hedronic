@@ -1,7 +1,7 @@
 import { Blueprint } from "../graph/blueprint";
 import { Widget } from "../graph/widget";
 import { CoreType } from "../operations/catalogue";
-import { BlueprintLibrary } from "../operations/module";
+import { Library } from "../operations/library";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
 import { Catalogue } from "./../operations/catalogue";
@@ -10,7 +10,7 @@ export class MenuContentOperations implements MenuContent {
     
     constructor(
         private cat: Catalogue, 
-        public mod: BlueprintLibrary,
+        public mod: Library,
         private canvas: HTMLCanvasElement) {
     }
     

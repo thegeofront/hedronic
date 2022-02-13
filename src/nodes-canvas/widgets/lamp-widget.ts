@@ -1,4 +1,4 @@
-import { Vector2 } from "../../../engine/src/lib";
+import { Vector2 } from "../../../../engine/src/lib";
 import { State } from "../graph/state";
 import { Widget, WidgetSide } from "../graph/widget";
 

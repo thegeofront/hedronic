@@ -6,8 +6,10 @@ import { tryFilter } from "../util/misc";
 import { Catalogue, CoreType } from "./catalogue";
 
 
-
-export class BlueprintLibrary {
+/**
+ * A library. Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
+ */
+export class Library {
     constructor(
         public name: string,
         public icon: string,
@@ -30,7 +32,7 @@ export class BlueprintLibrary {
     }
 
     static new(name: string, icon: string, fullPath: string, operations: Blueprint[], widgets: Widget[], catalogue: Catalogue) {
-        return new BlueprintLibrary(name, icon, fullPath, operations, widgets, catalogue);
+        return new Library(name, icon, fullPath, operations, widgets, catalogue);
     }
 
     /**
@@ -46,7 +48,7 @@ export class BlueprintLibrary {
                 ops.push(op);
             }
         }
-        return new BlueprintLibrary(name, icon, fullPath, ops, [], catalogue);
+        return new Library(name, icon, fullPath, ops, [], catalogue);
     }
 
     /**

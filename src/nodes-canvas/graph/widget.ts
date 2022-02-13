@@ -11,9 +11,9 @@
 //              also, only gizmo's are allowed to hold state. 
 //            
 
-import { Domain, Domain2, Vector2 } from "../../../engine/src/lib";
+import { Domain, Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
-import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { Blueprint } from "./blueprint";
 import { State } from "./state";
 

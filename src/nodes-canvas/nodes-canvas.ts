@@ -1,24 +1,20 @@
 // author : Jos Feenstra
 // purpose: wrapper for dealing with the 'whole of nodes'
 
-import { CtxCamera } from "../ctx/ctx-camera";
-import { Domain2, Graph, InputState, MultiLine, MultiVector2, Plane, Rectangle2, Vector2, Vector3 } from "../../../engine/src/lib";
-import { resizeCanvas } from "../ctx/ctx-helpers";
-import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
-import { Random } from "../../../engine/src/math/random";
-import { Catalogue, CoreType } from "../operations/catalogue";
-import { drawCable, drawCableBetween, drawNode, DrawState } from "./nodes-rendering";
-import { Socket, SocketSide } from "../graph/socket";
-import { Widget, WidgetSide } from "../graph/widget";
-import { graphToFunction, makeOperationsGlobal, trySpawnNode } from "../graph/graph-conversion";
-import { Blueprint } from "../graph/blueprint";
-import { Cable, CableState } from "../graph/cable";
-import { IO } from "../util/io";
-import { BlueprintLibrary } from "../operations/module";
-import { Menu } from "../ui/menu";
-import { dom } from "../util/dom-writer";
-import { History } from "../action/history";
+import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
+import { CtxCamera } from "./ctx/ctx-camera";
+import { resizeCanvas } from "./ctx/ctx-helpers";
+import { CableState } from "./graph/cable";
+import { NodesGraph } from "./graph/graph";
+import { makeOperationsGlobal } from "./graph/graph-conversion";
+import { Socket, SocketSide } from "./graph/socket";
+import { Widget } from "./graph/widget";
+import { Catalogue, CoreType } from "./operations/catalogue";
+import { Library } from "./operations/library";
+import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
+import { Menu } from "./ui/menu";
+import { IO } from "./util/io";
+import { History } from "./action/history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
@@ -317,7 +313,7 @@ export class NodesCanvas {
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
             let libString = await IO.importLibrary(config.path);
-            let mod = BlueprintLibrary.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
+            let mod = Library.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
             this.catalogue.addLibrary(mod);
         }
         this.ui();
@@ -350,7 +346,7 @@ export class NodesCanvas {
         if (this.catalogue.blueprintLibraries.has("graphs")) {
             this.catalogue.blueprintLibraries.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addLibrary(BlueprintLibrary.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addLibrary(Library.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }

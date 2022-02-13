@@ -1,12 +1,12 @@
 import { FN, Blueprint } from "../graph/blueprint";
 import { GeonNode } from "../graph/node";
-import { Vector2 } from "../../../engine/src/lib";
+import { Vector2 } from "../../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";
 import { ButtonWidget } from "../widgets/button-widget";
 import { ConsoleWidget } from "../widgets/console-widget";
 import { LampWidget } from "../widgets/lamp-widget";
 import { InputWidget } from "../widgets/input-widget";
-import { BlueprintLibrary } from "./module";
+import { Library } from "./library";
 import { Module } from "webpack";
 import { ImageWidget } from "../widgets/image-widget";
 
@@ -30,7 +30,7 @@ export class Catalogue {
 
     public selected?: Blueprint | Widget;
 
-    constructor(public blueprintLibraries: Map<string, BlueprintLibrary>) {}
+    constructor(public blueprintLibraries: Map<string, Library>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map());
@@ -52,7 +52,7 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = BlueprintLibrary.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        let widMod = Library.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
         cat.addLibrary(widMod);
         return cat;
     }
@@ -105,7 +105,7 @@ export class Catalogue {
         }
     }
 
-    addLibrary(lib: BlueprintLibrary) {
+    addLibrary(lib: Library) {
         this.blueprintLibraries.set(lib.name, lib);
         lib.publishGlobally();
     } 

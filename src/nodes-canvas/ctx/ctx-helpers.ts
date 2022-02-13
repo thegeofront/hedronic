@@ -1,4 +1,4 @@
-import { MultiVector2, Vector2 } from "../../../engine/src/lib";
+import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 

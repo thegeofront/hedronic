@@ -1,15 +1,15 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
+import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
+import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
+import { Cable, CableState } from "../graph/cable";
+import { NODE_WIDTH, GeonNode } from "../graph/node";
+import { Widget } from "../graph/widget";
+import { CTX, NodesCanvas } from "../nodes-canvas";
+
 /**
  * NOTE: maybe give this a svg-style overhaul...
  */
-
-import { MultiVector2, Vector2 } from "../../../engine/src/lib";
-import { GeonNode, NODE_WIDTH } from "../graph/node";
-import { CTX, NodesCanvas } from "./nodes-canvas";
-import { Cable, CableState } from "../graph/cable";
-import { Widget } from "../graph/widget";
-import { drawPolygon, filletPolyline, strokePolyline } from "../ctx/ctx-helpers";
 
 const NODE_GRID_WIDTH = 3;
 

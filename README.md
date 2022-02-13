@@ -27,10 +27,32 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 
 - QOL (quality of life)
-  - [ ] copy-pasting (parts of) the flowchart
+  - [🚧] copy-pasting (parts of) the flowchart
+    - [🚧] partial copying
+    - [🚧] partial pasting
+    - [ ] duplicate (Ctrl + D / D)
+    - [ ] cable copy-pasting 
   - [✔️] history & ctrl Z & Y support 
   - [ ] cable history
 
+# Post-Roadmap 
+- [ ] refactor visuals to css
+
+- [ ] refactor Operations / Widgets
+    - [✔️] Core -> Blueprint 
+    - [ ] rename Operations to FunctionBlueprint -> Generates FunctionNode
+    - [ ] introduce VariableBlueprint -> Generates VariableNode
+        - [ ] variableNode == cable? 
+    - [ ] introduce widget -> Is a VariableNode with a lit component instance attached in a box
+        - [ ] HTML widgets / Lit Widgets
+        - [ ] Canvas will treat widgets as VariableNodes
+        - [ ] A widget can be reduced to just a Variable
+
+
+# Notes
+> why not just use a type property in the json
+
+-------------------------------------------------------------------------------
 
 # OTHER THINGS TO DO
 
@@ -196,8 +218,3 @@ could be used to represent basicly anything. It will be the function's problem t
 # Status
 In phase 2 is done! 
 
-
-# Notes
-> NOTE: we probably need a completely unrelated name for this whole project, like `scorpi`
-
-> why not just use a type property in the json

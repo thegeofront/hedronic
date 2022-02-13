@@ -1,5 +1,5 @@
 import { drawPolygon } from "../ctx/ctx-helpers";
-import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
 

@@ -1,4 +1,4 @@
-import { Vector2 } from "../../../engine/src/lib";
+import { Vector2 } from "../../../../engine/src/lib";
 import { Blueprint } from "./blueprint";
 import { Widget } from "./widget";
 import { SocketIdx } from "./socket";

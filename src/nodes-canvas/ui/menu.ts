@@ -1,5 +1,5 @@
 import { Blueprint } from "../graph/blueprint";
-import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { Catalogue, CoreType } from "../operations/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
 import { MenuCategory } from "./category";

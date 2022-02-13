@@ -1,7 +1,7 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
 import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
-import { IO } from "./util/io";
+import { IO } from "./nodes-canvas/util/io";
 
 async function main() {
 

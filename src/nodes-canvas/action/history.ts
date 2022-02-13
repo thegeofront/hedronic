@@ -1,4 +1,4 @@
-import { Vector2 } from "../../../engine/src/lib";
+import { Vector2 } from "../../../../engine/src/lib";
 import { Blueprint } from "../graph/blueprint";
 import { NodesGraph } from "../graph/graph";
 import { GeonNode } from "../graph/node";
