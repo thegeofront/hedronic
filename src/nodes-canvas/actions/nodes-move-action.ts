@@ -1,6 +1,6 @@
-import { Vector2 } from "../../../../../engine/src/lib";
-import { NodesGraph } from "../../graph/graph";
-import { Action } from "../action";
+import { Vector2 } from "../../../../engine/src/lib";
+import { Action } from "../graph/action";
+import { NodesGraph } from "../graph/graph";
 
 export class NodesMoveAction implements Action {
     

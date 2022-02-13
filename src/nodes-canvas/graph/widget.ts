@@ -13,8 +13,8 @@
 
 import { Domain, Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../ctx/ctx-helpers";
-import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Blueprint } from "./blueprint";
+import { NodesCanvas } from "../nodes-canvas";
+import { Blueprint } from "../blueprints/blueprint";
 import { State } from "./state";
 
 export enum WidgetSide {

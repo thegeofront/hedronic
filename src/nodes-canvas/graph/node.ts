@@ -1,10 +1,10 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Blueprint } from "./blueprint";
+import { Blueprint } from "../blueprints/blueprint";
 import { Widget } from "./widget";
 import { SocketIdx } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
-import { CoreType } from "../operations/catalogue";
+import { CoreType } from "../blueprints/catalogue";
 
 export const NODE_WIDTH = 4;
 

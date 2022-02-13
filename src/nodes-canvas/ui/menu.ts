@@ -1,6 +1,6 @@
-import { Blueprint } from "../graph/blueprint";
+import { Blueprint } from "../blueprints/blueprint";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Catalogue, CoreType } from "../operations/catalogue";
+import { Catalogue, CoreType } from "../blueprints/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
 import { MenuCategory } from "./category";
 import { MenuContentMain } from "./category-main";

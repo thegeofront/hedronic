@@ -1,4 +1,4 @@
-import { FN, Blueprint } from "../graph/blueprint";
+import { FN, Blueprint } from "./blueprint";
 import { GeonNode } from "../graph/node";
 import { Vector2 } from "../../../../engine/src/lib";
 import { Widget, WidgetSide } from "../graph/widget";

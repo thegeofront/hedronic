@@ -1,14 +1,15 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Blueprint } from "../graph/blueprint";
-import { NodesGraph } from "../graph/graph";
-import { GeonNode } from "../graph/node";
-import { Socket } from "../graph/socket";
-import { State } from "../graph/state";
-import { Widget } from "../graph/widget";
+import { Blueprint } from "../blueprints/blueprint";
+import { NodesGraph } from "./graph";
+import { GeonNode } from "./node";
+import { Socket } from "./socket";
+import { State } from "./state";
+import { Widget } from "./widget";
 import { Action } from "./action";
-import { NodesAddAction } from "./c/nodes-add-action";
-import { NodesDeleteAction } from "./c/nodes-delete-action";
-import { NodesMoveAction } from "./c/nodes-move-action";
+
+import { NodesAddAction } from "../actions/nodes-add-action";
+import { NodesDeleteAction } from "../actions/nodes-delete-action";
+import { NodesMoveAction } from "../actions/nodes-move-action";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 

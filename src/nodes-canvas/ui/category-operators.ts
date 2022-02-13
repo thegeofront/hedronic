@@ -1,10 +1,10 @@
-import { Blueprint } from "../graph/blueprint";
+import { Blueprint } from "../blueprints/blueprint";
 import { Widget } from "../graph/widget";
-import { CoreType } from "../operations/catalogue";
-import { Library } from "../operations/library";
+import { CoreType } from "../blueprints/catalogue";
+import { Library } from "../blueprints/library";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
-import { Catalogue } from "./../operations/catalogue";
+import { Catalogue } from "../blueprints/catalogue";
 
 export class MenuContentOperations implements MenuContent {
     

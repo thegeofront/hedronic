@@ -9,12 +9,12 @@ import { NodesGraph } from "./graph/graph";
 import { makeOperationsGlobal } from "./graph/graph-conversion";
 import { Socket, SocketSide } from "./graph/socket";
 import { Widget } from "./graph/widget";
-import { Catalogue, CoreType } from "./operations/catalogue";
-import { Library } from "./operations/library";
+import { Catalogue, CoreType } from "./blueprints/catalogue";
+import { Library } from "./blueprints/library";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
-import { History } from "./action/history";
+import { History } from "./graph/history";
 
 // shorthands
 export type CTX = CanvasRenderingContext2D; 
