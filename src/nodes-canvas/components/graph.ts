@@ -1,6 +1,6 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
 import { Catalogue } from "../blueprints/catalogue";
-import { mapFromJson, mapToJson } from "../util/serializable";
+import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { Cable, CableState } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
@@ -68,10 +68,20 @@ export class NodesGraph {
         return graph;
     }
 
-    static toJson(graph: NodesGraph) {
+    static toJson(graph: NodesGraph, selection?: Socket[]) {
+        
+        
+        let nodes = graph.nodes;
+        let cables = graph.cables;
+        
+        if (selection) {
+            let keys = selection.map((s => s.node));
+            nodes = filterMap(nodes, (node) => keys.includes(node)))
+        }
+        
         return {
-                nodes: mapToJson(graph.nodes, GeonNode.toJson),
-                cables: mapToJson(graph.cables, Cable.toJson),
+                nodes: mapToJson(nodes, GeonNode.toJson),
+                cables: mapToJson(cables, Cable.toJson),
         }
     }
 
