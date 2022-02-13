@@ -16,6 +16,7 @@ import { CTX } from "../rendering/ctx/ctx-helpers";
 import { NodesCanvas } from "../nodes-canvas";
 import { Blueprint } from "../blueprints/blueprint";
 import { State } from "./state";
+import { MUTED_WHITE } from "../rendering/nodes-rendering";
 
 export enum WidgetSide {
     Input, // static input or UI 
@@ -117,7 +118,9 @@ export class Widget {
         ctx.fillRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         ctx.strokeRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         
-        ctx.fillStyle = this.state ? "#33dd33" : "#000000";
+        const LIME_GREEN = "#33dd33";
+
+        ctx.fillStyle = this.state ? MUTED_WHITE : "#000000";
         if (component == Infinity) {
             ctx.fillStyle += "88";
         } 

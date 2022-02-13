@@ -7,6 +7,8 @@ import { NODE_WIDTH, GeonNode } from "../components/node";
 import { Widget } from "../components/widget";
 import { NodesCanvas } from "../nodes-canvas";
 
+export const MUTED_WHITE = '#cecdd1';
+
 /**
  * NOTE: maybe give this a svg-style overhaul...
  */
@@ -159,7 +161,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         }
         
 
-        ctx.fillStyle = '#cecdd1';
+        ctx.fillStyle = MUTED_WHITE;
         ctx.font = `small-caps bold 14px sans-serif`;
         // ctx.rotate
         ctx.textAlign = 'center';
@@ -318,19 +320,26 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     line = filletPolyline(line, fillet);
     if (state == CableState.Null) {
         ctx.strokeStyle = "#222222";
-    } else if (state == CableState.Boolean) {
-        ctx.strokeStyle = "#08FD4E";
-    } else if (state == CableState.Number) {
-        ctx.strokeStyle = "#FD08B7";
-    } else if (state == CableState.String) {
-        ctx.strokeStyle = "#FDC908";
-    } else if (state == CableState.Object) {
-        ctx.strokeStyle = "#083DFD";
     } else if (state == CableState.Selected) {
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = "#ffffff";
     } else {
-        ctx.strokeStyle = "#222222";
-    }
+        ctx.strokeStyle = MUTED_WHITE;
+    } 
+    // if (state == CableState.Null) {
+    //     ctx.strokeStyle = "#222222";
+    // } else if (state == CableState.Boolean) {
+    //     ctx.strokeStyle = "#08FD4E";
+    // } else if (state == CableState.Number) {
+    //     ctx.strokeStyle = "#FD08B7";
+    // } else if (state == CableState.String) {
+    //     ctx.strokeStyle = "#FDC908";
+    // } else if (state == CableState.Object) {
+    //     ctx.strokeStyle = "#083DFD";
+    // } else if (state == CableState.Selected) {
+    //     ctx.strokeStyle = "#cc0000";
+    // } else {
+    //     ctx.strokeStyle = "#222222";
+    // }
 
     
     ctx.lineCap = "round";

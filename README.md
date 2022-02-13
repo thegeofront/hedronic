@@ -12,28 +12,34 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 # Roadmap MVP
 > status 
-> 🛑: Won't do
 > 🚧: Busy
+> ⏹️: On hold
 > ✔️: Done 
 
-- UI
-  - [✔️] double click menu
-     - [✔️] MVP
-     - [ ] _extra: nicer popup window_
-     - [ ] _extra: filters_
-     - [ ] _extra: autocomplete_
+- Visuals
+  - [✔️] Try to make the functions look a bit nicer and 'chunkier'
+  - [✔️] Mute the colors, to prepare for some other color coding
 
 - FUNCTIONALITY 
 
 
 - QOL (quality of life)
-  - [🚧] copy-pasting (parts of) the flowchart
-    - [🚧] partial copying
-    - [🚧] partial pasting
-    - [ ] duplicate (Ctrl + D / D)
-    - [ ] cable copy-pasting 
+  - [✔️] double click menu
+     - [✔️] MVP
+     - [] _extra: nicer popup window_
+     - [] _extra: filters_
+     - [] _extra: autocomplete_
+  - [⏹️] copy-pasting (parts of) the flowchart
+    - [✔️] partial copying
+    - [✔️] partial pasting
+    - [✔️] duplicate (Ctrl + D / D)
+    - [⏹️] cable copy-pasting 
   - [✔️] history & ctrl Z & Y support 
-  - [ ] cable history
+  - [⏹️] cable history
+  - [🚧] Cable Refactor
+    - [ ] We need a better definition and representation of variables. 
+    - [ ] Must be easier to manage
+    - [ ] Must be easier to map to  
 
 # Post-Roadmap 
 - [ ] refactor visuals to css
