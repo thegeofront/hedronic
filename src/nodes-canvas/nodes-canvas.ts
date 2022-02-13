@@ -3,7 +3,7 @@
 
 import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
-import { resizeCanvas } from "./rendering/ctx/ctx-helpers";
+import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { CableState } from "./components/cable";
 import { NodesGraph } from "./components/graph";
 import { makeOperationsGlobal } from "./components/graph-conversion";
@@ -15,9 +15,6 @@ import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/no
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./components/history";
-
-// shorthands
-export type CTX = CanvasRenderingContext2D; 
 
 /**
  * Represents the entire canvas of nodes.
