@@ -68,15 +68,15 @@ export class NodesGraph {
         return graph;
     }
 
-    static toJson(graph: NodesGraph, selection?: Socket[]) {
-        
+    static toJson(graph: NodesGraph, selection?: string[]) {
         
         let nodes = graph.nodes;
         let cables = graph.cables;
         
+        // O(n*n)
         if (selection) {
-            let keys = selection.map((s => s.node));
-            nodes = filterMap(nodes, (node) => keys.includes(node)))
+            nodes = filterMap(nodes, (key) => selection.includes(key));
+            // cables = filterMap()
         }
         
         return {

@@ -16,10 +16,10 @@ export function mapFromJson<T>(json: any, fromJson: (data: any) => T) {
     return map;
 }
 
-export function filterMap<K, V>(map: Map<K, V>, predicate: (value: V) => boolean) {
+export function filterMap<K, V>(map: Map<K, V>, predicate: (key: K, value: V) => boolean) {
     let filtered = new Map();
     for (let [key, value] of map) {
-        if (predicate(value)) {
+        if (predicate(key, value)) {
             filtered.set(key, value);
         }
     }

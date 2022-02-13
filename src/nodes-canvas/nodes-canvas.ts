@@ -114,7 +114,7 @@ export class NodesCanvas {
 
             if (control && key == 'a')
                 this.onSelectAll();
-            else if (control && shift && 'p') 
+            else if ((control && key =='p') || (control && shift && key == 'p')) 
                 this.onPrompt();
             else if (control && key == 's')
                 this.onSave();
@@ -193,7 +193,8 @@ export class NodesCanvas {
      * Ctrl + D
      */
     onDuplicate() {
-
+        let str = this.onCopy();
+        this.onPaste(str, false);
     }
 
     onPrompt() {
@@ -245,7 +246,9 @@ export class NodesCanvas {
 
     // Ctrl + X
     onCut() : string {  
-        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
+        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.node)));
+        let str = JSON.stringify(json, null, 2)
+        console.log(json);
         return str; 
     }
 
@@ -253,8 +256,9 @@ export class NodesCanvas {
     // Ctrl + C
     onCopy() : string {
         // let str = this.graph.toJs("GRAPH").toString();
-        let str = JSON.stringify(NodesGraph.toJson(this.graph), null, 2)
-        console.log(str);
+        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.node)));
+        let str = JSON.stringify(json, null, 2)
+        console.log(json);
         return str; 
     }
 
@@ -676,6 +680,13 @@ export class NodesCanvas {
         let parts = undefined;
         let initState = undefined;
 
+        // TODO : build regex expressions to extract certain patterns 
+        // ["hallo"] => input with "hello" writing
+        // [123] => integer input 
+        // [1.2] => float input
+        // [slider 1 10 0.1] => slider from 1 to 10 with steps of 0.1
+        // [range 0 10] => range from 0 to 10
+
         if (text.includes('//')) {
             // something special for quick inputs
             name = "input";
@@ -684,13 +695,14 @@ export class NodesCanvas {
             initState = text.split('// ')[1];
             let float = Number.parseFloat(initState);
             let int = Number.parseInt(initState);
-            if (float !== NaN && initState.includes('.')) {
+            if (float && initState.includes('.')) {
+                console.log("its float")
                 initState = float;
-            } else if (int !== NaN) {
+            } else if (int) {
+                console.log("its int", int);
                 initState = int;
-            } else {
-                initState = initState;
-            }
+            } 
+            console.log(initState);
         } else {
             parts = text.split('.');
             if (parts.length == 0) {
@@ -780,7 +792,7 @@ export class NodesCanvas {
         }
 
         this.select(socket);
-        if (socket?.side == SocketSide.Widget) {
+        if (socket?.side == SocketSide.Widget && !doubleClick) {
             // we just clicked a widget! let the widget figure out what to do
             (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
         } 
@@ -836,7 +848,7 @@ export class NodesCanvas {
         let s = this.trySelect(gp);
         if (s && this.input.IsKeyDown("shift")) {
             s.idx = 0;
-            console.log(s);
+            // console.log(s);
         }
         this.hover(s);
         this.requestRedraw();
