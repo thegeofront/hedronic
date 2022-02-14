@@ -3,7 +3,7 @@
 
 # what is it 
 
-A component of my master thesis involves a flowchart-application or VPL (Visual Programming Language). Since I couldn't find any web-based flowchart api which satisfied the requirements, This had to be created. 
+A component of my master thesis involves a flowchart-application or VPL (Visual Programming Language). I couldn't find any web-based flowchart api which satisfied the requirements, so I set out to create a new one.
 
 # Demo
 
