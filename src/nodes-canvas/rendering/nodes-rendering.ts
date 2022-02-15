@@ -2,7 +2,6 @@
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
 import { CTX, drawPolygon, filletPolyline, strokePolyline } from "./ctx/ctx-helpers";
-import { Cable } from "../components/cable";
 import { NODE_WIDTH, GeonNode } from "../components/node";
 import { Widget } from "../components/widget";
 import { NodesCanvas } from "../nodes-canvas";
@@ -203,10 +202,13 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 
 
 export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableState, canvas: NodesCanvas) {
-    
-    console.log("draw");
+
+    // return;
+    // console.log("draw", from, tos);
     // use the components in the graph to figure out the from and to position
     // console.log(from);
+    // console.log(canvas.graph.nodes)
+    // console.log(from.hash);
     let fromNode = canvas.graph.nodes.get(from.hash)!;
     // console.log(fromNode);
     let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;

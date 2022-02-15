@@ -12,8 +12,9 @@ export enum CableState {
 
 export class CableVisual {
     constructor(
-        public pointer: Socket,
-        public polyline: any
+        public socket: Socket,
+        public polyline: any,
+        public state: CableState,
         
     ) {
 

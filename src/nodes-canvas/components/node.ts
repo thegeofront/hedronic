@@ -17,8 +17,7 @@ export class GeonNode {
         public position: Vector2,              // position on the canvas, in grid space
         public process: Blueprint | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
-        public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components
-        // public cache: State[] = [],         // cached outputs 
+        public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
         ) {}
 
     get operation() : Blueprint | undefined {

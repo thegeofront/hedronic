@@ -20,7 +20,7 @@ export class NodeAddAction implements Action {
         if (node.process instanceof Widget && this.initState) {
             node.process.state = this.initState;
         }
-        this.key = graph.addNode(node, this.key);
+        this.key = graph.addNode(node);
     }
     
     undo(graph: NodesGraph) {

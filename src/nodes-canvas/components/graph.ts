@@ -1,7 +1,7 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
 import { Catalogue } from "../blueprints/catalogue";
+import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
-import { Cable } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
@@ -95,16 +95,24 @@ export class NodesGraph {
      * - store results in output widgets
      * TODO: build something that can recalculate parts of the graph
      */
-    calculate() {
+    calculate() : [Map<string, State>, Map<string, CableVisualState>] {
 
         let cache = new Map<string, State>();
+        let visuals = new Map<string, CableVisualState>();
         let orderedNodeKeys = this.kahn();
 
-        let setCache = (key: string, value: State) => {
+        let setValue = (key: string, value: State) => {
             // let cable = this.getOutputConnectionsAt(key)!;
             // if (!cable) {
             //     return;
             // }
+
+            let visual = CableVisualState.Null;
+            if (value) {
+                visual = CableVisualState.Boolean;
+            } 
+            
+            visuals.set(key, visual);
             cache.set(key, value);
         }
 
@@ -131,16 +139,19 @@ export class NodesGraph {
                 }
 
                 let outCables = node.getCablesAtOutput();
-                if (typeof outputs !== "object") {
-                    setCache(outCables[0], outputs);
-                } else {
-                    for (let i = 0 ; i < node.operation.outputs; i++) {
-                        setCache(outCables[i], outputs[i]);
-                    }
+                // if (typeof outputs !== "object") {
+                //     setValue(outCables[0], outputs);
+                // } else {
+                    // for (let i = 0 ; i < node.operation.outputs; i++) {
+                    //     setValue(outCables[i], outputs[i]);
+                    // }    
+                // }
+                for (let i = 0 ; i < node.operation.outputs; i++) {
+                    setValue(outCables[i], outputs[i]);
                 }
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
                 for (let cable of node.getCablesAtOutput()) {
-                    setCache(cable, node.widget!.state);
+                    setValue(cable, node.widget!.state);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
                 for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!!
@@ -150,6 +161,7 @@ export class NodesGraph {
                 throw new Error("should never happen");
             }
         }
+        return [cache, visuals];
     }
 
     /**
@@ -227,15 +239,12 @@ export class NodesGraph {
 
     //////////////////////////////////// Nodes /////////////////////////////////////
 
-    addNode(node: GeonNode, key?: string) {
-        if (key == "" || key == undefined) {
-            key = createRandomGUID();
-        }
-        this.nodes.set(key, node);
+    addNode(node: GeonNode) {
+        this.nodes.set(node.hash, node);
         if (node.process instanceof Widget) {
-            this.widgets.add(key);
+            this.widgets.add(node.hash);
         }
-        return key;
+        return node.hash;
     }
 
     getNode(key: string) {

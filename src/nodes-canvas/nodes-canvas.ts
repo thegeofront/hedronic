@@ -14,7 +14,7 @@ import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/no
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./components/history";
-import { CableState } from "./rendering/cable-visual";
+import { CableState, CableVisual } from "./rendering/cable-visual";
 
 /**
  * Represents the entire canvas of nodes.
@@ -36,6 +36,8 @@ export class NodesCanvas {
 
     // used to box select
     private boxStart: Vector2 | undefined;
+
+    private cableVisuals!: Map<string, CableState>;
 
 
     private constructor(
@@ -163,7 +165,9 @@ export class NodesCanvas {
     }
 
     onChange() {
-        this.graph.calculate();
+        let [cache, visuals] = this.graph.calculate();
+        console.log(visuals);
+        this.cableVisuals = visuals;
         this.requestRedraw();
     }
 
@@ -176,8 +180,7 @@ export class NodesCanvas {
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
-        this.graph.calculate();
-        this.requestRedraw();
+        this.onChange();
     }
 
     /////////////////////////////////////////////////////////////////
@@ -279,9 +282,7 @@ export class NodesCanvas {
             v.position.add(Vector2.new(1, 1));
             this.select(Socket.new(k, 0));
         }
-
-        this.graph.calculate();
-        this.requestRedraw();
+        this.onChange();
     }
 
 
@@ -449,7 +450,9 @@ export class NodesCanvas {
         for (let [hash, node] of this.graph.nodes) {
             node.forEachOutputSocket((socket, connections) => {
                 if (connections.length == 0) return;
-                drawCable(ctx, socket, connections, CableState.Null, this);
+                let cableHash = socket.toString();
+                let visual = this.cableVisuals.get(cableHash) || CableState.Null;
+                drawCable(ctx, socket, connections, visual, this);
             })
         }
 
@@ -706,7 +709,6 @@ export class NodesCanvas {
                 console.log("its int", int);
                 initState = int;
             } 
-            console.log(initState);
         } else {
             parts = text.split('.');
             if (parts.length == 0) {
@@ -748,7 +750,7 @@ export class NodesCanvas {
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {
 
-        console.log(doubleClick);
+        // console.log(doubleClick);
         
         // console.log("down!");
         this.mgpStart = gp;
@@ -814,7 +816,6 @@ export class NodesCanvas {
             this.selectedSockets.length > 0 && (this.selectedSockets.length > 1 || this.selectedSockets[0].side == SocketSide.Body)) {
             // record history
             let keys = this.selectedSockets.map(s => s.hash);
-            console.log(keys);
             this.graphHistory.recordMoveNodes(keys, this.mgpEnd.subbed(this.mgpStart));
         }
 
@@ -830,7 +831,7 @@ export class NodesCanvas {
                 this.deselect();
                 this.requestRedraw();
                 // new line means recalculation
-                this.graph.calculate();
+                this.onChange();
             }
         } 
 
@@ -840,6 +841,7 @@ export class NodesCanvas {
         this.mgpEnd = undefined;
         this.requestRedraw();
     }
+
 
     /**
      * fires when the mouse moves over to a new gridcell
