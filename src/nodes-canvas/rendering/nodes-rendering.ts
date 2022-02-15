@@ -2,10 +2,11 @@
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
 import { CTX, drawPolygon, filletPolyline, strokePolyline } from "./ctx/ctx-helpers";
-import { Cable, CableState } from "../components/cable";
+import { Cable } from "../components/cable";
 import { NODE_WIDTH, GeonNode } from "../components/node";
 import { Widget } from "../components/widget";
 import { NodesCanvas } from "../nodes-canvas";
+import { CableState } from "./cable-visual";
 
 export const MUTED_WHITE = '#cecdd1';
 
@@ -126,7 +127,7 @@ export class StyleSet {
 export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, component: number, style: DrawState) {
 
     // convert style 
-    let isWidget = node.core instanceof Widget;
+    let isWidget = node.process instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
     const BAR_WIDTH = 5;
@@ -137,7 +138,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
-    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.core.inputs, node.core.outputs, node.getHeight(), canvas.size);
+    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.process.inputs, node.process.outputs, node.getHeight(), canvas.size);
     ctx.fill();
     ctx.stroke();
     ctx.fill();
@@ -152,7 +153,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     if (!isWidget) {
         
         // TODO: do somemthing smart with the name to make it fit
-        let name = node.core.name;
+        let name = node.process.name;
         // name = "www";
         let maxSize = 3 + (node.getHeight() -1) * 7;
         if (name.length > maxSize) {
@@ -176,7 +177,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 
     // draw input text
     ctx.font = '12px courier new';
-    for (let i = 0 ; i < node.core.inputs; i++) {
+    for (let i = 0 ; i < node.process.inputs; i++) {
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillText('|', vec.x, vec.y);
@@ -184,16 +185,16 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     }
 
     // draw output text
-    for (let i = 0 ; i < node.core.outputs; i++) {
+    for (let i = 0 ; i < node.process.outputs; i++) {
         setStyle(ctx, style, component, i + 1, isWidget);
-        let vec = textCenters.get(1 + node.core.inputs + i);
+        let vec = textCenters.get(1 + node.process.inputs + i);
         ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         // ctx.fillText('|', vec.x, vec.y);
     }
 
     // render widget
     if (isWidget) {
-        let widget = node.core as Widget;
+        let widget = node.process as Widget;
         setStyle(ctx, style, component, 0, isWidget);
         widget.render(ctx, pos, component, canvas.size);
     }

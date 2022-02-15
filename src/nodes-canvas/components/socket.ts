@@ -16,7 +16,15 @@ export class Socket {
     }
 
     static new(node: string, idx: SocketIdx) {
-        return new Socket(node, idx, );
+        return new Socket(node, idx);
+    }
+
+    static null() {
+        return new Socket("", 0);
+    }
+
+    isNull() {
+        return this.node === "" && this.idx == 0;
     }
 
     cloneFrom(other: Socket) {
@@ -70,11 +78,20 @@ export class Socket {
         }
     }
 
+    toJson() {
+        return Socket.toJson(this);
+    }
+
     normalIndex() {
         return Socket.socketIndexToNormalIndex(this.idx);
     }
 
-    toString() {
-        return `idx: ${this.idx} | node: ${this.node}` 
+    toPrintString() {
+        return `idx: ${this.idx} | node: ${this.node}`; 
     }
+
+    toString() {
+        return `${this.node}${this.idx}`;
+    }
+
 }

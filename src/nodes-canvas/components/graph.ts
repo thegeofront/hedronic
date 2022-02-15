@@ -1,7 +1,7 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
 import { Catalogue } from "../blueprints/catalogue";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
-import { Cable, CableState } from "./cable";
+import { Cable } from "./cable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
@@ -17,14 +17,12 @@ export class NodesGraph {
 
     constructor(
         public nodes: Map<string, GeonNode>, 
-        public cables: Map<string, Cable>,
         private widgets: Set<string>) {}
 
     static new(
         nodes = new Map<string, GeonNode>(),
-        cables = new Map<string, Cable>(),
         widgets = new Set<string>()) {
-        return new NodesGraph(nodes, cables, widgets);
+        return new NodesGraph(nodes, widgets);
     }
     
     static fromJs(js: string, catalogue: Catalogue) {
@@ -51,19 +49,21 @@ export class NodesGraph {
             let name = value.core.name;
             let type = value.type;
 
-            let core = catalogue.trySelect(lib, name, type);
-            if (!core) {
-                console.error(`core: ${lib}, ${name}, ${type} cannot be created. The library is probably missing from this project`);
-            } else {
-                graph.nodes.set(key, GeonNode.fromJson(value, core));
+            let process = catalogue.trySelect(lib, name, type);
+            if (!process) {
+                console.error(`process: ${lib}, ${name}, ${type} cannot be created. The library is probably missing from this project`);
+                continue;
+            } 
+            let node = GeonNode.fromJson(value, process);
+            if (!node) {
+                console.error(`process: ${lib}, ${name}, ${type} cannot be created. json data provided is errorous`)
+                continue;
             }
+            graph.nodes.set(key, node);
+            
         }
 
         catalogue.deselect();
-
-        for (let key in json.cables) {
-            graph.cables.set(key, Cable.fromJson(json.cables[key]))
-        }
 
         return graph;
     }
@@ -71,17 +71,15 @@ export class NodesGraph {
     static toJson(graph: NodesGraph, selection?: string[]) {
         
         let nodes = graph.nodes;
-        let cables = graph.cables;
         
         // O(n*n)
         if (selection) {
             nodes = filterMap(nodes, (key) => selection.includes(key));
-            // cables = filterMap()
         }
         
         return {
                 nodes: mapToJson(nodes, GeonNode.toJson),
-                cables: mapToJson(cables, Cable.toJson),
+                // cables: mapToJson(cables, Cable.toJson),
         }
     }
 
@@ -108,17 +106,17 @@ export class NodesGraph {
             if (!cable) {
                 return;
             }
-            if (value === false || value === 0) {
-                cable.state = CableState.Null;
-            } else if (value === true) {
-                cable.state = CableState.Boolean;
-            } else if (value instanceof Number) {
-                cable.state = CableState.Number;
-            } else if (value instanceof Object) {
-                cable.state = CableState.Object;
-            } else {
-                cable.state = CableState.String;
-            }
+            // if (value === false || value === 0) {
+            //     cable.state = CableState.Null;
+            // } else if (value === true) {
+            //     cable.state = CableState.Boolean;
+            // } else if (value instanceof Number) {
+            //     cable.state = CableState.Number;
+            // } else if (value instanceof Object) {
+            //     cable.state = CableState.Object;
+            // } else {
+            //     cable.state = CableState.String;
+            // }
 
             // else if (value instanceof Number) {
             //     cable.state = CableState.Number;
@@ -164,11 +162,11 @@ export class NodesGraph {
                     }
                 }
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-                for (let cable of node.outputs()) {
+                for (let cable of node.getOutputs()) {
                     setCache(cable, node.widget!.state);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-                for (let cable of node.inputs()) { // TODO multiple inputs!!
+                for (let cable of node.getInputs()) { // TODO multiple inputs!!
                     node.widget!.run(cache.get(cable)!);
                 }
             } else {
@@ -265,7 +263,7 @@ export class NodesGraph {
             key = createRandomGUID();
         }
         this.nodes.set(key, node);
-        if (node.core instanceof Widget) {
+        if (node.process instanceof Widget) {
             this.widgets.add(key);
         }
         return key;
@@ -284,7 +282,7 @@ export class NodesGraph {
         }
 
         // remove the widget pointer
-        if (node.core instanceof Widget) {
+        if (node.process instanceof Widget) {
             this.widgets.delete(nkey);
         }
 
@@ -326,7 +324,7 @@ export class NodesGraph {
             }
             this.cables.delete(ckey);
         } else if (c.side == SocketSide.Input) {
-            cable._to.delete(c.toString());
+            cable._to.delete(c.toPrintString());
             if (cable._to.size == 0) {
                 // this will delete the cable as well
                 this.emptySocket(ckey, cable.from);  
@@ -417,22 +415,11 @@ export class NodesGraph {
         for (let [nkey, node] of this.nodes) {
             console.log(" node");
             console.log(" L key : ", nkey);
-            console.log(" L name: ", node.core.name);
-            console.log(" L connections: ");
-            for (let [k, v] of node.connections) {
-                console.log(`   L key: ${k} | value: ${v}`);
-            }
-        }
-
-        console.log("CABLES");
-        console.log("-----");
-        for (let [ckey, cable] of this.cables) {
-            console.log("cable")
-            console.log(" L from :", cable.from.toString());
-            console.log(" L to   :");
-            for (let to of cable.to) {
-                console.log("   L ", to.toString());
-            }
+            console.log(" L name: ", node.process.name);
+            // console.log(" L connections: ");
+            // for (let [k, v] of node.connections) {
+            //     console.log(`   L key: ${k} | value: ${v}`);
+            // }
         }
     }
 }

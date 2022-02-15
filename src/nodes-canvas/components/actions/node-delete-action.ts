@@ -4,14 +4,13 @@ import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { Widget } from "../widget";
 import { Action } from "../action";
-import { SocketIdx } from "../socket";
+import { Socket, SocketIdx } from "../socket";
 
 export class NodeDeleteAction implements Action {
 
     // TODO: why not just store the GeonNode's themselves? 
-    private blueprints!: (Blueprint | Widget);
-    private gridPositions!: Vector2;
-    private connections!: Map<SocketIdx, string>;
+    private data!: any;
+    private process!: Blueprint | Widget
 
     constructor(
         private key: string,
@@ -19,14 +18,14 @@ export class NodeDeleteAction implements Action {
 
     do(graph: NodesGraph) {
         let node = graph.getNode(this.key)!;
-        this.blueprints = node.core;
-        this.gridPositions = node.position;
-        this.connections = node.connections;
+        this.data = node.toJson()
+        this.process = node.process;
         graph.deleteNode(this.key);
     }
     
     undo(graph: NodesGraph) {
-        graph.addNode(GeonNode.new(this.gridPositions, this.blueprints), this.key);
-        graph.reinstateConnections(this.key, this.connections);
+
+        graph.addNode(GeonNode.fromJson(this.data, this.process)!);
+        // graph.reinstateConnections(this.key, this.connections);
     }
 }

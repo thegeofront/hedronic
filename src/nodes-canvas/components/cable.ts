@@ -1,14 +1,6 @@
+import { CableState } from "../rendering/cable-visual";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { Socket } from "./socket";
-
-export enum CableState {
-    Null,
-    Selected,
-    Object,
-    String,
-    Number,
-    Boolean,
-}
 
 export class Cable {
 
@@ -46,6 +38,6 @@ export class Cable {
     }
 
     add(s: Socket) {
-        this._to.set(s.toString(), s);
+        this._to.set(s.toPrintString(), s);
     }
 }

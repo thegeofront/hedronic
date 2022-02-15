@@ -4,7 +4,6 @@
 import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
-import { CableState } from "./components/cable";
 import { NodesGraph } from "./components/graph";
 import { makeOperationsGlobal } from "./components/graph-conversion";
 import { Socket, SocketSide } from "./components/socket";
@@ -15,6 +14,7 @@ import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/no
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./components/history";
+import { CableState } from "./rendering/cable-visual";
 
 /**
  * Represents the entire canvas of nodes.
@@ -445,9 +445,9 @@ export class NodesCanvas {
         this.drawGrid(ctx);
 
         // draw cables 
-        for (let [key, cable] of this.graph.cables) {
-            drawCable(ctx, cable, this);
-        }
+        // for (let [key, cable] of this.graph.cables) {
+        //     drawCable(ctx, cable, this);
+        // }
 
         // draw a cable if we are dragging a new cable
         if (this.mgpStart) {
@@ -794,7 +794,7 @@ export class NodesCanvas {
         this.select(socket);
         if (socket?.side == SocketSide.Widget && !doubleClick) {
             // we just clicked a widget! let the widget figure out what to do
-            (this.graph.getNode(socket.node)?.core as Widget).onClick(this);
+            (this.graph.getNode(socket.node)?.process as Widget).onClick(this);
         } 
         
         this.requestRedraw();   
