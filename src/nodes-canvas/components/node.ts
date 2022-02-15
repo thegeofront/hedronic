@@ -1,7 +1,7 @@
 import { createRandomGUID, Vector2 } from "../../../../engine/src/lib";
 import { Blueprint } from "../blueprints/blueprint";
 import { Widget } from "./widget";
-import { Socket, SocketIdx } from "./socket";
+import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../blueprints/catalogue";
@@ -13,12 +13,12 @@ export class GeonNode {
     errorState = "";
 
     private constructor(
-        public hash: string,
-        public position: Vector2, 
-        public process: Blueprint | Widget, // slot for an operation
-        public inputs: (Socket | undefined)[], // undefined = unconnected node
-        public outputs: Socket[][], // empty list == null
-        // public cache: State[] = [], // cached outputs 
+        public hash: string,                   // guid or some other unique identifier to this node 
+        public position: Vector2,              // position on the canvas, in grid space
+        public process: Blueprint | Widget,    // the process this node represents. Can be an operation or a widget
+        public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
+        public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components
+        // public cache: State[] = [],         // cached outputs 
         ) {}
 
     get operation() : Blueprint | undefined {
@@ -128,23 +128,24 @@ export class GeonNode {
     }
 
     /**
-     * 
+     * This is werid, but for graph processes, we want the ID of the 'cables' at our output
+     * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
+     * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
      */
-    getOutputs() : string[] {
-        let count = this.process.outputs;
+    getCablesAtOutput() : string[] {
         let sockets: string[] = [];
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < this.process.outputs; i++) {
             let socket = Socket.new(this.hash, i+1);
-            // let connections = this.outputs[i];
             sockets.push(socket.toString());
         }
         return sockets;
     }
 
     /**
-     * Get a stringified version of all input sockets
+     * Get a stringified version of all 'cables' the input sockets are pointing to.
+     * NOTE THE CONFUSING BIT: these DO involve the this.input values 
      */
-    getInputs() : string[] {
+    getCablesAtInput() : string[] {
         return this.inputs.map(s => s ? s?.toString() : "");
     }
 
@@ -205,5 +206,17 @@ export class GeonNode {
             }
         }
         return undefined;
+    }
+
+    forEachInputSocket(callback: (local: Socket, connection: Socket | undefined) => void) {
+        for (let i = 0; i < this.process.inputs; i++) {
+            callback(Socket.fromNode(this.hash, i, SocketSide.Input), this.inputs[i])
+        }
+    }
+
+    forEachOutputSocket(callback: (local: Socket, connections: Socket[]) => void) {
+        for (let i = 0; i < this.process.outputs; i++) {
+            callback(Socket.fromNode(this.hash, i, SocketSide.Output), this.outputs[i])
+        }
     }
 }

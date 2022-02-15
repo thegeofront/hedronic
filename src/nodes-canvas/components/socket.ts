@@ -8,7 +8,7 @@ export const enum SocketSide { Input=-1, Body=0, Output=1, Widget=1000};
 export class Socket {
     
     private constructor(
-        public node: string, 
+        public hash: string, 
         public idx: SocketIdx) {}
  
     get side() {
@@ -19,16 +19,8 @@ export class Socket {
         return new Socket(node, idx);
     }
 
-    static null() {
-        return new Socket("", 0);
-    }
-
-    isNull() {
-        return this.node === "" && this.idx == 0;
-    }
-
     cloneFrom(other: Socket) {
-        this.node = other.node;
+        this.hash = other.hash;
         this.idx = other.idx;
     }
 
@@ -37,7 +29,7 @@ export class Socket {
     }
 
     static toJson(s: Socket) {
-        return {node: s.node, index: s.idx} 
+        return {node: s.hash, index: s.idx} 
     }
 
     static fromJson(data: any) {
@@ -87,11 +79,11 @@ export class Socket {
     }
 
     toPrintString() {
-        return `idx: ${this.idx} | node: ${this.node}`; 
+        return `idx: ${this.idx} | node: ${this.hash}`; 
     }
 
     toString() {
-        return `${this.node}${this.idx}`;
+        return `${this.hash}${this.idx}`;
     }
 
 }

@@ -7,6 +7,7 @@ import { NODE_WIDTH, GeonNode } from "../components/node";
 import { Widget } from "../components/widget";
 import { NodesCanvas } from "../nodes-canvas";
 import { CableState } from "./cable-visual";
+import { Socket } from "../components/socket";
 
 export const MUTED_WHITE = '#cecdd1';
 
@@ -201,16 +202,19 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 }
 
 
-export function drawCable(ctx: CTX, cable: Cable, canvas: NodesCanvas) {
-
+export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableState, canvas: NodesCanvas) {
+    
+    console.log("draw");
     // use the components in the graph to figure out the from and to position
-    let fromNode = canvas.graph.nodes.get(cable.from.node)!;
-    let fromGridPos = fromNode.getConnectorGridPosition(cable.from.idx)!;
+    // console.log(from);
+    let fromNode = canvas.graph.nodes.get(from.hash)!;
+    // console.log(fromNode);
+    let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;
 
-    for (let to of cable.to) {
-        let toNode = canvas.graph.nodes.get(to.node)!;
+    for (let to of tos) {
+        let toNode = canvas.graph.nodes.get(to.hash)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-        drawCableBetween(ctx, fromGridPos, toGridPos, canvas, cable.state);
+        drawCableBetween(ctx, fromGridPos, toGridPos, canvas, state);
     }
 }
 

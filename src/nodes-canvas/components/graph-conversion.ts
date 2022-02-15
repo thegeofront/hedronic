@@ -16,7 +16,7 @@ export function trySpawnNode(graph: NodesGraph, catalogue: Catalogue, name: stri
         let node = catalogue.spawn(pos)!;
         if (type == CoreType.Widget) {
             // @ts-ignore
-            node.core.state = state!;
+            node.process.state = state!;
         }
         let key = graph.addNode(node);
         catalogue.deselect();
@@ -66,7 +66,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         let k = key.trim();
         if (cableStarts.has(k)) {
             let start = cableStarts.get(k)!;
-            graph.addCableBetween(start.node, start.idx, nodeKey, idx);
+            graph.addCableBetween(start.hash, start.idx, nodeKey, idx);
         }
     }
 
@@ -204,17 +204,17 @@ export function graphToFunction(graph: NodesGraph, name: string) {
 
         let node = graph.getNode(key)!;
         if (node.operation) { // A | operation 
-            let inputs = toEasyNames(node.outputs()).join(", ");
-            let outputs = toEasyNames(node.inputs()).join(", ");
+            let inputs = toEasyNames(node.getCablesAtOutput()).join(", ");
+            let outputs = toEasyNames(node.getCablesAtInput()).join(", ");
             let str = `let [${inputs}] = ${node.operation.namespace}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
-            for (let str of toEasyNames(node.outputs())) {
+            for (let str of toEasyNames(node.getCablesAtOutput())) {
                 str += ` /* "widget": "${node.widget!.name}" | "state": "${node.widget!.state}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                 inputs.push(str);
             }
         } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget 
-            for (let str of toEasyNames(node.inputs())) {
+            for (let str of toEasyNames(node.getCablesAtInput())) {
                 str += ` /* "widget": "${node.widget?.name}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                 outputs.push(str);
             }

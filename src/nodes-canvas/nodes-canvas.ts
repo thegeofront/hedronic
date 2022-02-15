@@ -246,7 +246,7 @@ export class NodesCanvas {
 
     // Ctrl + X
     onCut() : string {  
-        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.node)));
+        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.hash)));
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -256,7 +256,7 @@ export class NodesCanvas {
     // Ctrl + C
     onCopy() : string {
         // let str = this.graph.toJs("GRAPH").toString();
-        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.node)));
+        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.hash)));
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -333,6 +333,7 @@ export class NodesCanvas {
         `;
 
         this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
+        this.graph.log();
         return;
     }
 
@@ -392,7 +393,7 @@ export class NodesCanvas {
 
         if (this.input.IsKeyPressed("delete")) {
             if (this.selectedSockets.length > 0) {
-                this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.node));
+                this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.hash));
                 this.deselect();
                 this.requestRedraw();
             }
@@ -445,14 +446,17 @@ export class NodesCanvas {
         this.drawGrid(ctx);
 
         // draw cables 
-        // for (let [key, cable] of this.graph.cables) {
-        //     drawCable(ctx, cable, this);
-        // }
+        for (let [hash, node] of this.graph.nodes) {
+            node.forEachOutputSocket((socket, connections) => {
+                if (connections.length == 0) return;
+                drawCable(ctx, socket, connections, CableState.Null, this);
+            })
+        }
 
         // draw a cable if we are dragging a new cable
         if (this.mgpStart) {
             for (let socket of this.selectedSockets) {
-                let fromNode = this.graph.nodes.get(socket.node)!;
+                let fromNode = this.graph.nodes.get(socket.hash)!;
                 let p = fromNode.getConnectorGridPosition(socket.idx)!;
     
                 if (socket.side == SocketSide.Input) {
@@ -470,7 +474,7 @@ export class NodesCanvas {
             let selectedSocket = this.tryGetSelectedSocket(key);
             if (selectedSocket) {
                 drawNode(ctx, node, this, selectedSocket.idx, DrawState.OpSelected);
-            } else if (this.hoverSocket && key == this.hoverSocket!.node) {
+            } else if (this.hoverSocket && key == this.hoverSocket!.hash) {
                 drawNode(ctx, node, this, this.hoverSocket.idx, DrawState.OpHover);
             } else {
                 drawNode(ctx, node, this, 0, DrawState.Op);
@@ -566,7 +570,7 @@ export class NodesCanvas {
 
     
     select(s: Socket) {
-        let ex = this.tryGetSelectedSocket(s.node);
+        let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);
         } else {
@@ -582,7 +586,7 @@ export class NodesCanvas {
 
     tryGetSelectedSocket(key: string) : Socket | undefined {
         for (let socket of this.selectedSockets) {
-            if (socket.node == key) {
+            if (socket.hash == key) {
                 return socket;
             }
         }
@@ -779,7 +783,7 @@ export class NodesCanvas {
         } 
 
         // we clicked on a socket!
-        let sock = this.tryGetSelectedSocket(socket.node)
+        let sock = this.tryGetSelectedSocket(socket.hash)
         if (shift) {
             console.log("shift");
             socket.idx = 0;
@@ -794,7 +798,7 @@ export class NodesCanvas {
         this.select(socket);
         if (socket?.side == SocketSide.Widget && !doubleClick) {
             // we just clicked a widget! let the widget figure out what to do
-            (this.graph.getNode(socket.node)?.process as Widget).onClick(this);
+            (this.graph.getNode(socket.hash)?.process as Widget).onClick(this);
         } 
         
         this.requestRedraw();   
@@ -809,7 +813,7 @@ export class NodesCanvas {
         if (this.mgpStart && this.mgpEnd && !this.mgpStart.equals(this.mgpEnd) && 
             this.selectedSockets.length > 0 && (this.selectedSockets.length > 1 || this.selectedSockets[0].side == SocketSide.Body)) {
             // record history
-            let keys = this.selectedSockets.map(s => s.node);
+            let keys = this.selectedSockets.map(s => s.hash);
             console.log(keys);
             this.graphHistory.recordMoveNodes(keys, this.mgpEnd.subbed(this.mgpStart));
         }
@@ -822,7 +826,7 @@ export class NodesCanvas {
             (selectedSocket.side == SocketSide.Output && this.hoverSocket.side == SocketSide.Input)) {
             
                 console.log("adding cable...")
-                this.graph.addCable(selectedSocket, this.hoverSocket);
+                this.graph.addConnection(selectedSocket, this.hoverSocket);
                 this.deselect();
                 this.requestRedraw();
                 // new line means recalculation
@@ -865,7 +869,7 @@ export class NodesCanvas {
             // we are dragging something
             let delta = gp.subbed(this.mgpEnd!);
             for (let socket of this.selectedSockets) {
-                    let node = this.graph.nodes.get(socket.node);
+                    let node = this.graph.nodes.get(socket.hash);
                     node?.position.add(delta);
             }
         }

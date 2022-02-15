@@ -41,7 +41,6 @@ export class NodesGraph {
         console.log("from json...")
 
         let json = JSON.parse(str);
-        console.log(json);
         let graph = NodesGraph.new();
         for (let key in json.nodes) {
             let value = json.nodes[key];
@@ -102,32 +101,10 @@ export class NodesGraph {
         let orderedNodeKeys = this.kahn();
 
         let setCache = (key: string, value: State) => {
-            let cable = this.getCable(key)!;
-            if (!cable) {
-                return;
-            }
-            // if (value === false || value === 0) {
-            //     cable.state = CableState.Null;
-            // } else if (value === true) {
-            //     cable.state = CableState.Boolean;
-            // } else if (value instanceof Number) {
-            //     cable.state = CableState.Number;
-            // } else if (value instanceof Object) {
-            //     cable.state = CableState.Object;
-            // } else {
-            //     cable.state = CableState.String;
+            // let cable = this.getOutputConnectionsAt(key)!;
+            // if (!cable) {
+            //     return;
             // }
-
-            // else if (value instanceof Number) {
-            //     cable.state = CableState.Number;
-            // } else if (value instanceof String) {
-            //     cable.state = CableState.String;
-            // } else if (value instanceof Object) {
-            //     cable.state = CableState.Object;
-            // } else {
-            //     cable.state = CableState.Null;
-            // }
-     
             cache.set(key, value);
         }
 
@@ -140,7 +117,7 @@ export class NodesGraph {
             if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
                 
                 let inputs = [];
-                for (let cable of node.inputs()) { // TODO multiple inputs!!
+                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!! ?
                     inputs.push(cache.get(cable)!);
                 }
                 let outputs;
@@ -153,7 +130,7 @@ export class NodesGraph {
                     continue;
                 }
 
-                let outCables = node.outputs();
+                let outCables = node.getCablesAtOutput();
                 if (typeof outputs !== "object") {
                     setCache(outCables[0], outputs);
                 } else {
@@ -162,11 +139,11 @@ export class NodesGraph {
                     }
                 }
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-                for (let cable of node.getOutputs()) {
+                for (let cable of node.getCablesAtOutput()) {
                     setCache(cable, node.widget!.state);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-                for (let cable of node.getInputs()) { // TODO multiple inputs!!
+                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!!
                     node.widget!.run(cache.get(cable)!);
                 }
             } else {
@@ -195,25 +172,28 @@ export class NodesGraph {
 
         while (true) {
 
-            let node = S.pop();
-            if (node == undefined) 
+            let hash = S.pop();
+            if (hash == undefined) 
                 break;
-            L.push(node);
+            L.push(hash);
+
+            let node = this.getNode(hash)!;
 
             // for each node m with an edge e from n to m do
-            for (let cable of this.getNode(node)!.outputs()) {
+            node.forEachOutputSocket((s: Socket, connections: Socket[]) => {
+                let cableHash = s.toString();
                 
                 // 'remove' edge e from the graph
-                if (visitedCables.has(cable))
-                    continue;
-                visitedCables.add(cable);
+                if (visitedCables.has(cableHash))
+                    return;
+                visitedCables.add(cableHash);
 
                 // if m has no other incoming edges then
-                //    insert m into S
-                for (let nb of this.getCable(cable)!.to) {
-                    let m = nb.node;
+                // insert m into S
+                for (let connection of connections) {
+                    let m = connection.hash;
                     let allVisited = true;
-                    for (let c of this.getNode(m)!.inputs()) {
+                    for (let c of this.getNode(m)!.getCablesAtInput()) {
                         if (!visitedCables.has(c)) {
                             allVisited = false;
                             break;
@@ -223,7 +203,7 @@ export class NodesGraph {
                         S.push(m);
                     }
                 }
-            }
+            })
         }
 
         return L;
@@ -238,25 +218,14 @@ export class NodesGraph {
             if (this.nodes.has(key)) {
                 console.warn("double!!");
                 key = createRandomGUID();
-                for (let [k, v] of node.connections) {
-                    if (k < 0) {
-                        continue;
-                    }
-                    node.connections.delete(k);
-                }   
+                return;   
             } 
             this.nodes.set(key, node);
         }
-        // for (let [key, value] of other.cables) {
-        //     if (this.cables.has(key)) {
-        //         console.warn("double!!");
-        //     } 
-        //     this.cables.set(key, value);
-        // }
         return this;
     }
 
-    // ---- Node Management 
+    //////////////////////////////////// Nodes /////////////////////////////////////
 
     addNode(node: GeonNode, key?: string) {
         if (key == "" || key == undefined) {
@@ -273,153 +242,161 @@ export class NodesGraph {
         return this.nodes.get(key);
     }
 
-    deleteNode(nkey: string) {
-        let node = this.nodes.get(nkey)!;
+    deleteNode(hash: string) {
+        let node = this.nodes.get(hash)!;
 
         // pull all connections at connectors
-        for (let [idx, cable] of node.connections) {
-            this.emptySocket(cable, Socket.new(nkey, idx))
-        }
+        this.removeAllConnections(hash);
 
         // remove the widget pointer
         if (node.process instanceof Widget) {
-            this.widgets.delete(nkey);
+            this.widgets.delete(hash);
         }
 
-        return this.nodes.delete(nkey);
+        return this.nodes.delete(hash);
     }
 
-    getCable(key: string) {
-        return this.cables.get(key);
-    }
+    //////////////////////////////////// Connections ///////////////////////////////////////
 
-    private fillSocket(ckey: string, c: Socket) {
-        let cable = this.cables.get(ckey)!;
-        
-        // remove existing connections
-        if (c.side == SocketSide.Output) {
-            // take care of this one level higher than this
-        } else if (c.side == SocketSide.Input) {
-            // make sure the socket is empty
-            let existingTo = this.getCableAtConnector(c);
-            if (existingTo) {
-                this.emptySocket(existingTo, c);
-            }
-        }
-
-        // add the new connection
-        this.setNodeCableConnection(ckey, c);
-    }
-
-    private emptySocket(ckey: string, c: Socket) {
-        let cable = this.cables.get(ckey)!;
-
-        // console.log("EMPTYING A SOCKET FROM "+ this.nodes.get(c.node)?.core.name)
-        if (c.side == SocketSide.Output) {
-            // if connection is input, delete the entire cable
-            // console.log("EMPTY Output...");
-            // console.log("WE NEED TO DELETE THE ENTIRE CABLE");
-            for (let to of cable.to) {
-                this.emptySocket(ckey, to);
-            }
-            this.cables.delete(ckey);
-        } else if (c.side == SocketSide.Input) {
-            cable._to.delete(c.toPrintString());
-            if (cable._to.size == 0) {
-                // this will delete the cable as well
-                this.emptySocket(ckey, cable.from);  
-            }
-        }
-
-        // remove the node pointer 
-        this.removeNodeConnection(c);
-        return true;
-    }
-
-    // ---- Cable Management
-
-    reinstateConnections(node: string, connections: Map<SocketIdx, string>) {
-        
-    }
-
-    addCable(a: Socket, b: Socket) {
-
-        // before we create the cable, make sure the sockets are free
-        let cable = Cable.new(a, b);
-
-        // If a cable exist at the start of this cable, do not add a new cable.
-        // but add an additional output to this one
-        let existingFrom = this.getCableAtConnector(cable.from);
-        if (existingFrom) {
-            console.log("adding to existing...");
-            for(let to of cable.to) {
-                if (existingFrom == this.getCableAtConnector(to)) {
-                    console.log("this full cable exist already");
-                    // if the current 'to' socket is occupied by the same cable, this is meaningless
-                    return existingFrom;
-                }
-                this.fillSocket(existingFrom, to);
-            }
-            return existingFrom;
-        } 
-
-        // add the actual cable, floating in the air as it were.
-        let cableKey = createRandomGUID();
-        this.cables.set(cableKey, cable);
-
-        // now plug it in
-        this.fillSocket(cableKey, cable.from);
-        for (let to of cable.to) {
-            this.fillSocket(cableKey, to);
-        }
-        return cableKey;
+    getOutputConnectionsAt(local: Socket) : Socket[] {
+        if (local.side != SocketSide.Output) throw new Error("NOPE");
+        return this.nodes.get(local.hash)!.outputs[local.idx-1];
     }
     
-    addCableBetween(a: string, outputIndex: number, b: string, inputIndex: number) {
-        let aComp: SocketIdx = outputIndex + 1;
-        let bComp: SocketIdx = (inputIndex + 1) * -1;
-        // console.log({a, outputIndex, b, inputIndex });
-        this.addCable(Socket.new(a,aComp), Socket.new(b, bComp));
+    setOutputConnectionsAt(local: Socket, foreign: Socket[]) {
+        if (local.side != SocketSide.Output) throw new Error("NOPE");
+        this.nodes.get(local.hash)!.outputs[local.idx-1] = foreign;
+    }
+    
+    addOutputConnectionsAt(local: Socket, foreign: Socket) {
+        if (local.side != SocketSide.Output) throw new Error("NOPE");
+        this.nodes.get(local.hash)!.outputs[local.idx-1].push(foreign);
+    }
+    
+    removeOutputConnectionsAt(local: Socket, foreign: Socket) {
+        if (local.side != SocketSide.Output) throw new Error("NOPE");
+        let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
+        let index = list.indexOf(foreign);
+        if (index == -1) {
+            console.warn("foreign socket cannot be removed, because it does not exist");
+        }
+        list.splice(index, 1);
     }
 
-    // ---- Connection Management
-
-    private getCableAtConnector(c: Socket) {
-        return this.nodes.get(c.node)?.connections.get(c.idx);
+    getInputConnectionAt(local: Socket) : Socket | undefined {
+        if (local.side != SocketSide.Input) throw new Error("NOPE");
+        return this.nodes.get(local.hash)!.inputs[(-local.idx) - 1];
+    }
+    
+    setInputConnectionAt(local: Socket, foreign?: Socket) {
+        if (local.side != SocketSide.Input) throw new Error("NOPE");
+        this.nodes.get(local.hash)!.inputs[(-local.idx) - 1] = foreign;
     }
 
-    private setNodeCableConnection(ckey: string, c: Socket) {
-        let cable = this.cables.get(ckey)!;
-        let node = this.nodes.get(c.node)!;
-        if (c.side == SocketSide.Input) {
-            // input of node | 'to' / B of cable
-            cable.add(c);
-            node.connections.set(c.idx, ckey);
-        } else if (c.side == SocketSide.Output) {
-            // output of node | 'from' / A of cable
-            cable.from = c;
-            node.connections.set(c.idx, ckey);
+    removeAllConnections(hash: string) {
+        let node = this.getNode(hash)!;
+        
+        for (let i = 0 ; i < node.process.outputs; i++) {
+            let foreigns = node.outputs[i];
+            if (!foreigns) continue;
+            let local = Socket.fromNode(hash, i, SocketSide.Output);
+            
+            // remove foreign connection, then my connection
+            for (let foreign of foreigns) this.setInputConnectionAt(foreign, undefined)
+            this.setOutputConnectionsAt(local, []);
+        }
+        
+        for (let i = 0 ; i < node.process.inputs; i++) {
+            let foreign = node.inputs[i];
+            if (!foreign) continue;
+            let local = Socket.fromNode(hash, i, SocketSide.Input);
+            
+            // remove foreign connection, then my connection
+            this.removeOutputConnectionsAt(foreign, local);
+            this.setInputConnectionAt(local, undefined);
         }
     }
 
-    private removeNodeConnection(c: Socket) {
-        return this.nodes.get(c.node)?.connections.delete(c.idx);
+
+    addCableBetween(aHash: string, outputIndex: number, bHash: string, inputIndex: number) {
+        let aIndex: SocketIdx = outputIndex + 1;
+        let bIndex: SocketIdx = (inputIndex + 1) * -1;
+        // console.log({a, outputIndex, b, inputIndex });
+        this.addConnection(Socket.new(aHash,aIndex), Socket.new(bHash, bIndex));
     }
 
+
+    addConnection(local: Socket, foreign: Socket) : boolean {
+
+        // after this local.side == SocketSide.Input, foreign.side == SocketSide.Output
+        if (local.side == foreign.side) {
+            console.error("errorous connection!");
+            return false;
+        } else if (local.side != SocketSide.Input || foreign.side != SocketSide.Output) {
+            return this.addConnection(foreign, local);   
+        }
+
+        // if the input socket already contains something, make sure its emptied correctly
+        let localConnection = this.getInputConnectionAt(local);
+        let foreignConnections = this.getOutputConnectionsAt(foreign); 
+        
+        // this cable already exists, remove the connection instead
+        if (foreignConnections.includes(local)) {
+            console.log("exist already! removing...")
+            this.removeConnection(foreign, local);
+            return true;
+        }
+
+        // if the input node is already, filled, remove whatever is there first
+        if (localConnection) {
+            this.removeConnection(local, localConnection);
+        }
+
+        // finally, add the mutual connection 
+        this.setInputConnectionAt(local, foreign);
+        this.addOutputConnectionsAt(foreign, local);
+
+        return true;
+    }
+    
+    removeConnection(local: Socket, foreign: Socket) {
+        if (local.side == foreign.side) {
+            console.error("errorous connection!");
+            return false;
+        }
+        
+        if (local.side == SocketSide.Input) {
+            this.removeOutputConnectionsAt(foreign, local);
+            this.setInputConnectionAt(local, undefined);
+        } 
+
+        if (local.side == SocketSide.Output) {
+            this.setInputConnectionAt(foreign, undefined);
+            this.removeOutputConnectionsAt(local, foreign);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+
     log() {
-
         console.log("GRAPH");
-
         console.log("NODES");
         console.log("-----");
         for (let [nkey, node] of this.nodes) {
             console.log(" node");
             console.log(" L key : ", nkey);
             console.log(" L name: ", node.process.name);
-            // console.log(" L connections: ");
-            // for (let [k, v] of node.connections) {
-            //     console.log(`   L key: ${k} | value: ${v}`);
-            // }
+            console.log(" L output-connections: ");
+            node.forEachOutputSocket((socket, connections) => {
+                console.log("    L ", socket.idx, " ----> ");
+                connections.forEach(c=> console.log("      L", c.hash, c.idx));
+            })
+
+            console.log(" L input-connections: ");
+            node.forEachInputSocket((socket, c) => {
+                console.log("    L ", socket.idx, " ----> ");
+                console.log("      L", c?.hash, c?.idx);
+            })
         }
     }
 }

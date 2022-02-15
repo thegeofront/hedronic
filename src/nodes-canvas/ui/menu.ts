@@ -77,8 +77,6 @@ export class Menu {
             d.up()
         d.up();
         
-        console.log("render render render")
-
         d.addDiv("overlay")
             d.addText("hello, world!")
                 .style("position: absolute; left: 10px; bottom: 10px")
