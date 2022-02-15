@@ -41,6 +41,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
     - [ ] Must be easier to manage
     - [ ] Must be easier to map to  
 
+
 # Post-Roadmap 
 - [ ] refactor visuals to css
 

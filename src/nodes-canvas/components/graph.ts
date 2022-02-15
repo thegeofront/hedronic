@@ -326,23 +326,23 @@ export class NodesGraph {
             }
             this.cables.delete(ckey);
         } else if (c.side == SocketSide.Input) {
-    
             cable._to.delete(c.toString());
             if (cable._to.size == 0) {
                 // this will delete the cable as well
-                this.emptySocket(ckey, cable.from);
-                
-            } 
-            // console.log("WE NEED TO DELETE THE ENTIRE CABLE ONLY IF WE ARE THE LAST");
+                this.emptySocket(ckey, cable.from);  
+            }
         }
 
         // remove the node pointer 
         this.removeNodeConnection(c);
-
         return true;
     }
 
     // ---- Cable Management
+
+    reinstateConnections(node: string, connections: Map<SocketIdx, string>) {
+        
+    }
 
     addCable(a: Socket, b: Socket) {
 

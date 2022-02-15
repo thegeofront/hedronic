@@ -1,13 +1,13 @@
-import { Vector2 } from "../../../../engine/src/lib";
-import { Action } from "../components/action";
-import { Blueprint } from "../blueprints/blueprint";
-import { NodesGraph } from "../components/graph";
-import { GeonNode } from "../components/node";
-import { State } from "../components/state";
-import { Widget } from "../components/widget";
+import { Vector2 } from "../../../../../engine/src/lib";
+import { Blueprint } from "../../blueprints/blueprint";
+import { NodesGraph } from "../graph";
+import { GeonNode } from "../node";
+import { State } from "../state";
+import { Widget } from "../widget";
+import { Action } from "../action";
 
-export class NodesAddAction implements Action {
-    
+export class NodeAddAction implements Action {
+
     constructor(
         public blueprint: Blueprint | Widget,
         public gridPosition: Vector2,

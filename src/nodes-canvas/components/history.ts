@@ -1,19 +1,19 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { Blueprint } from "../blueprints/blueprint";
-import { NodesGraph } from "./graph";
-import { GeonNode } from "./node";
-import { Socket } from "./socket";
-import { State } from "./state";
-import { Widget } from "./widget";
+import { NodesGraph } from "../components/graph";
+import { GeonNode } from "../components/node";
+import { Socket } from "../components/socket";
+import { State } from "../components/state";
+import { Widget } from "../components/widget";
 import { Action } from "./action";
+import { MultiAction } from "./actions/multi-action";
 
-import { NodesAddAction } from "../actions/nodes-add-action";
-import { NodesDeleteAction } from "../actions/nodes-delete-action";
-import { NodesMoveAction } from "../actions/nodes-move-action";
+import { NodeAddAction } from "./actions/node-add-action";
+import { NodeDeleteAction } from "./actions/node-delete-action";
+import { NodeMoveAction } from "./actions/node-move-action";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
- * TODO: make all actions about a single node / cable, and then add something to group actions together
  */
 export class History {
     
@@ -87,19 +87,22 @@ export class History {
     ///////////////////////////////////////////////////////////////////////////    
 
     addNodes(selected: Blueprint | Widget, gp: Vector2, state?: State) {
-        return this.do(new NodesAddAction(selected, gp, state))
+        return this.do(new NodeAddAction(selected, gp, state))
     }
 
     deleteNodes(keys: string[]) {
-        return this.do(new NodesDeleteAction(keys))
+        let actions = keys.map(key => new NodeDeleteAction(key));
+        return this.do(new MultiAction(actions));
     }
 
     moveNodes(keys: string[], delta: Vector2) {
-        return this.do(new NodesMoveAction(keys, delta));
+        let actions = keys.map(key => new NodeMoveAction(key, delta));
+        return this.do(new MultiAction(actions));
     }
 
     recordMoveNodes(keys: string[], delta: Vector2) {
-        return this.record(new NodesMoveAction(keys, delta))
+        let actions = keys.map(key => new NodeMoveAction(key, delta));
+        return this.record(new MultiAction(actions))
     }
 }
 
