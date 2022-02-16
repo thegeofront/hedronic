@@ -371,7 +371,7 @@ export class NodesGraph {
         let foreignConnections = this.getOutputConnectionsAt(foreign); 
         
         // this exact connection already exists, remove the connection instead
-        if (localConnection?.hash == foreign.hash) {
+        if (localConnection?.hash == foreign.hash && localConnection.idx == foreign.idx) {
             console.log("exist already! removing...")
             // this.removeConnection(foreign, local);
             return false;

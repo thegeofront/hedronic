@@ -1,7 +1,21 @@
-export function Point(x, y, z) {
-    let res = {x,y,z};
-    return [res];
+export class Point {
+
+    static new(x, y) {
+        let p = new Point();
+        p.x = x;
+        p.y = y;
+        return p;
+    }
 }
+
+export function depoint(p=Point.new()) {
+    return [p.x,p.y];
+}
+
+// export function Point(x, y, z) {
+//     let res = {x,y,z};
+//     return [res];
+// }
 
 export function add(a, b) {
     let res = {
