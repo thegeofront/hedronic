@@ -826,11 +826,15 @@ export class NodesCanvas {
             if ((selectedSocket.side == SocketSide.Input && this.hoverSocket.side == SocketSide.Output) || 
             (selectedSocket.side == SocketSide.Output && this.hoverSocket.side == SocketSide.Input)) {
             
-                console.log("adding cable...")
-                this.graph.addConnection(selectedSocket, this.hoverSocket);
-                this.deselect();
-                this.requestRedraw();
                 // new line means recalculation
+                console.log("adding cable...")
+                let control = this.input.IsKeyDown("control")
+                if (control) {
+                    this.graphHistory.removeConnection(selectedSocket, this.hoverSocket!);
+                } else {
+                    this.graphHistory.addConnection(selectedSocket, this.hoverSocket!);
+                }
+                this.deselect();
                 this.onChange();
             }
         } 

@@ -2,7 +2,7 @@ import { NodesGraph } from "../graph";
 import { Action } from "../action";
 import { Socket } from "../socket";
 
-export class CableAddAction implements Action {
+export class CableDeleteAction implements Action {
 
     constructor(
         public from: Socket,
@@ -10,11 +10,11 @@ export class CableAddAction implements Action {
     ) {}
 
     do(graph: NodesGraph) {
-        graph.addConnection(this.from, this.to);
+        graph.removeConnection(this.from, this.to);
     }
     
     undo(graph: NodesGraph) {
-        graph.removeConnection(this.from, this.to)
+        graph.addConnection(this.from, this.to);
     }
 }
 

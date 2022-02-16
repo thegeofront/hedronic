@@ -18,6 +18,10 @@ async function main() {
     let acc_time = 0;
     let counter = FpsCounter.new();
 
+    // publish globally 
+    // @ts-ignore
+    this.nodes = nodes;
+
     // loop
     function loop(elapsed_time: number) {
         let delta_time = elapsed_time - acc_time;

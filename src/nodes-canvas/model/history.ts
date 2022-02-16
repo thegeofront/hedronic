@@ -11,6 +11,8 @@ import { MultiAction } from "./actions/multi-action";
 import { NodeAddAction } from "./actions/node-add-action";
 import { NodeDeleteAction } from "./actions/node-delete-action";
 import { NodeMoveAction } from "./actions/node-move-action";
+import { CableAddAction } from "./actions/cable-add-action";
+import { CableDeleteAction } from "./actions/cable-delete-action";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
@@ -85,6 +87,14 @@ export class History {
     }
 
     ///////////////////////////////////////////////////////////////////////////    
+
+    addConnection(from: Socket, to: Socket) {
+        return this.do(new CableAddAction(from, to));
+    }
+
+    removeConnection(from: Socket, to: Socket) {
+        return this.do(new CableDeleteAction(from, to));
+    }
 
     addNodes(selected: Blueprint | Widget, gp: Vector2, state?: State) {
         return this.do(new NodeAddAction(selected, gp, state))

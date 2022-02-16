@@ -282,7 +282,7 @@ export class NodesGraph {
         let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
         // find and remove
         for (let i = 0 ; i < list.length; i++) {
-            if (list[i].hash != foreign.hash) continue;
+            if (list[i].hash != foreign.hash || list[i].idx != foreign.idx) continue;
             return true;
         }
         return false;
@@ -370,15 +370,16 @@ export class NodesGraph {
         let localConnection = this.getInputConnectionAt(local);
         let foreignConnections = this.getOutputConnectionsAt(foreign); 
         
-        // this cable already exists, remove the connection instead
-        if (foreignConnections.includes(local)) {
+        // this exact connection already exists, remove the connection instead
+        if (localConnection?.hash == foreign.hash) {
             console.log("exist already! removing...")
-            this.removeConnection(foreign, local);
-            return true;
+            // this.removeConnection(foreign, local);
+            return false;
         }
 
         // if the input node is already, filled, remove whatever is there first
         if (localConnection) {
+            console.log("WARNING- REMOVING SOME OTHER CONNECTION TO ALLOW THIS ONE!");
             this.removeConnection(local, localConnection);
         }
 
