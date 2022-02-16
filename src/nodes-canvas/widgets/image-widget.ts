@@ -17,6 +17,6 @@ export class ImageWidget extends Widget {
     onClick(canvas: NodesCanvas) {
         this.state = !this.state;
         canvas.deselect();
-        canvas.graph.calculate();
+        canvas.onChange();
     }
 }

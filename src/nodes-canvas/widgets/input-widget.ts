@@ -28,7 +28,7 @@ export class InputWidget extends Widget {
             }
         }
         canvas.deselect();
-        canvas.graph.calculate();
+        canvas.onChange();
     }
 }
 

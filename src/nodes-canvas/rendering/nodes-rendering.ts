@@ -7,6 +7,7 @@ import { Widget } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
 import { CableState } from "./cable-visual";
 import { Socket } from "../model/socket";
+import { NodesGraph } from "../model/graph";
 
 export const MUTED_WHITE = '#cecdd1';
 
@@ -201,7 +202,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 }
 
 
-export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableState, canvas: NodesCanvas) {
+export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableState, canvas: NodesCanvas, graph: NodesGraph) {
 
     // return;
     // console.log("draw", from, tos);
@@ -209,12 +210,12 @@ export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableSta
     // console.log(from);
     // console.log(canvas.graph.nodes)
     // console.log(from.hash);
-    let fromNode = canvas.graph.nodes.get(from.hash)!;
+    let fromNode = graph.nodes.get(from.hash)!;
     // console.log(fromNode);
     let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;
 
     for (let to of tos) {
-        let toNode = canvas.graph.nodes.get(to.hash)!;
+        let toNode = graph.nodes.get(to.hash)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
         drawCableBetween(ctx, fromGridPos, toGridPos, canvas, state);
     }

@@ -44,7 +44,7 @@ export class NodesCanvas {
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
-        public graph: NodesGraph,
+        private graph: NodesGraph,
         public graphHistory: History,
         public menu: Menu,
         
@@ -65,9 +65,7 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-
-        const catalogue = Catalogue.newFromStd();
-        
+        const catalogue = Catalogue.newFromStd();   
         const menu = Menu.new(ui, htmlCanvas);
 
         return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
@@ -451,7 +449,7 @@ export class NodesCanvas {
                 if (connections.length == 0) return;
                 let cableHash = socket.toString();
                 let visual = this.cableVisuals.get(cableHash) || CableState.Null;
-                drawCable(ctx, socket, connections, visual, this);
+                drawCable(ctx, socket, connections, visual, this, this.graph);
             })
         }
 
