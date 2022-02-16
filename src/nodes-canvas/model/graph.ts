@@ -282,14 +282,17 @@ export class NodesGraph {
         this.nodes.get(local.hash)!.outputs[local.idx-1].push(foreign);
     }
     
-    removeOutputConnectionsAt(local: Socket, foreign: Socket) {
+    removeOutputConnectionAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
         let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
-        let index = list.indexOf(foreign);
-        if (index == -1) {
-            console.warn("foreign socket cannot be removed, because it does not exist");
+        console.log({list, foreign});
+        
+        // find and remove
+        for (let i = 0 ; i < list.length; i++) {
+            if (list[i].hash != foreign.hash) continue;
+            list.splice(i, 1);
+            return 
         }
-        list.splice(index, 1);
     }
 
     getInputConnectionAt(local: Socket) : Socket | undefined {
@@ -305,6 +308,7 @@ export class NodesGraph {
     removeAllConnections(hash: string) {
         let node = this.getNode(hash)!;
         
+        console.log("outputs");
         for (let i = 0 ; i < node.process.outputs; i++) {
             let foreigns = node.outputs[i];
             if (!foreigns) continue;
@@ -315,13 +319,14 @@ export class NodesGraph {
             this.setOutputConnectionsAt(local, []);
         }
         
+        console.log("inputs");
         for (let i = 0 ; i < node.process.inputs; i++) {
             let foreign = node.inputs[i];
             if (!foreign) continue;
             let local = Socket.fromNode(hash, i, SocketSide.Input);
             
             // remove foreign connection, then my connection
-            this.removeOutputConnectionsAt(foreign, local);
+            this.removeOutputConnectionAt(foreign, local);
             this.setInputConnectionAt(local, undefined);
         }
     }
@@ -375,13 +380,13 @@ export class NodesGraph {
         }
         
         if (local.side == SocketSide.Input) {
-            this.removeOutputConnectionsAt(foreign, local);
+            this.removeOutputConnectionAt(foreign, local);
             this.setInputConnectionAt(local, undefined);
         } 
 
         if (local.side == SocketSide.Output) {
             this.setInputConnectionAt(foreign, undefined);
-            this.removeOutputConnectionsAt(local, foreign);
+            this.removeOutputConnectionAt(local, foreign);
         }
     }
 
