@@ -285,8 +285,6 @@ export class NodesGraph {
     removeOutputConnectionAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
         let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
-        console.log({list, foreign});
-        
         // find and remove
         for (let i = 0 ; i < list.length; i++) {
             if (list[i].hash != foreign.hash) continue;

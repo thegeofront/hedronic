@@ -25,7 +25,8 @@ export class NodeDeleteAction implements Action {
     
     undo(graph: NodesGraph) {
 
-        graph.addNode(GeonNode.fromJson(this.data, this.process)!);
+        let node = GeonNode.fromJson(this.data, this.process)!;
+        graph.addNode(node);
         // graph.reinstateConnections(this.key, this.connections);
     }
 }

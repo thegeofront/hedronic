@@ -87,7 +87,7 @@ export class GeonNode {
 
     static toJson(node: GeonNode) {
 
-        let toJsonOrNull = (s: Socket | undefined) => {s ? s.toJson() : 0}
+        let toJsonOrNull = (s: Socket | undefined) => s ? s.toJson() : 0;
     
         return {
             hash: node.hash,
