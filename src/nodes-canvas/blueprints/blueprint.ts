@@ -7,7 +7,7 @@
 //                L  
 // 
 
-import { State } from "../components/state";
+import { State } from "../model/state";
 
 export type FN = (...args: State[]) => State[];
 

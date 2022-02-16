@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Socket } from "../components/socket";
+import { Socket } from "../model/socket";
 
 export enum CableState {
     Null,

@@ -37,10 +37,11 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
   - [✔️] history & ctrl Z & Y support 
   - [⏹️] cable history
   - [🚧] Cable Refactor
-    - [ ] We need a better definition and representation of variables. 
-    - [ ] Must be easier to manage
-    - [ ] Must be easier to map to  
-
+    - [✔️] We need a better definition and representation of variables. 
+    - [✔️] Must be easier for state management and history
+    - [✔️] Must be easier to reason about
+    - [✔️] Must be easier to translate to js / json or whatever
+    - [ ] Deal
 
 # Post-Roadmap 
 - [ ] refactor visuals to css

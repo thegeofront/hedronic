@@ -1,6 +1,6 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
-import { State } from "../components/state";
-import { Widget, WidgetSide } from "../components/widget";
+import { State } from "../model/state";
+import { Widget, WidgetSide } from "../model/widget";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 
 export class ImageWidget extends Widget {

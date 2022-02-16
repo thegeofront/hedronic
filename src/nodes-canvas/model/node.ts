@@ -18,6 +18,7 @@ export class GeonNode {
         public process: Blueprint | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
+        // outputState
         ) {}
 
     get operation() : Blueprint | undefined {

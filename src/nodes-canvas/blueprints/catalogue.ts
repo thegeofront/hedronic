@@ -1,7 +1,7 @@
 import { FN, Blueprint } from "./blueprint";
-import { GeonNode } from "../components/node";
+import { GeonNode } from "../model/node";
 import { Vector2 } from "../../../../engine/src/lib";
-import { Widget, WidgetSide } from "../components/widget";
+import { Widget, WidgetSide } from "../model/widget";
 import { ButtonWidget } from "../widgets/button-widget";
 import { ConsoleWidget } from "../widgets/console-widget";
 import { LampWidget } from "../widgets/lamp-widget";

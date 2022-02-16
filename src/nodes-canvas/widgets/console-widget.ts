@@ -1,7 +1,7 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../rendering/ctx/ctx-helpers";
-import { State } from "../components/state";
-import { Widget, WidgetSide } from "../components/widget";
+import { State } from "../model/state";
+import { Widget, WidgetSide } from "../model/widget";
 import { renderTextInWidget } from "./input-widget";
 
 export class ConsoleWidget extends Widget {

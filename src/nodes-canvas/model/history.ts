@@ -1,10 +1,10 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { Blueprint } from "../blueprints/blueprint";
-import { NodesGraph } from "../components/graph";
-import { GeonNode } from "../components/node";
-import { Socket } from "../components/socket";
-import { State } from "../components/state";
-import { Widget } from "../components/widget";
+import { NodesGraph } from "./graph";
+import { GeonNode } from "./node";
+import { Socket } from "./socket";
+import { State } from "./state";
+import { Widget } from "./widget";
 import { Action } from "./action";
 import { MultiAction } from "./actions/multi-action";
 

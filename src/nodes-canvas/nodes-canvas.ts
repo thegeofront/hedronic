@@ -4,16 +4,16 @@
 import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
-import { NodesGraph } from "./components/graph";
-import { makeOperationsGlobal } from "./components/graph-conversion";
-import { Socket, SocketSide } from "./components/socket";
-import { Widget } from "./components/widget";
+import { NodesGraph } from "./model/graph";
+import { makeOperationsGlobal } from "./model/graph-conversion";
+import { Socket, SocketSide } from "./model/socket";
+import { Widget } from "./model/widget";
 import { Catalogue, CoreType } from "./blueprints/catalogue";
 import { Library } from "./blueprints/library";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
-import { History } from "./components/history";
+import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 
 /**
@@ -109,7 +109,7 @@ export class NodesCanvas {
 
         document.addEventListener("keydown", (e) => {
             
-            // TODO: give these actions different files
+            // TODO: give these actions different files or something, maybe like the history actions
             let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
             let shift = e.shiftKey;      
             var key = e.key.toLowerCase(); 
@@ -166,7 +166,6 @@ export class NodesCanvas {
 
     onChange() {
         let [cache, visuals] = this.graph.calculate();
-        console.log(visuals);
         this.cableVisuals = visuals;
         this.requestRedraw();
     }

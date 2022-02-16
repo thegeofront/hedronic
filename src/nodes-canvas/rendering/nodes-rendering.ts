@@ -2,11 +2,11 @@
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
 import { CTX, drawPolygon, filletPolyline, strokePolyline } from "./ctx/ctx-helpers";
-import { NODE_WIDTH, GeonNode } from "../components/node";
-import { Widget } from "../components/widget";
+import { NODE_WIDTH, GeonNode } from "../model/node";
+import { Widget } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
 import { CableState } from "./cable-visual";
-import { Socket } from "../components/socket";
+import { Socket } from "../model/socket";
 
 export const MUTED_WHITE = '#cecdd1';
 
