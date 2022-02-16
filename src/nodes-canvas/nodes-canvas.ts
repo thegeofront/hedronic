@@ -163,6 +163,9 @@ export class NodesCanvas {
     }
 
     onChange() {
+        if (this.graph.areConnectionsCorrect()) {
+            console.log("correct!");
+        }
         let [cache, visuals] = this.graph.calculate();
         this.cableVisuals = visuals;
         this.requestRedraw();

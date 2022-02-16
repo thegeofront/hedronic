@@ -23,7 +23,7 @@ export class GeonNode {
 
     get operation() : Blueprint | undefined {
         if (this.process instanceof Blueprint) {
-            return this.process as Blueprint
+            return this.process as Blueprint;
         } else {
             return undefined;
         }
@@ -31,7 +31,7 @@ export class GeonNode {
 
     get widget() : Widget | undefined {
         if (this.process instanceof Widget) {
-            return this.process as Widget
+            return this.process as Widget;
         } else {
             return undefined;
         }
@@ -39,9 +39,9 @@ export class GeonNode {
 
     get type() : CoreType {
         if (this.process instanceof Widget) {
-            return CoreType.Widget
+            return CoreType.Widget;
         } else {
-            return CoreType.Operation
+            return CoreType.Operation;
         }
     }
     
@@ -55,18 +55,18 @@ export class GeonNode {
             inputs = [];
             for (let i = 0 ; i < process.inputs; i++) inputs.push(undefined);
         } else {
-            if (inputs.length != process.inputs)
-            console.warn("Inadequate number of inputs!")
-            return undefined;
+            if (inputs.length != process.inputs) {
+                throw new Error("Inadecuate number of inputs!");
+            }
         }
 
         if (!outputs) {
             outputs = [];
             for (let i = 0 ; i < process.outputs; i++) outputs.push([]);
         } else {
-            if (outputs.length != process.outputs)
-            console.warn("Inadequate number of outputs!")
-            return undefined;
+            if (outputs.length != process.outputs) {
+                throw new Error("Inadecuate number of outputs!");
+            }
         }
 
         return new GeonNode(hash, gridpos, process, inputs, outputs);
@@ -74,15 +74,24 @@ export class GeonNode {
 
     static fromJson(data: any, process: Blueprint | Widget) {
 
-        let fromJsonOrNull = (s: any) => {s !== 0 ? Socket.fromJson(s) : undefined}
+        console.log(data);
+
+        let fromJsonOrNull = (s: any) => {
+            if (s !== 0) 
+                return Socket.fromJson(s);
+            return undefined;
+        }
+
+        let mappedInputs = data.inputs.map(fromJsonOrNull);
+        let mappedOutputs = data.outputs.map((list: any) => list.map(fromJsonOrNull));
 
         return GeonNode.new(
             Vector2.new(data.position.x, data.position.y), 
             process,
-            data.inputs.map(fromJsonOrNull),
-            data.outputs.map((list: any) => list.map(fromJsonOrNull)),
+            mappedInputs,
+            mappedOutputs,
             data.hash,
-        )
+        );  
     }
 
     static toJson(node: GeonNode) {
@@ -113,7 +122,7 @@ export class GeonNode {
     log() {
         console.log(`node at ${this.position}`);
         // this.operation.name
-        console.log("operation: ")
+        console.log("operation: ");
         this.process.log();
     }
 
@@ -128,7 +137,7 @@ export class GeonNode {
     }
 
     /**
-     * This is werid, but for graph processes, we want the ID of the 'cables' at our output
+     * This looks werid, but for graph processes, we want the ID of the 'cables' at our output
      * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
      * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
      */

@@ -27,6 +27,8 @@ export class NodeDeleteAction implements Action {
 
         let node = GeonNode.fromJson(this.data, this.process)!;
         graph.addNode(node);
+        graph.reinstateConnections(node.hash);
+        
         // graph.reinstateConnections(this.key, this.connections);
     }
 }

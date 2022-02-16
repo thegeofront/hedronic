@@ -44,18 +44,18 @@ export class NodesGraph {
         let graph = NodesGraph.new();
         for (let key in json.nodes) {
             let value = json.nodes[key];
-            let lib = value.core.namespace;
-            let name = value.core.name;
+            let lib = value.process.namespace;
+            let name = value.process.name;
             let type = value.type;
 
             let process = catalogue.trySelect(lib, name, type);
             if (!process) {
-                console.error(`process: ${lib}, ${name}, ${type} cannot be created. The library is probably missing from this project`);
+                console.error(`process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
                 continue;
             } 
             let node = GeonNode.fromJson(value, process);
             if (!node) {
-                console.error(`process: ${lib}, ${name}, ${type} cannot be created. json data provided is errorous`)
+                console.error(`process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
                 continue;
             }
             graph.nodes.set(key, node);
@@ -277,6 +277,17 @@ export class NodesGraph {
         this.nodes.get(local.hash)!.outputs[local.idx-1] = foreign;
     }
     
+    hasOutputConnectionAt(local: Socket, foreign: Socket) {
+        if (local.side != SocketSide.Output) throw new Error("NOPE");
+        let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
+        // find and remove
+        for (let i = 0 ; i < list.length; i++) {
+            if (list[i].hash != foreign.hash) continue;
+            return true;
+        }
+        return false;
+    }
+
     addOutputConnectionsAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
         this.nodes.get(local.hash)!.outputs[local.idx-1].push(foreign);
@@ -293,6 +304,13 @@ export class NodesGraph {
         }
     }
 
+    /////// 
+
+    hasInputConnectionAt(local: Socket) {
+        if (local.side != SocketSide.Input) throw new Error("NOPE");
+        return this.nodes.get(local.hash)!.inputs[(-local.idx) - 1] != undefined;
+    }
+
     getInputConnectionAt(local: Socket) : Socket | undefined {
         if (local.side != SocketSide.Input) throw new Error("NOPE");
         return this.nodes.get(local.hash)!.inputs[(-local.idx) - 1];
@@ -303,10 +321,11 @@ export class NodesGraph {
         this.nodes.get(local.hash)!.inputs[(-local.idx) - 1] = foreign;
     }
 
+    ///////
+
     removeAllConnections(hash: string) {
         let node = this.getNode(hash)!;
-        
-        console.log("outputs");
+
         for (let i = 0 ; i < node.process.outputs; i++) {
             let foreigns = node.outputs[i];
             if (!foreigns) continue;
@@ -317,7 +336,6 @@ export class NodesGraph {
             this.setOutputConnectionsAt(local, []);
         }
         
-        console.log("inputs");
         for (let i = 0 ; i < node.process.inputs; i++) {
             let foreign = node.inputs[i];
             if (!foreign) continue;
@@ -386,6 +404,53 @@ export class NodesGraph {
             this.setInputConnectionAt(foreign, undefined);
             this.removeOutputConnectionAt(local, foreign);
         }
+    }
+
+    /**
+     * Use this when a node has connections, but you want to make these connections mutual
+     */
+    reinstateConnections(hash: string, overrideOutputConnections=false) {
+        let node = this.getNode(hash)!;
+        
+        node.forEachInputSocket((s, connection) => {
+            if (connection == undefined) return;
+            if (this.hasOutputConnectionAt(connection, s)) return;
+            this.addOutputConnectionsAt(connection, s);
+        });
+
+        node.forEachOutputSocket((s, connections) => {
+            if (connections == []) return;
+            for (let con of connections) {
+                if (!overrideOutputConnections && this.hasInputConnectionAt(con)) return;
+                this.setInputConnectionAt(con, s);
+            }
+        });
+    }
+
+    areConnectionsCorrect() : boolean {
+        
+        for (let [hash, node] of this.nodes) {
+
+            node.forEachInputSocket((socket, connection) => {
+                if (connection == undefined) return;
+                if (!this.hasOutputConnectionAt(connection, socket)) {
+                    console.warn(`${{socket, connection}}, "is not mutual! ${this.getOutputConnectionsAt(connection)} instead...`);
+                    return false;
+                }
+            });
+            
+            node.forEachOutputSocket((socket, connections) => {
+                if (connections == []) return;
+                for (let connection of connections) {
+                    if (!this.hasInputConnectionAt(connection)) {
+                        console.warn(`${{socket, connection}}, "is not mutual! ${this.getOutputConnectionsAt(connection)} instead...`);
+                        return false;
+                    }
+                }
+            }); 
+        }
+        
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
