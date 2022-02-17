@@ -1,14 +1,13 @@
-import { FN, Blueprint } from "./blueprint";
-import { GeonNode } from "../model/node";
-import { Vector2 } from "../../../../engine/src/lib";
-import { Widget, WidgetSide } from "../model/widget";
-import { ButtonWidget } from "../widgets/button-widget";
-import { ConsoleWidget } from "../widgets/console-widget";
-import { LampWidget } from "../widgets/lamp-widget";
-import { InputWidget } from "../widgets/input-widget";
+import { FN, FunctionBlueprint } from "./function-blueprint";
+import { GeonNode } from "../nodes-canvas/model/node";
+import { Vector2 } from "../../../engine/src/lib";
+import { Widget } from "../nodes-canvas/model/widget";
+import { ButtonWidget } from "../nodes-canvas/widgets/button-widget";
+import { ConsoleWidget } from "../nodes-canvas/widgets/console-widget";
+import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
+import { InputWidget } from "../nodes-canvas/widgets/input-widget";
 import { Library } from "./library";
-import { Module } from "webpack";
-import { ImageWidget } from "../widgets/image-widget";
+import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -28,7 +27,7 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: Blueprint | Widget;
+    public selected?: FunctionBlueprint | Widget;
 
     constructor(public blueprintLibraries: Map<string, Library>) {}
 
@@ -82,7 +81,7 @@ export class Catalogue {
         return this.selected;
     }
 
-    selectCore(core: Blueprint | Widget | undefined) {
+    selectCore(core: FunctionBlueprint | Widget | undefined) {
         this.selected = core;
     }
 

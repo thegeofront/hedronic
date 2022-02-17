@@ -1,5 +1,5 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
-import { Catalogue } from "../blueprints/catalogue";
+import { Catalogue } from "../../blueprints/catalogue";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
@@ -146,7 +146,7 @@ export class NodesGraph {
                     //     setValue(outCables[i], outputs[i]);
                     // }    
                 // }
-                for (let i = 0 ; i < node.operation.outputs; i++) {
+                for (let i = 0 ; i < node.operation.numOutputs; i++) {
                     setValue(outCables[i], outputs[i]);
                 }
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
@@ -326,7 +326,7 @@ export class NodesGraph {
     removeAllConnections(hash: string) {
         let node = this.getNode(hash)!;
 
-        for (let i = 0 ; i < node.process.outputs; i++) {
+        for (let i = 0 ; i < node.process.numOutputs; i++) {
             let foreigns = node.outputs[i];
             if (!foreigns) continue;
             let local = Socket.fromNode(hash, i, SocketSide.Output);
@@ -336,7 +336,7 @@ export class NodesGraph {
             this.setOutputConnectionsAt(local, []);
         }
         
-        for (let i = 0 ; i < node.process.inputs; i++) {
+        for (let i = 0 ; i < node.process.numInputs; i++) {
             let foreign = node.inputs[i];
             if (!foreign) continue;
             let local = Socket.fromNode(hash, i, SocketSide.Input);

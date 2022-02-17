@@ -7,32 +7,34 @@
 //                L  
 // 
 
-import { State } from "../model/state";
+import { State } from "../nodes-canvas/model/state";
 
 export type FN = (...args: State[]) => State[];
 
 /**
  * Offers a blueprint for creating a new node
- * Wraps a function, and delivers some useful information
+ * It wraps a function, and delivers some useful information
  * This is needed, so we can reason about the functionalities of operations
- * Not the same as a Node : Multiple Different Nodes will point to the same Operations
+ * Not the same as a Node : Multiple Different Nodes will point to the same FunctionBlueprint
  */
-export class Blueprint {
+export class FunctionBlueprint {
+
+    public nameLower: string;
 
     private constructor(
         public readonly func: FN,
         public readonly name: string,
-        public readonly nameLower: string,
-        public readonly inputs: number, 
-        public readonly outputs: number,
-        public readonly namespace: string) {}
+        public readonly numInputs: number, 
+        public readonly numOutputs: number,
+        public readonly namespace: string) {
+            this.nameLower = name.toLowerCase();
+        }
 
     static new(func: FN, namespace: string) {
-        let inCount = Blueprint.countInputs(func);
-        let outCount = Blueprint.countOutputs(func);
+        let inCount = FunctionBlueprint.countInputs(func);
+        let outCount = FunctionBlueprint.countOutputs(func);
         let name = func.name;
-        let nameLower = name.toLowerCase();
-        return new Blueprint(func, name, nameLower, inCount, outCount, namespace);
+        return new FunctionBlueprint(func, name, inCount, outCount, namespace);
     }
 
     run(args: State[]) {
@@ -42,8 +44,8 @@ export class Blueprint {
     log() {
         console.log(`this: ${this.func}`);
         console.log(`name: ${this.func.name}`);
-        console.log(`inputs: ${this.inputs}`);
-        console.log(`outputs: ${this.outputs}`);    
+        console.log(`inputs: ${this.numInputs}`);
+        console.log(`outputs: ${this.numOutputs}`);    
     }
 
     toJson() {

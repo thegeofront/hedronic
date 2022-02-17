@@ -24,5 +24,14 @@
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/test.js",
             "icon": "bi-bullseye"
         }
+    ],
+    "wasm": [
+        {
+            "icon": "bi-house",
+            "nickname": "cityjson",
+            "filename": "cityjson-validator",
+            "local-path": "wasm-modules/",
+            "url": "josfeenstra.nl/project/nodes/wasm-modules/"
+        }
     ]
 }

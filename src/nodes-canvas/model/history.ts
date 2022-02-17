@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { Blueprint } from "../blueprints/blueprint";
+import { FunctionBlueprint } from "../../blueprints/function-blueprint";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";
 import { Socket } from "./socket";
@@ -96,7 +96,7 @@ export class History {
         return this.do(new CableDeleteAction(from, to));
     }
 
-    addNodes(selected: Blueprint | Widget, gp: Vector2, state?: State) {
+    addNodes(selected: FunctionBlueprint | Widget, gp: Vector2, state?: State) {
         return this.do(new NodeAddAction(selected, gp, state))
     }
 

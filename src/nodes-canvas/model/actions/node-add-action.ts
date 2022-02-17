@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../../engine/src/lib";
-import { Blueprint } from "../../blueprints/blueprint";
+import { FunctionBlueprint } from "../../../blueprints/function-blueprint";
 import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { State } from "../state";
@@ -9,7 +9,7 @@ import { Action } from "../action";
 export class NodeAddAction implements Action {
 
     constructor(
-        public process: Blueprint | Widget,
+        public process: FunctionBlueprint | Widget,
         public gridPosition: Vector2,
         public initState?: State,
         private key?: string,

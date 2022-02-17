@@ -14,7 +14,7 @@
 import { Domain, Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../rendering/ctx/ctx-helpers";
 import { NodesCanvas } from "../nodes-canvas";
-import { Blueprint } from "../blueprints/blueprint";
+import { FunctionBlueprint } from "../../blueprints/function-blueprint";
 import { State } from "./state";
 import { MUTED_WHITE } from "../rendering/nodes-rendering";
 
@@ -42,8 +42,8 @@ export class Widget {
 
     nameLower: string;
     bounds: Domain2;
-    inputs: number;
-    outputs: number
+    numInputs: number;
+    numOutputs: number
 
     public constructor(
         public readonly name: string,
@@ -52,8 +52,8 @@ export class Widget {
         public state: State,
     ) {
         this.nameLower = name.toLowerCase();
-        this.inputs = side == WidgetSide.Input ? 0 : 1;
-        this.outputs = side == WidgetSide.Output ? 0 : 1;
+        this.numInputs = side == WidgetSide.Input ? 0 : 1;
+        this.numOutputs = side == WidgetSide.Output ? 0 : 1;
         this.bounds = Widget.determineWidgetSize(this.side, this.size);
     }
 

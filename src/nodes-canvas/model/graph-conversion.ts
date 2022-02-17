@@ -2,7 +2,7 @@
 // note:    since this graph->js business is very specific and weird, I thought it best to split it away from `graph.ts`
 
 import { Vector2 } from "../../../../engine/src/lib";
-import { Catalogue, CoreType } from "../blueprints/catalogue";
+import { Catalogue, CoreType } from "../../blueprints/catalogue";
 import { Casing, Permutator } from "../util/permutator";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";

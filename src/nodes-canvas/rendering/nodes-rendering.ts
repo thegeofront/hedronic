@@ -139,7 +139,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
-    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.process.inputs, node.process.outputs, node.getHeight(), canvas.size);
+    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.process.numInputs, node.process.numOutputs, node.getHeight(), canvas.size);
     ctx.fill();
     ctx.stroke();
     ctx.fill();
@@ -178,7 +178,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 
     // draw input text
     ctx.font = '12px courier new';
-    for (let i = 0 ; i < node.process.inputs; i++) {
+    for (let i = 0 ; i < node.process.numInputs; i++) {
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillText('|', vec.x, vec.y);
@@ -186,9 +186,9 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     }
 
     // draw output text
-    for (let i = 0 ; i < node.process.outputs; i++) {
+    for (let i = 0 ; i < node.process.numOutputs; i++) {
         setStyle(ctx, style, component, i + 1, isWidget);
-        let vec = textCenters.get(1 + node.process.inputs + i);
+        let vec = textCenters.get(1 + node.process.numInputs + i);
         ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         // ctx.fillText('|', vec.x, vec.y);
     }

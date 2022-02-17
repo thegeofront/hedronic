@@ -1,8 +1,8 @@
 // purpose: module, or library representation
 
-import { FN, Blueprint } from "./blueprint";
-import { Widget } from "../model/widget";
-import { tryFilter } from "../util/misc";
+import { FN, FunctionBlueprint } from "./function-blueprint";
+import { Widget } from "../nodes-canvas/model/widget";
+import { tryFilter } from "../nodes-canvas/util/misc";
 import { Catalogue, CoreType } from "./catalogue";
 
 
@@ -16,7 +16,7 @@ export class Library {
         public icon: string,
         public fullPath: string,
 
-        public blueprints: Blueprint[],
+        public blueprints: FunctionBlueprint[],
         public widgets: Widget[],
         public catalogue: Catalogue,
         ) {}
@@ -32,7 +32,7 @@ export class Library {
         this.catalogue.selectCore(core);
     }
 
-    static new(name: string, icon: string, fullPath: string, operations: Blueprint[], widgets: Widget[], catalogue: Catalogue) {
+    static new(name: string, icon: string, fullPath: string, operations: FunctionBlueprint[], widgets: Widget[], catalogue: Catalogue) {
         return new Library(name, icon, fullPath, operations, widgets, catalogue);
     }
 
@@ -45,7 +45,7 @@ export class Library {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = Blueprint.new(f, name);
+                let op = FunctionBlueprint.new(f, name);
                 ops.push(op);
             }
         }

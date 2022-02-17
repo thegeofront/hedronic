@@ -1,10 +1,10 @@
-import { Blueprint } from "../blueprints/blueprint";
+import { FunctionBlueprint } from "../../blueprints/function-blueprint";
 import { Widget } from "../model/widget";
-import { CoreType } from "../blueprints/catalogue";
-import { Library } from "../blueprints/library";
+import { CoreType } from "../../blueprints/catalogue";
+import { Library } from "../../blueprints/library";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
-import { Catalogue } from "../blueprints/catalogue";
+import { Catalogue } from "../../blueprints/catalogue";
 
 export class MenuContentOperations implements MenuContent {
     
@@ -20,7 +20,7 @@ export class MenuContentOperations implements MenuContent {
 }
 
 
-function renderCores(d: DomWriter, ops: Blueprint[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
+function renderCores(d: DomWriter, ops: FunctionBlueprint[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
     
     // operations
     d.add('div', "core-list");

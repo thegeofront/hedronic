@@ -43,8 +43,8 @@ async function setupGraphEditor() {
 }
 
 async function main() {
-    init();
-    // setupGraphEditor();
+    // init();
+    setupGraphEditor();
 }
 
 window.addEventListener("load", main, false);
