@@ -1,16 +1,16 @@
 // purpose: module, or library representation
 
-import { FN, FunctionBlueprint } from "./function-blueprint";
-import { Widget } from "../nodes-canvas/model/widget";
-import { tryFilter } from "../nodes-canvas/util/misc";
-import { Catalogue, CoreType } from "./catalogue";
+import { FN, FunctionBlueprint } from "./function-shim";
+import { Catalogue, CoreType } from "../catalogue";
+import { Widget } from "../../nodes-canvas/model/widget";
+import { tryFilter } from "../../nodes-canvas/util/misc";
 
 
 /**
  * A library, in the programming language sense. 
  * Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
  */
-export class Library {
+export class LibraryShim {
     constructor(
         public name: string,
         public icon: string,
@@ -33,7 +33,7 @@ export class Library {
     }
 
     static new(name: string, icon: string, fullPath: string, operations: FunctionBlueprint[], widgets: Widget[], catalogue: Catalogue) {
-        return new Library(name, icon, fullPath, operations, widgets, catalogue);
+        return new LibraryShim(name, icon, fullPath, operations, widgets, catalogue);
     }
 
     /**
@@ -49,7 +49,7 @@ export class Library {
                 ops.push(op);
             }
         }
-        return new Library(name, icon, fullPath, ops, [], catalogue);
+        return new LibraryShim(name, icon, fullPath, ops, [], catalogue);
     }
 
     /**

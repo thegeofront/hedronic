@@ -1,10 +1,10 @@
 import { createRandomGUID, Vector2 } from "../../../../engine/src/lib";
-import { FunctionBlueprint } from "../../blueprints/function-blueprint";
 import { Widget } from "./widget";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
-import { CoreType } from "../../blueprints/catalogue";
+import { CoreType } from "../../module-loading/catalogue";
+import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
 
 export const NODE_WIDTH = 4;
 

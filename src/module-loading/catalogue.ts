@@ -1,4 +1,4 @@
-import { FN, FunctionBlueprint } from "./function-blueprint";
+import { FN, FunctionBlueprint } from "./shims/function-shim";
 import { GeonNode } from "../nodes-canvas/model/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget } from "../nodes-canvas/model/widget";
@@ -6,7 +6,7 @@ import { ButtonWidget } from "../nodes-canvas/widgets/button-widget";
 import { ConsoleWidget } from "../nodes-canvas/widgets/console-widget";
 import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
-import { Library } from "./library";
+import { LibraryShim } from "./shims/library-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
 
 // TODO rename CORE to TYPE
@@ -19,8 +19,9 @@ export enum CoreType {
 }
 
 /**
- * Catalogue containing all cores
- * Cores contain functionality of a node
+ * Catalogue containing shim libraries
+ * Shims are wrappers of functions and variables. 
+ * The canvas can use these to spawn nodes, and draw a graph
  * 
  * In the future, this would make creating a menu easier
  * TODO: Categories
@@ -29,13 +30,13 @@ export class Catalogue {
 
     public selected?: FunctionBlueprint | Widget;
 
-    constructor(public blueprintLibraries: Map<string, Library>) {}
+    constructor(public libraries: Map<string, LibraryShim>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map());
     }
 
-    static newFromStd() {
+    static newFromWidgets() {
         
         let widgets: Widget[] = [
             ButtonWidget.new(false),
@@ -51,13 +52,13 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = Library.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        let widMod = LibraryShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
         cat.addLibrary(widMod);
         return cat;
     }
 
     find(lib: string, key: string) {  
-        let mod = this.blueprintLibraries.get(lib);
+        let mod = this.libraries.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -72,7 +73,7 @@ export class Catalogue {
     }
 
     trySelect(lib: string, key: string, type: CoreType) {
-        let mod = this.blueprintLibraries.get(lib);
+        let mod = this.libraries.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -86,7 +87,8 @@ export class Catalogue {
     }
 
     select(lib: string, key: string, type: CoreType) {
-        this.blueprintLibraries.get(lib)!.select(key, type);
+
+        this.libraries.get(lib)!.select(key, type);
     }
 
     deselect() {
@@ -104,8 +106,8 @@ export class Catalogue {
         }
     }
 
-    addLibrary(lib: Library) {
-        this.blueprintLibraries.set(lib.name, lib);
+    addLibrary(lib: LibraryShim) {
+        this.libraries.set(lib.name, lib);
         lib.publishGlobally();
     } 
 }

@@ -14,7 +14,6 @@
 import { Domain, Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../rendering/ctx/ctx-helpers";
 import { NodesCanvas } from "../nodes-canvas";
-import { FunctionBlueprint } from "../../blueprints/function-blueprint";
 import { State } from "./state";
 import { MUTED_WHITE } from "../rendering/nodes-rendering";
 

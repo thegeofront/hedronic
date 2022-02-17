@@ -1,7 +1,7 @@
 
 
 import * as ts from "typescript";
-import { IO } from "../nodes-canvas/util/io";
+import { IO } from "../../nodes-canvas/util/io";
 
 export class DTSLoader {
 

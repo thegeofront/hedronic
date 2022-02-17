@@ -8,8 +8,8 @@ import { NodesGraph } from "./model/graph";
 import { makeOperationsGlobal } from "./model/graph-conversion";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
-import { Catalogue, CoreType } from "../blueprints/catalogue";
-import { Library } from "../blueprints/library";
+import { Catalogue, CoreType } from "../module-loading/catalogue";
+import { LibraryShim } from "../module-loading/shims/library-shim";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
@@ -48,12 +48,11 @@ export class NodesCanvas {
         public graphHistory: History,
         public menu: Menu,
         
-        public catalogue: Catalogue,
-        public stdPath: string,
+        public catalogue: Catalogue
         ) {}
 
 
-    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, stdPath: string) {
+    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, catalogue: Catalogue) {
 
         const ctx = htmlCanvas.getContext('2d');
         if (!ctx || ctx == null) {
@@ -65,10 +64,9 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-        const catalogue = Catalogue.newFromStd();   
         const menu = Menu.new(ui, htmlCanvas);
 
-        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue, stdPath);
+        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue);
     }
 
 
@@ -90,12 +88,9 @@ export class NodesCanvas {
 
         this.setupControlKeyActions();
 
-        // DEBUG add a standard graph
-        await this.loadModules(this.stdPath);
-        this.testGraph();
-
         // publish catalogue and ui 
         this.ui();
+        this.menu.updateCategories(this);
     }
 
     
@@ -315,7 +310,7 @@ export class NodesCanvas {
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
             let libString = await IO.importLibrary(config.path);
-            let mod = Library.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
+            let mod = LibraryShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
             this.catalogue.addLibrary(mod);
         }
         this.ui();
@@ -346,10 +341,10 @@ export class NodesCanvas {
         
         // @ts-ignore;
         let graph = Blueprint.new(GRAPH);
-        if (this.catalogue.blueprintLibraries.has("graphs")) {
-            this.catalogue.blueprintLibraries.get("graphs")!.blueprints.push(graph);
+        if (this.catalogue.libraries.has("graphs")) {
+            this.catalogue.libraries.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addLibrary(Library.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addLibrary(LibraryShim.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }
@@ -650,7 +645,7 @@ export class NodesCanvas {
     
     tryGetbpFromLibrary(library: string, name: string) {
                 
-        let lib = this.catalogue.blueprintLibraries.get(library);        
+        let lib = this.catalogue.libraries.get(library);        
 
         if (!lib) {
             console.warn(`lib ${lib} not found!`);
@@ -724,7 +719,7 @@ export class NodesCanvas {
 
         // if no library was detected, brute force!
         if (!library) {
-            for (let lib of this.catalogue.blueprintLibraries.keys()) {
+            for (let lib of this.catalogue.libraries.keys()) {
                 let blueprint = this.tryGetbpFromLibrary(lib, name);
                 if (blueprint) {
                     this.graphHistory.addNodes(blueprint, gp, initState);

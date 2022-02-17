@@ -7,8 +7,8 @@
 //                L  
 // 
 
-import { State } from "../nodes-canvas/model/state";
-
+import { State } from "../../nodes-canvas/model/state";
+  
 export type FN = (...args: State[]) => State[];
 
 /**

@@ -1,16 +1,16 @@
-import { FunctionBlueprint } from "../../blueprints/function-blueprint";
+import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
 import { Widget } from "../model/widget";
-import { CoreType } from "../../blueprints/catalogue";
-import { Library } from "../../blueprints/library";
+import { CoreType } from "../../module-loading/catalogue";
+import { LibraryShim } from "../../module-loading/shims/library-shim";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
-import { Catalogue } from "../../blueprints/catalogue";
+import { Catalogue } from "../../module-loading/catalogue";
 
 export class MenuContentOperations implements MenuContent {
     
     constructor(
         private cat: Catalogue, 
-        public mod: Library,
+        public mod: LibraryShim,
         private canvas: HTMLCanvasElement) {
     }
     

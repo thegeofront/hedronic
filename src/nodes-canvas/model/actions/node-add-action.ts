@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../../engine/src/lib";
-import { FunctionBlueprint } from "../../../blueprints/function-blueprint";
+import { FunctionBlueprint } from "../../../module-loading/shims/function-shim";
 import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { State } from "../state";

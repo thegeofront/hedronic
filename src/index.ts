@@ -1,22 +1,23 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
-import { Librarian } from "./librarian/librarian";
+import { Catalogue } from "./module-loading/catalogue";
+import { ModuleLoading } from "./module-loading/module-loading";
 import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
 
-async function init() {
-    const librarian = new Librarian();
-    librarian.parse();
+async function setupCatalogue() {
+    const stdPath = "./std.json";
+    const catalogue = ModuleLoading.loadModulesToCatalogue(stdPath);
+    return catalogue;
 }
 
-async function setupGraphEditor() {
+async function setupGraphEditor(catalogue: Catalogue) {
 
     // get references of all items on the canvas
     const html_canvas = document.getElementById("nodes-canvas")! as HTMLCanvasElement;
     const ui = document.getElementById("nodes-panel") as HTMLDivElement;
-    const stdPath = "./std.json";
-
+    
     // nodes
-    const nodes = NodesCanvas.new(html_canvas, ui, stdPath)!;
+    const nodes = NodesCanvas.new(html_canvas, ui, catalogue)!;
     nodes.start();
 
     // timing
@@ -43,8 +44,8 @@ async function setupGraphEditor() {
 }
 
 async function main() {
-    // init();
-    setupGraphEditor();
+    let catalogue = await setupCatalogue();
+    setupGraphEditor(catalogue);
 }
 
 window.addEventListener("load", main, false);

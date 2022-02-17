@@ -1,6 +1,6 @@
-import { FunctionBlueprint } from "../../blueprints/function-blueprint";
+import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Catalogue, CoreType } from "../../blueprints/catalogue";
+import { Catalogue, CoreType } from "../../module-loading/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
 import { MenuCategory } from "./category";
 import { MenuContentMain } from "./category-main";
@@ -34,7 +34,7 @@ export class Menu {
         let catalogue = nodesCanvas.catalogue;
         items.push(new MenuCategory("geofront", "bi-globe2", true, new MenuContentMain(nodesCanvas)));
 
-        for (let mod of catalogue.blueprintLibraries.values()) {
+        for (let mod of catalogue.libraries.values()) {
             let ops: FunctionBlueprint[] = [];
             for (let op of mod.blueprints.values()) {
                 ops.push(op);
