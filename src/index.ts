@@ -1,9 +1,14 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
+import { Librarian } from "./librarian/librarian";
 import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
-import { IO } from "./nodes-canvas/util/io";
 
-async function main() {
+async function init() {
+    const librarian = new Librarian();
+    librarian.parse();
+}
+
+async function setupGraphEditor() {
 
     // get references of all items on the canvas
     const html_canvas = document.getElementById("nodes-canvas")! as HTMLCanvasElement;
@@ -20,7 +25,7 @@ async function main() {
 
     // publish globally 
     // @ts-ignore
-    this.nodes = nodes;
+    window.nodes = nodes;
 
     // loop
     function loop(elapsed_time: number) {
@@ -35,6 +40,11 @@ async function main() {
         requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
+}
+
+async function main() {
+    init();
+    // setupGraphEditor();
 }
 
 window.addEventListener("load", main, false);

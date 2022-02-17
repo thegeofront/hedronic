@@ -7,7 +7,8 @@ import { Catalogue, CoreType } from "./catalogue";
 
 
 /**
- * A library. Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
+ * A library, in the programming language sense. 
+ * Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
  */
 export class Library {
     constructor(

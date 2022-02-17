@@ -15,6 +15,9 @@
     ],
     "author": "Jos Feenstra",
     "license": "",
+    "dependencies": {
+        "typescript": "^4.0.3"
+    },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^4.20.0",
         "eslint": "^7.23.0",

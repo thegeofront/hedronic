@@ -17,7 +17,6 @@ export class IO {
         
         //@ts-ignore
         let res = await import(/* webpackIgnore: true */ dataUri);
-        console.log('response', res);
         return res;
     }
 
