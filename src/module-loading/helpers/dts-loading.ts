@@ -1,9 +1,36 @@
 
 
 import * as ts from "typescript";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
 import { OldFunctionShim } from "../shims/old-function-shim";
+
+export namespace DTSHelpers {
+
+    export function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => void) {
+        
+        let recurse = (child: ts.Node) => {
+            callback(child)
+            ts.forEachChild(child, recurse);
+        };
+
+        ts.forEachChild(root, recurse);
+    }
+
+    export function trueForAnyChild(node: ts.Node, predicate: (node: ts.Node) => boolean) {
+        ts.forEachChild(node, (child) => {
+            if (predicate(child)) {
+                return true;
+            }
+        })
+        return false;
+    }
+
+    export function getKind(node: ts.Node) {
+        return ts.SyntaxKind[node.kind];
+    }
+}
 
 export namespace DTSLoading {
 
@@ -16,23 +43,26 @@ export namespace DTSLoading {
         // let sourceNode = program.getSourceFiles()[1];
 
         // ts.forEachChild(sourceFile, visitNode);
-        convert(source);
+        convertToShims(source);
 
         return source;
     }
 
-    function convert(source: ts.Node) {
-        extractFunctionShims(source);
+    function convertToShims(source: ts.Node) {
+        extractTypeShims(source);
+        // extractFunctionShims(source);
     }
 
-    function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => void) {
-        
-        let recurse = (child: ts.Node) => {
-            callback(child)
-            ts.forEachChild(child, recurse);
-        };
+    function extractTypeShims(source: ts.Node) {
+        DTSHelpers.forEachRecursiveNode(source, (node) => {
+            if (ts.isTypeNode(node)) {
+                // debug
+                console.log(DTSHelpers.getKind(node));
 
-        ts.forEachChild(root, recurse);
+                
+            }
+
+        });
     }
 
     function extractRelevantInfoTree(source: ts.Node) {
@@ -69,37 +99,30 @@ export namespace DTSLoading {
         return tree;
     } 
 
-    function trueForAnyChild(node: ts.Node, predicate: (node: ts.Node) => boolean) {
-        ts.forEachChild(node, (child) => {
-            if (predicate(child)) {
-                return true;
-            }
-        })
-        return false;
-    }
 
-    function getKind(node: ts.Node) {
-        return ts.SyntaxKind[node.kind];
-    }
-
-    function extractFunctionShims(source: ts.Node) {
+    function extractFunctionShims(source: ts.Node, moduleName="untitled") {
         
         let shims: FunctionShim[] = [];
 
-        forEachRecursiveNode(source, (node) => {
+        DTSHelpers.forEachRecursiveNode(source, (node) => {
             if (ts.isFunctionLike(node)) {
                 if (node.kind == ts.SyntaxKind.Constructor) return;
+                if (node.kind == ts.SyntaxKind.MethodDeclaration) return;
                 if (!node.name) return;
-                // this is a function
-                // return;
-                console.log(`found function! kind: ${getKind(node)}`);
+                
+                // debug
+                // console.log(`found function! kind: ${getKind(node)}`);
                 // console.log(node);
                 
+                // get name and invoke
                 //@ts-ignore
                 const name = node.name.escapedText;
+                const invoke = [name];
 
-                console.log("inputs", node.parameters);
-                // console.log("outputs", node.type);
+                console.log(name);
+                const inputs = node.parameters.map((p) => visitType(node));
+                // console.log("inputs", );
+                console.log("outputs", node.type);
                 // return;
 
                 // let shim = new FunctionShim()
@@ -118,6 +141,10 @@ export namespace DTSLoading {
         return shims;
     }
 
+    function visitType(node: ts.Node) {
+        
+    }
+
     function visitNode(node: ts.Node, level=0) {
         
         if (node.kind == ts.SyntaxKind.FunctionDeclaration) return readFunction(node);
@@ -129,8 +156,4 @@ export namespace DTSLoading {
     function readFunction(node: ts.Node) {
         console.log(`EXTRACT FUNCTION: ${ts.SyntaxKind[node.kind]}`);
     }
-
-
-    
-
 }
