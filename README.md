@@ -29,13 +29,14 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
      - [] _extra: nicer popup window_
      - [] _extra: filters_
      - [] _extra: autocomplete_
-  - [⏹️] copy-pasting (parts of) the flowchart
+  - [🚧] copy-pasting (parts of) the flowchart
     - [✔️] partial copying
     - [✔️] partial pasting
     - [✔️] duplicate (Ctrl + D / D)
-    - [⏹️] cable copy-pasting 
+    - [✔️] cable copy-pasting 
   - [✔️] history & ctrl Z & Y support 
-  - [⏹️] cable history
+  - [✔️] cable history
+     - [ ] fix minor bugs
   - [🚧] Cable Refactor
     - [✔️] We need a better definition and representation of variables. 
     - [✔️] Must be easier for state management and history
