@@ -68,7 +68,7 @@ export namespace ModuleLoading {
 
         // 
 
-        console.log(libObj, sourceMap);
+        // console.log(libObj, sourceMap);
 
         return true;
     }

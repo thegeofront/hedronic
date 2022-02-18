@@ -1,9 +1,10 @@
 // purpose: module, or library representation
 
-import { FN, FunctionBlueprint } from "./function-shim";
+import { OldFunctionShim } from "./old-function-shim";
 import { Catalogue, CoreType } from "../catalogue";
 import { Widget } from "../../nodes-canvas/model/widget";
 import { tryFilter } from "../../nodes-canvas/util/misc";
+import { FN } from "../helpers/js-loading";
 
 
 /**
@@ -16,7 +17,7 @@ export class ModuleShim {
         public icon: string,
         public fullPath: string,
 
-        public blueprints: FunctionBlueprint[],
+        public blueprints: OldFunctionShim[],
         public widgets: Widget[],
         public catalogue: Catalogue,
         ) {}
@@ -32,7 +33,7 @@ export class ModuleShim {
         this.catalogue.selectCore(core);
     }
 
-    static new(name: string, icon: string, fullPath: string, operations: FunctionBlueprint[], widgets: Widget[], catalogue: Catalogue) {
+    static new(name: string, icon: string, fullPath: string, operations: OldFunctionShim[], widgets: Widget[], catalogue: Catalogue) {
         return new ModuleShim(name, icon, fullPath, operations, widgets, catalogue);
     }
 
@@ -45,7 +46,7 @@ export class ModuleShim {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = FunctionBlueprint.new(f, name);
+                let op = OldFunctionShim.newFromRawJs(f, name);
                 ops.push(op);
             }
         }

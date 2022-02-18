@@ -4,7 +4,7 @@ import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../../module-loading/catalogue";
-import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
+import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
 
 export const NODE_WIDTH = 4;
 
@@ -15,15 +15,15 @@ export class GeonNode {
     private constructor(
         public hash: string,                   // guid or some other unique identifier to this node 
         public position: Vector2,              // position on the canvas, in grid space
-        public process: FunctionBlueprint | Widget,    // the process this node represents. Can be an operation or a widget
+        public process: OldFunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
         // outputState
         ) {}
 
-    get operation() : FunctionBlueprint | undefined {
-        if (this.process instanceof FunctionBlueprint) {
-            return this.process as FunctionBlueprint;
+    get operation() : OldFunctionShim | undefined {
+        if (this.process instanceof OldFunctionShim) {
+            return this.process as OldFunctionShim;
         } else {
             return undefined;
         }
@@ -45,7 +45,7 @@ export class GeonNode {
         }
     }
     
-    static new(gridpos: Vector2, process: FunctionBlueprint | Widget, inputs?: (Socket | undefined)[], outputs?: Socket[][], hash = createRandomGUID()) {
+    static new(gridpos: Vector2, process: OldFunctionShim | Widget, inputs?: (Socket | undefined)[], outputs?: Socket[][], hash = createRandomGUID()) {
         if (process instanceof Widget) {
             // TODO This should not be, this is dumb
             process = process.clone(); // Widgets contain unique state, while Operations are prototypes 
@@ -72,7 +72,7 @@ export class GeonNode {
         return new GeonNode(hash, gridpos, process, inputs, outputs);
     }
 
-    static fromJson(data: any, process: FunctionBlueprint | Widget) {
+    static fromJson(data: any, process: OldFunctionShim | Widget) {
 
         console.log(data);
 

@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../../engine/src/lib";
-import { FunctionBlueprint } from "../../../module-loading/shims/function-shim";
+import { OldFunctionShim } from "../../../module-loading/shims/old-function-shim";
 import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { State } from "../state";
@@ -9,7 +9,7 @@ import { Action } from "../action";
 export class NodeAddAction implements Action {
 
     constructor(
-        public process: FunctionBlueprint | Widget,
+        public process: OldFunctionShim | Widget,
         public gridPosition: Vector2,
         public initState?: State,
         private key?: string,

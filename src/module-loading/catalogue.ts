@@ -1,4 +1,4 @@
-import { FN, FunctionBlueprint } from "./shims/function-shim";
+import { OldFunctionShim } from "./shims/old-function-shim";
 import { GeonNode } from "../nodes-canvas/model/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget } from "../nodes-canvas/model/widget";
@@ -8,6 +8,7 @@ import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
 import { ModuleShim } from "./shims/library-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
+import { TypeShim } from "./shims/type-shim";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -28,32 +29,20 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: FunctionBlueprint | Widget;
+    public selected?: OldFunctionShim | Widget;
 
-    constructor(public modules: Map<string, ModuleShim>) {}
+    constructor(
+        public modules: Map<string, ModuleShim>,
+        public types: Map<string, TypeShim>) {}
 
     static new() : Catalogue {
-        return new Catalogue(new Map());
+        return new Catalogue(new Map(), new Map());
     }
 
     static newFromWidgets() {
         
-        let widgets: Widget[] = [
-            ButtonWidget.new(false),
-            InputWidget.new("hello world"),
-            LampWidget.new(false),
-            ConsoleWidget.new(false),
-            ImageWidget.new("<image>")
-        ]
-
-        let wmap = new Map<string, Widget>();
-        for (let w of widgets) {
-            wmap.set(w.name, w);
-        }
-
         let cat = Catalogue.new();
-        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
-        cat.addLibrary(widMod);
+        cat = createStdWidgets(cat);
         return cat;
     }
 
@@ -82,7 +71,7 @@ export class Catalogue {
         return this.selected;
     }
 
-    selectCore(core: FunctionBlueprint | Widget | undefined) {
+    selectCore(core: OldFunctionShim | Widget | undefined) {
         this.selected = core;
     }
 
@@ -110,4 +99,26 @@ export class Catalogue {
         this.modules.set(lib.name, lib);
         lib.publishGlobally();
     } 
+}
+
+function createStdWidgets(cat: Catalogue) {
+        // create widgets
+        let widgets: Widget[] = [
+            ButtonWidget.new(false),
+            InputWidget.new("hello world"),
+            LampWidget.new(false),
+            ConsoleWidget.new(false),
+            ImageWidget.new("<image>")
+        ]
+
+        // add them to a map
+        let wmap = new Map<string, Widget>();
+        for (let w of widgets) {
+            wmap.set(w.name, w);
+        }
+
+        // use the map to create a library
+        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        cat.addLibrary(widMod);
+        return cat;
 }

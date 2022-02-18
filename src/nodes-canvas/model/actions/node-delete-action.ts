@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../../engine/src/lib";
-import { FunctionBlueprint } from "../../../module-loading/shims/function-shim";
+import { OldFunctionShim } from "../../../module-loading/shims/old-function-shim";
 import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { Widget } from "../widget";
@@ -10,7 +10,7 @@ export class NodeDeleteAction implements Action {
 
     // TODO: why not just store the GeonNode's themselves? 
     private data!: any;
-    private process!: FunctionBlueprint | Widget
+    private process!: OldFunctionShim | Widget
 
     constructor(
         private key: string,

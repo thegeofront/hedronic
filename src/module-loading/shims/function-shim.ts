@@ -8,75 +8,49 @@
 // 
 
 import { State } from "../../nodes-canvas/model/state";
+import { FN, JSLoading } from "../helpers/js-loading";
+import { TypeShim } from "./type-shim";
   
-export type FN = (...args: State[]) => State[];
-
 /**
  * Offers a blueprint for creating a new node
  * It wraps a function, and delivers some useful information
  * This is needed, so we can reason about the functionalities of operations
  * Not the same as a Node : Multiple Different Nodes will point to the same FunctionBlueprint
  */
-export class FunctionBlueprint {
+export class FunctionShim {
 
     public nameLower: string;
 
-    private constructor(
-        public readonly func: FN,
+    constructor(
         public readonly name: string,
-        public readonly numInputs: number, 
-        public readonly numOutputs: number,
-        public readonly namespace: string) {
+        public readonly invokeCode: string[], 
+        public readonly moduleName: string,
+        
+        public readonly inTypes: TypeShim[],
+        public readonly outTypes: TypeShim[]
+        ) {
             this.nameLower = name.toLowerCase();
         }
 
-    static new(func: FN, namespace: string) {
-        let inCount = FunctionBlueprint.countInputs(func);
-        let outCount = FunctionBlueprint.countOutputs(func);
-        let name = func.name;
-        return new FunctionBlueprint(func, name, inCount, outCount, namespace);
+    get inCount() {
+        return this.inTypes.length;
     }
 
-    run(args: State[]) {
-        return this.func(...args);
+    get outCount() {
+        return this.inTypes.length;
     }
 
     log() {
-        console.log(`this: ${this.func}`);
-        console.log(`name: ${this.func.name}`);
-        console.log(`inputs: ${this.numInputs}`);
-        console.log(`outputs: ${this.numOutputs}`);    
+        console.log(`name: ${this.name}`);
+        console.log(`invokeCode: ${this.invokeCode}`);
+        console.log(`inputs: ${this.inCount}`);
+        console.log(`outputs: ${this.outCount}`);    
     }
 
     toJson() {
         return {
-            namespace: this.namespace,
+            namespace: this.moduleName,
             name: this.name,
         }
-    }
-
-    // ---- util
-
-    static countInputs(operation: FN) {
-        return operation.length;
-    }
-
-    static countOutputs(operation: FN) {
-        // HACK: its hard to determine the number of inputs, so im directly reading the string of the operation, 
-        // and derriving it from the number of comma's found in the return statement.
-        // this could create some nasty unforseen side effects...
-        let getOutput = /return.*(\[.*\]).*/
-        let match = getOutput.exec(operation.toString()) || "";
-        let output = match[1];
-        if (!output) {
-            return 1;
-        }
-        if (output == "[]") {
-            return 0;
-        }
-
-        let count = output.split(',').length;
-        
-        return count;
     }
 }

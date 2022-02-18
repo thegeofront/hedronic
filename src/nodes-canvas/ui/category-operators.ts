@@ -1,4 +1,4 @@
-import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
+import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
 import { Widget } from "../model/widget";
 import { CoreType } from "../../module-loading/catalogue";
 import { ModuleShim } from "../../module-loading/shims/library-shim";
@@ -20,7 +20,7 @@ export class MenuContentOperations implements MenuContent {
 }
 
 
-function renderCores(d: DomWriter, ops: FunctionBlueprint[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
+function renderCores(d: DomWriter, ops: OldFunctionShim[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
     
     // operations
     d.add('div', "core-list");

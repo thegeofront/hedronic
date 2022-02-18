@@ -1,7 +1,7 @@
 // purpose: entry point
 import { FpsCounter } from "../../engine/src/lib";
 import { Catalogue } from "./module-loading/catalogue";
-import { ModuleLoading } from "./module-loading/module-loading";
+import { ModuleLoading } from "./module-loading/loading";
 import { NodesCanvas } from "./nodes-canvas/nodes-canvas";
 
 async function setupCatalogue() {
