@@ -20,7 +20,7 @@ export namespace WasmLoading {
 
         // console.log(module["CityJsonValidator"]["new_from_string"](""));
 
-        console.log({sourceMap, module: lowLevelModule, res: module})
+        // console.log({sourceMap, module: lowLevelModule, res: module})
         
 
 

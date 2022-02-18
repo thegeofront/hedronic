@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.someFunction = exports.getAnswer = exports.Line = exports.Vector = void 0;
 var Vector = /** @class */ (function () {
     function Vector(x, y) {
         this.x = x;
@@ -10,11 +7,11 @@ var Vector = /** @class */ (function () {
         return new Vector(x, y);
     };
     Vector.distance = function (a, b) {
-        return Math.pow(a.x * a.x + b.x * b.y, 0.5);
+        return Math.pow((a.x - b.x) * 2 + (a.y - b.y) * 2, 0.5);
     };
     return Vector;
 }());
-exports.Vector = Vector;
+export { Vector };
 var Line = /** @class */ (function () {
     function Line(a, b) {
         this.a = a;
@@ -28,12 +25,10 @@ var Line = /** @class */ (function () {
     };
     return Line;
 }());
-exports.Line = Line;
-function getAnswer() {
+export { Line };
+export function getAnswer() {
     return 42;
 }
-exports.getAnswer = getAnswer;
-function someFunction(a, b) {
+export function someFunction(a, b) {
     return "this is a: ".concat(a, ", this is b ").concat(b);
 }
-exports.someFunction = someFunction;

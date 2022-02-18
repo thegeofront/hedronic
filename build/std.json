@@ -1,6 +1,14 @@
 {
     "std": [
         {
+            "icon": "bi-math",
+            "nickname": "lin alg",
+            "filename": "linalg",
+            "path": "./geon-header-modules/"
+        }
+    ],
+    "std_old": [
+        {
             "name": "bool",
             "path": "./geon-modules/bool.js",
             "fullPath": "josfeenstra.nl/project/nodes/geon-modules/bool.js",
