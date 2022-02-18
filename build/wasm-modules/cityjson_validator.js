@@ -202,9 +202,11 @@ async function load(module, imports) {
 }
 
 async function init(input) {
+
     if (typeof input === 'undefined') {
         input = new URL('cityjson_validator_bg.wasm', import.meta.url);
     }
+
     const imports = {};
     imports.wbg = {};
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
@@ -225,10 +227,11 @@ async function init(input) {
     };
 
     if (typeof input === 'string' || (typeof Request === 'function' && input instanceof Request) || (typeof URL === 'function' && input instanceof URL)) {
+        console.log("trying to fetch...");
         input = fetch(input);
     }
 
-
+    console.log("something!!");
 
     const { instance, module } = await load(await input, imports);
 

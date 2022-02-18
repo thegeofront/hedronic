@@ -29,7 +29,7 @@
         {
             "icon": "bi-house",
             "nickname": "cityjson",
-            "filename": "cityjson-validator",
+            "filename": "cityjson_validator",
             "localPath": "wasm-modules/",
             "url": "josfeenstra.nl/project/nodes/wasm-modules/"
         }
