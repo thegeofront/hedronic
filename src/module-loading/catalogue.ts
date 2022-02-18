@@ -6,7 +6,7 @@ import { ButtonWidget } from "../nodes-canvas/widgets/button-widget";
 import { ConsoleWidget } from "../nodes-canvas/widgets/console-widget";
 import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
-import { LibraryShim } from "./shims/library-shim";
+import { ModuleShim } from "./shims/library-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
 
 // TODO rename CORE to TYPE
@@ -30,7 +30,7 @@ export class Catalogue {
 
     public selected?: FunctionBlueprint | Widget;
 
-    constructor(public libraries: Map<string, LibraryShim>) {}
+    constructor(public modules: Map<string, ModuleShim>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map());
@@ -52,13 +52,13 @@ export class Catalogue {
         }
 
         let cat = Catalogue.new();
-        let widMod = LibraryShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
         cat.addLibrary(widMod);
         return cat;
     }
 
     find(lib: string, key: string) {  
-        let mod = this.libraries.get(lib);
+        let mod = this.modules.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -73,7 +73,7 @@ export class Catalogue {
     }
 
     trySelect(lib: string, key: string, type: CoreType) {
-        let mod = this.libraries.get(lib);
+        let mod = this.modules.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
@@ -88,7 +88,7 @@ export class Catalogue {
 
     select(lib: string, key: string, type: CoreType) {
 
-        this.libraries.get(lib)!.select(key, type);
+        this.modules.get(lib)!.select(key, type);
     }
 
     deselect() {
@@ -106,8 +106,8 @@ export class Catalogue {
         }
     }
 
-    addLibrary(lib: LibraryShim) {
-        this.libraries.set(lib.name, lib);
+    addLibrary(lib: ModuleShim) {
+        this.modules.set(lib.name, lib);
         lib.publishGlobally();
     } 
 }

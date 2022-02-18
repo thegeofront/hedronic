@@ -1,3 +1,7 @@
+import { WebIO } from "../../../../engine/src/lib";
+import { ModuleShim } from "../shims/library-shim";
+import { DTSLoading } from "./dts-loading";
+
 export namespace JSLoading {
 
     export async function load(code: string) {

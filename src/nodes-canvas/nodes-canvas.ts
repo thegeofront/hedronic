@@ -9,7 +9,7 @@ import { makeOperationsGlobal } from "./model/graph-conversion";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
 import { Catalogue, CoreType } from "../module-loading/catalogue";
-import { LibraryShim } from "../module-loading/shims/library-shim";
+import { ModuleShim } from "../module-loading/shims/library-shim";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
@@ -310,7 +310,7 @@ export class NodesCanvas {
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
             let libString = await IO.importLibrary(config.path);
-            let mod = LibraryShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
+            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
             this.catalogue.addLibrary(mod);
         }
         this.ui();
@@ -341,10 +341,10 @@ export class NodesCanvas {
         
         // @ts-ignore;
         let graph = Blueprint.new(GRAPH);
-        if (this.catalogue.libraries.has("graphs")) {
-            this.catalogue.libraries.get("graphs")!.blueprints.push(graph);
+        if (this.catalogue.modules.has("graphs")) {
+            this.catalogue.modules.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addLibrary(LibraryShim.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addLibrary(ModuleShim.new("graphs", "braces", "", [graph], [], this.catalogue));
         }
         this.ui();
     }
@@ -645,7 +645,7 @@ export class NodesCanvas {
     
     tryGetbpFromLibrary(library: string, name: string) {
                 
-        let lib = this.catalogue.libraries.get(library);        
+        let lib = this.catalogue.modules.get(library);        
 
         if (!lib) {
             console.warn(`lib ${lib} not found!`);
@@ -719,7 +719,7 @@ export class NodesCanvas {
 
         // if no library was detected, brute force!
         if (!library) {
-            for (let lib of this.catalogue.libraries.keys()) {
+            for (let lib of this.catalogue.modules.keys()) {
                 let blueprint = this.tryGetbpFromLibrary(lib, name);
                 if (blueprint) {
                     this.graphHistory.addNodes(blueprint, gp, initState);

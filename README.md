@@ -30,10 +30,11 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
      - [] _extra: filters_
      - [] _extra: autocomplete_
   - [🚧] copy-pasting (parts of) the flowchart
-    - [✔️] partial copying
-    - [✔️] partial pasting
-    - [✔️] duplicate (Ctrl + D / D)
-    - [✔️] cable copy-pasting 
+    - _note: I broke this again during the cable refactor..._
+    - [ ] partial copying
+    - [ ] partial pasting
+    - [ ] duplicate (Ctrl + D / D)
+    - [ ] cable copy-pasting 
   - [✔️] history & ctrl Z & Y support 
   - [✔️] cable history
      - [ ] fix minor bugs
@@ -43,6 +44,16 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
     - [✔️] Must be easier to reason about
     - [✔️] Must be easier to translate to js / json or whatever
     - [ ] Deal
+
+- Module Loading
+  - [✔️] Dynamically load js, 
+  - [✔️] build a LibraryShim so we can reason about it
+  - [ ] Rework the library shims  
+  - [ ] Load `*.d.ts` header files. 
+    - [ ] Ensure type savety from these headers
+    - [ ]  
+  - [✔️] Load a WebAssembly module created using wasm-pack       
+
 
 # Post-Roadmap 
 - [ ] refactor visuals to css

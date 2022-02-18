@@ -1,18 +1,10 @@
-import { IO, WebIO } from "../../../../engine/src/lib";
-import { DTSLoading } from "../helpers/dts-loading";
-import { JSLoading } from "../helpers/js-loading";
+import { WebIO } from "../../../../engine/src/lib";
+import { ModuleShim } from "../shims/library-shim";
+import { DTSLoading } from "./dts-loading";
 
-export class WasmLibraryShim {
+export namespace WasmLoading {
 
-    constructor() {
-
-    }
-
-    static async getModuleAndSourceMap() {
-
-    }
-
-    static async new(jsPath: string, dtsPath: string, wasmPath: string) {
+    export async function moduleFromWasmPack(jsPath: string, dtsPath: string, wasmPath: string) {
         console.log("creating a wasm shim")
         let sourceMap = await DTSLoading.load(dtsPath, {});
         let code = await WebIO.getText(jsPath);
@@ -21,12 +13,18 @@ export class WasmLibraryShim {
         let url = URL.createObjectURL(new Blob([code], {type: 'text/javascript'}));
         
         //@ts-ignore
-        let res = await import(/* webpackIgnore: true */url);
-        let module = await res.default(wasmModule);
-
-        console.log({sourceMap, module})
+        let module = await import(/* webpackIgnore: true */url);
         
-        return false;
+        // init the module
+        let lowLevelModule = await module.default(wasmModule);
+
+        // console.log(module["CityJsonValidator"]["new_from_string"](""));
+
+        console.log({sourceMap, module: lowLevelModule, res: module})
+        
+
+
+        return undefined;
 
         //@ts-ignore
         // window.js = js;
@@ -44,6 +42,4 @@ export class WasmLibraryShim {
         // console.log(js);
         // console.log();
     }
-        
-
 }

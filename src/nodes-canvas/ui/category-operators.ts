@@ -1,7 +1,7 @@
 import { FunctionBlueprint } from "../../module-loading/shims/function-shim";
 import { Widget } from "../model/widget";
 import { CoreType } from "../../module-loading/catalogue";
-import { LibraryShim } from "../../module-loading/shims/library-shim";
+import { ModuleShim } from "../../module-loading/shims/library-shim";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
 import { Catalogue } from "../../module-loading/catalogue";
@@ -10,7 +10,7 @@ export class MenuContentOperations implements MenuContent {
     
     constructor(
         private cat: Catalogue, 
-        public mod: LibraryShim,
+        public mod: ModuleShim,
         private canvas: HTMLCanvasElement) {
     }
     

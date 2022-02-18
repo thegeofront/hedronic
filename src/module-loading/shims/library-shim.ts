@@ -7,10 +7,10 @@ import { tryFilter } from "../../nodes-canvas/util/misc";
 
 
 /**
- * A library, in the programming language sense. 
+ * A Module, in the programming language sense. 
  * Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
  */
-export class LibraryShim {
+export class ModuleShim {
     constructor(
         public name: string,
         public icon: string,
@@ -33,7 +33,7 @@ export class LibraryShim {
     }
 
     static new(name: string, icon: string, fullPath: string, operations: FunctionBlueprint[], widgets: Widget[], catalogue: Catalogue) {
-        return new LibraryShim(name, icon, fullPath, operations, widgets, catalogue);
+        return new ModuleShim(name, icon, fullPath, operations, widgets, catalogue);
     }
 
     /**
@@ -49,7 +49,7 @@ export class LibraryShim {
                 ops.push(op);
             }
         }
-        return new LibraryShim(name, icon, fullPath, ops, [], catalogue);
+        return new ModuleShim(name, icon, fullPath, ops, [], catalogue);
     }
 
     /**
