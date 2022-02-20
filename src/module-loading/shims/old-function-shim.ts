@@ -9,6 +9,7 @@
 
 import { State } from "../../nodes-canvas/model/state";
 import { FN, JSLoading } from "../helpers/js-loading";
+import { TypeKind } from "./type-kind";
 import { TypeShim } from "./type-shim";
   
 /**
@@ -24,8 +25,8 @@ export class OldFunctionShim {
     private constructor(
         public readonly func: FN,
         public readonly name: string,
-        public readonly inputTypes: TypeShim[],
-        public readonly outputTypes: TypeShim[],
+        public readonly inputTypes: TypeKind[],
+        public readonly outputTypes: TypeKind[],
         public readonly numInputs: number, 
         public readonly numOutputs: number,
         public readonly namespace: string) {
@@ -41,10 +42,10 @@ export class OldFunctionShim {
         let outCount = JSLoading.countOutputsFromRawFunction(func);
 
         // with raw js, there is no way of ensuring type savety
-        const inputTypes: TypeShim[] = [];
-        for (let i = 0 ; i < inCount; i++) inputTypes.push(TypeShim.any())
-        const outputTypes: TypeShim[] = [];
-        for (let i = 0 ; i < outCount; i++) outputTypes.push(TypeShim.any())
+        const inputTypes: TypeKind[] = [];
+        for (let i = 0 ; i < inCount; i++) inputTypes.push(TypeKind.Any)
+        const outputTypes: TypeKind[] = [];
+        for (let i = 0 ; i < outCount; i++) outputTypes.push(TypeKind.Any)
 
         let name = func.name;
         return new OldFunctionShim(func, name, inputTypes, outputTypes, inCount, outCount, namespace);

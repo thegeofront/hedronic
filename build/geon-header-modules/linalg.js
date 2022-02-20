@@ -42,3 +42,4 @@ export function getTwoResults(a) {
         return [a, a - 1];
     }
 }
+

@@ -55,6 +55,23 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
   - [✔️] Load a WebAssembly module created using wasm-pack       
 
 
+> ### Some brainstorming
+> Some categories are emerging. 
+> 1. Flow-language features 
+> - history, copy-pasting, loops, json editing, 
+> - idea for json: use the ideas generated in the 'gazelle' grasshopper plugin
+> - idea for loops: use nested lists, NOT TREES, and use the idea of a loop-box
+> 
+> 
+> 2. Module loading and conversion 
+> - How to deal with classes? types? non-pure functions? 
+> 
+> 
+> Things which affect both: 
+>
+>
+
+
 # Post-Roadmap 
 - [ ] refactor visuals to css
 
