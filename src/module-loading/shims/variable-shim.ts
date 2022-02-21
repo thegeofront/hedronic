@@ -1,5 +1,7 @@
 // import { TypeKind } from "./type-kind";
 
+import { State } from "../../nodes-canvas/model/state";
+
 /**
  * This is what the Flow would like to know about a certain variable
  * NOTE that this is NOT a StateShim
@@ -14,17 +16,17 @@
 export class VariableShim {
     constructor(
         public name:  string,  // what to show up as name 
-        public type: Type, // the actual type
-        public glyph: string,  // how to visualize the type or variable briefly
+        public type: Type, // the actual type  
+        public glyph?: string,  // how to visualize the type or variable briefly
         public child?: VariableShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
     static new(name: string, kind: Type, glyph?: string, child?: VariableShim[]) {
-        return new VariableShim(name, kind, glyph || name.charAt(0).toUpperCase(), child);
+        return new VariableShim(name, kind, glyph, child);
     }
 
     /**
-     * See if the pattern 
+     * answers the question, can a state of `this` be put into `other` without problems?
      */
     isSameType(other: VariableShim) : boolean {
 
@@ -69,18 +71,21 @@ export class VariableShim {
     }
 
     render() : string {
+
+        if (this.glyph) return this.glyph;   
+
         switch (this.type) {
             case Type.any:
             case Type.boolean:
             case Type.number:
             case Type.string:
-                return this.glyph;
+                return this.name.charAt(0).toUpperCase();
             
             case Type.Tuple:
             case Type.List:
                 return `[ ${this.child!.map(c => c.render()).join(" , ")} ]`;
             case Type.Object:
-                return ``;
+                return `{}`;
         }
     }
 }
