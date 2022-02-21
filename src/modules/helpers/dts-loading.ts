@@ -4,7 +4,6 @@ import * as ts from "typescript";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
-import { OldFunctionShim } from "../shims/old-function-shim";
 import { Type, VariableShim } from "../shims/variable-shim";
 
 export namespace DTSHelpers {
@@ -139,10 +138,8 @@ export namespace DTSLoading {
                 outputs.push(convertTypeToVariableShim("Result", node.type!))
             }
 
-            // console.log(DTSHelpers.getKind(node.type!));
-
             let shim = new FunctionShim(name, path, inputs, outputs);
-            shim.log();
+            shims.push(shim);
         })
 
         return shims;

@@ -9,7 +9,7 @@ import { makeOperationsGlobal } from "./model/graph-conversion";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
 import { Catalogue, CoreType } from "../modules/catalogue";
-import { ModuleShim } from "../modules/shims/library-shim";
+import { ModuleShim } from "../modules/shims/module-shim";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
 import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
@@ -310,7 +310,7 @@ export class NodesCanvas {
         let json = await IO.fetchJson(stdPath);
         for (let config of json.std) {
             let libString = await IO.importLibrary(config.path);
-            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString, this.catalogue);
+            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString);
             this.catalogue.addLibrary(mod);
         }
         this.ui();
@@ -344,7 +344,7 @@ export class NodesCanvas {
         if (this.catalogue.modules.has("graphs")) {
             this.catalogue.modules.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addLibrary(ModuleShim.new("graphs", "braces", "", [graph], [], this.catalogue));
+            this.catalogue.addLibrary(ModuleShim.new("graphs", "braces", "", {},[graph], []));
         }
         this.ui();
     }

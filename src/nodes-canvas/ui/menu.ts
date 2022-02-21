@@ -1,4 +1,3 @@
-import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { Catalogue, CoreType } from "../../modules/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
@@ -6,6 +5,7 @@ import { MenuCategory } from "./category";
 import { MenuContentMain } from "./category-main";
 import { MenuContentOperations as MenuContentModule } from "./category-operators";
 import { MenuContentSettings } from "./category-settings";
+import { FunctionShim } from "../../modules/shims/function-shim";
 
 export class Menu {
 
@@ -35,7 +35,7 @@ export class Menu {
         items.push(new MenuCategory("geofront", "bi-globe2", true, new MenuContentMain(nodesCanvas)));
 
         for (let mod of catalogue.modules.values()) {
-            let ops: OldFunctionShim[] = [];
+            let ops: FunctionShim[] = [];
             for (let op of mod.blueprints.values()) {
                 ops.push(op);
             }

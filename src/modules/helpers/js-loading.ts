@@ -1,6 +1,6 @@
 import { WebIO } from "../../../../engine/src/lib";
 import { State } from "../../nodes-canvas/model/state";
-import { ModuleShim } from "../shims/library-shim";
+import { ModuleShim } from "../shims/module-shim";
 import { DTSLoading } from "./dts-loading";
 
 export type FN = (...args: State[]) => State[];

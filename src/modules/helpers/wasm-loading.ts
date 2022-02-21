@@ -1,5 +1,5 @@
 import { WebIO } from "../../../../engine/src/lib";
-import { ModuleShim } from "../shims/library-shim";
+import { ModuleShim } from "../shims/module-shim";
 import { DTSLoading } from "./dts-loading";
 
 export namespace WasmLoading {

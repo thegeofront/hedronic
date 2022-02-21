@@ -53,6 +53,10 @@ export class FunctionShim {
         return new FunctionShim(name, [namespace, name], ins, outs);
     }
 
+    run(inputs: any[]) {
+        return inputs;
+    }
+
     log() {
         console.log(`name: ${this.name}`);
         console.log(`path: ${this.path}`);

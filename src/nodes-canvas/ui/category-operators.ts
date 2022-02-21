@@ -1,10 +1,10 @@
-import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { Widget } from "../model/widget";
 import { CoreType } from "../../modules/catalogue";
-import { ModuleShim } from "../../modules/shims/library-shim";
+import { ModuleShim } from "../../modules/shims/module-shim";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
 import { Catalogue } from "../../modules/catalogue";
+import { FunctionShim } from "../../modules/shims/function-shim";
 
 export class MenuContentOperations implements MenuContent {
     
@@ -15,18 +15,23 @@ export class MenuContentOperations implements MenuContent {
     }
     
     render(dom: DomWriter): void {
-        renderCores(dom, this.mod.blueprints, this.mod.widgets, this.mod.select.bind(this.mod), this.canvas);
+        
+        let f = (cat: Catalogue, opidx: string, type: CoreType) => {
+            this.mod.select(opidx, type, cat);
+        }
+        f.bind(this.mod, this.cat);
+        renderCores(dom, this.mod.blueprints, this.mod.widgets, f, this.cat, this.canvas);
     }
 }
 
 
-function renderCores(d: DomWriter, ops: OldFunctionShim[], wid: Widget[], onPress: (opIdx: string, type: CoreType) => void, canvas: HTMLCanvasElement) {
+function renderCores(d: DomWriter, ops: FunctionShim[], wid: Widget[], onPress: (cat: Catalogue, opIdx: string, type: CoreType) => void, cat: Catalogue, canvas: HTMLCanvasElement) {
     
     // operations
     d.add('div', "core-list");
     for (let i = 0 ; i < ops.length; i++) {
         d.addButton("create-node-button m-1", () => {
-            onPress(ops[i].name, CoreType.Operation);
+            onPress(cat, ops[i].name, CoreType.Operation);
             canvas.focus();
         }).addText(ops[i].name)
         d.up().up();
@@ -36,7 +41,7 @@ function renderCores(d: DomWriter, ops: OldFunctionShim[], wid: Widget[], onPres
     for (let i = 0 ; i < wid.length; i++) {
         d.addDiv("create-gizmo-button-wrapper");
         d.addButton("button", () => {
-            onPress(wid[i].name, CoreType.Widget);
+            onPress(cat, wid[i].name, CoreType.Widget);
             canvas.focus();
         }).addText(wid[i].name);
         d.up().up().up();

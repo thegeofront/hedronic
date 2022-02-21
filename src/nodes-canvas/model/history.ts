@@ -1,5 +1,4 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";
 import { Socket } from "./socket";
@@ -13,6 +12,7 @@ import { NodeDeleteAction } from "./actions/node-delete-action";
 import { NodeMoveAction } from "./actions/node-move-action";
 import { CableAddAction } from "./actions/cable-add-action";
 import { CableDeleteAction } from "./actions/cable-delete-action";
+import { FunctionShim } from "../../modules/shims/function-shim";
 
 /**
  * purpose: messenger system / decoupling strategy / undo support 
@@ -96,7 +96,7 @@ export class History {
         return this.do(new CableDeleteAction(from, to));
     }
 
-    addNodes(selected: OldFunctionShim | Widget, gp: Vector2, state?: State) {
+    addNodes(selected: FunctionShim | Widget, gp: Vector2, state?: State) {
         return this.do(new NodeAddAction(selected, gp, state))
     }
 

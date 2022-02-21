@@ -4,7 +4,7 @@ import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../../modules/catalogue";
-import { OldFunctionShim } from "../../modules/shims/old-function-shim";
+import { FunctionShim } from "../../modules/shims/function-shim";
 
 export const NODE_WIDTH = 4;
 
@@ -15,15 +15,15 @@ export class GeonNode {
     private constructor(
         public hash: string,                   // guid or some other unique identifier to this node 
         public position: Vector2,              // position on the canvas, in grid space
-        public process: OldFunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
+        public process: FunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
         // outputState
         ) {}
 
-    get operation() : OldFunctionShim | undefined {
-        if (this.process instanceof OldFunctionShim) {
-            return this.process as OldFunctionShim;
+    get operation() : FunctionShim | undefined {
+        if (this.process instanceof FunctionShim) {
+            return this.process as FunctionShim;
         } else {
             return undefined;
         }
@@ -45,7 +45,7 @@ export class GeonNode {
         }
     }
     
-    static new(gridpos: Vector2, process: OldFunctionShim | Widget, inputs?: (Socket | undefined)[], outputs?: Socket[][], hash = createRandomGUID()) {
+    static new(gridpos: Vector2, process: FunctionShim | Widget, inputs?: (Socket | undefined)[], outputs?: Socket[][], hash = createRandomGUID()) {
         if (process instanceof Widget) {
             // TODO This should not be, this is dumb
             process = process.clone(); // Widgets contain unique state, while Operations are prototypes 
@@ -53,18 +53,18 @@ export class GeonNode {
 
         if (!inputs) {
             inputs = [];
-            for (let i = 0 ; i < process.numInputs; i++) inputs.push(undefined);
+            for (let i = 0 ; i < process.inCount; i++) inputs.push(undefined);
         } else {
-            if (inputs.length != process.numInputs) {
+            if (inputs.length != process.inCount) {
                 throw new Error("Inadecuate number of inputs!");
             }
         }
 
         if (!outputs) {
             outputs = [];
-            for (let i = 0 ; i < process.numOutputs; i++) outputs.push([]);
+            for (let i = 0 ; i < process.outCount; i++) outputs.push([]);
         } else {
-            if (outputs.length != process.numOutputs) {
+            if (outputs.length != process.outCount) {
                 throw new Error("Inadecuate number of outputs!");
             }
         }
@@ -72,7 +72,7 @@ export class GeonNode {
         return new GeonNode(hash, gridpos, process, inputs, outputs);
     }
 
-    static fromJson(data: any, process: OldFunctionShim | Widget) {
+    static fromJson(data: any, process: FunctionShim | Widget) {
 
         console.log(data);
 
@@ -115,8 +115,9 @@ export class GeonNode {
         return GeonNode.toJson(this);
     }
 
-    run(args: State[]) {
-        return this.process.run(args);
+    run(args: State[]) : State[] {
+        return args;
+        // return this.process.run(args);
     }
 
     log() {
@@ -132,7 +133,7 @@ export class GeonNode {
         if (this.type == CoreType.Widget) {
             return this.widget!.size.y;
         } else {
-            return Math.max(2, this.process.numInputs, this.process.numOutputs);
+            return Math.max(2, this.process.inCount, this.process.outCount);
         }
     }
 
@@ -143,7 +144,7 @@ export class GeonNode {
      */
     getCablesAtOutput() : string[] {
         let sockets: string[] = [];
-        for (let i = 0; i < this.process.numOutputs; i++) {
+        for (let i = 0; i < this.process.outCount; i++) {
             let socket = Socket.new(this.hash, i+1);
             sockets.push(socket.toString());
         }
@@ -170,11 +171,11 @@ export class GeonNode {
 
     GetComponentLocalGridPosition(c: SocketIdx) {
         
-        if (c + 1 > -this.process.numInputs && c < 0) {
+        if (c + 1 > -this.process.inCount && c < 0) {
             // input
             let input = (c * -1) - 1;
             return Vector2.new(0, input);
-        } else if (c > 0 && c-1 < this.process.numOutputs) {
+        } else if (c > 0 && c-1 < this.process.outCount) {
             // output 
             let output = c - 1;
             return Vector2.new(NODE_WIDTH-1, output);
@@ -200,7 +201,7 @@ export class GeonNode {
             // quickly return if we dont even come close
             return undefined;
         } else if (local.x == 0) {
-            if (local.y < this.process.numInputs) {
+            if (local.y < this.process.inCount) {
                 return -(local.y + 1) // selected input
             } else {
                 return 0; // selected body
@@ -208,7 +209,7 @@ export class GeonNode {
         } else if (local.x > 0 && local.x < NODE_WIDTH-1) {
             return 0; // selected body
         } else if (local.x == NODE_WIDTH-1) {
-            if (local.y < this.process.numOutputs) {
+            if (local.y < this.process.outCount) {
                 return local.y + 1 // selected output
             } else {
                 return 0; // selected body
@@ -218,13 +219,13 @@ export class GeonNode {
     }
 
     forEachInputSocket(callback: (local: Socket, connection: Socket | undefined) => void) {
-        for (let i = 0; i < this.process.numInputs; i++) {
+        for (let i = 0; i < this.process.inCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Input), this.inputs[i])
         }
     }
 
     forEachOutputSocket(callback: (local: Socket, connections: Socket[]) => void) {
-        for (let i = 0; i < this.process.numOutputs; i++) {
+        for (let i = 0; i < this.process.outCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Output), this.outputs[i])
         }
     }

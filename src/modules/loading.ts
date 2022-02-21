@@ -1,6 +1,6 @@
 import { Catalogue } from "./catalogue";
 import { IO } from "../nodes-canvas/util/io";
-import { ModuleShim } from "./shims/library-shim";
+import { ModuleShim } from "./shims/module-shim";
 import { WasmLoading } from "./helpers/wasm-loading";
 import { DTSLoading } from "./helpers/dts-loading";
 import { JSLoading } from "./helpers/js-loading";
@@ -22,7 +22,7 @@ export namespace ModuleLoading {
         // load old modules for now 
         for (let config of json.std_old) {
             let libObj = await IO.importLibrary(config.path);
-            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj, catalogue);
+            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj);
             catalogue.addLibrary(mod);
         }
 
@@ -61,12 +61,12 @@ export namespace ModuleLoading {
      */
     export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string) {
         
-        let libObj = await JSLoading.loadModule(jsPath);
+        let module = await JSLoading.loadModule(jsPath);
         let sourceMap = await DTSLoading.load(dtsPath, {});
 
         console.log(sourceMap.fileName)
 
-        DTSLoading.extractFunctionShims(sourceMap, nickname);
+        let shims = DTSLoading.extractFunctionShims(sourceMap, nickname);
 
         // DTSLoading.
 

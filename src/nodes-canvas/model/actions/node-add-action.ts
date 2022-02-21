@@ -1,15 +1,15 @@
 import { Vector2 } from "../../../../../engine/src/lib";
-import { OldFunctionShim } from "../../../modules/shims/old-function-shim";
 import { NodesGraph } from "../graph";
 import { GeonNode } from "../node";
 import { State } from "../state";
 import { Widget } from "../widget";
 import { Action } from "../action";
+import { FunctionShim } from "../../../modules/shims/function-shim";
 
 export class NodeAddAction implements Action {
 
     constructor(
-        public process: OldFunctionShim | Widget,
+        public process: FunctionShim | Widget,
         public gridPosition: Vector2,
         public initState?: State,
         private key?: string,

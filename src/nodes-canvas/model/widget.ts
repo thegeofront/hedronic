@@ -41,8 +41,8 @@ export class Widget {
 
     nameLower: string;
     bounds: Domain2;
-    numInputs: number;
-    numOutputs: number
+    inCount: number;
+    outCount: number
 
     public constructor(
         public readonly name: string,
@@ -51,8 +51,8 @@ export class Widget {
         public state: State,
     ) {
         this.nameLower = name.toLowerCase();
-        this.numInputs = side == WidgetSide.Input ? 0 : 1;
-        this.numOutputs = side == WidgetSide.Output ? 0 : 1;
+        this.inCount = side == WidgetSide.Input ? 0 : 1;
+        this.outCount = side == WidgetSide.Output ? 0 : 1;
         this.bounds = Widget.determineWidgetSize(this.side, this.size);
     }
 

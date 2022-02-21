@@ -206,7 +206,7 @@ export function graphToFunction(graph: NodesGraph, name: string) {
         if (node.operation) { // A | operation 
             let inputs = toEasyNames(node.getCablesAtOutput()).join(", ");
             let outputs = toEasyNames(node.getCablesAtInput()).join(", ");
-            let str = `let [${inputs}] = ${node.operation.namespace}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
+            let str = `let [${inputs}] = ${node.operation.path[0]}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
             for (let str of toEasyNames(node.getCablesAtOutput())) {

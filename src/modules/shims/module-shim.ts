@@ -1,10 +1,9 @@
 // purpose: module, or library representation
-
-import { OldFunctionShim } from "./old-function-shim";
 import { Catalogue, CoreType } from "../catalogue";
 import { Widget } from "../../nodes-canvas/model/widget";
 import { tryFilter } from "../../nodes-canvas/util/misc";
 import { FN } from "../helpers/js-loading";
+import { FunctionShim } from "./function-shim";
 
 
 /**
@@ -17,12 +16,13 @@ export class ModuleShim {
         public icon: string,
         public fullPath: string,
 
-        public blueprints: OldFunctionShim[],
-        public widgets: Widget[],
-        public catalogue: Catalogue,
+        public readModule: any,
+
+        public blueprints: FunctionShim[],
+        public widgets: Widget[]
         ) {}
 
-    select(key: string, type: CoreType) {
+    select(key: string, type: CoreType, catalogue: Catalogue) {
         console.log(`select name: ${key} type: ${type}`);
         let core;
         if (type == CoreType.Operation) {
@@ -30,27 +30,27 @@ export class ModuleShim {
         } else {
             core = tryFilter(this.widgets, (item) => {return item.name == key});
         }
-        this.catalogue.selectCore(core);
+        catalogue.selectCore(core);
     }
 
-    static new(name: string, icon: string, fullPath: string, operations: OldFunctionShim[], widgets: Widget[], catalogue: Catalogue) {
-        return new ModuleShim(name, icon, fullPath, operations, widgets, catalogue);
+    static new(name: string, icon: string, fullPath: string, realModule: any, operations: FunctionShim[], widgets: Widget[]) {
+        return new ModuleShim(name, icon, fullPath, realModule, operations, widgets);
     }
 
     /**
      * extract the object. If it contains defined functions, fill it
      */
-    static fromJsObject(name: string, icon: string, fullPath: string, origin: string, obj: any, catalogue: Catalogue) {
+    static fromJsObject(name: string, icon: string, fullPath: string, origin: string, obj: any) {
         let ops = [];
         for (const key in obj) {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = OldFunctionShim.newFromRawJs(f, name);
+                let op = FunctionShim.newFromFunction(f, f.name);
                 ops.push(op);
             }
         }
-        return new ModuleShim(name, icon, fullPath, ops, [], catalogue);
+        return new ModuleShim(name, icon, fullPath, obj, ops, []);
     }
 
     /**
@@ -61,7 +61,7 @@ export class ModuleShim {
         let space = {};
 
         for (let op of this.blueprints) {
-            Object.defineProperty(space, op.name, { value: op.func, configurable: true});
+            Object.defineProperty(space, op.name, { value: "hallo", configurable: true});
         }
         Object.defineProperty(window, this.name, { value: space, configurable: true});
     }

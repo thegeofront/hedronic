@@ -1,4 +1,3 @@
-import { OldFunctionShim } from "./shims/old-function-shim";
 import { GeonNode } from "../nodes-canvas/model/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget } from "../nodes-canvas/model/widget";
@@ -6,9 +5,10 @@ import { ButtonWidget } from "../nodes-canvas/widgets/button-widget";
 import { ConsoleWidget } from "../nodes-canvas/widgets/console-widget";
 import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
-import { ModuleShim } from "./shims/library-shim";
+import { ModuleShim } from "./shims/module-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
 import { VariableShim } from "./shims/variable-shim";
+import { FunctionShim } from "./shims/function-shim";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -29,7 +29,7 @@ export enum CoreType {
  */
 export class Catalogue {
 
-    public selected?: OldFunctionShim | Widget;
+    public selected?: FunctionShim | Widget;
 
     constructor(
         public modules: Map<string, ModuleShim>,
@@ -67,17 +67,17 @@ export class Catalogue {
             console.error(`no module is called: ${lib}`);
             return undefined;
         }
-        mod.select(key, type);
+        mod.select(key, type, this);
         return this.selected;
     }
 
-    selectCore(core: OldFunctionShim | Widget | undefined) {
+    selectCore(core: FunctionShim | Widget | undefined) {
         this.selected = core;
     }
 
     select(lib: string, key: string, type: CoreType) {
 
-        this.modules.get(lib)!.select(key, type);
+        this.modules.get(lib)!.select(key, type, this);
     }
 
     deselect() {
@@ -118,7 +118,7 @@ function createStdWidgets(cat: Catalogue) {
         }
 
         // use the map to create a library
-        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "", [], widgets, cat);
+        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
         cat.addLibrary(widMod);
         return cat;
 }
