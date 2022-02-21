@@ -13,43 +13,58 @@ import { State } from "../../nodes-canvas/model/state";
  *      new VariableShim("z", Type.number)
  * ]);`
  */
-export class VariableShim {
+export class ParameterShim {
     constructor(
         public name:  string,  // what to show up as name 
         public type: Type, // the actual type  
         public glyph?: string,  // how to visualize the type or variable briefly
-        public child?: VariableShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
+        public child?: ParameterShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
-    static new(name: string, type: Type, glyph?: string, child?: VariableShim[]) {
-        return new VariableShim(name, type, glyph, child);
+    static new(name: string, type: Type, glyph?: string, child?: ParameterShim[]) {
+        return new ParameterShim(name, type, glyph, child);
     }
 
     /**
      * answers the question, can a state of `this` be put into `other` without problems?
      */
-    isSameType(other: VariableShim) : boolean {
+    isAcceptableType(other: ParameterShim) : boolean {
 
         // Any is difficult, it could potentially lead to unsafe circumstances. 
         // however, if the 'other' is any, we can accept everything 
         if (other.type == Type.any) return true;
-        if (this.type != other.type) return false;
+
+        // deal with union types
+        if (other.type == Type.Union) {
+            if (other.child!) throw new Error("should have children!");
+            let others = other.child!;
+            for (let oChild of others) {
+                if (this.isAcceptableType(oChild)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        if (other.type != this.type) return false;
 
         // types with nested types will require additional checks
         // we only care if the actual types match. 
         // They do not have to have the same name 
         // we stick to the JS notion of : 'if it acts like X, it is X'
-        if (this.type == Type.Tuple || this.type == Type.List || this.type == Type.Object) {   
+        if (other.type == Type.Tuple || other.type == Type.List || other.type == Type.Object) {   
             let childs = this.child!;
             let others = other.child!;
             if (this.child! || other.child!) throw new Error("should have children!");
             if (childs.length != others.length) throw new Error("should have same length!");
             for (let i = 0; i < this.child!.length; i++) {
-                if (!childs[i].isSameType(others[i])) {
+                if (!childs[i].isAcceptableType(others[i])) {
                     return false;
                 }
             }  
         }
+
         return true;
     }
 
@@ -69,6 +84,8 @@ export class VariableShim {
                 return `List<${this.child![0].typeToString()}>`;
             case Type.Object:
                 return `Object<${this.child!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}>`;  
+            case Type.Union:
+                return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
         }
     }
 
@@ -88,6 +105,8 @@ export class VariableShim {
                 return `[ ${this.child!.map(c => c.render()).join(" , ")} ]`;
             case Type.Object:
                 return `{}`;
+            case Type.Union:
+                return `[ ${this.child!.map(c => c.render()).join(" | ")} ]`;
         }
     }
 }
@@ -113,6 +132,7 @@ export enum Type {
     List,
     Tuple,
     Object,
+    Union,
 }
 
 export enum SameTypeResult {

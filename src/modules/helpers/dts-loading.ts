@@ -5,7 +5,7 @@ import { BillboardShader } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
-import { Type, VariableShim } from "../shims/variable-shim";
+import { Type, ParameterShim } from "../shims/parameter-shim";
 
 export namespace DTSHelpers {
 
@@ -129,7 +129,7 @@ export namespace DTSLoading {
                 return convertTypeToVariableShim(inputName, typeNode);
             });
             
-            let outputs: VariableShim[] = []; 
+            let outputs: ParameterShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
@@ -146,8 +146,9 @@ export namespace DTSLoading {
         return shims;
     }
 
-    function convertTypeToVariableShim(name: string, node: ts.TypeNode) : VariableShim {
-        // TODO
+    function convertTypeToVariableShim(name: string, node: ts.TypeNode) : ParameterShim {
+        
+        // 'base' types 
         let type = Type.any
         switch (node.kind) {
             case ts.SyntaxKind.AnyKeyword: type = Type.any;         break;
@@ -156,13 +157,22 @@ export namespace DTSLoading {
             case ts.SyntaxKind.StringKeyword: type = Type.string;   break;
         } 
 
+        // list type
         if (ts.isArrayTypeNode(node)) {
-            type = Type.List;
-            return VariableShim.new(name, type, undefined, [convertTypeToVariableShim("item", node.elementType)]);
+            let subs = [convertTypeToVariableShim("item", node.elementType)]
+            return ParameterShim.new(name, Type.List, undefined, subs);
         } 
         
+        // TODO IMPLEMENT OBJECTS
 
-        return VariableShim.new(name, type, undefined, undefined);
+        // TODO IMPLEMENT TUPLES 
+
+        if (ts.isUnionTypeNode(node)) {
+            let subs = node.types.map((child, i) => convertTypeToVariableShim(`option ${i}`, child));
+            return ParameterShim.new(name, Type.Union, undefined, subs);
+        }
+
+        return ParameterShim.new(name, type, undefined, undefined);
     }
 
     function visitType(node: ts.Node) {
