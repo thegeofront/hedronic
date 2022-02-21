@@ -28,12 +28,14 @@ export namespace ModuleLoading {
 
         // load new modules 
         for (let config of json.std) {
+            const icon = config.icon;
+            const nickname = config.nickname;
             const jsPath = config.path + config.filename + ".js";
             const dtsPath = config.path + config.filename + ".d.ts";
 
             console.log(jsPath);
 
-            const module = loadShimModule(jsPath, dtsPath);
+            const module = loadShimModule(jsPath, dtsPath, nickname, icon);
 
             // let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj, catalogue);
             // catalogue.addLibrary(mod);
@@ -57,10 +59,14 @@ export namespace ModuleLoading {
     /**
      * The loading procedure of one module
      */
-    export async function loadShimModule(jsPath: string, dtsPath: string) {
+    export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string) {
         
         let libObj = await JSLoading.loadModule(jsPath);
         let sourceMap = await DTSLoading.load(dtsPath, {});
+
+        console.log(sourceMap.fileName)
+
+        DTSLoading.extractFunctionShims(sourceMap, nickname);
 
         // DTSLoading.
 

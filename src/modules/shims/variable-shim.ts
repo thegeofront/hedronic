@@ -21,8 +21,8 @@ export class VariableShim {
         public child?: VariableShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
-    static new(name: string, kind: Type, glyph?: string, child?: VariableShim[]) {
-        return new VariableShim(name, kind, glyph, child);
+    static new(name: string, type: Type, glyph?: string, child?: VariableShim[]) {
+        return new VariableShim(name, type, glyph, child);
     }
 
     /**

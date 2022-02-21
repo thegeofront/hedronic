@@ -37,9 +37,9 @@ export function getList(a) {
 }
 export function getTwoResults(a) {
     if (a) {
-        return [a, a + 1];
+        return [a, `${a} + 1`];
     } else {
-        return [a, a - 1];
+        return [a, `${a} - 1`];
     }
 }
 

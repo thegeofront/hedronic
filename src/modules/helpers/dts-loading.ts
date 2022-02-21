@@ -5,6 +5,7 @@ import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
 import { OldFunctionShim } from "../shims/old-function-shim";
+import { Type, VariableShim } from "../shims/variable-shim";
 
 export namespace DTSHelpers {
 
@@ -41,9 +42,6 @@ export namespace DTSLoading {
 
         // let checker = program.getTypeChecker();
         // let sourceNode = program.getSourceFiles()[1];
-
-        // ts.forEachChild(sourceFile, visitNode);
-        // convertToShims(source);
 
         return source;
     }
@@ -100,45 +98,59 @@ export namespace DTSLoading {
     } 
 
 
-    export function extractFunctionShims(source: ts.Node, moduleName="untitled") {
+    export function extractFunctionShims(source: ts.Node, moduleName: string) {
         
         let shims: FunctionShim[] = [];
 
         DTSHelpers.forEachRecursiveNode(source, (node) => {
-            if (ts.isFunctionLike(node)) {
-                if (node.kind == ts.SyntaxKind.Constructor) return;
-                if (node.kind == ts.SyntaxKind.MethodDeclaration) return;
-                if (!node.name) return;
-                
-                // debug
-                // console.log(`found function! kind: ${getKind(node)}`);
-                // console.log(node);
-                
-                // get name and invoke
-                //@ts-ignore
-                const name = node.name.escapedText;
-                const invoke = [name];
+            if (!ts.isFunctionLike(node)) return;
+            if (node.kind == ts.SyntaxKind.Constructor) return;
+            if (node.kind == ts.SyntaxKind.MethodDeclaration) return;
+            if (!node.name) return;
 
-                console.log(name);
-                const inputs = node.parameters.map((p) => visitType(node));
-                // console.log("inputs", );
-                console.log("outputs", node.type);
-                // return;
-
-                // let shim = new FunctionShim()
+            // get name and invoke
+            //@ts-ignore
+            let name = node.name.escapedText;
+            let path = [moduleName, name];
+            
+            let inputs = node.parameters.map((input) => {
+                let inputName = "";
+                let typeNode: ts.TypeNode | undefined;
+                input.forEachChild((i) => {
+                    if (ts.isIdentifier(i)) {
+                        inputName = i.text;
+                    } else if (ts.isTypeNode(i)) {
+                        typeNode = i;
+                    }
+                })    
+                if (typeNode == undefined) {
+                    throw new Error("this is weird");
+                } 
+                return convertTypeToVariableShim(inputName, typeNode);
+            });
+            
+            let outputs: VariableShim[] = []; 
+            if (ts.isTupleTypeNode(node.type!)) {
+                let tuple = node.type as ts.TupleTypeNode;
+                for (let i = 0; i < tuple.elements.length; i++) {
+                    outputs.push(convertTypeToVariableShim(`Result ${i}`, tuple.elements[i]))
+                }
+            } else {
+                outputs.push(convertTypeToVariableShim("Result", node.type!))
             }
 
-            // if (node.kind == ts.SyntaxKind.MethodDeclaration) {
-            //     // this is static method
-            //     // console.log(node);
+            // console.log(DTSHelpers.getKind(node.type!));
 
-            //     console.log("found static method!");
-            //     // return;
-            //     // return;
-            // }
+            let shim = new FunctionShim(name, path, inputs, outputs);
+            shim.log();
         })
 
         return shims;
+    }
+
+    function convertTypeToVariableShim(name: string, node: ts.TypeNode) : VariableShim {
+        // TODO
+        return VariableShim.new(name, Type.any);
     }
 
     function visitType(node: ts.Node) {
