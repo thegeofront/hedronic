@@ -20,7 +20,7 @@ export enum CoreType {
 }
 
 /**
- * Catalogue containing shim libraries
+ * Catalogue containing shim Modules
  * Shims are wrappers of functions and variables. 
  * The canvas can use these to spawn nodes, and draw a graph
  * 

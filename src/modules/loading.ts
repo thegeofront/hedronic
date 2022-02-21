@@ -62,6 +62,8 @@ export namespace ModuleLoading {
         let libObj = await JSLoading.loadModule(jsPath);
         let sourceMap = await DTSLoading.load(dtsPath, {});
 
+        // DTSLoading.
+
         // use the source map to find types
         
         // use the source map to find functions 

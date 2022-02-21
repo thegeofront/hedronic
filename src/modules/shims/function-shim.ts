@@ -29,8 +29,8 @@ export class FunctionShim {
         public readonly ins: VariableShim[],
         public readonly outs: VariableShim[]
         ) {
-            this.nameLower = name.toLowerCase();
-        }
+        this.nameLower = name.toLowerCase();
+    }
 
     get inCount() {
         return this.ins.length;

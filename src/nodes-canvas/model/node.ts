@@ -3,8 +3,8 @@ import { Widget } from "./widget";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
-import { CoreType } from "../../module-loading/catalogue";
-import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
+import { CoreType } from "../../modules/catalogue";
+import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 
 export const NODE_WIDTH = 4;
 

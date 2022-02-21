@@ -1,5 +1,5 @@
 import { Vector2 } from "../../../../engine/src/lib";
-import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
+import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";
 import { Socket } from "./socket";

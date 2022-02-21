@@ -1,5 +1,5 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
-import { Catalogue } from "../../module-loading/catalogue";
+import { Catalogue } from "../../modules/catalogue";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";

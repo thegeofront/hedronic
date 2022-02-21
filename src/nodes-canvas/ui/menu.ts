@@ -1,6 +1,6 @@
-import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
+import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Catalogue, CoreType } from "../../module-loading/catalogue";
+import { Catalogue, CoreType } from "../../modules/catalogue";
 import { dom, DomWriter } from "../util/dom-writer";
 import { MenuCategory } from "./category";
 import { MenuContentMain } from "./category-main";

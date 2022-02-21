@@ -1,10 +1,10 @@
-import { OldFunctionShim } from "../../module-loading/shims/old-function-shim";
+import { OldFunctionShim } from "../../modules/shims/old-function-shim";
 import { Widget } from "../model/widget";
-import { CoreType } from "../../module-loading/catalogue";
-import { ModuleShim } from "../../module-loading/shims/library-shim";
+import { CoreType } from "../../modules/catalogue";
+import { ModuleShim } from "../../modules/shims/library-shim";
 import { DomWriter } from "../util/dom-writer";
 import { MenuContent } from "./category";
-import { Catalogue } from "../../module-loading/catalogue";
+import { Catalogue } from "../../modules/catalogue";
 
 export class MenuContentOperations implements MenuContent {
     

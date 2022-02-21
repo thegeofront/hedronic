@@ -43,7 +43,7 @@ export namespace DTSLoading {
         // let sourceNode = program.getSourceFiles()[1];
 
         // ts.forEachChild(sourceFile, visitNode);
-        convertToShims(source);
+        // convertToShims(source);
 
         return source;
     }
@@ -59,7 +59,7 @@ export namespace DTSLoading {
                 // debug
                 console.log(DTSHelpers.getKind(node));
 
-                
+                // here we are !                
             }
 
         });
@@ -100,7 +100,7 @@ export namespace DTSLoading {
     } 
 
 
-    function extractFunctionShims(source: ts.Node, moduleName="untitled") {
+    export function extractFunctionShims(source: ts.Node, moduleName="untitled") {
         
         let shims: FunctionShim[] = [];
 
