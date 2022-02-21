@@ -16,14 +16,22 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 > ⏹️: On hold
 > ✔️: Done 
 
+===============================================================================
+
+# PHASE 1
+- TODO
+
+===============================================================================
+
+# PHASE 2
+
+## STEP 1 : THE VPL;
+
 - Visuals
   - [✔️] Try to make the functions look a bit nicer and 'chunkier'
   - [✔️] Mute the colors, to prepare for some other color coding
 
-- FUNCTIONALITY 
-
-
-- QOL (quality of life)
+- quality of life
   - [✔️] double click menu
      - [✔️] MVP
      - [] _extra: nicer popup window_
@@ -45,6 +53,10 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
     - [✔️] Must be easier to translate to js / json or whatever
     - [ ] Deal
 
+
+
+# STEP 2 : ADVANCED MODULE LOADING & INTRODUCTION OF TYPES
+
 - Module Loading
   - [✔️] Dynamically load js, 
   - [✔️] build a LibraryShim so we can reason about it
@@ -54,6 +66,24 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
     - [ ]  
   - [✔️] Load a WebAssembly module created using wasm-pack       
 
+- Types 
+  - [ ] How to represent basic types ? 
+  - [ ] How to represent nested types (a list of numbers)
+  - [ ] How to represent custom types ? (== structs | interfaces | classes)
+  - [ ] How to show this on the canvas ?  
+     - [ ] Introduce a Variable Node 
+
+
+# STEP 3 : INPUT AND OUTPUT
+
+- Using the types of step 2
+
+- [ ] introduce VariableBlueprint -> Generates VariableNode 
+- [ ] Make a 'file drop' widget
+- [ ] Make a 'visualize geometry' widget
+- [ ] How to make users determine inputs & outputs ?
+
+- [ ] Try to 
 
 > ### Some brainstorming
 > Some categories are emerging. 
@@ -71,20 +101,32 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 >
 >
 
+===============================================================================
 
-# Post-Roadmap 
+# PHASE 3 
+
+
+
+===============================================================================
+
+# PHASE 4
+
+
+
+===============================================================================
+
+# NICE TO HAVES / could have's 
 - [ ] refactor visuals to css
+   - because right now, the drawing of the canvas requires a lot of render calls, and is slow on less-powerful pc's. Not accessible.
 
 - [ ] refactor Operations / Widgets
     - [✔️] Core -> Blueprint 
-    - [ ] rename Operations to FunctionBlueprint -> Generates FunctionNode
-    - [ ] introduce VariableBlueprint -> Generates VariableNode
-        - [ ] variableNode == cable? 
-    - [ ] introduce widget -> Is a VariableNode with a lit component instance attached in a box
-        - [ ] HTML widgets / Lit Widgets
-        - [ ] Canvas will treat widgets as VariableNodes
-        - [ ] A widget can be reduced to just a Variable
-
+    - [✔️] rename Operations to FunctionBlueprint -> Generates FunctionNode
+- [ ] introduce widget -> Is a Node with a lit component instance attached  
+      in a box
+  - [ ] HTML widgets / Lit Widgets
+  - [ ] A widget can be reduced to just a Variable
+  - [ ] A LitWidget can use a number of hooks to declare output variables.
 
 # Notes
 > why not just use a type property in the json
