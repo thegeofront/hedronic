@@ -1,7 +1,7 @@
 {
     "std": [
         {
-            "icon": "bi-math",
+            "icon": "bi-calculator-fill",
             "nickname": "lin alg",
             "filename": "linalg",
             "path": "./geon-header-modules/"

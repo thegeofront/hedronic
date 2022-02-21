@@ -115,11 +115,6 @@ export class GeonNode {
         return GeonNode.toJson(this);
     }
 
-    run(args: State[]) : State[] {
-        return args;
-        // return this.process.run(args);
-    }
-
     log() {
         console.log(`node at ${this.position}`);
         // this.operation.name

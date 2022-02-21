@@ -35,8 +35,8 @@ export namespace ModuleLoading {
 
             console.log(jsPath);
 
-            const module = loadShimModule(jsPath, dtsPath, nickname, icon);
-
+            const module = await loadShimModule(jsPath, dtsPath, nickname, icon);
+            catalogue.addLibrary(module);
             // let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj, catalogue);
             // catalogue.addLibrary(mod);
         }
@@ -61,7 +61,7 @@ export namespace ModuleLoading {
      */
     export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string) {
         
-        let module = await JSLoading.loadModule(jsPath);
+        let jsModule = await JSLoading.loadModule(jsPath);
         let sourceMap = await DTSLoading.load(dtsPath, {});
 
         console.log(sourceMap.fileName)
@@ -78,6 +78,8 @@ export namespace ModuleLoading {
 
         // console.log(libObj, sourceMap);
 
-        return true;
+        const module = ModuleShim.new(nickname, icon, jsPath, jsModule, shims, []);
+
+        return module;
     }
 }

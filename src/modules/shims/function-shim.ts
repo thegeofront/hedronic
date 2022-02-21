@@ -15,7 +15,8 @@ import { Type, VariableShim } from "./variable-shim";
  * Offers a blueprint for creating a new node
  * It wraps a function, and delivers some useful information
  * This is needed, so we can reason about the functionalities of operations
- * Not the same as a Node : Multiple Different Nodes will point to the same FunctionBlueprint
+ * Not the same as a Node, Because multiple nodes will point to the same FunctionShim
+ * 
  */
 export class FunctionShim {
 
@@ -46,7 +47,7 @@ export class FunctionShim {
 
         // with raw js, there is no way of ensuring type savety
         let ins: VariableShim[] = [];
-        for (let i = 0 ; i < inCount; i++) ins.push()
+        for (let i = 0 ; i < inCount; i++) ins.push(VariableShim.new(`in${i}`, Type.any))
         let outs: VariableShim[] = [];
         for (let i = 0 ; i < outCount; i++) outs.push(VariableShim.new(`out${i}`, Type.any))
 
