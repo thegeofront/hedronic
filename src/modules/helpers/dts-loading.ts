@@ -1,6 +1,7 @@
 
 
 import * as ts from "typescript";
+import { BillboardShader } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
@@ -147,7 +148,21 @@ export namespace DTSLoading {
 
     function convertTypeToVariableShim(name: string, node: ts.TypeNode) : VariableShim {
         // TODO
-        return VariableShim.new(name, Type.any);
+        let type = Type.any
+        switch (node.kind) {
+            case ts.SyntaxKind.AnyKeyword: type = Type.any;         break;
+            case ts.SyntaxKind.BooleanKeyword: type = Type.boolean; break;
+            case ts.SyntaxKind.NumberKeyword: type = Type.number;   break;
+            case ts.SyntaxKind.StringKeyword: type = Type.string;   break;
+        } 
+
+        if (ts.isArrayTypeNode(node)) {
+            type = Type.List;
+            return VariableShim.new(name, type, undefined, [convertTypeToVariableShim("item", node.elementType)]);
+        } 
+        
+
+        return VariableShim.new(name, type, undefined, undefined);
     }
 
     function visitType(node: ts.Node) {
