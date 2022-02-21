@@ -56,14 +56,13 @@ export class VariableShim {
     typeToString() : string {
         switch (this.type) {
             case Type.any:
-                return "?";
+                return "any";
             case Type.boolean:
-                return "B";
+                return "bool";
             case Type.number:
-                return "N";
+                return "num";
             case Type.string:
                 return "str";
-            
             case Type.Tuple:
                 return `Tuple<${this.child!.map(c => c.typeToString()).join(", ")}>`;
             case Type.List:
