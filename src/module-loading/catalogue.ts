@@ -8,7 +8,7 @@ import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
 import { ModuleShim } from "./shims/library-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
-import { TypeShim } from "./shims/type-shim";
+import { VariableShim } from "./shims/variable-shim";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -33,7 +33,7 @@ export class Catalogue {
 
     constructor(
         public modules: Map<string, ModuleShim>,
-        public types: Map<string, TypeShim>) {}
+        public types: Map<string, VariableShim>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map(), new Map());

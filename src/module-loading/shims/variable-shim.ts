@@ -19,7 +19,7 @@ export class VariableShim {
         public child?: VariableShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
-    static new(kind: Type, name: string, glyph?: string, child?: VariableShim[]) {
+    static new(name: string, kind: Type, glyph?: string, child?: VariableShim[]) {
         return new VariableShim(name, kind, glyph || name.charAt(0).toUpperCase(), child);
     }
 
@@ -84,17 +84,6 @@ export class VariableShim {
         }
     }
 }
-
-export function getBasicTypes() {
-    return [
-        VariableShim.new(Type.any, "any", "A"),
-        VariableShim.new(Type.boolean, "boolean", "B"),
-        VariableShim.new(Type.number, "number", "N"),
-        VariableShim.new(Type.string, "string", "S"),
-    ];
-}
-
-
 
 // https://www.sheshbabu.com/posts/rust-for-javascript-developers-pattern-matching-and-enums/
 // *sigh*, if only we could write something like this. 
