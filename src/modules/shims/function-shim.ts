@@ -13,7 +13,7 @@ import { Type, VariableShim } from "./variable-shim";
 
 /**
  * Offers a blueprint for creating a new node
- * It wraps a function, and delivers some useful information
+ * wrap a function, and delivers some useful information
  * This is needed, so we can reason about the functionalities of operations
  * Not the same as a Node, Because multiple nodes will point to the same FunctionShim
  * 

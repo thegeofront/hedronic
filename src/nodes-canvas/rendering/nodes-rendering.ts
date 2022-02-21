@@ -111,8 +111,8 @@ export class StyleSet {
         // lineTo(0.5, gb);
     }
 
-    drawBlockShape(height, numInputs,  is, is + fillet, is + fillet, ie - fillet, ie, oe);
-    drawBlockShape(height, numOutputs, os, os - fillet, os - fillet, oe + fillet, oe, ie);
+    drawBlockShape(height, numInputs,  is, is + fillet, is + 2.5, ie - fillet, ie, oe);
+    drawBlockShape(height, numOutputs, os, os - fillet, os - 2.5, oe + fillet, oe, ie);
 
     let polygon = MultiVector2.fromList([
         coord(fillet*2, ie),
@@ -151,6 +151,10 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // ctx.stroke();
 
     // draw operation text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `small-caps bold 14px sans-serif`;
+
     if (!isWidget) {
         
         // TODO: do somemthing smart with the name to make it fit
@@ -164,10 +168,8 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         
 
         ctx.fillStyle = MUTED_WHITE;
-        ctx.font = `small-caps bold 14px sans-serif`;
+        
         // ctx.rotate
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
         let op_center = textCenters.get(0);
         ctx.translate(op_center.x, op_center.y);
         ctx.rotate(Math.PI*-0.5);
@@ -181,16 +183,18 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     for (let i = 0 ; i < node.process.inCount; i++) {
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
-        // ctx.fillText('|', vec.x, vec.y);
-        ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
+        // ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
+        let text = node.operation?.ins[i].typeToString() || "in";
+        ctx.fillText(text, vec.x, vec.y);
     }
-
+    
     // draw output text
     for (let i = 0 ; i < node.process.outCount; i++) {
         setStyle(ctx, style, component, i + 1, isWidget);
         let vec = textCenters.get(1 + node.process.inCount + i);
-        ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
-        // ctx.fillText('|', vec.x, vec.y);
+        let text = node.operation?.outs[i].typeToString() || "in";
+        // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
+        ctx.fillText(text, vec.x, vec.y);
     }
 
     // render widget
