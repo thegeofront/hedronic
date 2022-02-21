@@ -25,7 +25,7 @@
 function somethingPrivate() {
     return "kaas";
 }
-export function getAnswer() {
+export function getTheAnswer() {
     return 42;
 }
 export function someFunction(a, b) {
@@ -41,5 +41,9 @@ export function getTwoResults(a) {
     } else {
         return [a, `${a} - 1`];
     }
+}
+
+export function add(a, b) {
+    return a + b;
 }
 

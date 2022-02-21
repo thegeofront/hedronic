@@ -66,7 +66,7 @@ export namespace ModuleLoading {
 
         console.log(sourceMap.fileName)
 
-        let shims = DTSLoading.extractFunctionShims(sourceMap, nickname);
+        let shims = DTSLoading.extractFunctionShims(sourceMap, nickname, jsModule);
 
         // DTSLoading.
 

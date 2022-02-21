@@ -97,7 +97,7 @@ export namespace DTSLoading {
     } 
 
 
-    export function extractFunctionShims(source: ts.Node, moduleName: string) {
+    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any) {
         
         let shims: FunctionShim[] = [];
 
@@ -138,7 +138,7 @@ export namespace DTSLoading {
                 outputs.push(convertTypeToVariableShim("Result", node.type!))
             }
 
-            let shim = new FunctionShim(name, path, inputs, outputs);
+            let shim = new FunctionShim(name, path, jsModule[name], inputs, outputs);
             shims.push(shim);
         })
 

@@ -25,7 +25,7 @@ export class FunctionShim {
     constructor(
         public readonly name: string,
         public readonly path: string[],
-    
+        public readonly func: Function,
         public readonly ins: VariableShim[],
         public readonly outs: VariableShim[]
         ) {
@@ -51,11 +51,12 @@ export class FunctionShim {
         let outs: VariableShim[] = [];
         for (let i = 0 ; i < outCount; i++) outs.push(VariableShim.new(`out${i}`, Type.any))
 
-        return new FunctionShim(name, [namespace, name], ins, outs);
+        return new FunctionShim(name, [namespace, name], func, ins, outs);
     }
 
     run(inputs: any[]) {
-        return inputs;
+        // console.log()
+        return this.func(...inputs);
     }
 
     log() {

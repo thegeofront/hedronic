@@ -140,16 +140,14 @@ export class NodesGraph {
                 }
 
                 let outCables = node.getCablesAtOutput();
-                // if (typeof outputs !== "object") {
-                //     setValue(outCables[0], outputs);
-                // } else {
-                    // for (let i = 0 ; i < node.operation.outputs; i++) {
-                    //     setValue(outCables[i], outputs[i]);
-                    // }    
-                // }
-                for (let i = 0 ; i < node.operation.outCount; i++) {
-                    setValue(outCables[i], outputs[i]);
+                if (node.operation.outCount == 1) {
+                    setValue(outCables[0], outputs);
+                } else {
+                    for (let i = 0 ; i < node.operation.outCount; i++) {
+                        setValue(outCables[i], outputs[i]);
+                    }
                 }
+                
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
                 for (let cable of node.getCablesAtOutput()) {
                     setValue(cable, node.widget!.state);
