@@ -1,11 +1,11 @@
-// class Thingie {
+export class Thingie {
     
-//     constructor(
-//         public x: number,
-//         public y: number,
-//     ) {}
+    constructor(
+        public x: number,
+        public y: number,
+    ) {}
 
-// }
+}
 
 /**
  * A thing to do things
