@@ -1,32 +1,31 @@
 {
     "std": [
         {
+            "icon": "bi-question-diamond",
+            "nickname": "various",
+            "filename": "various",
+            "path": "./modules/"
+        },
+        {
+            "icon": "bi-toggle-on",
+            "nickname": "bool",
+            "filename": "bool",
+            "path": "./modules/"
+        },
+        {
+            "icon": "bi-calculator",
+            "nickname": "math",
+            "filename": "math",
+            "path": "./modules/"
+        },
+        {
             "icon": "bi-braces",
-            "nickname": "json",
-            "filename": "linalg",
-            "path": "./geon-header-modules/"
+            "nickname": "std",
+            "filename": "std",
+            "path": "./modules/"
         }
     ],
-    "std_old": [
-        {
-            "name": "bool",
-            "path": "./geon-modules/bool.js",
-            "fullPath": "josfeenstra.nl/project/nodes/geon-modules/bool.js",
-            "icon": "bi-toggle-on"
-        },
-        {
-            "name": "math",
-            "path": "./geon-modules/math.js",
-            "fullPath": "josfeenstra.nl/project/nodes/geon-modules/math.js",
-            "icon": "bi-calculator-fill"
-        },
-        {
-            "name": "point",
-            "path": "./geon-modules/point.js",
-            "fullPath": "josfeenstra.nl/project/nodes/geon-modules/test.js",
-            "icon": "bi-bullseye"
-        }
-    ],
+    "std_old": [],
     "wasm": [
         {
             "icon": "bi-house",

@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+      "sourceMap": false,
+      "declaration": true,
+      "target": "esNext",
+      "outDir": "../build/geon-header-modules/"
+    },
+    "include": [
+      "src/**/*"
+    ]
+}
