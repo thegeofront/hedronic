@@ -6,7 +6,6 @@ export namespace WasmLoading {
 
     export async function moduleFromWasmPack(jsPath: string, dtsPath: string, wasmPath: string) {
         console.log("creating a wasm shim")
-        let sourceMap = await DTSLoading.load(dtsPath, {});
         let code = await WebIO.getText(jsPath);
         // let fakeWasmPath = "wasm-modules/cityjson_validator_bg.wasm";
         let wasmModule = fetch(wasmPath);
@@ -16,7 +15,8 @@ export namespace WasmLoading {
         let module = await import(/* webpackIgnore: true */url);
         
         // init the module
-        let lowLevelModule = await module.default(wasmModule);
+        let syntaxTree = await DTSLoading.load(dtsPath, {});
+        let js = await module.default(wasmModule);
 
         // console.log(module["CityJsonValidator"]["new_from_string"](""));
 
@@ -24,7 +24,7 @@ export namespace WasmLoading {
         
 
 
-        return undefined;
+        return {js, syntaxTree};
 
         //@ts-ignore
         // window.js = js;

@@ -47,8 +47,13 @@ namespace Help {
     }
 
     export function getTypeName(node: ts.TypeNode) : string {
-        //@ts-ignore
-        return node.typeName.escapedText;
+        try {
+            //@ts-ignore
+            return node.typeName.escapedText;
+        } catch {
+            console.warn("Cannot read the type of ", node);
+            return ""
+        }
     }
 }
 

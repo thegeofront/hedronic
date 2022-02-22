@@ -4,7 +4,7 @@ import { ModuleShim } from "./shims/module-shim";
 import { WasmLoading } from "./helpers/wasm-loading";
 import { DTSLoading } from "./helpers/dts-loading";
 import { JSLoading } from "./helpers/js-loading";
-import { createSolutionBuilder } from "typescript";
+import ts from "typescript";
 import { TypeShim } from "./shims/parameter-shim";
 
 export namespace ModuleLoading {
@@ -19,13 +19,6 @@ export namespace ModuleLoading {
         let catalogue = Catalogue.newFromWidgets();   
 
         let json = await IO.fetchJson(stdPath);
-        
-        // load old modules for now 
-        for (let config of json.std_old) {
-            let libObj = await IO.importLibrary(config.path);
-            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj);
-            catalogue.addLibrary(mod);
-        }
 
         // load new modules 
         for (let config of json.std) {
@@ -35,43 +28,48 @@ export namespace ModuleLoading {
             const dtsPath = config.path + config.filename + ".d.ts";
 
             console.log(jsPath);
-
-            const module = await loadShimModule(jsPath, dtsPath, nickname, icon);
+            
+            const {js, syntaxTree} = await loadModule(jsPath, dtsPath);
+            const module = await loadShimModule(js, jsPath, syntaxTree, nickname, icon);
             catalogue.addLibrary(module);
-            // let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libObj, catalogue);
-            // catalogue.addLibrary(mod);
         }
 
         // load wasm modules 
         for (let config of json.wasm) {
 
+            const icon = config.icon;
+            const nickname = config.nickname;
+
             const jsPath = config.localPath + config.filename + ".js";
             const dtsPath = config.localPath + config.filename + ".d.ts";
             const wasmPath = config.localPath + config.filename + "_bg.wasm";
 
-            // const module = WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath);
-
+            const {js, syntaxTree} = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath);
+            let types = new Map<string, TypeShim>()
+            types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
+            console.log(types);
+            // const module = await loadShimModule(js, jsPath, syntaxTree, nickname, icon);
+            // catalogue.addLibrary(module);
         }
 
         return catalogue
     }
 
 
+    export async function loadModule(jsPath: string, dtsPath: string) {
+        let js = await JSLoading.loadModule(jsPath);
+        let syntaxTree = await DTSLoading.load(dtsPath, {});
+
+        return {js, syntaxTree};
+    }
+
     /**
      * The loading procedure of one module
      */
-    export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string, types = new Map<string, TypeShim>()) {
+    export async function loadShimModule(jsModule: any, jsPath: string, syntaxTree: ts.SourceFile, nickname: string, icon: string, types = new Map<string, TypeShim>()) {
         
-        let jsModule = await JSLoading.loadModule(jsPath);
-        let syntaxTree = await DTSLoading.load(dtsPath, {});
-
-        console.log(syntaxTree.fileName)
-
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
         let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, types);
-         
-
-        // DTSLoading.
 
         // use the source map to find types
         
