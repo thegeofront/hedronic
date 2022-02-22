@@ -330,7 +330,7 @@ export class NodesCanvas {
         `;
 
         this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
-        this.graph.log();
+        // this.graph.log();
         return;
     }
 

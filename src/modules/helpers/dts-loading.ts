@@ -7,7 +7,7 @@ import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
 import { Type, ParameterShim } from "../shims/parameter-shim";
 
-export namespace DTSHelpers {
+namespace Help {
 
     export function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => void) {
         
@@ -31,6 +31,14 @@ export namespace DTSHelpers {
     export function getKind(node: ts.Node) {
         return ts.SyntaxKind[node.kind];
     }
+
+    export function getNameAndType(node: ts.TypeLiteralNode) {
+        
+        console.log(node)
+        // ts.forEachChild(node, (child) => {
+        //     console.log(child);
+        // })
+    }
 }
 
 export namespace DTSLoading {
@@ -52,10 +60,10 @@ export namespace DTSLoading {
     }
 
     function extractTypeShims(source: ts.Node) {
-        DTSHelpers.forEachRecursiveNode(source, (node) => {
+        Help.forEachRecursiveNode(source, (node) => {
             if (ts.isTypeNode(node)) {
                 // debug
-                console.log(DTSHelpers.getKind(node));
+                console.log(Help.getKind(node));
 
                 // here we are !                
             }
@@ -102,7 +110,7 @@ export namespace DTSLoading {
         
         let shims: FunctionShim[] = [];
 
-        DTSHelpers.forEachRecursiveNode(source, (node) => {
+        Help.forEachRecursiveNode(source, (node) => {
             if (!ts.isFunctionLike(node)) return;
             if (node.kind == ts.SyntaxKind.Constructor) return;
             if (node.kind == ts.SyntaxKind.MethodDeclaration) return;
@@ -126,17 +134,17 @@ export namespace DTSLoading {
                 if (typeNode == undefined) {
                     throw new Error("this is weird");
                 } 
-                return convertTypeToVariableShim(inputName, typeNode);
+                return convertTypeToParameterShim(inputName, typeNode);
             });
             
             let outputs: ParameterShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
-                    outputs.push(convertTypeToVariableShim(`Result ${i}`, tuple.elements[i]))
+                    outputs.push(convertTypeToParameterShim(`Result ${i}`, tuple.elements[i]))
                 }
             } else {
-                outputs.push(convertTypeToVariableShim("Result", node.type!))
+                outputs.push(convertTypeToParameterShim("Result", node.type!))
             }
 
             let shim = new FunctionShim(name, path, jsModule[name], inputs, outputs);
@@ -146,48 +154,47 @@ export namespace DTSLoading {
         return shims;
     }
 
-    function convertTypeToVariableShim(name: string, node: ts.TypeNode) : ParameterShim {
+    function convertTypeToParameterShim(name: string, node: ts.TypeNode) : ParameterShim {
         
         // 'base' types 
-        let type = Type.any
         switch (node.kind) {
-            case ts.SyntaxKind.AnyKeyword: type = Type.any;         break;
-            case ts.SyntaxKind.BooleanKeyword: type = Type.boolean; break;
-            case ts.SyntaxKind.NumberKeyword: type = Type.number;   break;
-            case ts.SyntaxKind.StringKeyword: type = Type.string;   break;
+            case ts.SyntaxKind.AnyKeyword: return ParameterShim.new(name, Type.any);
+            case ts.SyntaxKind.BooleanKeyword: return ParameterShim.new(name, Type.boolean);
+            case ts.SyntaxKind.NumberKeyword: return ParameterShim.new(name, Type.number);
+            case ts.SyntaxKind.StringKeyword: return ParameterShim.new(name, Type.string);
         } 
 
-        // list type
+        // list type 
         if (ts.isArrayTypeNode(node)) {
-            let subs = [convertTypeToVariableShim("item", node.elementType)]
+            let subs = [convertTypeToParameterShim("item", node.elementType)]
             return ParameterShim.new(name, Type.List, undefined, subs);
         } 
         
-        // TODO IMPLEMENT OBJECTS
-
-        // TODO IMPLEMENT TUPLES 
-
+        // union type
         if (ts.isUnionTypeNode(node)) {
-            let subs = node.types.map((child, i) => convertTypeToVariableShim(`option ${i}`, child));
+            let subs = node.types.map((child, i) => convertTypeToParameterShim(`option ${i}`, child));
             return ParameterShim.new(name, Type.Union, undefined, subs);
         }
-
-        return ParameterShim.new(name, type, undefined, undefined);
-    }
-
-    function visitType(node: ts.Node) {
         
-    }
+        // literal object type 
+        if (ts.isTypeLiteralNode(node)) {
+            let subs = node.members.map((element) => {
+                
+                // This is kind of strange... dont know why ts does not recognise the data. Disconnect between data & header?
+                // @ts-ignore 
+                let elementName: string = element.name.escapedText;
+                // @ts-ignore
+                let elementType: ts.TypeNode = element.type;
 
-    function visitNode(node: ts.Node, level=0) {
-        
-        if (node.kind == ts.SyntaxKind.FunctionDeclaration) return readFunction(node);
-        console.log(`${"--".repeat(level)} type: ${ts.SyntaxKind[node.kind]}`);
-        ts.forEachChild(node, (child) => visitNode(child, level+1));
-        return;
-    }
+                return convertTypeToParameterShim(elementName, elementType);
+            });
+            return ParameterShim.new(name, Type.Object, undefined, subs);
+        }
 
-    function readFunction(node: ts.Node) {
-        console.log(`EXTRACT FUNCTION: ${ts.SyntaxKind[node.kind]}`);
+        // non-literal object type
+
+
+        console.warn("unregognised type: ", Help.getKind(node));
+        return ParameterShim.new(name, Type.any);
     }
 }

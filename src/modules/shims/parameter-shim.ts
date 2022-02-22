@@ -14,14 +14,29 @@ import { State } from "../../nodes-canvas/model/state";
  * ]);`
  */
 export class ParameterShim {
-    constructor(
-        public name:  string,  // what to show up as name 
-        public type: Type, // the actual type  
-        public glyph?: string,  // how to visualize the type or variable briefly
-        public child?: ParameterShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
+    private constructor(
+        public readonly name:  string,  // what to show up as name 
+        public readonly type: Type, // the actual type  
+        public readonly glyph?: string,  // how to visualize the type or variable briefly
+        public readonly child?: ParameterShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
     static new(name: string, type: Type, glyph?: string, child?: ParameterShim[]) {
+
+        // make sure children are sorted
+        if (child) {
+            child.sort((a, b) => {
+                if (a.name == b.name) {
+                    throw new Error("children must have unique names...");
+                }
+                if (a.name < b.name) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            })
+        }
+
         return new ParameterShim(name, type, glyph, child);
     }
 
@@ -83,7 +98,7 @@ export class ParameterShim {
             case Type.List:
                 return `List<${this.child![0].typeToString()}>`;
             case Type.Object:
-                return `Object<${this.child!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}>`;  
+                return `Object {${this.child!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
             case Type.Union:
                 return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
         }
@@ -107,7 +122,7 @@ export class ParameterShim {
                 return `{}`;
             case Type.Union:
                 return `[ ${this.child!.map(c => c.render()).join(" | ")} ]`;
-        }
+        } 
     }
 }
 
