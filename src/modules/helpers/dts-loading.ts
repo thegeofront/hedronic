@@ -1,7 +1,7 @@
 
 
 import * as ts from "typescript";
-import { BillboardShader } from "../../../../engine/src/lib";
+import { BillboardShader, Debug } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
@@ -11,6 +11,7 @@ namespace Help {
 
     export function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => void) {
         
+        let level = 0;
         let recurse = (child: ts.Node) => {
             callback(child)
             ts.forEachChild(child, recurse);
@@ -105,15 +106,45 @@ export namespace DTSLoading {
         return tree;
     } 
 
+    /**
+     * Catch all declared types, and convert them to a type format we can use
+     */
+    export function extractTypeDeclarations(source: ts.Node) {
+        
+        let namedTypes: ParameterShim[] = [];
 
-    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any) {
+        Help.forEachRecursiveNode(source, (node) => {
+
+            if (ts.isClassDeclaration(node)) {
+                Debug.info("FOUND A CLASS");
+            }
+
+            if (ts.isInterfaceDeclaration(node)) {
+                Debug.info("FOUND AN INTERFACE");
+            }
+
+            if (ts.isTypeAliasDeclaration(node)) {
+                Debug.info("FOUND A TYPE ALIAS");
+            }
+        });
+
+        return namedTypes;
+    }
+
+
+    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any, typeReferences: Map<string, ParameterShim>) {
         
         let shims: FunctionShim[] = [];
 
         Help.forEachRecursiveNode(source, (node) => {
             if (!ts.isFunctionLike(node)) return;
+
+            // TODO implement constructors once typeReferences are done 
             if (node.kind == ts.SyntaxKind.Constructor) return;
-            if (node.kind == ts.SyntaxKind.MethodDeclaration) return;
+
+            // TODO implement methods once typeReferences are done
+            if (node.kind == ts.SyntaxKind.MethodDeclaration) return; 
+            
             if (!node.name) return;
 
             // get name and invoke
@@ -134,17 +165,17 @@ export namespace DTSLoading {
                 if (typeNode == undefined) {
                     throw new Error("this is weird");
                 } 
-                return convertTypeToParameterShim(inputName, typeNode);
+                return convertTypeToParameterShim(inputName, typeNode, typeReferences);
             });
             
             let outputs: ParameterShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
-                    outputs.push(convertTypeToParameterShim(`Result ${i}`, tuple.elements[i]))
+                    outputs.push(convertTypeToParameterShim(`Result ${i}`, tuple.elements[i], typeReferences))
                 }
             } else {
-                outputs.push(convertTypeToParameterShim("Result", node.type!))
+                outputs.push(convertTypeToParameterShim("Result", node.type!, typeReferences))
             }
 
             let shim = new FunctionShim(name, path, jsModule[name], inputs, outputs);
@@ -154,7 +185,7 @@ export namespace DTSLoading {
         return shims;
     }
 
-    function convertTypeToParameterShim(name: string, node: ts.TypeNode) : ParameterShim {
+    function convertTypeToParameterShim(name: string, node: ts.TypeNode, typeReferences: Map<string, ParameterShim>) : ParameterShim {
         
         // 'base' types 
         switch (node.kind) {
@@ -166,13 +197,13 @@ export namespace DTSLoading {
 
         // list type 
         if (ts.isArrayTypeNode(node)) {
-            let subs = [convertTypeToParameterShim("item", node.elementType)]
+            let subs = [convertTypeToParameterShim("item", node.elementType, typeReferences)]
             return ParameterShim.new(name, Type.List, undefined, subs);
         } 
         
         // union type
         if (ts.isUnionTypeNode(node)) {
-            let subs = node.types.map((child, i) => convertTypeToParameterShim(`option ${i}`, child));
+            let subs = node.types.map((child, i) => convertTypeToParameterShim(`option ${i}`, child, typeReferences));
             return ParameterShim.new(name, Type.Union, undefined, subs);
         }
         
@@ -186,15 +217,27 @@ export namespace DTSLoading {
                 // @ts-ignore
                 let elementType: ts.TypeNode = element.type;
 
-                return convertTypeToParameterShim(elementName, elementType);
+                return convertTypeToParameterShim(elementName, elementType, typeReferences);
             });
             return ParameterShim.new(name, Type.Object, undefined, subs);
         }
 
-        // non-literal object type
+        // referenced object type
+        if (ts.isTypeReferenceNode(node)) {
 
+            // @ts-ignore
+            let typeName = node.typeName.escapedText;
 
-        console.warn("unregognised type: ", Help.getKind(node));
+            // look up if the reference matches previously defined types
+            if (typeReferences.has(typeName)) {
+                return ParameterShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
+            } else {
+                console.warn("could not find referenced type described by", typeName);
+                return ParameterShim.new(name, Type.any);
+            }
+        }
+
+        console.warn("type not implemented: ", Help.getKind(node));
         return ParameterShim.new(name, Type.any);
     }
 }

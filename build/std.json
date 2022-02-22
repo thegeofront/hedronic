@@ -23,6 +23,12 @@
             "nickname": "std",
             "filename": "std",
             "path": "./modules/"
+        },
+        {
+            "icon": "bi-cone-striped",
+            "nickname": "test",
+            "filename": "test",
+            "path": "./modules/"
         }
     ],
     "std_old": [],

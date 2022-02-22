@@ -320,10 +320,13 @@ export class NodesCanvas {
 
     async testGraph() {
         let js = `
-        function anonymous(a /* "widget": "button" | "state": "true" | "x": 2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": 2 | "y": 2 */
+        function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
         ) {
-            let [b] = bool.not(a) /* "x": 8 | "y": -1 */;
-            let [d] = bool.or(a, c) /* "x": 8 | "y": 2 */;
+            let [aFixed] = various.toBoolean(a) /* "x": 3 | "y": -1 */;
+            let [cFixed] = various.toBoolean(c) /* "x": 3 | "y": 2 */;
+
+            let [b] = bool.not(aFixed) /* "x": 8 | "y": -1 */;
+            let [d] = bool.or(aFixed, cFixed) /* "x": 8 | "y": 2 */;
             let [e] = bool.and(b, d) /* "x": 13 | "y": 0 */;
             return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
         }

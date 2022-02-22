@@ -62,11 +62,14 @@ export namespace ModuleLoading {
     export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string) {
         
         let jsModule = await JSLoading.loadModule(jsPath);
-        let sourceMap = await DTSLoading.load(dtsPath, {});
+        let syntaxTree = await DTSLoading.load(dtsPath, {});
 
-        console.log(sourceMap.fileName)
+        console.log(syntaxTree.fileName)
 
-        let shims = DTSLoading.extractFunctionShims(sourceMap, nickname, jsModule);
+        if (nickname == "test") {
+            let types = DTSLoading.extractTypeDeclarations(syntaxTree);
+        }
+        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, new Map());
 
         // DTSLoading.
 

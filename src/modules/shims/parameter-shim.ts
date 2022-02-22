@@ -6,6 +6,8 @@ import { State } from "../../nodes-canvas/model/state";
  * This is what the Flow would like to know about a certain variable
  * NOTE that this is NOT a StateShim
  * 
+ * NOTE: maybe a better name would be 'NamedType'
+ * 
  * Example: `new VariableShim("radius", Type.number, "🔘");`
  * Example: `new VariableShim("point", Type.Ojbect, [
  *      new VariableShim("x", Type.number),
@@ -50,6 +52,13 @@ export class ParameterShim {
         // Any is difficult, it could potentially lead to unsafe circumstances. 
         // however, if the 'other' is any, we can accept everything 
         if (other.type == Type.any) return true;
+
+        if (other.type == Type.Reference) {
+            return this.isAcceptableType(other.child![0]);
+        }
+        if (this.type == Type.Reference) {
+            return this.child![0].isAcceptableType(other);
+        }
 
         // deal with union types
         if (other.type == Type.Union) {
@@ -113,6 +122,8 @@ export class ParameterShim {
                 return `Object {${this.child!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
             case Type.Union:
                 return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
+            case Type.Reference:
+                return `Ref->${this.child![0].typeToString()}`;  
         }
     }
 
@@ -134,6 +145,8 @@ export class ParameterShim {
                 return `{}`;
             case Type.Union:
                 return `[ ${this.child!.map(c => c.render()).join(" | ")} ]`;
+            case Type.Reference:
+                return this.child![0].render();  
         } 
     }
 }
@@ -160,4 +173,5 @@ export enum Type {
     Tuple,
     Object,
     Union,
+    Reference,
 }
