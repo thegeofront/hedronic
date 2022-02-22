@@ -5,6 +5,7 @@ import { WasmLoading } from "./helpers/wasm-loading";
 import { DTSLoading } from "./helpers/dts-loading";
 import { JSLoading } from "./helpers/js-loading";
 import { createSolutionBuilder } from "typescript";
+import { TypeShim } from "./shims/parameter-shim";
 
 export namespace ModuleLoading {
     
@@ -59,17 +60,16 @@ export namespace ModuleLoading {
     /**
      * The loading procedure of one module
      */
-    export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string) {
+    export async function loadShimModule(jsPath: string, dtsPath: string, nickname: string, icon: string, types = new Map<string, TypeShim>()) {
         
         let jsModule = await JSLoading.loadModule(jsPath);
         let syntaxTree = await DTSLoading.load(dtsPath, {});
 
         console.log(syntaxTree.fileName)
 
-        if (nickname == "test") {
-            let types = DTSLoading.extractTypeDeclarations(syntaxTree);
-        }
-        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, new Map());
+        types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
+        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, types);
+         
 
         // DTSLoading.
 

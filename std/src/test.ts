@@ -4,7 +4,6 @@ export class Thingie {
         public x: number,
         public y: number,
     ) {}
-
 }
 
 /**

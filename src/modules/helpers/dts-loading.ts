@@ -40,6 +40,16 @@ namespace Help {
         //     console.log(child);
         // })
     }
+
+    export function getName(node: ts.Node) : string {
+        //@ts-ignore
+        return node.name.escapedText;
+    }
+
+    export function getTypeName(node: ts.TypeNode) : string {
+        //@ts-ignore
+        return node.typeName.escapedText;
+    }
 }
 
 export namespace DTSLoading {
@@ -109,28 +119,68 @@ export namespace DTSLoading {
     /**
      * Catch all declared types, and convert them to a type format we can use
      */
-    export function extractTypeDeclarations(source: ts.Node) {
-        
-        let namedTypes: TypeShim[] = [];
+    export function extractTypeDeclarations(source: ts.Node, types = new Map<string, TypeShim>()) {
 
         Help.forEachRecursiveNode(source, (node) => {
-
-            if (ts.isClassDeclaration(node)) {
-                Debug.info("FOUND A CLASS");
+            let type = tryExtractReferenceNode(node, types);
+            if (!type) return;
+            if (types.has(type.name)) {
+                console.warn("duplicate type declaration: ", type.name);
+                return;
             }
-
-            if (ts.isInterfaceDeclaration(node)) {
-                Debug.info("FOUND AN INTERFACE");
-            }
-
-            if (ts.isTypeAliasDeclaration(node)) {
-                Debug.info("FOUND A TYPE ALIAS");
-            }
+            types.set(type.name, type);
         });
 
-        return namedTypes;
+        return types;
     }
 
+    function tryExtractReferenceNode(node: ts.Node, types: Map<string, TypeShim>) {
+        
+        // Class
+        if (ts.isClassDeclaration(node)) {
+            Debug.info("FOUND A CLASS");
+            let name = Help.getName(node);
+            let subTypes: TypeShim[] = [];
+            for (let member of node.members) {
+                if (!ts.isPropertyDeclaration(member)) continue;
+                
+                let memberName = Help.getName(member);
+                
+                //@ts-ignore
+                let memberType: ts.TypeNode = member.type;
+                
+                subTypes.push(convertTypeToParameterShim(memberName, memberType, types))
+            }
+            return TypeShim.new(name, Type.Object, undefined, subTypes);
+        }
+
+        // Interface
+        // TODO : recursive reference!
+        if (ts.isInterfaceDeclaration(node)) {
+            Debug.info("FOUND AN INTERFACE");
+            let name = Help.getName(node);
+            let subTypes: TypeShim[] = [];
+            for (let member of node.members) {
+                let memberName = Help.getName(member);
+                //@ts-ignore
+                let memberType = member.type;
+
+                subTypes.push(convertTypeToParameterShim(memberName, memberType, types))
+            }
+            return TypeShim.new(name, Type.Object, undefined, subTypes);
+        }
+
+        // Alias
+        if (ts.isTypeAliasDeclaration(node)) {
+            let name = Help.getName(node);
+            let typeName = Help.getTypeName(node.type);
+            let subType = convertTypeToParameterShim(typeName, node.type, types);
+            return TypeShim.new(name, Type.Reference, undefined, [subType]);
+        }
+
+        // none
+        return undefined;
+    } 
 
     export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any, typeReferences: Map<string, TypeShim>) {
         
@@ -232,7 +282,7 @@ export namespace DTSLoading {
             if (typeReferences.has(typeName)) {
                 return TypeShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
             } else {
-                console.warn("could not find referenced type described by", typeName);
+                console.warn("could not find the reference type titled: ", typeName);
                 return TypeShim.new(name, Type.any);
             }
         }
