@@ -1,5 +1,6 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
 import { Catalogue } from "../../modules/catalogue";
+import { ParameterShim, Type } from "../../modules/shims/parameter-shim";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
@@ -303,6 +304,43 @@ export class NodesGraph {
         }
     }
 
+    ///////////////////////////////// Types ///////////////////////////////////
+
+    getParameterAt(socket: Socket) : ParameterShim | undefined {
+        
+        // check if node exists
+        let node = this.getNode(socket.hash);
+        if (!node) {
+            console.warn("node does not exist!");
+            return undefined;
+        }
+
+        // check for widget
+        let op = node.operation;
+        if (!op) {
+            return ParameterShim.new("widget-param", Type.any);
+        }
+
+        // deal with different sides
+        switch(socket.side) {
+            case SocketSide.Input: return op.ins[socket.normalIndex()];
+            case SocketSide.Output: return op.outs[socket.normalIndex()];
+            default: 
+                console.warn("Only SocketSide.Input and SocketSide.Output are valid")
+                return undefined;
+        }
+    }
+
+    /**
+     * Assume the order
+     */
+    isConnectionValid(from: Socket, to: Socket) {
+        let fromParam = this.getParameterAt(from)!;
+        let toParam = this.getParameterAt(to)!;
+
+        return fromParam?.isAcceptableType(toParam);
+    }
+
     /////// 
 
     hasInputConnectionAt(local: Socket) {
@@ -354,6 +392,35 @@ export class NodesGraph {
         this.addConnection(Socket.new(aHash,aIndex), Socket.new(bHash, bIndex));
     }
 
+    private addOrderedConnection(to: Socket, from: Socket) {
+        
+        if (!this.isConnectionValid(from, to)) {
+            console.warn("connection is NOT valid!");
+            return false;
+        }
+
+        // if the input socket already contains something, make sure its emptied correctly
+        let fromConnections = this.getOutputConnectionsAt(from); 
+        let toConnections = this.getInputConnectionAt(to);
+        
+        // this exact connection already exists, remove the connection instead
+        if (toConnections?.hash == from.hash && toConnections.idx == from.idx) {
+            console.log("exist already! removing...")
+            // this.removeConnection(foreign, local);
+            return false;
+        }
+
+        // if the input node is already, filled, remove whatever is there first
+        if (toConnections) {
+            console.log("WARNING- REMOVING SOME OTHER CONNECTION TO ALLOW THIS ONE!");
+            this.removeConnection(to, toConnections);
+        }
+
+        // finally, add the mutual connection 
+        this.setInputConnectionAt(to, from);
+        this.addOutputConnectionsAt(from, to);
+        return true;
+    }
 
     addConnection(local: Socket, foreign: Socket) : boolean {
 
@@ -362,31 +429,10 @@ export class NodesGraph {
             console.error("errorous connection!");
             return false;
         } else if (local.side != SocketSide.Input || foreign.side != SocketSide.Output) {
-            return this.addConnection(foreign, local);   
+            return this.addOrderedConnection(foreign, local);   
         }
 
-        // if the input socket already contains something, make sure its emptied correctly
-        let localConnection = this.getInputConnectionAt(local);
-        let foreignConnections = this.getOutputConnectionsAt(foreign); 
-        
-        // this exact connection already exists, remove the connection instead
-        if (localConnection?.hash == foreign.hash && localConnection.idx == foreign.idx) {
-            console.log("exist already! removing...")
-            // this.removeConnection(foreign, local);
-            return false;
-        }
-
-        // if the input node is already, filled, remove whatever is there first
-        if (localConnection) {
-            console.log("WARNING- REMOVING SOME OTHER CONNECTION TO ALLOW THIS ONE!");
-            this.removeConnection(local, localConnection);
-        }
-
-        // finally, add the mutual connection 
-        this.setInputConnectionAt(local, foreign);
-        this.addOutputConnectionsAt(foreign, local);
-
-        return true;
+        return this.addOrderedConnection(local, foreign);
     }
     
     removeConnection(local: Socket, foreign: Socket) {
@@ -451,6 +497,10 @@ export class NodesGraph {
         }
         
         return true;
+    }
+
+    isConnectionTypeSave() {
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////////

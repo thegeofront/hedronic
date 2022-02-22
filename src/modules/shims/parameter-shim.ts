@@ -45,13 +45,15 @@ export class ParameterShim {
      */
     isAcceptableType(other: ParameterShim) : boolean {
 
+        console.log("this", this.typeToString(), "other", other.typeToString())
+
         // Any is difficult, it could potentially lead to unsafe circumstances. 
         // however, if the 'other' is any, we can accept everything 
         if (other.type == Type.any) return true;
 
         // deal with union types
         if (other.type == Type.Union) {
-            if (other.child!) throw new Error("should have children!");
+            if (!other.child) throw new Error("should have children!");
             let others = other.child!;
             for (let oChild of others) {
                 if (this.isAcceptableType(oChild)) {
@@ -60,8 +62,18 @@ export class ParameterShim {
             }
             return false;
         }
+        if (this.type == Type.Union) {
+            if (!this.child) throw new Error("should have children!");
+            let children = this.child!;
+            for (let child of children) {
+                if (child.isAcceptableType(other)) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-
+        // after that, do not accept different base types anymore
         if (other.type != this.type) return false;
 
         // types with nested types will require additional checks
@@ -71,10 +83,10 @@ export class ParameterShim {
         if (other.type == Type.Tuple || other.type == Type.List || other.type == Type.Object) {   
             let childs = this.child!;
             let others = other.child!;
-            if (this.child! || other.child!) throw new Error("should have children!");
+            if (!childs || !others) throw new Error("should have children!");
             if (childs.length != others.length) throw new Error("should have same length!");
             for (let i = 0; i < this.child!.length; i++) {
-                if (!childs[i].isAcceptableType(others[i])) {
+                if (childs[i].name != others[i].name || !childs[i].isAcceptableType(others[i])) {
                     return false;
                 }
             }  
@@ -148,10 +160,4 @@ export enum Type {
     Tuple,
     Object,
     Union,
-}
-
-export enum SameTypeResult {
-    Same,
-    Different,
-    Unsure,
 }
