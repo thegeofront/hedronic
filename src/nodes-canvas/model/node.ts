@@ -5,7 +5,7 @@ import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../../modules/catalogue";
 import { FunctionShim } from "../../modules/shims/function-shim";
-import { ParameterShim } from "../../modules/shims/parameter-shim";
+import { TypeShim } from "../../modules/shims/parameter-shim";
 
 export const NODE_WIDTH = 4;
 
@@ -214,13 +214,13 @@ export class GeonNode {
         return undefined;
     }
 
-    forEachInputSocket(callback: (local: Socket, connection: Socket | undefined, shim?: ParameterShim) => void) {
+    forEachInputSocket(callback: (local: Socket, connection: Socket | undefined, shim?: TypeShim) => void) {
         for (let i = 0; i < this.process.inCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Input), this.inputs[i], this.operation?.ins[i])
         }
     }
 
-    forEachOutputSocket(callback: (local: Socket, connections: Socket[], shim?: ParameterShim) => void) {
+    forEachOutputSocket(callback: (local: Socket, connections: Socket[], shim?: TypeShim) => void) {
         for (let i = 0; i < this.process.outCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Output), this.outputs[i], this.operation?.outs[i])
         }

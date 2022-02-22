@@ -5,7 +5,7 @@ import { BillboardShader, Debug } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
-import { Type, ParameterShim } from "../shims/parameter-shim";
+import { Type, TypeShim } from "../shims/parameter-shim";
 
 namespace Help {
 
@@ -111,7 +111,7 @@ export namespace DTSLoading {
      */
     export function extractTypeDeclarations(source: ts.Node) {
         
-        let namedTypes: ParameterShim[] = [];
+        let namedTypes: TypeShim[] = [];
 
         Help.forEachRecursiveNode(source, (node) => {
 
@@ -132,7 +132,7 @@ export namespace DTSLoading {
     }
 
 
-    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any, typeReferences: Map<string, ParameterShim>) {
+    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any, typeReferences: Map<string, TypeShim>) {
         
         let shims: FunctionShim[] = [];
 
@@ -168,7 +168,7 @@ export namespace DTSLoading {
                 return convertTypeToParameterShim(inputName, typeNode, typeReferences);
             });
             
-            let outputs: ParameterShim[] = []; 
+            let outputs: TypeShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
@@ -185,26 +185,26 @@ export namespace DTSLoading {
         return shims;
     }
 
-    function convertTypeToParameterShim(name: string, node: ts.TypeNode, typeReferences: Map<string, ParameterShim>) : ParameterShim {
+    function convertTypeToParameterShim(name: string, node: ts.TypeNode, typeReferences: Map<string, TypeShim>) : TypeShim {
         
         // 'base' types 
         switch (node.kind) {
-            case ts.SyntaxKind.AnyKeyword: return ParameterShim.new(name, Type.any);
-            case ts.SyntaxKind.BooleanKeyword: return ParameterShim.new(name, Type.boolean);
-            case ts.SyntaxKind.NumberKeyword: return ParameterShim.new(name, Type.number);
-            case ts.SyntaxKind.StringKeyword: return ParameterShim.new(name, Type.string);
+            case ts.SyntaxKind.AnyKeyword: return TypeShim.new(name, Type.any);
+            case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, Type.boolean);
+            case ts.SyntaxKind.NumberKeyword: return TypeShim.new(name, Type.number);
+            case ts.SyntaxKind.StringKeyword: return TypeShim.new(name, Type.string);
         } 
 
         // list type 
         if (ts.isArrayTypeNode(node)) {
             let subs = [convertTypeToParameterShim("item", node.elementType, typeReferences)]
-            return ParameterShim.new(name, Type.List, undefined, subs);
+            return TypeShim.new(name, Type.List, undefined, subs);
         } 
         
         // union type
         if (ts.isUnionTypeNode(node)) {
             let subs = node.types.map((child, i) => convertTypeToParameterShim(`option ${i}`, child, typeReferences));
-            return ParameterShim.new(name, Type.Union, undefined, subs);
+            return TypeShim.new(name, Type.Union, undefined, subs);
         }
         
         // literal object type 
@@ -219,7 +219,7 @@ export namespace DTSLoading {
 
                 return convertTypeToParameterShim(elementName, elementType, typeReferences);
             });
-            return ParameterShim.new(name, Type.Object, undefined, subs);
+            return TypeShim.new(name, Type.Object, undefined, subs);
         }
 
         // referenced object type
@@ -230,14 +230,14 @@ export namespace DTSLoading {
 
             // look up if the reference matches previously defined types
             if (typeReferences.has(typeName)) {
-                return ParameterShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
+                return TypeShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
             } else {
                 console.warn("could not find referenced type described by", typeName);
-                return ParameterShim.new(name, Type.any);
+                return TypeShim.new(name, Type.any);
             }
         }
 
         console.warn("type not implemented: ", Help.getKind(node));
-        return ParameterShim.new(name, Type.any);
+        return TypeShim.new(name, Type.any);
     }
 }

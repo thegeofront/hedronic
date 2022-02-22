@@ -15,15 +15,15 @@ import { State } from "../../nodes-canvas/model/state";
  *      new VariableShim("z", Type.number)
  * ]);`
  */
-export class ParameterShim {
+export class TypeShim {
     private constructor(
         public readonly name:  string,  // what to show up as name 
         public readonly type: Type, // the actual type  
         public readonly glyph?: string,  // how to visualize the type or variable briefly
-        public readonly child?: ParameterShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
+        public readonly child?: TypeShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
-    static new(name: string, type: Type, glyph?: string, child?: ParameterShim[]) {
+    static new(name: string, type: Type, glyph?: string, child?: TypeShim[]) {
 
         // make sure children are sorted
         if (child) {
@@ -39,13 +39,13 @@ export class ParameterShim {
             })
         }
 
-        return new ParameterShim(name, type, glyph, child);
+        return new TypeShim(name, type, glyph, child);
     }
 
     /**
      * answers the question, can a state of `this` be put into `other` without problems?
      */
-    isAcceptableType(other: ParameterShim) : boolean {
+    isAcceptableType(other: TypeShim) : boolean {
 
         console.log("this", this.typeToString(), "other", other.typeToString())
 

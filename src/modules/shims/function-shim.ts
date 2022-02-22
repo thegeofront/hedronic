@@ -9,7 +9,7 @@
 
 import { State } from "../../nodes-canvas/model/state";
 import { FN, JSLoading } from "../helpers/js-loading";
-import { Type, ParameterShim } from "./parameter-shim";
+import { Type, TypeShim } from "./parameter-shim";
 
 /**
  * Offers a blueprint for creating a new node
@@ -26,8 +26,8 @@ export class FunctionShim {
         public readonly name: string,
         public readonly path: string[],
         public readonly func: Function,
-        public readonly ins: ParameterShim[],
-        public readonly outs: ParameterShim[]
+        public readonly ins: TypeShim[],
+        public readonly outs: TypeShim[]
         ) {
         this.nameLower = name.toLowerCase();
     }
@@ -46,10 +46,10 @@ export class FunctionShim {
         let outCount = JSLoading.countOutputsFromRawFunction(func);
 
         // with raw js, there is no way of ensuring type savety
-        let ins: ParameterShim[] = [];
-        for (let i = 0 ; i < inCount; i++) ins.push(ParameterShim.new(`in${i}`, Type.any))
-        let outs: ParameterShim[] = [];
-        for (let i = 0 ; i < outCount; i++) outs.push(ParameterShim.new(`out${i}`, Type.any))
+        let ins: TypeShim[] = [];
+        for (let i = 0 ; i < inCount; i++) ins.push(TypeShim.new(`in${i}`, Type.any))
+        let outs: TypeShim[] = [];
+        for (let i = 0 ; i < outCount; i++) outs.push(TypeShim.new(`out${i}`, Type.any))
 
         return new FunctionShim(name, [namespace, name], func, ins, outs);
     }

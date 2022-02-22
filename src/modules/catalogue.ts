@@ -7,7 +7,7 @@ import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
 import { InputWidget } from "../nodes-canvas/widgets/input-widget";
 import { ModuleShim } from "./shims/module-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
-import { ParameterShim } from "./shims/parameter-shim";
+import { TypeShim } from "./shims/parameter-shim";
 import { FunctionShim } from "./shims/function-shim";
 
 // TODO rename CORE to TYPE
@@ -33,7 +33,7 @@ export class Catalogue {
 
     constructor(
         public modules: Map<string, ModuleShim>,
-        public types: Map<string, ParameterShim>) {}
+        public types: Map<string, TypeShim>) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map(), new Map());

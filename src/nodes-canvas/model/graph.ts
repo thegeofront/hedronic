@@ -1,6 +1,6 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
 import { Catalogue } from "../../modules/catalogue";
-import { ParameterShim, Type } from "../../modules/shims/parameter-shim";
+import { TypeShim, Type } from "../../modules/shims/parameter-shim";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";
@@ -306,7 +306,7 @@ export class NodesGraph {
 
     ///////////////////////////////// Types ///////////////////////////////////
 
-    getParameterAt(socket: Socket) : ParameterShim | undefined {
+    getParameterAt(socket: Socket) : TypeShim | undefined {
         
         // check if node exists
         let node = this.getNode(socket.hash);
@@ -318,7 +318,7 @@ export class NodesGraph {
         // check for widget
         let op = node.operation;
         if (!op) {
-            return ParameterShim.new("widget-param", Type.any);
+            return TypeShim.new("widget-param", Type.any);
         }
 
         // deal with different sides
