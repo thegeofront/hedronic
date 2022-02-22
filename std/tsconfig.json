@@ -3,7 +3,7 @@
       "sourceMap": false,
       "declaration": true,
       "target": "esNext",
-      "outDir": "../build/geon-header-modules/"
+      "outDir": "../build/modules"
     },
     "include": [
       "src/**/*"
