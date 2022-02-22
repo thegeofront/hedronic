@@ -22,10 +22,14 @@ export function getThing(value: number) {
     return a;
 }
 
-// export function getThingie(x: number) : Kaas {
-//     return new Thingie(x, 2);
-// }
+export function getThingie(x: number) : Kaas {
+    return {name: "henk", value: x};
+}
 
-// export function anotherThingie(x: number) : Thingie {
-//     return new Thingie(x, 3);
-// }
+export function anotherThingie(x: number) : Thingie {
+    return new Thingie(x, 3);
+}
+
+export function addThingies(a: Thingie, b: Thingie) : Thingie {
+    return new Thingie(a.x + b.x, a.y + b.y);
+}
