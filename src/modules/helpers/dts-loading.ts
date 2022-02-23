@@ -92,7 +92,7 @@ namespace Help {
 
     export function getNameAndType(node: ts.TypeLiteralNode) {
         
-        console.log(node)
+        // console.log(node)
         // ts.forEachChild(node, (child) => {
         //     console.log(child);
         // })
@@ -141,7 +141,7 @@ export namespace DTSLoading {
         Help.forEachRecursiveNode(source, (node) => {
             if (ts.isTypeNode(node)) {
                 // debug
-                console.log(Help.getKind(node));
+                // console.log(Help.getKind(node));
 
                 // here we are !                
             }
@@ -214,7 +214,7 @@ export namespace DTSLoading {
 
         // Class
         if (ts.isClassDeclaration(node)) {
-            Debug.info("FOUND A CLASS");
+            // Debug.info("FOUND A CLASS");
             let subTypes: TypeShim[] = [];
             for (let member of node.members) {
                 if (!ts.isPropertyDeclaration(member)) continue;
@@ -232,7 +232,7 @@ export namespace DTSLoading {
         // Interface
         // TODO : recursive reference!
         if (ts.isInterfaceDeclaration(node)) {
-            Debug.info("FOUND AN INTERFACE");
+            // Debug.info("FOUND AN INTERFACE");
             let subTypes: TypeShim[] = [];
             for (let member of node.members) {
                 let memberName = Help.getName(member);
@@ -277,17 +277,27 @@ export namespace DTSLoading {
             // TODO implement constructors once typeReferences are done 
             if (node.kind == ts.SyntaxKind.Constructor) return false;
 
-            // Do something slightly different for methods
-            if (node.kind == ts.SyntaxKind.MethodDeclaration) {
-                console.log("found a method!");
-                let isStatic = Help.isStatic(node);
-                if (!isStatic) 
+            // Do something slightly different for non-static methods
+            let isNonStaticMethod = false;
+            let methodInput: TypeShim | undefined;
+            if (node.kind == ts.SyntaxKind.MethodDeclaration && !Help.isStatic(node)) {
+                
+                // convert the method to a static method
+                console.log("FOUND A NORMAL METHOD!");
                 console.log(node);
                 console.log(callStack);
-                // console.log(parent, parent ? Help.getKind(parent) : undefined);
-                // return true;
-            } 
+                isNonStaticMethod = true;
 
+                // add the 'this' object as the first input.
+                let thisObjectType = callStack[callStack.length-1]; 
+                let myType = typeReferences.get(thisObjectType);
+                if (!myType) {
+                    console.error("this would be weird");
+                    return false;
+                }
+                methodInput = TypeShim.new(thisObjectType, Type.Reference, undefined, [myType]); 
+            } 
+            
             // extract inputs
             let inputs = node.parameters.map((input) => {
                 let inputName = "";
@@ -304,7 +314,8 @@ export namespace DTSLoading {
                 } 
                 return convertTypeToParameterShim(inputName, typeNode, typeReferences);
             });
-            
+            if (methodInput) inputs = [methodInput, ...inputs];
+
             // extract outputs
             let outputs: TypeShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
@@ -319,15 +330,27 @@ export namespace DTSLoading {
             // extract function using the name and callstack
             // NOTE: I dont think this is bulletproof, but it 'll work for now
             let js = jsModule;
-            console.log(js);
-            for (let call of callStack) {
+            for (let call of [...callStack]) {
                 js = js[call]
             } 
             let theFunction = js[name];
+            if (isNonStaticMethod) {
+                console.log("dealing with non-static boy")
+                // console.log(js);
+                // console.log(js['prototype'][name]);
+                // console.log(js['prototype'][name])
+                theFunction = js['prototype'][name];
+                // let wrapper = function(...args: any[]) { 
+                //     return this.call(args[0], args.slice(1)) 
+                // }
+            }
+            // if (callStackAdditions.length != 0) {
+            //     theFunction = js[name]
+            // }
 
             // add the actual functionShim
             let path = [moduleName, ...callStack, name];
-            let shim = new FunctionShim(name, path, theFunction, inputs, outputs);
+            let shim = new FunctionShim(name, path, theFunction, inputs, outputs, isNonStaticMethod);
             shims.push(shim);
             return true;
         })

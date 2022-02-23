@@ -27,9 +27,16 @@ export class FunctionShim {
         public readonly path: string[],
         public readonly func: Function,
         public readonly ins: TypeShim[],
-        public readonly outs: TypeShim[]
+        public readonly outs: TypeShim[],
+        public readonly isMethod = false,
         ) {
         this.nameLower = name.toLowerCase();
+        
+        // if (this.isMethod) {
+        //     this.run = (...inputs: any) => this.func.call(inputs[0], ...inputs.slice(1));
+        // } else {
+        //     this.run = (...inputs: any) => this.func(...inputs);
+        // }
     }
 
     get inCount() {
@@ -55,7 +62,9 @@ export class FunctionShim {
     }
 
     run(inputs: any[]) {
-        // console.log()
+        if (this.isMethod) {
+            return this.func.call(inputs[0], ...inputs.slice(1));
+        }
         return this.func(...inputs);
     }
 

@@ -1,3 +1,8 @@
+export async function fetchJson(path: string) {
+    return await fetch(path);
+}
+
+
 export function toNumber(n: any) : number {
     return Number(n);
 }

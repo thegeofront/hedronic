@@ -231,8 +231,6 @@ async function init(input) {
         input = fetch(input);
     }
 
-    console.log("something!!");
-
     const { instance, module } = await load(await input, imports);
 
     wasm = instance.exports;

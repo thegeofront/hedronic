@@ -91,7 +91,7 @@ export class NodesCanvas {
         // publish catalogue and ui 
         this.ui();
         this.menu.updateCategories(this);
-        // this.testGraph();
+        this.testGraph();
     }
 
     

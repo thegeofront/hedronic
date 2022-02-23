@@ -27,8 +27,6 @@ export namespace ModuleLoading {
             const nickname = config.nickname;
             const jsPath = config.path + config.filename + ".js";
             const dtsPath = config.path + config.filename + ".d.ts";
-
-            console.log(jsPath);
             
             const {js, syntaxTree} = await loadModule(jsPath, dtsPath);
             const module = await loadShimModule(js, jsPath, syntaxTree, nickname, icon);
