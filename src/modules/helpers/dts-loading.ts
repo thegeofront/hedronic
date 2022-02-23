@@ -9,14 +9,71 @@ import { Type, TypeShim } from "../shims/parameter-shim";
 
 namespace Help {
 
-    export function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => void) {
+    export function isStatic(node: ts.Node) {
+        if (!node.modifiers) return false;
+        for (let mod of node.modifiers) {
+            if (mod.kind == ts.SyntaxKind.StaticKeyword) return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * if callback returns true, continue recursing
+     */
+    export function forEachRecursiveNode(root: ts.Node, callback: (node: ts.Node) => boolean) {
         
         let level = 0;
         let recurse = (child: ts.Node) => {
-            callback(child)
-            ts.forEachChild(child, recurse);
+            if (callback(child)) {
+                ts.forEachChild(child, recurse);
+            }
         };
+        ts.forEachChild(root, recurse);
+    }
 
+    export function forEachRecursiveNodeWithCallstack(root: ts.Node, callback: (node: ts.Node, callstack: string[]) => boolean) {
+        
+        let level = 0;
+        let callstack: string[] = [];
+
+        let getCallStackAddition = (node: ts.Node) => {
+
+            if (ts.isClassDeclaration(node)) {
+                return Help.getName(node);
+            }
+            
+            if (ts.isNamespaceExportDeclaration(node)) {
+                return Help.getName(node);
+            }
+
+            return undefined;
+        }
+
+        let recurse = (child: ts.Node) => {
+
+            if (callback(child, callstack)) {
+                let add = getCallStackAddition(child);
+                if (add) callstack.push(add);
+                ts.forEachChild(child, recurse);
+                if (add) callstack.pop();
+            }
+
+        };
+        ts.forEachChild(root, recurse);
+    }
+    export function forEachRecursiveNodeAndParent(root: ts.Node, callback: (node: ts.Node, parent?: ts.Node) => boolean) {
+        
+        let parent: ts.Node | undefined = undefined;
+        let recurse = (child: ts.Node) => {
+            let doRecurse = callback(child, parent) 
+            let OGparent = parent;
+            if (doRecurse) {
+                parent = child;
+                ts.forEachChild(child, recurse);
+            }
+            parent = OGparent;
+        };
         ts.forEachChild(root, recurse);
     }
 
@@ -42,8 +99,13 @@ namespace Help {
     }
 
     export function getName(node: ts.Node) : string {
-        //@ts-ignore
-        return node.name.escapedText;
+        try {
+            //@ts-ignore
+            return node.name.escapedText;
+        } catch {
+            // console.warn("Cannot get name of ", node);
+            return ""
+        }        
     }
 
     export function getTypeName(node: ts.TypeNode) : string {
@@ -83,7 +145,7 @@ export namespace DTSLoading {
 
                 // here we are !                
             }
-
+            return true;
         });
     }
 
@@ -124,27 +186,35 @@ export namespace DTSLoading {
     /**
      * Catch all declared types, and convert them to a type format we can use
      */
-    export function extractTypeDeclarations(source: ts.Node, types = new Map<string, TypeShim>()) {
+    export function extractTypeDeclarations(source: ts.Node, types = new Map<string, TypeShim>(), blackList?: Set<string>) {
 
         Help.forEachRecursiveNode(source, (node) => {
-            let type = tryExtractReferenceNode(node, types);
-            if (!type) return;
+            let type = tryExtractReferenceNode(node, types, blackList);
+            if (!type) return false;
             if (types.has(type.name)) {
                 console.warn("duplicate type declaration: ", type.name);
-                return;
+                return false;
             }
             types.set(type.name, type);
+            return true;
         });
 
         return types;
     }
 
-    function tryExtractReferenceNode(node: ts.Node, types: Map<string, TypeShim>) {
+    function tryExtractReferenceNode(node: ts.Node, types: Map<string, TypeShim>, blacklist?: Set<string>) {
         
+        // Name
+        let name = Help.getName(node);
+        if (name == "") return undefined; // we require things with names
+        if (blacklist && blacklist.has(name)) {
+            // console.log("blacklisted!");
+            return undefined;  
+        } 
+
         // Class
         if (ts.isClassDeclaration(node)) {
             Debug.info("FOUND A CLASS");
-            let name = Help.getName(node);
             let subTypes: TypeShim[] = [];
             for (let member of node.members) {
                 if (!ts.isPropertyDeclaration(member)) continue;
@@ -163,7 +233,6 @@ export namespace DTSLoading {
         // TODO : recursive reference!
         if (ts.isInterfaceDeclaration(node)) {
             Debug.info("FOUND AN INTERFACE");
-            let name = Help.getName(node);
             let subTypes: TypeShim[] = [];
             for (let member of node.members) {
                 let memberName = Help.getName(member);
@@ -177,7 +246,6 @@ export namespace DTSLoading {
 
         // Alias
         if (ts.isTypeAliasDeclaration(node)) {
-            let name = Help.getName(node);
             let typeName = Help.getTypeName(node.type);
             let subType = convertTypeToParameterShim(typeName, node.type, types);
             return TypeShim.new(name, Type.Reference, undefined, [subType]);
@@ -187,26 +255,40 @@ export namespace DTSLoading {
         return undefined;
     } 
 
-    export function extractFunctionShims(source: ts.Node, moduleName: string, jsModule: any, typeReferences: Map<string, TypeShim>) {
+    export function extractFunctionShims(
+        source: ts.Node, 
+        moduleName: string, 
+        jsModule: any, 
+        typeReferences: Map<string, TypeShim>,
+        blackList?: Set<string>
+        ) {
         
         let shims: FunctionShim[] = [];
 
-        Help.forEachRecursiveNode(source, (node) => {
-            if (!ts.isFunctionLike(node)) return;
+        Help.forEachRecursiveNodeWithCallstack(source, (node, callStack) => {
 
+            if (!ts.isFunctionLike(node)) return true;
+
+            // Extract a name, but cancel if the name is invalid or blacklisted
+            let name = Help.getName(node);
+            if (name == "") return true;
+            if (blackList && blackList.has(name)) return false;
+            
             // TODO implement constructors once typeReferences are done 
-            if (node.kind == ts.SyntaxKind.Constructor) return;
+            if (node.kind == ts.SyntaxKind.Constructor) return false;
 
-            // TODO implement methods once typeReferences are done
-            if (node.kind == ts.SyntaxKind.MethodDeclaration) return; 
-            
-            if (!node.name) return;
+            // Do something slightly different for methods
+            if (node.kind == ts.SyntaxKind.MethodDeclaration) {
+                console.log("found a method!");
+                let isStatic = Help.isStatic(node);
+                if (!isStatic) 
+                console.log(node);
+                console.log(callStack);
+                // console.log(parent, parent ? Help.getKind(parent) : undefined);
+                // return true;
+            } 
 
-            // get name and invoke
-            //@ts-ignore
-            let name = node.name.escapedText;
-            let path = [moduleName, name];
-            
+            // extract inputs
             let inputs = node.parameters.map((input) => {
                 let inputName = "";
                 let typeNode: ts.TypeNode | undefined;
@@ -223,6 +305,7 @@ export namespace DTSLoading {
                 return convertTypeToParameterShim(inputName, typeNode, typeReferences);
             });
             
+            // extract outputs
             let outputs: TypeShim[] = []; 
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
@@ -233,8 +316,20 @@ export namespace DTSLoading {
                 outputs.push(convertTypeToParameterShim("Result", node.type!, typeReferences))
             }
 
-            let shim = new FunctionShim(name, path, jsModule[name], inputs, outputs);
+            // extract function using the name and callstack
+            // NOTE: I dont think this is bulletproof, but it 'll work for now
+            let js = jsModule;
+            console.log(js);
+            for (let call of callStack) {
+                js = js[call]
+            } 
+            let theFunction = js[name];
+
+            // add the actual functionShim
+            let path = [moduleName, ...callStack, name];
+            let shim = new FunctionShim(name, path, theFunction, inputs, outputs);
             shims.push(shim);
+            return true;
         })
 
         return shims;

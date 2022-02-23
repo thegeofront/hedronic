@@ -14,3 +14,14 @@ export function mapmap<K, V, T>(map: Map<K, V>, mapper: (k: K, v: V) => T) {
     }
     return mapped;
 }
+
+export namespace Misc {
+
+    export function setFromList<T>(list: Array<T>) {
+        let set = new Set<T>();
+        for (let item of list) {
+            set.add(item);
+        }
+        return set;
+    }
+}

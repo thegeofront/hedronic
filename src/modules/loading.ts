@@ -6,6 +6,7 @@ import { DTSLoading } from "./helpers/dts-loading";
 import { JSLoading } from "./helpers/js-loading";
 import ts from "typescript";
 import { TypeShim } from "./shims/parameter-shim";
+import { Misc } from "../nodes-canvas/util/misc";
 
 export namespace ModuleLoading {
     
@@ -36,23 +37,41 @@ export namespace ModuleLoading {
 
         // load wasm modules 
         for (let config of json.wasm) {
-
-            const icon = config.icon;
-            const nickname = config.nickname;
-
-            const jsPath = config.localPath + config.filename + ".js";
-            const dtsPath = config.localPath + config.filename + ".d.ts";
-            const wasmPath = config.localPath + config.filename + "_bg.wasm";
-
-            const {js, syntaxTree} = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath);
-            let types = new Map<string, TypeShim>()
-            types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
-            console.log(types);
-            // const module = await loadShimModule(js, jsPath, syntaxTree, nickname, icon);
-            // catalogue.addLibrary(module);
+            let module = await loadWasmModule(config);
+            if (module) {
+                catalogue.addLibrary(module);
+            }
         }
 
         return catalogue
+    }
+
+
+    export async function loadWasmModule(config: any) {
+
+        const icon = config.icon;
+        const nickname = config.nickname;
+
+        const jsPath = config.localPath + config.filename + ".js";
+        const dtsPath = config.localPath + config.filename + ".d.ts";
+        const wasmPath = config.localPath + config.filename + "_bg.wasm";
+        
+        const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
+        const funcBlacklist = Misc.setFromList(["init", "free"]);
+
+        const {js, syntaxTree} = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath);
+        
+        let types = new Map<string, TypeShim>();
+        
+        types = DTSLoading.extractTypeDeclarations(syntaxTree, types, typeBlacklist);
+        console.log(types);
+        
+        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, js, types, funcBlacklist);
+        const module = ModuleShim.new(nickname, icon, jsPath, js, shims, []);
+
+        console.log(shims);
+
+        return module;
     }
 
 
@@ -66,7 +85,14 @@ export namespace ModuleLoading {
     /**
      * The loading procedure of one module
      */
-    export async function loadShimModule(jsModule: any, jsPath: string, syntaxTree: ts.SourceFile, nickname: string, icon: string, types = new Map<string, TypeShim>()) {
+    export async function loadShimModule(
+        jsModule: any, 
+        jsPath: string, 
+        syntaxTree: ts.SourceFile, 
+        nickname: string, 
+        icon: string, 
+        types= new Map<string, TypeShim>(), 
+        ) {
         
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
         let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, types);

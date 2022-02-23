@@ -17,14 +17,7 @@ export namespace WasmLoading {
         // init the module
         let syntaxTree = await DTSLoading.load(dtsPath, {});
         let js = await module.default(wasmModule);
-
-        // console.log(module["CityJsonValidator"]["new_from_string"](""));
-
-        // console.log({sourceMap, module: lowLevelModule, res: module})
-        
-
-
-        return {js, syntaxTree};
+        return {js: module, syntaxTree};
 
         //@ts-ignore
         // window.js = js;
