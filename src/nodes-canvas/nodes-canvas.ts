@@ -158,11 +158,11 @@ export class NodesCanvas {
         });
     }
 
-    onChange() {
+    async onChange() {
         if (this.graph.areConnectionsCorrect()) {
             console.log("correct!");
         }
-        let [cache, visuals] = this.graph.calculate();
+        let [cache, visuals] = await this.graph.calculate();
         this.cableVisuals = visuals;
         this.requestRedraw();
     }

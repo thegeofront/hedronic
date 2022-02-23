@@ -96,7 +96,7 @@ export class NodesGraph {
      * - store results in output widgets
      * TODO: build something that can recalculate parts of the graph
      */
-    calculate() : [Map<string, State>, Map<string, CableVisualState>] {
+    async calculate() : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
 
         let cache = new Map<string, State>();
         let visuals = new Map<string, CableVisualState>();
@@ -132,7 +132,7 @@ export class NodesGraph {
                 let outputs;
                 try {
                     //TODO RUN RUN RUN
-                    outputs = node.operation.run(inputs);
+                    outputs = await node.operation.run(inputs);
                 } catch(e) {
                     let error = e as Error;
                     node.errorState = error.message;

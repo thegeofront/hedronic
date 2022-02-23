@@ -61,11 +61,11 @@ export class FunctionShim {
         return new FunctionShim(name, [namespace, name], func, ins, outs);
     }
 
-    run(inputs: any[]) {
+    async run(inputs: any[]) {
         if (this.isMethod) {
-            return this.func.call(inputs[0], ...inputs.slice(1));
+            return await this.func.call(inputs[0], ...inputs.slice(1));
         }
-        return this.func(...inputs);
+        return await this.func(...inputs);
     }
 
     log() {

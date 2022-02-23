@@ -1,10 +1,12 @@
 export async function fetchJson(path: string) {
     let data = await fetch(path);
-    let json = await data.json();
-    console.log(json);
-    return json
+    return await data.json();
 }
 
+export async function fetchText(path: string) {
+    let data = await fetch(path);
+    return await data.text();
+}
 
 export function toNumber(n: any) : number {
     return Number(n);
