@@ -1,5 +1,8 @@
 export async function fetchJson(path: string) {
-    return await fetch(path);
+    let data = await fetch(path);
+    let json = await data.json();
+    console.log(json);
+    return json
 }
 
 
