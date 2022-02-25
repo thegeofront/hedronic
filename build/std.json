@@ -37,7 +37,14 @@
             "icon": "bi-house",
             "nickname": "cityjson",
             "filename": "cityjson_validator",
-            "localPath": "wasm-modules/",
+            "localPath": "wasm-modules/cjval/",
+            "url": "josfeenstra.nl/project/nodes/wasm-modules/cjval/"
+        },
+        {
+            "icon": "bi-wasm",
+            "nickname": "hello",
+            "filename": "wasm_nodes",
+            "localPath": "wasm-modules/hello-wasm/",
             "url": "josfeenstra.nl/project/nodes/wasm-modules/"
         }
     ]
