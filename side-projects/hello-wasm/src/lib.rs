@@ -29,3 +29,9 @@ pub fn add(a: f32, b: f32) -> f32 {
 pub fn subtract(a: f32, b: f32) -> f32 {
     return a - b;
 }
+
+#[wasm_bindgen]
+pub fn get_list(a: f32, length: usize) -> Vec<f32> {
+    let arr = vec![a; length];
+    return arr;
+}

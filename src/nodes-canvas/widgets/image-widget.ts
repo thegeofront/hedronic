@@ -15,8 +15,8 @@ export class ImageWidget extends Widget {
     }
 
     onClick(canvas: NodesCanvas) {
-        this.state = !this.state;
-        canvas.deselect();
-        canvas.onChange();
+        // this.state = !this.state;
+        // canvas.deselect();
+        // canvas.onChange();
     }
 }

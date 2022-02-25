@@ -22,3 +22,15 @@ function anonymous(a, d, i ,j) {
     let [m] = GEON.XOR(l, f) 
     return [h, m];
 }
+
+
+
+
+
+
+let thingie = undefined;
+
+
+if (thingie == undefined) {
+    
+}
