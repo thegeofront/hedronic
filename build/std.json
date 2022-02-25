@@ -26,10 +26,11 @@
         },
         {
             "icon": "bi-cone-striped",
-            "nickname": "test",
-            "filename": "test",
-            "path": "./modules/"
+            "nickname": "random",
+            "filename": "Random",
+            "path": "https://unpkg.com/geon-engine@0.6.1/dist/math/"
         }
+        
     ],
     "std_old": [],
     "wasm": [
@@ -41,7 +42,7 @@
             "url": "josfeenstra.nl/project/nodes/wasm-modules/cjval/"
         },
         {
-            "icon": "bi-wasm",
+            "icon": "bi-puzzle-fill",
             "nickname": "hello",
             "filename": "wasm_nodes",
             "localPath": "wasm-modules/hello-wasm/",

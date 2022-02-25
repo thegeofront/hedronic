@@ -1,0 +1,7 @@
+        {
+            "icon": "bi-house",
+            "nickname": "cityjson",
+            "filename": "cityjson_validator",
+            "localPath": "wasm-modules/cjval/",
+            "url": "josfeenstra.nl/project/nodes/wasm-modules/cjval/"
+        },

@@ -28,7 +28,7 @@ export namespace ModuleLoading {
             const jsPath = config.path + config.filename + ".js";
             const dtsPath = config.path + config.filename + ".d.ts";
             
-            const {js, syntaxTree} = await loadModule(jsPath, dtsPath);
+            const {js, syntaxTree} = await loadModule(jsPath, dtsPath, config.filename);
             const module = await loadShimModule(js, jsPath, syntaxTree, nickname, icon);
             catalogue.addLibrary(module);
         }
@@ -73,9 +73,10 @@ export namespace ModuleLoading {
     }
 
 
-    export async function loadModule(jsPath: string, dtsPath: string) {
+    export async function loadModule(jsPath: string, dtsPath: string, dtsName: string) {
+        console.log("loading", jsPath, "and", dtsPath)
         let js = await JSLoading.loadModule(jsPath);
-        let syntaxTree = await DTSLoading.load(dtsPath, {});
+        let syntaxTree = await DTSLoading.load(dtsPath, dtsName, {});
 
         return {js, syntaxTree};
     }

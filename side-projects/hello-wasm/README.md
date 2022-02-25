@@ -4,5 +4,5 @@ build with
 ```
 wasm-pack build --dev
 wasm-pack build --out-dir build
-wasm-pack build --out-dir ../../build/wasm-modules/hello-wasm/
+wasm-pack build --out-dir ../../build/wasm-modules/hello-wasm/ --target web
 ```

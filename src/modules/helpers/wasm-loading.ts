@@ -15,7 +15,7 @@ export namespace WasmLoading {
         let module = await import(/* webpackIgnore: true */url);
         
         // init the module
-        let syntaxTree = await DTSLoading.load(dtsPath, {});
+        let syntaxTree = await DTSLoading.load(dtsPath, dtsPath, {});
         let js = await module.default(wasmModule);
         return {js: module, syntaxTree};
 

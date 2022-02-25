@@ -1,7 +1,7 @@
 
 
 import * as ts from "typescript";
-import { BillboardShader, Debug } from "../../../../engine/src/lib";
+import { BillboardShader, Debug, WebIO } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
@@ -121,11 +121,10 @@ namespace Help {
 
 export namespace DTSLoading {
 
-    export async function load(codePath: string, options: any) {
+    export async function load(codePath: string, name: string, options: any) {
             
-        let code = await IO.fetchText(codePath);
-        let source = ts.createSourceFile(codePath,code, ts.ScriptTarget.Latest);
-
+        let code = await WebIO.getText(codePath);
+        let source = ts.createSourceFile(codePath, code, ts.ScriptTarget.Latest);
         // let checker = program.getTypeChecker();
         // let sourceNode = program.getSourceFiles()[1];
 
@@ -361,6 +360,12 @@ export namespace DTSLoading {
     function convertTypeToParameterShim(name: string, node: ts.TypeNode, typeReferences: Map<string, TypeShim>) : TypeShim {
         
         // 'base' types 
+        if (!node) {
+            console.warn("node does not appear to exist...");
+            console.warn(node)
+            return TypeShim.new(name, Type.any);
+        }
+
         switch (node.kind) {
             case ts.SyntaxKind.AnyKeyword: return TypeShim.new(name, Type.any);
             case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, Type.boolean);
