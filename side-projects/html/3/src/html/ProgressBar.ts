@@ -16,37 +16,54 @@ class ProgressBar extends HTMLElement {
             transition: width 0.25s;
         }
     `;
+
     static get observedAttributes() {
         return ["percent"];
     }
+
     constructor() {
         super();
+    
         this.attachShadow({ mode: "open" });
+    
         const style = document.createElement("style");
         const fill = document.createElement("div");
+    
         style.innerHTML = ProgressBar.css;
         fill.classList.add("fill");
+    
         this.shadowRoot.append(style, fill);
-    }
-    get percent() {
+        }
+    
+        get percent() {
         const value = this.getAttribute("percent");
         const number = Number(value);
+
+        if (isNaN(number)) {
+            return 0;
+        }
+    
         if (number < 0) {
             return 0;
         }
+    
         if (number > 100) {
             return 100;
         }
+    
         return number;
     }
-    set percent(value) {
+    
+    set percent(value: number) {
         this.setAttribute("percent", value.toString());
-    }
+        }
+    
     attributeChangedCallback(name) {
         if (name === "percent") {
-            let el = this.shadowRoot.querySelector(".fill");
+            let el = this.shadowRoot.querySelector(".fill") as HTMLElement;
             el.style.width = `${this.percent}%`;
         }
     }
 }
+    
 customElements.define("progress-bar", ProgressBar);
