@@ -12,6 +12,10 @@ class MyHeader extends WebComponent {
     
     <style>
         header {
+            -webkit-user-select: none; /* Safari */        
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
             width: 100vw;
             background-color: var(--background-color-1);
         }
