@@ -1,5 +1,5 @@
 class ProgressBar extends HTMLElement {
-    static css = `
+    static css = css`
         :host {
             display: block;
             width: 250px;
@@ -16,6 +16,10 @@ class ProgressBar extends HTMLElement {
             transition: width 0.25s;
         }
     `;
+
+    static html = html`
+        <div>
+    `
 
     static get observedAttributes() {
         return ["percent"];

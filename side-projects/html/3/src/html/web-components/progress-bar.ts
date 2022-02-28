@@ -1,5 +1,9 @@
+import { css, html } from "../util";
+
+customElements.define("progress-bar", 
 class ProgressBar extends HTMLElement {
-    static css = `
+    
+    static css = css`
         :host {
             display: block;
             width: 250px;
@@ -17,6 +21,12 @@ class ProgressBar extends HTMLElement {
         }
     `;
 
+    static html = html`
+        <div>
+            hallo hallo hallo 
+        </div>
+    `
+
     static get observedAttributes() {
         return ["percent"];
     }
@@ -27,15 +37,15 @@ class ProgressBar extends HTMLElement {
         this.attachShadow({ mode: "open" });
     
         const style = document.createElement("style");
-        const fill = document.createElement("div");
-    
+        
         style.innerHTML = ProgressBar.css;
+        
+        const fill = document.createElement("div");
         fill.classList.add("fill");
-    
         this.shadowRoot.append(style, fill);
-        }
+    }
     
-        get percent() {
+    get percent() {
         const value = this.getAttribute("percent");
         const number = Number(value);
 
@@ -64,6 +74,4 @@ class ProgressBar extends HTMLElement {
             el.style.width = `${this.percent}%`;
         }
     }
-}
-    
-customElements.define("progress-bar", ProgressBar);
+});

@@ -1,37 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geofront</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani&display=swap');
+import { Template } from "../util";
+import { WebComponent } from "../WebComponent";
 
-        body {
-            color: white;
-            font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;;
-            /* font-family: 'Rajdhani', sans-serif; */
-            background-color: hsl(240, 4%, 15%);
-        }
+class FastMenuWrapper extends WebComponent {
 
-        h1 {
-            font-family: 'Rajdhani', sans-serif;
-        }
+    tag = "fast-menu-wrapper";
 
-        :not(:defined) {
-            visibility: hidden;
-        }
-        
-    </style> 
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
-</head>
-<body>
-    <!-- bootstrap -->
-    
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
-
-
+    static template = Template.html`
     <fast-design-system-provider use-defaults>
         <section>
             <h1 >Geofront</h1>
@@ -86,10 +60,12 @@
                 </fast-menu-item>
             </fast-menu>
         </section>
-        
     </fast-design-system-provider>
+    `
 
-    <!-- We are using some fast-components -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@microsoft/fast-components/dist/fast-components.min.js"></script>
-</body>
-</html>
+    connectedCallback() {
+        this.addFrom(FastMenuWrapper.template);
+    }
+}
+
+customElements.define('fast-menu-wrapper', FastMenuWrapper);

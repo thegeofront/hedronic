@@ -2,6 +2,7 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "public",
-        "target": "ES3"
+        "target": "es6",
+        "noEmitOnError": false,
     }
 }

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "outDir": "public/js",
-        "rootDir": "src/",
-        "target": "ESNext",
+        "rootDir": "src",
+        "outDir": "public",
+        "target": "es5",
     }
 }
