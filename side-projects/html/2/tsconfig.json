@@ -2,6 +2,6 @@
     "compilerOptions": {
         "outDir": "public/js",
         "rootDir": "src",
-        "target": "ES3",
+        "target": "ESNext",
     }
 }
