@@ -6,22 +6,22 @@ class MyCounter extends WebComponent {
     static theTemplate = Template.html`
         <style>
         * {
-        font-size: 200%;
+            font-size: 200%;
         }
 
         span {
-        width: 4rem;
-        display: inline-block;
-        text-align: center;
+            width: 4rem;
+            display: inline-block;
+            text-align: center;
         }
 
         button {
-        width: 4rem;
-        height: 4rem;
-        border: none;
-        border-radius: 10px;
-        background-color: seagreen;
-        color: white;
+            width: 4rem;
+            height: 4rem;
+            border: none;
+            border-radius: 10px;
+            background-color: seagreen;
+            color: white;
         }
         </style>
         <button id="dec">-</button>

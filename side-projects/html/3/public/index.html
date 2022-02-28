@@ -9,14 +9,28 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani&display=swap');
 
-        body {
-            color: white;
-            font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;;
-            /* font-family: 'Rajdhani', sans-serif; */
-            background-color: hsl(240, 4%, 15%);
+        :root {
+            --background-color-1: hsl(240, 4%, 15%);
+            --background-color-2: hsl(240, 5%, 22%);
         }
 
-        h1 {
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            color: white;
+            /* font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;; */
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--background-color-2);
+        }
+
+        p {
+            font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;
+        }
+
+        h1, h2, h3 {
             font-family: 'Rajdhani', sans-serif;
         }
 
@@ -28,7 +42,7 @@
 </head>
 <body>
     <!-- We are using some fast-components -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@microsoft/fast-components/dist/fast-components.min.js"></script>
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@microsoft/fast-components/dist/fast-components.min.js"></script> -->
 
     <script src="index.js"></script>    
 </body>

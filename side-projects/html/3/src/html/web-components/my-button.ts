@@ -7,10 +7,25 @@ class MyButton extends WebComponent {
     static readonly template = Template.html`
         <style>
         p {
-            color: green;        
+            margin: 0px;
         }
+
+        button {
+            width: 3.5rem;
+            height: 1.5rem;
+            border: none;
+            border-radius: 2px;
+            background-color: transparent;
+            color: grey;
+        }
+
+        button:hover {
+            background-color: white;
+            color: var(--background-color-1)
+        }
+
         </style>
-        <p><slot></slot></p>
+        <button id="button"><p><slot>default</slot></p></button>
     `;
         
     connectedCallback() {
