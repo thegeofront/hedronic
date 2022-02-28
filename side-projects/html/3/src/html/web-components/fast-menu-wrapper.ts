@@ -1,9 +1,7 @@
 import { Template } from "../util";
-import { WebComponent } from "../WebComponent";
+import { WebComponent } from "../web-component";
 
 class FastMenuWrapper extends WebComponent {
-
-    tag = "fast-menu-wrapper";
 
     static template = Template.html`
     <fast-design-system-provider use-defaults>

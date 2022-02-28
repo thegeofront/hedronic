@@ -1,7 +1,7 @@
 import { css, html } from "../util";
 
-customElements.define("progress-bar", 
-class ProgressBar extends HTMLElement {
+customElements.define("some-progress-bar", 
+class SomeProgressBar extends HTMLElement {
     
     static css = css`
         :host {
@@ -38,7 +38,7 @@ class ProgressBar extends HTMLElement {
     
         const style = document.createElement("style");
         
-        style.innerHTML = ProgressBar.css;
+        style.innerHTML = SomeProgressBar.css;
         
         const fill = document.createElement("div");
         fill.classList.add("fill");

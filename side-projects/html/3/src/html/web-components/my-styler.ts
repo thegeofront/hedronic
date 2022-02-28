@@ -1,8 +1,8 @@
 import { Template } from "../util";
-import { WebComponent } from "../WebComponent";
+import { WebComponent } from "../web-component";
 
-customElements.define('x-styler', 
-class XStyler extends WebComponent {
+customElements.define('my-styler', 
+class MyStyler extends WebComponent {
     
     static readonly template = Template.html`
         <style>
@@ -14,7 +14,7 @@ class XStyler extends WebComponent {
     `;
         
     connectedCallback() {
-        this.addFrom(XStyler.template);
+        this.addFrom(MyStyler.template);
     }  
 
 });

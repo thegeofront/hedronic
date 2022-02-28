@@ -1,8 +1,8 @@
 import { Template } from "../util";
-import { WebComponent } from "../WebComponent";
+import { WebComponent } from "../web-component";
 
-customElements.define('geofront-logo', 
-class GeofrontLogo extends WebComponent {
+customElements.define('my-logo', 
+class MyLogo extends WebComponent {
     
     static template = Template.html`
         <style>
@@ -21,6 +21,6 @@ class GeofrontLogo extends WebComponent {
         `;
         
     connectedCallback() {
-        this.addFrom(GeofrontLogo.template);
+        this.addFrom(MyLogo.template);
     }  
 });

@@ -19,4 +19,8 @@ export abstract class WebComponent extends HTMLElement {
     }
 
     abstract connectedCallback(): any;
+
+    // attributeChangedCallback
+
+    
 }

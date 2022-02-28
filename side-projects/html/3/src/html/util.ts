@@ -26,7 +26,7 @@ export namespace Div {
      */
     export function html(template: TemplateStringsArray, ...args: any[]) {
         const div = document.createElement("div");
-        let str = String.raw(template, args);
+        let str = String.raw(template, ...args);
         div.innerHTML = str;
         return div;
     }
@@ -36,7 +36,7 @@ export namespace Template {
     
     export function html(template: TemplateStringsArray, ...args: any[]) {
         const temp = document.createElement("template");
-        let str = String.raw(template, args);
+        let str = String.raw(template, ...args);
         temp.innerHTML = str;
         return temp;
     }

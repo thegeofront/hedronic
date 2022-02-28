@@ -1,5 +1,5 @@
 import { Template } from "../util";
-import { WebComponent } from "../WebComponent";
+import { WebComponent } from "../web-component";
 
 class MyCounter extends WebComponent {
     
