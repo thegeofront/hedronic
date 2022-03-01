@@ -28,13 +28,6 @@
     "std_old": [],
     "wasm": [
         {
-            "icon": "bi-cone-striped",
-            "nickname": "cityjson",
-            "filename": "cityjson_validator",
-            "localPath": "wasm-modules/cjval/",
-            "url": "josfeenstra.nl/project/nodes/wasm-modules/cjval/"
-        },
-        {
             "icon": "bi-puzzle-fill",
             "nickname": "hello",
             "filename": "wasm_nodes",

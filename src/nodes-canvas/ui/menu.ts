@@ -52,7 +52,7 @@ export class Menu {
     }
 
     renderNav() {
-        
+        return;
         let d = dom.body;
         d.to(this.container);
         d.clear();
@@ -76,12 +76,6 @@ export class Menu {
                 d.up();
             d.up()
         d.up();
-        
-        d.addDiv("overlay")
-            d.addText("hello, world!")
-                .style("position: absolute; left: 10px; bottom: 10px")
-                .up();
-        d.up()
 
         // d.innerHTML = VerticalTabList.new(items).toHtml();
         // b.up();

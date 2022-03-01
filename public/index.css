@@ -19,6 +19,10 @@
     padding: 0px;
 }
 
+*:focus {
+    outline: none;
+}
+
 body {
     color: white;
     /* font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;; */

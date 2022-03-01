@@ -71,7 +71,7 @@ class MyScreen extends WebComponent {
             <div class="col p-0">
                 <my-main></my-main>
             </div>
-            <div class="col right">
+            <div class="col right" style="display: none">
                 <my-right-panel></my-right-panel>
             </div>
             <!-- <my-left-panel class="col-4"></my-left-panel>

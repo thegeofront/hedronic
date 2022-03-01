@@ -4,8 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build-wasm": "cd side-projects/hello-wasm && wasm-pack build --out-dir ../../public/wasm-modules/hello-wasm/ --target web",
-        "build-std": "cd side-projects/std && tsc",
+        "build-all": "npm run build-wasm && npm run build-std && npm run build",
+        "build-wasm": "cd std/wasm && wasm-pack build --out-dir ../../public/wasm-modules/hello-wasm/ --target web",
+        "build-std": "cd std/ts && tsc",
         "build": "webpack --mode production --env=prod",
         "build-dev": "webpack --env=dev",
         "test": "echo \"Error: no test specified\" && exit 1",

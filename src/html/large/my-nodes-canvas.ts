@@ -1,8 +1,10 @@
+import { visitNode } from "typescript";
 import { Catalogue } from "../../modules/catalogue";
 import { ModuleLoading } from "../../modules/loading";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
+import { CanvasResizeEvent } from "./my-main";
 
 customElements.define('my-nodes-canvas', 
 class MyNodesCanvas extends WebComponent {
@@ -31,16 +33,18 @@ class MyNodesCanvas extends WebComponent {
     }
 
     article {
-        position: relative;
-        width: 100%;
-        height: 100%;
+        /* position: relative; */
+        /* width: 100%; */
+        /* height: 100%; */
         /* overflow: hidden; */
         background: green;
     }
 
     #nodes-canvas {
+        outline: none;
+        display: block;
         width: 100%;
-        height: 100%;
+        height: calc(100vh - 80px);
         background-color: var(--background);
     }
 
@@ -69,23 +73,21 @@ class MyNodesCanvas extends WebComponent {
         border-radius: 5px;
     }
     </style>
-    <article id="nodes">
-        <canvas id="nodes-canvas" tabindex="0">
+    <canvas id="nodes-canvas" tabindex="0">
 
-        </canvas>
-        <div id="nodes-panel" style="display: none"></div>
-    </article>
+    </canvas>
     `;
         
-    connectedCallback() {
+    async connectedCallback() {
         this.addFrom(MyNodesCanvas.template);
-        this.initialize();
-    }  
-
-    async initialize() {
         let catalogue = await this.setupCatalogue();
         this.setupGraphEditor(catalogue);
-    }
+        
+        // this.listen(CanvasResizeEvent, this.resizeCanvas);
+        window.addEventListener("resize", this.resizeCanvas.bind(this));
+        this.resizeCanvas();
+        // this.addEventListener("resize", this.resizeCanvas.bind(this));
+    }  
 
     async setupCatalogue() {
         const stdPath = "./std.json";
@@ -126,5 +128,19 @@ class MyNodesCanvas extends WebComponent {
         requestAnimationFrame(loop);
     }
 
+    getCanvas() {
+        
+        return this.get("nodes-canvas") as HTMLCanvasElement;
+    }
 
+    resizeCanvas() {
+        let canvas = this.getCanvas();
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        // let {newWidth, newHeight} = payload;
+
+        // canvas.width = newWidth;
+        // canvas.height = newHeight;
+    }
 });

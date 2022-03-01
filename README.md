@@ -16,6 +16,17 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 > ⏹️: On hold
 > ✔️: Done 
 
+# install
+```
+npm install
+npm run build-wasm
+npm run build-std
+npm run build
+```
+then serve the `public` folder using something like 
+[live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) or [python's http server](https://docs.python.org/3/library/http.server.html)
+[]
+
 ===============================================================================
 
 # PHASE 1

@@ -12,6 +12,8 @@ export function resizeCanvas(ctx: CTX) {
     const displayWidth = canvas.clientWidth;
     const displayHeight = canvas.clientHeight;
 
+    console.log({displayWidth, displayHeight});
+
     // Check if the canvas is not the same size.
     const needResize = ctx.canvas.width !== displayWidth || ctx.canvas.height !== displayHeight;
 

@@ -52,7 +52,12 @@ export class MyMain extends WebComponent {
         this.addFrom(MyMain.template);
         this.doTab(this.currentTab);
         this.listen(TabMainEvent, this.doTab.bind(this))
+        window.addEventListener("resize", this.resize.bind(this))
     }  
+
+    resize() {
+
+    }
 
     doTab(selected: MainTab) {
         for (let option in MainTab) {
@@ -70,6 +75,8 @@ export class MyMain extends WebComponent {
 customElements.define('my-main', MyMain);
 
 export const TabMainEvent = "tabmain";
+
+export const CanvasResizeEvent = "canvasresize";
 
 export enum MainTab {
     Demo="Demo",

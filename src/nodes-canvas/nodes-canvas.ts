@@ -39,7 +39,6 @@ export class NodesCanvas {
 
     private cableVisuals!: Map<string, CableState>;
 
-
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
@@ -73,11 +72,11 @@ export class NodesCanvas {
     async start() {
 
         // hook up all functions & listeners
-        window.addEventListener("resize", () => this.onResize());
+        // window.addEventListener("resize", () => this.onResize());
         // this.ctx.canvas.addEventListener("blur", () => console.log("blur")); 
         // this.ctx.canvas.addEventListener("focus", () => console.log("focus")); 
         // this.ctx.canvas.addEventListener("mouseout", () => console.log("mouseout")); 
-        this.onResize();
+        // this.onResize();
 
         this.camera.onMouseDown = (worldPos, double) => {
             this.onMouseDown(this.toGrid(worldPos), double);
@@ -897,7 +896,7 @@ export class NodesCanvas {
 
 
     onResize() {
-        resizeCanvas(this.ctx);
+        // resizeCanvas(this.ctx);
         this.requestRedraw();
     }
 }
