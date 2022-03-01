@@ -15,11 +15,15 @@ export abstract class WebComponent extends HTMLElement {
     }
 
     addFrom(template: HTMLTemplateElement, deep=true) {
-        this.shadowRoot.appendChild(template.content.cloneNode(deep));
+        this.shadowRoot!.appendChild(template.content.cloneNode(deep));
     }
 
     get(id: string) {
-        return this.shadowRoot.getElementById(id)
+        let item = this.shadowRoot!.getElementById(id);
+        if (!item) {
+            console.error(`coudnt find item with id ${item} on the shadowroot`);
+        }
+        return item!;
     }
 
     dispatch(type: string, payload: any) {
@@ -39,6 +43,8 @@ export abstract class WebComponent extends HTMLElement {
             callback(e.detail.payload, e);
         }
         this.listeners.set(type, listener);
+
+        //@ts-ignore
         document.addEventListener(type, listener);
     }
 
@@ -50,6 +56,7 @@ export abstract class WebComponent extends HTMLElement {
     unconnectedCallback() {
         console.log("unconnect!!");
         for (let [type, listener] of this.listeners.entries()) {
+            //@ts-ignore
             document.removeEventListener(type, listener);
         }
     }

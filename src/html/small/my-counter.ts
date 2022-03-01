@@ -1,6 +1,9 @@
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
+/**
+ * Taken from: https://webcomponents.dev/blog/all-the-ways-to-make-a-web-component/
+ */
 class MyCounter extends WebComponent {
     
     static theTemplate = Template.html`
@@ -55,8 +58,8 @@ class MyCounter extends WebComponent {
         this.update(--this.count);
     }
 
-    update(count) {
-        this.get('count').innerHTML = count;
+    update(count: number) {
+        this.get('count').innerHTML = count.toString();
     }
 }
 

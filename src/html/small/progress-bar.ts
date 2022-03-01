@@ -42,7 +42,7 @@ class SomeProgressBar extends HTMLElement {
         
         const fill = document.createElement("div");
         fill.classList.add("fill");
-        this.shadowRoot.append(style, fill);
+        this.shadowRoot!.append(style, fill);
     }
     
     get percent() {
@@ -68,9 +68,9 @@ class SomeProgressBar extends HTMLElement {
         this.setAttribute("percent", value.toString());
         }
     
-    attributeChangedCallback(name) {
+    attributeChangedCallback(name: string) {
         if (name === "percent") {
-            let el = this.shadowRoot.querySelector(".fill") as HTMLElement;
+            let el = this.shadowRoot!.querySelector(".fill") as HTMLElement;
             el.style.width = `${this.percent}%`;
         }
     }

@@ -55,7 +55,8 @@ export class MyMain extends WebComponent {
 
     doTab(selected: MainTab) {
         for (let option in MainTab) {
-            let tab = MainTab[option];
+            //@ts-ignore
+            let tab = MainTab[option] as string;
             if (tab == selected) {
                 this.get(tab).style.display = "";
             } else {
