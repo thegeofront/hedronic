@@ -9,8 +9,9 @@ class MyLogo extends WebComponent {
         svg {
             display: inline-block;
             width: 3rem;
-            height: 3rem;   
+            height: 3rem;
         }
+
         </style>
         <div style="margin: 7px">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.9 -94 96.1 91.6">
