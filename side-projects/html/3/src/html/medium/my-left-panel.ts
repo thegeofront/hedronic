@@ -9,25 +9,19 @@ class MyLeftPanel extends WebComponent {
     <!-- <link rel="stylesheet" type="text/css" href="./index.css"/>    -->
     <style>
 
+    /* NOTE: keep this around: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
     #panel {
         display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: flex-end;
         height: 100%;
-    }
-
-    .group {
-        display: inline-block;
-        align-self: flex-end;
-        position: relative;
-        bottom: 0px;
-        left: 0px;
     }
 
     </style>
     <div id="panel">
-        <div class="group">
-            <my-small-button>V</my-small-button>
-            <my-small-button>B</my-small-button>
-        </div>
+        <my-small-button>V</my-small-button>
+        <my-small-button>B</my-small-button>
     </div>
     `;
         

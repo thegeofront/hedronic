@@ -43,18 +43,26 @@ class MyFooter extends WebComponent {
         <div class="footer-section" style="margin-left: auto; margin-right: 1rem">
             <p>© Geofront</p>
         </div>
+        <div class="footer-section">
+            <p id="version">version: 0.0.0</p>
+        </div>
     </footer>  
     `;
         
     connectedCallback() {
         this.addFrom(MyFooter.template);
         window.addEventListener("mousemove", this.onMouseMove.bind(this))
+        this.get("version").innerText = this.getVersion();
     }  
 
     onMouseMove(e: MouseEvent) {
         let x = e.clientX;
         let y = e.clientY;
         this.get("pos").innerText = `pos {x: ${x}, y: ${y}}`;
+    }
+
+    getVersion() {
+        return "verstion: 0.0.3";
     }
 
     disconnectedCallback() {

@@ -1,10 +1,6 @@
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
-function getVersion() {
-    return "0.0.3";
-}
-
 customElements.define('my-header', 
 class MyHeader extends WebComponent {
     
@@ -33,6 +29,7 @@ class MyHeader extends WebComponent {
             padding: 0px; 
             margin: 0px;
             font-weight: 500;
+            margin-bottom: -10px;
         }
             
         #subtitle {
@@ -48,7 +45,6 @@ class MyHeader extends WebComponent {
         <div style="display: flex; align-items: center">
             <my-logo></my-logo>
             <div>
-                <h6 id="subtitle">Version ${getVersion()}</h6>
                 <h1 id="title">Geofront</h1>
             </div>
         </div>
