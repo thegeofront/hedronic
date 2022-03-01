@@ -4,7 +4,14 @@ import { WebComponent } from "../web-component";
 class FastMenuWrapper extends WebComponent {
 
     static template = Template.html`
-    <fast-design-system-provider use-defaults>
+
+    <style>
+        fast-menu {
+            background-color: var(--background-color-2);
+        }
+    </style>
+
+    <!-- <fast-design-system-provider use-defaults> -->
         <section>
             <h1 >Geofront</h1>
             <p >Modern geoprocessing<p>
@@ -31,7 +38,7 @@ class FastMenuWrapper extends WebComponent {
             </fast-slider>
             <br>
             <br>
-            <fast-menu>
+            <fast-menu slot="submenu">
                 <fast-menu-item>
                     Menu item 1
                     <fast-menu slot="submenu">
@@ -58,7 +65,7 @@ class FastMenuWrapper extends WebComponent {
                 </fast-menu-item>
             </fast-menu>
         </section>
-    </fast-design-system-provider>
+    <!-- </fast-design-system-provider> -->
     `
 
     connectedCallback() {

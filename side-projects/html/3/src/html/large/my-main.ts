@@ -1,8 +1,7 @@
-import { Template } from "../util";
+import { html, Template } from "../util";
 import { WebComponent } from "../web-component";
 
-customElements.define('my-main', 
-class MyMain extends WebComponent {
+export class MyMain extends WebComponent {
     
     static readonly template = Template.html`
     <link rel="stylesheet" type="text/css" href="./bootstrap.css"> 
@@ -18,15 +17,70 @@ class MyMain extends WebComponent {
         } */
 
     </style>
-    <main id="main">
-        <h1>MAIN</h1>
-        <p>This is main</p>
+    <main id="root">
+        <div id="Demo">
+            <h1>MAIN</h1>
+            <p>This is main</p>
+            <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
+            <my-dropdown-button>
+            </my-dropdown-button>
+            <!-- <bs-dropdown></bs-dropdown> -->
+        </div>
+        <div id="Graph">
+            <h1>GRAPH</h1>
+            <p>This is main</p>
+            <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
+            <my-dropdown-button>
+            </my-dropdown-button>
+            <!-- <bs-dropdown></bs-dropdown> -->
+        </div>
+        <div id="Viewer">
+            <h1>VIEWER</h1>
+            <p>This is main</p>
+            <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
+            <my-dropdown-button>
+            </my-dropdown-button>
+            <!-- <bs-dropdown></bs-dropdown> -->
+        </div>
     </main>
         
     `;
         
+    constructor(
+        private currentTab: MainTab = MainTab.Demo,
+    ) {
+        super();
+    }
+    
     connectedCallback() {
         this.addFrom(MyMain.template);
+        this.doTab(this.currentTab);
+        this.listen(TabMainEvent, this.doTab.bind(this))
     }  
 
-});
+    doTab(selected: MainTab) {
+        console.log("tabbing...");
+        for (let option in MainTab) {
+            let tab = MainTab[option];
+            if (tab == selected) {
+                this.get(tab).style.display = "";
+            } else {
+                this.get(tab).style.display = "none";
+            }
+        }
+    }
+
+    renderDemo() {
+        
+    }
+}
+
+customElements.define('my-main', MyMain);
+
+export const TabMainEvent = "tabmain";
+
+export enum MainTab {
+    Demo="Demo",
+    Graph="Graph",
+    Viewer="Viewer"
+}
