@@ -17,6 +17,7 @@ class MyHeader extends WebComponent {
             -ms-user-select: none; /* IE10+/Edge */
             user-select: none; /* Standard */
             width: 100vw;
+            height: 100%;
             background-color: var(--background-color-1);
         }
 
@@ -28,20 +29,34 @@ class MyHeader extends WebComponent {
             align-items: end
         }
 
+        #title {
+            padding: 0px; 
+            margin: 0px;
+            font-weight: 500;
+        }
+            
+        #subtitle {
+            padding: 0px; 
+            margin: 0px; 
+            color: darkgrey; 
+            margin-bottom: -12px;
+        }
+
     </style>
     <header style="display: flex; align-content: end" >
         <!-- title tag -->
         <div style="display: flex; align-items: center">
             <my-logo></my-logo>
-            <div style="align-items: middle">
-                <h6 style="padding: 0px; margin: 0px; color: darkgrey">Version ${getVersion()}</h6>
-                <h1 style="padding: 0px; margin: 0px">Geofront</h1>
+            <div>
+                <h6 id="subtitle">Version ${getVersion()}</h6>
+                <h1 id="title">Geofront</h1>
             </div>
         </div>
         <div class="header-section">
             <my-button>File</my-button>
             <my-button>Edit</my-button>
             <my-button>Add</my-button>
+            <my-button>View</my-button>
             <my-button>Help</my-button>
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">

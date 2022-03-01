@@ -5,7 +5,7 @@ import "./html/registry.ts";
 function main() {
     
     document.body.append(Div.html`
-        <my-header></my-header>
+        <my-screen></my-screen>
     `);
 }
 
