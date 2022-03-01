@@ -4,6 +4,7 @@
 export * from "./large/my-screen";
 export * from "./large/my-main";
 
+export * from "./medium/my-viewer";
 export * from "./medium/my-left-panel";
 export * from "./medium/my-right-panel";
 export * from "./medium/my-header";

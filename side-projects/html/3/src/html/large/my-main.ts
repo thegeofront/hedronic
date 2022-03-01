@@ -10,7 +10,7 @@ export class MyMain extends WebComponent {
             background-color: black;
             height: 100%;
         }
-/* 
+        /* 
         * {
             margin: 0px;
             padding: 0px;
@@ -35,12 +35,7 @@ export class MyMain extends WebComponent {
             <!-- <bs-dropdown></bs-dropdown> -->
         </div>
         <div id="Viewer">
-            <h1>VIEWER</h1>
-            <p>This is main</p>
-            <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
-            <my-dropdown-button>
-            </my-dropdown-button>
-            <!-- <bs-dropdown></bs-dropdown> -->
+
         </div>
     </main>
         
@@ -59,7 +54,6 @@ export class MyMain extends WebComponent {
     }  
 
     doTab(selected: MainTab) {
-        console.log("tabbing...");
         for (let option in MainTab) {
             let tab = MainTab[option];
             if (tab == selected) {
@@ -68,10 +62,6 @@ export class MyMain extends WebComponent {
                 this.get(tab).style.display = "none";
             }
         }
-    }
-
-    renderDemo() {
-        
     }
 }
 
