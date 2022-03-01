@@ -5,15 +5,18 @@ customElements.define('my-main',
 class MyMain extends WebComponent {
     
     static readonly template = Template.html`
-    
+    <link rel="stylesheet" type="text/css" href="./bootstrap.css"> 
     <style>
-        /* .centered {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+        main {
+            background-color: black;
+            height: 100%;
+        }
+/* 
+        * {
+            margin: 0px;
+            padding: 0px;
         } */
+
     </style>
     <main id="main">
         <h1>MAIN</h1>

@@ -6,6 +6,7 @@ class MyScreen extends WebComponent {
     
     static readonly template = Template.html`
     
+    <link rel="stylesheet" type="text/css" href="./bootstrap.css">  
     <style>
 
         #screen {
@@ -13,6 +14,11 @@ class MyScreen extends WebComponent {
             display: flex;
             min-height: 100vh;
             flex-direction: column;
+        }
+
+        #main {
+            padding: 0px;
+            margin: 0px;
         }
 
         my-header {
@@ -23,22 +29,9 @@ class MyScreen extends WebComponent {
         #content {
             flex: 1;
             width:100%;
+            padding: 0px;
+            margin: 0px;
         }
-
-        /* my-left-panel {
-            width: 100px;
-            float: left;
-        } */
-
-        /* my-main {
-            float: auto;
-        } */
-
-        /* my-right-panel {
-            width: 300px;
-            float: right;
-            
-        } */
 
         my-footer {
             overflow: hidden;
@@ -47,19 +40,36 @@ class MyScreen extends WebComponent {
             bottom: 0;
             height: 20px;
         }
-        
+
+        .left {
+            -ms-flex: 0 0 60px;
+            flex: 0 0 60px;
+            background-color: var(--background-color-2); 
+        } 
+
+        .right {
+            -ms-flex: 0 0 270px;
+            flex: 0 0 270px;
+            background-color: var(--background-color-2);
+        } 
+
+        @media (max-width: 500px) {
+            .right {
+                display: none; 
+            } 
+        }
+
     </style>
     <section id="screen">
         <my-header></my-header>
         <section class="row" id="content">
-            <div class="col-4">
+            <div class="col left">
                 <p>Left</p>
             </div>
-            
-            <div class="col-4">
-                <p>Center</p>
+            <div class="col p-0">
+                <my-main></my-main>
             </div>
-            <div class="col-4">
+            <div class="col right">
                 <p>Right</p>
             </div>
             <!-- <my-left-panel class="col-4"></my-left-panel>
