@@ -1,8 +1,8 @@
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
-customElements.define('my-button', 
-class MyButton extends WebComponent {
+customElements.define('my-small-button', 
+class MySmallButton extends WebComponent {
     
     static readonly template = Template.html`
         <style>
@@ -16,7 +16,7 @@ class MyButton extends WebComponent {
             -ms-user-select: none; /* IE10+/Edge */
             user-select: none; /* Standard */
 
-            width: 3.5rem;
+            width: 1.5rem;
             height: 1.5rem;
             border: none;
             border-radius: 2px;
@@ -34,7 +34,7 @@ class MyButton extends WebComponent {
     `;
         
     connectedCallback() {
-        this.addFrom(MyButton.template);
+        this.addFrom(MySmallButton.template);
     }  
 
 });

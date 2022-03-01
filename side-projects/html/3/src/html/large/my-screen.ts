@@ -42,14 +42,16 @@ class MyScreen extends WebComponent {
         }
 
         .left {
-            -ms-flex: 0 0 60px;
-            flex: 0 0 60px;
+            -ms-flex: 0 0 30px;
+            flex: 0 0 30px;
+            width: 30px;
             background-color: var(--background-color-2); 
         } 
 
         .right {
             -ms-flex: 0 0 270px;
             flex: 0 0 270px;
+            width: 270px;
             background-color: var(--background-color-2);
         } 
 
@@ -63,14 +65,14 @@ class MyScreen extends WebComponent {
     <section id="screen">
         <my-header></my-header>
         <section class="row" id="content">
-            <div class="col left">
-                <p>Left</p>
+            <div class="col left px-0">
+                <my-left-panel></my-left-panel>
             </div>
             <div class="col p-0">
                 <my-main></my-main>
             </div>
             <div class="col right">
-                <p>Right</p>
+                <my-right-panel></my-right-panel>
             </div>
             <!-- <my-left-panel class="col-4"></my-left-panel>
             <my-main style="width:80%"></my-main>
