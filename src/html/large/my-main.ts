@@ -10,6 +10,10 @@ export class MyMain extends WebComponent {
             background-color: black;
             height: 100%;
         }
+
+        div {
+            height: 100%;
+        }
         /* 
         * {
             margin: 0px;
@@ -27,22 +31,19 @@ export class MyMain extends WebComponent {
             <!-- <bs-dropdown></bs-dropdown> -->
         </div>
         <div id="Graph">
-            <h1>GRAPH</h1>
-            <p>This is main</p>
-            <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
-            <my-dropdown-button>
-            </my-dropdown-button>
-            <!-- <bs-dropdown></bs-dropdown> -->
+            <my-nodes-canvas>
+
+            </my-nodes-canvas>
         </div>
         <div id="Viewer">
-
+            <p>TODO...</p>
         </div>
     </main>
         
     `;
         
     constructor(
-        private currentTab: MainTab = MainTab.Demo,
+        private currentTab: MainTab = MainTab.Graph,
     ) {
         super();
     }

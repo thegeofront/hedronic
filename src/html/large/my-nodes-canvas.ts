@@ -30,20 +30,17 @@ class MyNodesCanvas extends WebComponent {
         margin: 0;
     }
 
-    article, footer {
-        /* margin: 10px; */
-        width:fit-content;
-        height:fit-content;
-        /* background: var(---background); */
+    article {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        /* overflow: hidden; */
+        background: green;
     }
 
     #nodes-canvas {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 500px;
-        height: 500px;
-
+        width: 100%;
+        height: 100%;
         background-color: var(--background);
     }
 
@@ -72,12 +69,11 @@ class MyNodesCanvas extends WebComponent {
         border-radius: 5px;
     }
     </style>
-    <canvas id="canvas">
-    </canvas>
     <article id="nodes">
-        <canvas id="nodes-canvas" tabindex="0"></canvas>
-        <div id="nodes-panel"></div>
+        <canvas id="nodes-canvas" tabindex="0">
+
         </canvas>
+        <div id="nodes-panel" style="display: none"></div>
     </article>
     `;
         
