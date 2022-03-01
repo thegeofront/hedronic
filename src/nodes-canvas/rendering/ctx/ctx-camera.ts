@@ -41,7 +41,9 @@ export class CtxCamera {
         let redraw = false;
         
         // always store mouse 
-        let worldPos = this.screenToWorld(state.mousePos);
+        let canvasPos = Vector2.new(this.html_canvas.offsetLeft, this.html_canvas.offsetTop)
+        // console.log(canvasPos);
+        let worldPos = this.screenToWorld(state.mousePos.subbed(canvasPos));
         this.mousePos = worldPos;
 
         // we have to check these things every frame to make dragging consistent
