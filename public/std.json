@@ -23,19 +23,12 @@
             "nickname": "std",
             "filename": "std",
             "path": "./modules/"
-        },
-        {
-            "icon": "bi-cone-striped",
-            "nickname": "random",
-            "filename": "Random",
-            "path": "https://unpkg.com/geon-engine@0.6.1/dist/math/"
         }
-        
     ],
     "std_old": [],
     "wasm": [
         {
-            "icon": "bi-house",
+            "icon": "bi-cone-striped",
             "nickname": "cityjson",
             "filename": "cityjson_validator",
             "localPath": "wasm-modules/cjval/",

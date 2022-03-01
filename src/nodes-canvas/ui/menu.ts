@@ -89,6 +89,8 @@ export class Menu {
 
     
     rerenderNav() {
+        return;
+
         // colorize buttons correctly
         let bootstrapHighlightClasses = ["bg-white", "text-danger", "border-danger"];
         let els = this.container.querySelectorAll('.menu-category');

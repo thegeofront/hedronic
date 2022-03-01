@@ -1,6 +1,7 @@
 /**
  * This is where we register all components currently in use
  */
+export * from "./large/my-nodes-canvas";
 export * from "./large/my-screen";
 export * from "./large/my-main";
 
