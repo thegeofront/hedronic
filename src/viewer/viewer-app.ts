@@ -1,7 +1,10 @@
 import { createModuleDeclaration } from "typescript";
 import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3 } from "../../../engine/src/lib";
+import { HTML } from "../html/util";
 
-export class TemplateApp extends App {
+export const VisualizeEvent = "visualizestate";
+
+export class ViewerApp extends App {
 
     // render
     scene: Scene;
@@ -18,8 +21,15 @@ export class TemplateApp extends App {
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.debug = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
-
         // init some state
+        this.listen();
+    }
+
+    listen() {
+        HTML.listen(VisualizeEvent, (payload) => {
+            let {state, id} = payload;
+            console.log("visualize something:", id, state);
+        })
     }
 
     async start() {

@@ -9,6 +9,7 @@ import { ModuleShim } from "./shims/module-shim";
 import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
 import { TypeShim } from "./shims/parameter-shim";
 import { FunctionShim } from "./shims/function-shim";
+import { ViewWidget } from "../nodes-canvas/widgets/view-widget";
 
 // TODO rename CORE to TYPE
 //      rename NODE to INSTANCE maybe
@@ -120,7 +121,8 @@ function createStdWidgets(cat: Catalogue) {
             InputWidget.new("hello world"),
             LampWidget.new(false),
             ConsoleWidget.new(false),
-            ImageWidget.new("<image>")
+            ImageWidget.new("<image>"),
+            ViewWidget.new(false)
         ]
 
         // add them to a map

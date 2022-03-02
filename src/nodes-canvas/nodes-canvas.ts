@@ -15,7 +15,7 @@ import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
-import { dispatch } from "../html/util";
+import { HTML } from "../html/util";
 import { hideRightPanel, showRightPanel, ShowRightPanelPayload } from "../html/registry";
 
 /**
@@ -579,6 +579,7 @@ export class NodesCanvas {
 
     
     select(s: Socket, doDispatch=true) {
+        // dispatch a message containing some info 
         if (doDispatch) {
             let node = this.graph.getNode(s.hash)!;
             let title = node.process.nameLower || "-";
@@ -590,8 +591,10 @@ export class NodesCanvas {
                 subtitle,
                 content,
             }
-            dispatch(showRightPanel, message);
+            HTML.dispatch(showRightPanel, message);
         }
+
+        // actually select the thing
         let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);
@@ -602,7 +605,7 @@ export class NodesCanvas {
  
 
     deselect() {
-        dispatch(hideRightPanel);
+        HTML.dispatch(hideRightPanel);
         this.selectedSockets = [];
     }
 

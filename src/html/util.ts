@@ -19,16 +19,30 @@ export function css(template: TemplateStringsArray, ...args: any[]) {
     return String.raw(template, ...args);
 }
 
-export function dispatch(eventType: string, payload?: any) {
-    let event = new CustomEvent(eventType, {
-        detail: {
-            payload,
-            bubbles: true,
-            composed: true,
-        },
-    });
-    document.dispatchEvent(event);
+export namespace HTML {
+    export function dispatch(eventType: string, payload?: any) {
+        let event = new CustomEvent(eventType, {
+            detail: {
+                payload,
+                bubbles: true,
+                composed: true,
+            },
+        });
+        document.dispatchEvent(event);
+    }
+    
+    export function listen(type: string, callback: (payload: any, e: CustomEvent) => void) {
+        let listener = (e: CustomEvent) => {
+            //@ts-ignore
+            callback(e.detail.payload, e);
+        }
+    
+        //@ts-ignore
+        document.addEventListener(type, listener);
+    }
 }
+
+
 
 export namespace Div {
     /**

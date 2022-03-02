@@ -26,6 +26,11 @@ pub fn add(a: f32, b: f32) -> f32 {
 }
 
 #[wasm_bindgen]
+pub fn testietestie(kaas: f32, b: f32, c: f32) -> f32 {
+    return kaas + b * c;
+}
+
+#[wasm_bindgen]
 pub fn subtract(a: f32, b: f32) -> f32 {
     return a - b;
 }

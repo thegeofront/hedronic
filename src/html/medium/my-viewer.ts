@@ -1,5 +1,5 @@
 import { Core, HelpGl } from "../../../../engine/src/lib";
-import { TemplateApp } from "../../viewer/template-app";
+import { ViewerApp } from "../../viewer/viewer-app";
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
@@ -40,7 +40,7 @@ class MyViewer extends WebComponent {
         HelpGl.resizeViewportToCanvas(gl);
     
         // let swapApp = new SwapApp(gl, core, appCollection);
-        core.addApp(new TemplateApp(gl));
+        core.addApp(new ViewerApp(gl));
     
         // // check if the hash matches one of the app names, if so, switch to that app. if not, goto the default start app.
         // let defaultIndex = 0;
