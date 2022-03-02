@@ -59,7 +59,7 @@ class MyScreen extends WebComponent {
             left: var(--left-width);
             top: var(--header-height); 
             width: calc(100vw - var(--left-width));
-            height: calc(100vh - var(--header-height) - var(--footer-height)); 
+            height: var(---main-height); 
             background: green;
         }
 
@@ -68,6 +68,7 @@ class MyScreen extends WebComponent {
             top: var(--header-height); 
             right: 0px; 
             width: var(--right-width);
+            height: var(---main-height);
         } 
 
     </style>

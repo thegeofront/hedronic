@@ -17,7 +17,7 @@ export class ViewerApp extends App {
 
         let canvas = gl.canvas as HTMLCanvasElement;
         let camera = new Camera(canvas, -2, true);
-        camera.setState([0.0000, 0.0000, 0.0000, -297.8023467558876, 1.07598230397687,14.463674887946102]);
+        camera.setState([0.0000, 0.0000, 0.0000, -52.60572505720773, 1.201994676589813,22.834186420856327]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.debug = DebugRenderer.new(gl);
         this.scene = new Scene(camera);

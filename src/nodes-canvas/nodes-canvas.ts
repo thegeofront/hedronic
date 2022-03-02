@@ -596,7 +596,7 @@ export class NodesCanvas {
             let node = this.graph.getNode(s.hash)!;
             let title = node.process.nameLower || "-";
             let subtitle = node.operation?.path.join(".") || "widget";
-            let content = "-";
+            let content = `<code>${JSON.stringify(node.operation?.toJson(), null, 2)}</code>` || "-";
 
             let message: ShowRightPanelPayload = {
                 title,

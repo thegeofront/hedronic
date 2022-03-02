@@ -16,8 +16,13 @@ class MyRightPanel extends WebComponent {
             border: 5px;
             border-color: red;
         }
+        #panel {
+            height: var(--main-height);
+            background-color: var(--background-color-2)
+        }
+
     </style>
-    <div>
+    <div id="panel"> 
         <h3 id="header" class="pt-3">Settings</h3>
         <p id="subheader">The Right Panel</p>
         <p id="body">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorem eaque iusto asperiores recusandae voluptatum aspernatur totam molestiae obcaecati esse eveniet sapiente id, odit laborum culpa possimus officia natus adipisci ipsa ratione? Obcaecati temporibus dignissimos laborum tenetur excepturi optio sapiente, officia autem eius necessitatibus ipsa deleniti maxime? Est aliquam nihil adipisci!</p>
@@ -46,6 +51,6 @@ class MyRightPanel extends WebComponent {
         this.style.display = "";
         this.get("header").innerText = message.title;
         this.get("subheader").innerText = message.subtitle;
-        this.get("body").innerText = message.content;
+        this.get("body").innerHTML = message.content;
     }
 });

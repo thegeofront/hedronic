@@ -79,6 +79,10 @@ export class FunctionShim {
         return {
             name: this.name,
             path: this.path,
+            inCount: this.inCount,
+            outCount: this.outCount,
+            ins: this.ins.map((input) => input.typeToString()),
+            outs: this.outs.map((output) => output.typeToString()),
         }
     }
 }
