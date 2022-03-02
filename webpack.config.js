@@ -53,11 +53,11 @@ module.exports = (env) => {
               }),
             ],
         },
-        plugins: [
-            new webpack.IgnorePlugin({
-                resourceRegExp: /geon-modules|kaas\.js/,
-              }),
-        ]
+        // plugins: [
+        //     new webpack.IgnorePlugin({
+        //         resourceRegExp: /geon-modules|kaas\.js/,
+        //       }),
+        // ]
     }
 
     if (env.eval === "dev") {

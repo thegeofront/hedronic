@@ -21,7 +21,7 @@ export abstract class WebComponent extends HTMLElement {
     get(id: string) {
         let item = this.shadowRoot!.getElementById(id);
         if (!item) {
-            console.error(`coudnt find item with id ${item} on the shadowroot`);
+            console.error(this, `coudnt find item with id ${item} on the shadowroot`);
         }
         return item!;
     }

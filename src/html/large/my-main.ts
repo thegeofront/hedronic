@@ -31,12 +31,10 @@ export class MyMain extends WebComponent {
             <!-- <bs-dropdown></bs-dropdown> -->
         </div>
         <div id="Graph">
-            <my-nodes-canvas>
-
-            </my-nodes-canvas>
+            <my-nodes-canvas></my-nodes-canvas>
         </div>
         <div id="Viewer">
-            <p>TODO...</p>
+            <my-viewer></my-viewer>
         </div>
     </main>
         
