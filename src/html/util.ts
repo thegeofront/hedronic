@@ -19,6 +19,16 @@ export function css(template: TemplateStringsArray, ...args: any[]) {
     return String.raw(template, ...args);
 }
 
+export function dispatch(eventType: string, payload?: any) {
+    let event = new CustomEvent(eventType, {
+        detail: {
+            payload,
+            bubbles: true,
+            composed: true,
+        },
+    });
+    document.dispatchEvent(event);
+}
 
 export namespace Div {
     /**

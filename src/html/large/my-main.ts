@@ -6,20 +6,11 @@ export class MyMain extends WebComponent {
     static readonly template = Template.html`
     <link rel="stylesheet" type="text/css" href="./bootstrap.css"> 
     <style>
-        main {
-            background-color: black;
+        #root {
+            width: 100%;
             height: 100%;
+            background: yellow;
         }
-
-        div {
-            height: 100%;
-        }
-        /* 
-        * {
-            margin: 0px;
-            padding: 0px;
-        } */
-
     </style>
     <main id="root">
         <div id="Demo">

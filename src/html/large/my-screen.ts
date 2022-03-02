@@ -8,75 +8,74 @@ class MyScreen extends WebComponent {
     
     <link rel="stylesheet" type="text/css" href="./bootstrap.css">  
     <style>
-
+        
         #screen {
+            position: absolute;
             overflow: hidden;
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-        }
+            /* display: flex;
+            flex-direction: column; */
+            width: 100vw;
+            height: 100vh;
 
-        #main {
-            padding: 0px;
-            margin: 0px;
-        }
+            --header-height: 60px;
+            --footer-height: 20px;
+            --left-width: 30px;
+            --right-width: 270px;
+            --main-height: calc(100vh - var(--header-height) - var(--footer-height)); 
 
-        my-header {
-            top: 0;
-            height: 60px;
+            left: 0px;
+            top: 0px;
         }
 
         #content {
-            flex: 1;
-            width:100%;
-            padding: 0px;
-            margin: 0px;
+            position: relative;
+            /* top: var(--header-height); */
+            /* bottom: var(--footer-height); */
+        }
+
+        my-header {
+            position: absolute;
+            overflow: hidden;
+            top: 0;
+            height: var(--header-height);
         }
 
         my-footer {
+            position: absolute;
             overflow: hidden;
-            left: 0;
-            right: 0;
             bottom: 0;
-            height: 20px;
+            max-height: var(---footer-height);
         }
 
-        .left {
-            -ms-flex: 0 0 30px;
-            flex: 0 0 30px;
-            width: 30px;
+        my-left-panel {
+            position: absolute;
+            top: var(--header-height);
+            width: var(--left-width);
             background-color: var(--background-color-2); 
         } 
 
-        .right {
-            -ms-flex: 0 0 270px;
-            flex: 0 0 270px;
-            width: 270px;
-            background-color: var(--background-color-2);
-        } 
-
-        @media (max-width: 500px) {
-            .right {
-                display: none; 
-            } 
+        my-main {
+            position: absolute;
+            left: var(--left-width);
+            top: var(--header-height); 
+            width: calc(100vw - var(--left-width));
+            height: calc(100vh - var(--header-height) - var(--footer-height)); 
+            background: green;
         }
+
+        my-right-panel {
+            position: absolute;
+            top: var(--header-height); 
+            right: 0px; 
+        } 
 
     </style>
     <section id="screen">
         <my-header></my-header>
-        <section class="row" id="content">
-            <div class="col left px-0">
-                <my-left-panel></my-left-panel>
-            </div>
-            <div class="col p-0">
-                <my-main></my-main>
-            </div>
-            <div class="col right" style="display: none">
-                <my-right-panel></my-right-panel>
-            </div>
-            <!-- <my-left-panel class="col-4"></my-left-panel>
-            <my-main style="width:80%"></my-main>
-            <my-right-panel></my-right-panel> -->
+        <section id="content">
+            <my-left-panel></my-left-panel>
+            <my-main></my-main>
+            <my-right-panel></my-right-panel>
         </section>
         <my-footer></my-footer>
     </section>

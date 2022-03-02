@@ -13,38 +13,13 @@ class MyNodesCanvas extends WebComponent {
 
     <!-- our own css -->
     <style>
-    html {
-        font-family: sans-serif;
-        /* background-color: var(--antracite-light); */
-        /* overflow: hidden; */
-    }
-
-    code {
-        font-family: Consolas,"courier new";
-        padding: 2px;
-        font-size: 95%;
-    }
-
-    h1 {
-        text-align: center;
-        color: white;
-        line-height: 100px;
-        margin: 0;
-    }
-
-    article {
-        /* position: relative; */
-        /* width: 100%; */
-        /* height: 100%; */
-        /* overflow: hidden; */
-        background: green;
-    }
-
     #nodes-canvas {
         outline: none;
         display: block;
         width: 100%;
-        height: calc(100vh - 80px);
+        height: var(--main-height);
+        /* width: calc(100vw - 30px); */
+        /* height: calc(100vh - 80px); */
         background-color: var(--background);
     }
 
@@ -74,7 +49,6 @@ class MyNodesCanvas extends WebComponent {
     }
     </style>
     <canvas id="nodes-canvas" tabindex="0">
-
     </canvas>
     `;
         

@@ -1,6 +1,9 @@
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
+export const hideRightPanel = "hiderightpanel";
+export const showRightPanel = "showrightpanel";
+
 customElements.define('my-right-panel', 
 class MyRightPanel extends WebComponent {
     
@@ -22,5 +25,22 @@ class MyRightPanel extends WebComponent {
         
     connectedCallback() {
         this.addFrom(MyRightPanel.template);
+        this.hide();
+        this.listen(showRightPanel, this.show.bind(this))
+        this.listen(hideRightPanel, this.hide.bind(this))
     }  
+
+    hide() {
+        // if (!this.parentElement) {
+        //     return;
+        // }
+        this.style.display = "none";
+    }
+
+    show() {
+        // if (!this.parentElement) {
+        //     return;
+        // }
+        this.style.display = "";
+    }
 });

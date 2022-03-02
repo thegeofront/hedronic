@@ -41,7 +41,11 @@ export class CtxCamera {
         let redraw = false;
         
         // always store mouse 
-        let canvasPos = Vector2.new(this.html_canvas.offsetLeft, this.html_canvas.offsetTop)
+        let rect = this.html_canvas.getBoundingClientRect();
+        let canvasPos = Vector2.new(rect.x, rect.y);
+        
+        // console.log(rect);
+        // let canvasPos = Vector2.new(Number(this.html_canvas.style.left), Number(this.html_canvas.style.top));
         // console.log(canvasPos);
         let worldPos = this.screenToWorld(state.mousePos.subbed(canvasPos));
         this.mousePos = worldPos;

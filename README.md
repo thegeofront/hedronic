@@ -1,5 +1,4 @@
-# GEON-NODES
-![image](doc/images/thumbnail.png)
+# GEON-NODES / Geofront
 
 # what is it 
 A component of my master thesis involves a flowchart-application or VPL (Visual Programming Language). I couldn't find any web-based flowchart api which satisfied the requirements, so I set out to create a new one.
@@ -15,7 +14,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 
 # install
 we need the 3d engine locally present. We use it as a 'header only' dependency at the moment for rapid development
-```
+```shell
 git clone https://github.com/josfeenstra/geon-engine engine
 cd engine 
 npm install
@@ -23,7 +22,7 @@ cd ..
 ```
 
 then clone and install the actual repo 
-```
+```shell
 git clone https://github.com/josfeenstra/geon-nodes nodes
 cd nodes
 npm install

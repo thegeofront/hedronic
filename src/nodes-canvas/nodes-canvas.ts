@@ -15,6 +15,8 @@ import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
+import { dispatch } from "../html/util";
+import { hideRightPanel, showRightPanel } from "../html/registry";
 
 /**
  * Represents the entire canvas of nodes.
@@ -571,6 +573,7 @@ export class NodesCanvas {
 
     
     select(s: Socket) {
+        dispatch(showRightPanel);
         let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);
@@ -581,6 +584,7 @@ export class NodesCanvas {
  
 
     deselect() {
+        dispatch(hideRightPanel);
         this.selectedSockets = [];
     }
 
