@@ -99,6 +99,18 @@ export class Catalogue {
         this.modules.set(lib.name, lib);
         lib.publishGlobally();
     } 
+
+    /**
+     * Print yourself
+     */
+    print() {
+        for (let [name, mod] of this.modules) {
+            console.log(name);
+            for (let func of mod.blueprints) {
+                console.log(" L ",func.nameLower);
+            }
+        }
+    }
 }
 
 function createStdWidgets(cat: Catalogue) {

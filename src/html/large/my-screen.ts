@@ -67,6 +67,7 @@ class MyScreen extends WebComponent {
             position: absolute;
             top: var(--header-height); 
             right: 0px; 
+            width: var(--right-width);
         } 
 
     </style>

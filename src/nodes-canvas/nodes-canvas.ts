@@ -16,7 +16,7 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { dispatch } from "../html/util";
-import { hideRightPanel, showRightPanel } from "../html/registry";
+import { hideRightPanel, showRightPanel, ShowRightPanelPayload } from "../html/registry";
 
 /**
  * Represents the entire canvas of nodes.
@@ -125,6 +125,8 @@ export class NodesCanvas {
                 this.onRedo();
             else if (control && key == ' ') 
                 this.onTest();
+            else if (control && key == 'k')
+                this.onPrint();
             else    
                 return;
             
@@ -157,6 +159,10 @@ export class NodesCanvas {
             }
             e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
         });
+    }
+
+    onPrint() {
+        this.catalogue.print();
     }
 
     async onChange() {
@@ -287,7 +293,7 @@ export class NodesCanvas {
     onSelectAll() {
         console.log("selecting all...");
         for (let [k,_] of this.graph.nodes) {
-            this.select(Socket.new(k, 0));
+            this.select(Socket.new(k, 0), false);
         }
         this.requestRedraw();
     }
@@ -572,8 +578,20 @@ export class NodesCanvas {
     }
 
     
-    select(s: Socket) {
-        dispatch(showRightPanel);
+    select(s: Socket, doDispatch=true) {
+        if (doDispatch) {
+            let node = this.graph.getNode(s.hash)!;
+            let title = node.process.nameLower || "-";
+            let subtitle = node.operation?.path.join(".") || "widget";
+            let content = "-";
+
+            let message: ShowRightPanelPayload = {
+                title,
+                subtitle,
+                content,
+            }
+            dispatch(showRightPanel, message);
+        }
         let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);

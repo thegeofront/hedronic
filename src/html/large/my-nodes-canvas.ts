@@ -18,8 +18,6 @@ class MyNodesCanvas extends WebComponent {
         display: block;
         width: 100%;
         height: var(--main-height);
-        /* width: calc(100vw - 30px); */
-        /* height: calc(100vh - 80px); */
         background-color: var(--background);
     }
 
