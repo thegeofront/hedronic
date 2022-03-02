@@ -1,5 +1,5 @@
 import { createModuleDeclaration } from "typescript";
-import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit } from "../../../engine/src/lib";
+import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh } from "../../../engine/src/lib";
 import { HTML } from "../html/util";
 
 export const VisualizeEvent = "visualizestate";
@@ -67,13 +67,14 @@ export class ViewerApp extends App {
  */
 function tempConvert(item: any) : RenderableUnit | undefined {
     if (typeof item !== 'object' || item === null) return undefined;
-    console.log(typeof(item));
-    console.log(item.prototype);
-
+    
     //@ts-ignore
     let typename = item.constructor.name;
-
     console.log(typename);
 
+    if (typename == "Vector") return MultiVector3.fromData([item.x, item.y, item.z]);
+    if (typename == "Line") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
+    if (typename == "Sphere") return Mesh.newSphere(item.center, item.radius, 10, 10);
+    
     return undefined;
 }
