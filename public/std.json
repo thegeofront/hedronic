@@ -23,6 +23,12 @@
             "nickname": "std",
             "filename": "std",
             "path": "./modules/"
+        },
+        {
+            "icon": "bi-arrow",
+            "nickname": "vector",
+            "filename": "vector",
+            "path": "./modules/"
         }
     ],
     "std_old": [],

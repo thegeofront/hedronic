@@ -1,4 +1,4 @@
-export class Point {
+export class Vector {
     
     constructor(
         public x: number,
@@ -6,7 +6,7 @@ export class Point {
     ) {}
 
     static new(x=0.0, y=0.0) {
-        return new Point(x,y);
+        return new Vector(x,y);
     }
 
     decompose() : [number, number] {
@@ -34,10 +34,10 @@ export function getThingie(x: number) : Kaas {
     return {name: "henk", value: x};
 }
 
-export function anotherThingie(x: number) : Point {
-    return new Point(x, 3);
+export function anotherThingie(x: number) : Vector {
+    return new Vector(x, 3);
 }
 
-export function addThingies(a: Point, b: Point) : Point {
-    return new Point(a.x + b.x, a.y + b.y);
+export function addThingies(a: Vector, b: Vector) : Vector {
+    return new Vector(a.x + b.x, a.y + b.y);
 }

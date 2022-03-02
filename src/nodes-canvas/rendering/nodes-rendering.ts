@@ -184,7 +184,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
         // ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
-        let text = node.operation?.ins[i].typeToString() || "in";
+        let text = node.operation?.ins[i].render() || "in";
         ctx.fillText(text, vec.x, vec.y);
     }
     
@@ -192,7 +192,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     for (let i = 0 ; i < node.process.outCount; i++) {
         setStyle(ctx, style, component, i + 1, isWidget);
         let vec = textCenters.get(1 + node.process.inCount + i);
-        let text = node.operation?.outs[i].typeToString() || "out";
+        let text = node.operation?.outs[i].render() || "out";
         // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         ctx.fillText(text, vec.x, vec.y);
     }

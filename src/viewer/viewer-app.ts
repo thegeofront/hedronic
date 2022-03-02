@@ -1,5 +1,5 @@
 import { createModuleDeclaration } from "typescript";
-import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3 } from "../../../engine/src/lib";
+import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit } from "../../../engine/src/lib";
 import { HTML } from "../html/util";
 
 export const VisualizeEvent = "visualizestate";
@@ -21,25 +21,30 @@ export class ViewerApp extends App {
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.debug = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
-        // init some state
         this.listen();
     }
 
     listen() {
         HTML.listen(VisualizeEvent, (payload) => {
             let {state, id} = payload;
-            console.log("visualize something:", id, state);
+            this.tryVisualize(String(id), state);
         })
+        return 
     }
 
     async start() {
         this.startGrid();
         // this.debug.set(MultiVector3.fromData([1,2,3]));
-        // fill some state | fill up shaders
-    
+        // fill some state | fill up shaders    
     }
 
-    ui(ui: UI) {}
+    tryVisualize(id: string, item: any) {
+        console.log("visualize something:", id, item);
+        let unit = tempConvert(item);
+        if (unit) {
+            this.debug.set(unit, id);
+        }
+    }
 
     startGrid() {
         let grid = MultiLine.fromGrid(Plane.WorldXY().moveTo(new Vector3(0, 0, 0)), 100, 2);
@@ -48,11 +53,27 @@ export class ViewerApp extends App {
 
     update(input: InputHandler) {
         this.scene.camera.update(input);
-        // update state | fill up shaders
     }
 
     draw() {
         this.grid.render(this.scene);
         this.debug.render(this.scene);
     }
+}
+
+
+/**
+ * Try to convert a general type to a type we can render
+ */
+function tempConvert(item: any) : RenderableUnit | undefined {
+    if (typeof item !== 'object' || item === null) return undefined;
+    console.log(typeof(item));
+    console.log(item.prototype);
+
+    //@ts-ignore
+    let typename = item.constructor.name;
+
+    console.log(typename);
+
+    return undefined;
 }
