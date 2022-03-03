@@ -44,6 +44,9 @@ class MyRightPanel extends WebComponent {
     }
 
     show(payload?: any) {
+        
+        // HIGHJACK
+        return;
         if (!payload) {
             return;
         }

@@ -12,14 +12,12 @@ export class MyMain extends WebComponent {
             display: grid;
         }
 
-        #Graph {
+        div {
             grid-column: 1;
             grid-row: 1;
         }
 
         #Viewer {
-            grid-column: 1;
-            grid-row: 1;
             z-index: -1;
         }
 
@@ -27,7 +25,7 @@ export class MyMain extends WebComponent {
     <main id="root">
         <div id="Demo">
             <h1>MAIN</h1>
-            <p>This is main</p>
+            <p>This is just some html sample</p>
             <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
             <my-dropdown-button>
             </my-dropdown-button>
