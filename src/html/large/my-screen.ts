@@ -35,7 +35,7 @@ class MyScreen extends WebComponent {
 
         my-header {
             position: absolute;
-            overflow: hidden;
+            /* overflow: hidden; */
             top: 0;
             height: var(--header-height);
         }

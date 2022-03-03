@@ -5,49 +5,46 @@ class MyDropdownButton extends WebComponent {
     
     static readonly template = Template.html`
 
-    <!-- TODO 
-    
-    1. make it on click , not on hover
-
-    -->
-
 	<style>
 		* {
 			margin: 0;
 			padding: 0;
+			font: "comic sans";
+			z-index: 10;
 		}
-	
+
 		li {
 			float: left;
 			position: relative;
-			width: 150px;
 			list-style: none;
-			/* -webkit-transition: .5s;
-			transition: .5s; */
 		}
 	
+		li li {
+			width: 200px;
+		}
+
 		a {
 			display: block;
 			text-decoration: none;
-			padding: 2px 15px;
-			color: #000;
+			padding: 4px 15px;
+			color: white;
+			font-size: 12pt;
+			font: arial;
 		}
 
 		ul {
-			background: white;
+			background: var(--background-color-1);
 			float: left;
-			/* -webkit-transition: .5s;
-			transition: .5s; */
+			color: white;
+			/* -webkit-transition: .9s;
+			transition: .9s; */
 		}
         
 		ul ul {
 			position: absolute;
 			left: 0;
 			top: 100%;
-
             display: none;
-			/* visibility: hidden; */
-			/* opacity: 0; */
 		}
 	
 		ul ul ul {
@@ -55,57 +52,48 @@ class MyDropdownButton extends WebComponent {
 			top: 0;
 		}
 	
-		li:hover, li:hover li {
-			background: #ddd;
-		}
-	
-		li li:hover, li li:hover li {
-			background: #bbb;
-		}
-	
-		li li li:hover {
-			background: #999;
+		li:hover {
+			background: var(--background-color-3);
 		}
 	
 		li:hover > ul {
             display: block;
-			/* visibility: visible; */
-			/* opacity: 1; */
 		}
 	</style>
-	<article>
+	<ul>
+		<li>
+			<my-button ><slot name="title"></slot>
+			</my-button>
 			<ul>
+				<slot name="items"></slot>
 				<li>
-					<a>Mammals</a>
+					<a>Monotremes</a>
 					<ul>
-						<li>
-							<a>Monotremes</a>
-							<ul>
-								<li><a href="#">Echidnas</a></li>
-								<li><a href="#">Platypus</a></li>
-							</ul>
-						</li>
-						<li>
-							<a>Marsupials</a>
-							<ul>
-								<li><a href="#">Opossums</a></li>
-								<li><a href="#">Numbats, etc.</a></li>
-								<li><a href="#">Bandicoots, etc.</a></li>
-								<li><a href="#">Kangaroos, koalas, wombats, etc.</a></li>
-							</ul>
-						</li>
-						<li>
-							<a>Placentals</a>
-							<ul>
-								<li><a href="#">Primates, ungulates, etc.</a></li>
-								<li><a href="#">Anteaters, sloths, etc.</a></li>
-								<li><a href="#">Elephants, etc.</a></li>
-							</ul>
-						</li>
+						<li><a>Echidnas</a></li>
+						<li><a>Platypus</a></li>
+					</ul>
+				</li>
+				<li>
+					<a>Marsupials -> </a>
+					<ul>
+						<li><a>Opossums</a></li>
+						<li><a>Numbats, etc.</a></li>
+						<li><a>Bandicoots, etc.</a></li>
+						<li><a>Kangaroos, koalas, wombats, etc.</a></li>
+					</ul>
+				</li>
+				<li>
+					<a>Placentals</a>
+					<p></p>
+					<ul>
+						<li><a>Primates, ungulates, etc.</a></li>
+						<li><a>Anteaters, sloths, etc.</a></li>
+						<li><a>Elephants, etc.</a></li>
 					</ul>
 				</li>
 			</ul>
-	</article>
+		</li>
+	</ul>
     `;
         
     connectedCallback() {

@@ -19,8 +19,9 @@ export namespace ModuleLoading {
 
         let catalogue = Catalogue.newFromWidgets();   
 
+        // return catalogue;
         let json = await IO.fetchJson(stdPath);
-
+  
         // load new modules 
         for (let config of json.std) {
             const icon = config.icon;

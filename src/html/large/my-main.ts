@@ -18,10 +18,6 @@ export class MyMain extends WebComponent {
             grid-row: 1;
         }
 
-        #Viewer {
-            z-index: -1;
-        }
-
     </style>
     <main id="root">
         <div id="Demo">
@@ -29,6 +25,7 @@ export class MyMain extends WebComponent {
             <p>This is just some html sample</p>
             <!-- <fast-menu-wrapper></fast-menu-wrapper> -->
             <my-dropdown-button>
+                File
             </my-dropdown-button>
             <!-- <bs-dropdown></bs-dropdown> -->
         </div>
@@ -43,7 +40,7 @@ export class MyMain extends WebComponent {
     `;
         
     constructor(
-        private currentTab: MainTab = MainTab.Demo,
+        private currentTab: MainTab = MainTab.Graph,
     ) {
         super();
     }
@@ -63,7 +60,7 @@ export class MyMain extends WebComponent {
         for (let option in MainTab) {
 
             // always render viewer in background
-            if (option == MainTab.Viewer) continue;
+            // if (option == MainTab.Viewer) continue;
 
             //@ts-ignore
             let tab = MainTab[option] as string;

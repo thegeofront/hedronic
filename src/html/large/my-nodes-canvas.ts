@@ -6,28 +6,29 @@ import { Template } from "../util";
 import { WebComponent } from "../web-component";
 import { CanvasResizeEvent } from "./my-main";
 
+
 customElements.define('my-nodes-canvas', 
 class MyNodesCanvas extends WebComponent {
     
     static readonly template = Template.html` 
-
-    <!-- our own css -->
     <style>
     #nodes-canvas {
         outline: none;
         /* background-color: var(--background); */
         /* opacity: 0; */
-        background-color: rgba(0, 0, 0, .15);  
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
+        /* background-color: rgba(0, 0, 0, .15);   */
+        /* backdrop-filter: blur(5px); */
+        /* -webkit-backdrop-filter: blur(5px); */
+        
         display: block;
         width: 100%;
-        height: calc(var(--main-height));
+        height: var(--main-height);
     }
+
+    /*
 
     #nodes-panel {
         position: absolute;
-        /* height: 100vh; */
         display: flex;
         align-items: center;
     }
@@ -49,21 +50,32 @@ class MyNodesCanvas extends WebComponent {
         min-height: 40px;
         border-radius: 5px;
     }
+    
+    */
+    
     </style>
     <canvas id="nodes-canvas" tabindex="0">
     </canvas>
     `;
-        
-    async connectedCallback() {
+     
+    nodes?: NodesCanvas
+
+    constructor() {
+        super();
+    }  
+    
+    connectedCallback() {
         this.addFrom(MyNodesCanvas.template);
+        this.init();
+    }  
+
+    async init() {
         let catalogue = await this.setupCatalogue();
-        this.setupGraphEditor(catalogue);
-        
         // this.listen(CanvasResizeEvent, this.resizeCanvas);
         window.addEventListener("resize", this.resizeCanvas.bind(this));
         this.resizeCanvas();
-        // this.addEventListener("resize", this.resizeCanvas.bind(this));
-    }  
+        this.setupGraphEditor(catalogue);
+    }
 
     async setupCatalogue() {
         const stdPath = "./std.json";
@@ -75,11 +87,10 @@ class MyNodesCanvas extends WebComponent {
 
         // get references of all items on the canvas
         const html_canvas = this.get("nodes-canvas") as HTMLCanvasElement;
-        const ui = this.get("nodes-panel") as HTMLDivElement;
-        
+        // const ui = this.get("nodes-panel") as HTMLDivElement;
         // nodes
-        const nodes = NodesCanvas.new(html_canvas, ui, catalogue)!;
-        nodes.start();
+        this.nodes = NodesCanvas.new(html_canvas, catalogue)!;
+        this.nodes.start();
 
         // timing
         let acc_time = 0;
@@ -87,25 +98,24 @@ class MyNodesCanvas extends WebComponent {
 
         // publish globally 
         // @ts-ignore
-        window.nodes = nodes;
+        window.nodes = this.nodes;
 
         // loop
-        function loop(elapsed_time: number) {
+        let loop = (elapsed_time: number) => {
             let delta_time = elapsed_time - acc_time;
             acc_time = elapsed_time;
 
             // counter._update(delta_time);
             // document.title = "fps: " + counter.getFps();
 
-            nodes.update(delta_time);
-            nodes.draw();
+            this.nodes!.update(delta_time);
+            this.nodes!.draw();
             requestAnimationFrame(loop);
         }
         requestAnimationFrame(loop);
     }
 
     getCanvas() {
-        
         return this.get("nodes-canvas") as HTMLCanvasElement;
     }
 
@@ -113,7 +123,7 @@ class MyNodesCanvas extends WebComponent {
         let canvas = this.getCanvas();
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-
+        
         // let {newWidth, newHeight} = payload;
 
         // canvas.width = newWidth;

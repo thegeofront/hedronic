@@ -6,12 +6,17 @@
     --background-color-3: hsl(240, 5%, 22%);
     --background-color-4: hsl(240, 7%, 38%);
     
+    --accent-color-1: rgb(255, 69, 0);
+
     --antracite-light: #666f7a;
     --antracite: #292C33;
     --background: #3d3f44;
     --antracite-dark: #232427;
     --white: #faf0e6;
     --highlight: rgb(255, 69, 0); 
+
+    --font-lead: "Rajdhani", sans-serif;
+    --font-body: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
 * {
@@ -25,17 +30,16 @@
 
 body {
     color: white;
-    /* font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;; */
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--font-lead);
     background-color: var(--background-color-3);
 }
 
-p {
-    font-family: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;
+p, a {
+    font-family: var(--font-body);
 }
 
 h1, h2, h3 {
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--font-lead);
 }
 
 :not(:defined) {

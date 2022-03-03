@@ -51,7 +51,7 @@ export class NodesCanvas {
         ) {}
 
 
-    static new(htmlCanvas: HTMLCanvasElement, ui: HTMLDivElement, catalogue: Catalogue) {
+    static new(htmlCanvas: HTMLCanvasElement, catalogue: Catalogue) {
 
         const ctx = htmlCanvas.getContext('2d');
         if (!ctx || ctx == null) {

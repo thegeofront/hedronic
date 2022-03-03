@@ -23,6 +23,7 @@ class MyHeader extends WebComponent {
             width: 100vw;
             height: 100%;
             background-color: var(--background-color-1);
+            z-index: -10;
         }
 
         .header-section {
@@ -85,7 +86,14 @@ class MyHeader extends WebComponent {
         // generate the needed html
         let str: string[] = [];
         for (let [catName, cat] of menu.actions) {
-            let btn = html`<my-button>${catName}</my-button>`;
+            let btn = html`
+            <my-dropdown-button>
+                <p slot="title">${catName}</p>
+                <ul>
+                    <li>thingie</li>
+                    <li>thingiepingie</li>
+                </ul>
+            </my-dropdown-button>`;
             str.push(btn);
         }
 
