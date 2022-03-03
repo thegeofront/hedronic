@@ -4,70 +4,132 @@ import { WebComponent } from "../web-component";
 class MyDropdownButton extends WebComponent {
     
     static readonly template = Template.html`
-        <style>
-        .dropbtn {
-            background-color: #04AA6D;
-            color: white;
-            padding: 16px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
 
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
+    <!-- TODO 
+    
+    1. make it on click , not on hover
 
-        .dropdown-content 
-        {
+    -->
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+	
+		li {
+			float: left;
+			position: relative;
+			width: 150px;
+			list-style: none;
+			/* -webkit-transition: .5s;
+			transition: .5s; */
+		}
+	
+		a {
+			display: block;
+			text-decoration: none;
+			padding: 2px 15px;
+			color: #000;
+		}
+
+		ul {
+			background: white;
+			float: left;
+			/* -webkit-transition: .5s;
+			transition: .5s; */
+		}
+        
+		ul ul {
+			position: absolute;
+			left: 0;
+			top: 100%;
+
             display: none;
-            position: absolute;
-            right: 0;
-            background-color: var(--background-color-4);
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            color: white;
-            padding: 5px 10px;
-            text-decoration: none;
+			/* visibility: hidden; */
+			/* opacity: 0; */
+		}
+	
+		ul ul ul {
+			left: 100%;
+			top: 0;
+		}
+	
+		li:hover, li:hover li {
+			background: #ddd;
+		}
+	
+		li li:hover, li li:hover li {
+			background: #bbb;
+		}
+	
+		li li li:hover {
+			background: #999;
+		}
+	
+		li:hover > ul {
             display: block;
-        }
-
-        .divider {
-            height: 1px;
-            width: 100% - 20px;
-            background-color: white;
-            margin: 10px 10px;
-        }
-
-        /* .dropdown:hover .dropbtn {background-color: #3e8e41;} */
-        .dropdown-content a:hover {background-color: #f1f1f1;}
-        .dropdown:hover .dropdown-content {display: block;}
-        </style>
-        <div class="dropdown" style="float:left;">
-            <button class="dropbtn">Left</button>
-            <div class="dropdown-content" style="left:0;">
-                <a href="#">Link 1</a>
-                <a href="#">Link 2</a>
-                <p class="divider"></p>
-                <slot></slot>
-            </div>
-        </div>
+			/* visibility: visible; */
+			/* opacity: 1; */
+		}
+	</style>
+	<article>
+			<ul>
+				<li>
+					<a>Mammals</a>
+					<ul>
+						<li>
+							<a>Monotremes</a>
+							<ul>
+								<li><a href="#">Echidnas</a></li>
+								<li><a href="#">Platypus</a></li>
+							</ul>
+						</li>
+						<li>
+							<a>Marsupials</a>
+							<ul>
+								<li><a href="#">Opossums</a></li>
+								<li><a href="#">Numbats, etc.</a></li>
+								<li><a href="#">Bandicoots, etc.</a></li>
+								<li><a href="#">Kangaroos, koalas, wombats, etc.</a></li>
+							</ul>
+						</li>
+						<li>
+							<a>Placentals</a>
+							<ul>
+								<li><a href="#">Primates, ungulates, etc.</a></li>
+								<li><a href="#">Anteaters, sloths, etc.</a></li>
+								<li><a href="#">Elephants, etc.</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+	</article>
     `;
         
     connectedCallback() {
         this.addFrom(MyDropdownButton.template);
+        // this.get("dropbtn").addEventListener("click", () => this.onCLick.bind(this));
+        
+        console.log("TESTING 123")
+        this.shadow.querySelectorAll("ul").forEach((el) => {
+            console.log(el);
+        })
     }  
 
-    setMenu(menu: Object) {
-        // recursively go through the object, and try to find functions
-        // create a dropdown menu based upon that
+    onCLick() {
+        this.toggle();
     }
 
+    toggle() {
+        console.log("click!");
+        // if (this.style.display == "none") {
+        //     this.style.display = "block";
+        // } else {
+        //     this.style.display = "none";
+        // }
+    }
 };
 
 customElements.define('my-dropdown-button', MyDropdownButton);

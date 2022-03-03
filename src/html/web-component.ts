@@ -16,6 +16,10 @@ export abstract class WebComponent extends HTMLElement {
         this.attachShadow({ mode });
     }
 
+    get shadow() {
+        return this.shadowRoot!;
+    }
+
     addFrom(template: HTMLTemplateElement, deep=true) {
         this.shadowRoot!.appendChild(template.content.cloneNode(deep));
     }
@@ -63,6 +67,10 @@ export abstract class WebComponent extends HTMLElement {
         }
     }
 
+    // static get observedAttributes() {
+    //     return ['value', 'max'];
+    //   }
+      
     // attributeChangedCallback
 
     
