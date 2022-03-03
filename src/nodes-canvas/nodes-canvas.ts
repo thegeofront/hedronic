@@ -15,6 +15,7 @@ import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
 import { hideRightPanel, showRightPanel, ShowRightPanelPayload } from "../html/registry";
+import { Menu } from "../menu/menu";
 
 /**
  * Represents the entire canvas of nodes.
@@ -44,7 +45,8 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         private graph: NodesGraph,
-        public graphHistory: History,        
+        public graphHistory: History,
+        public menu: Menu,        
         public catalogue: Catalogue
         ) {}
 
@@ -61,9 +63,12 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-        // const menu = Menu.new(ui, htmlCanvas);
+        const menu = Menu.newDefault();
 
-        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue);
+        // fill the html of menu now that menu is created
+        // HTML.dispatch()
+
+        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue);
     }
 
 

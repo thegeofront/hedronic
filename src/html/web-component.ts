@@ -1,3 +1,5 @@
+import { PayloadEventType } from "./payload-event";
+
 /**
  * An in-between class for using Web Components
  * 
@@ -26,26 +28,26 @@ export abstract class WebComponent extends HTMLElement {
         return item!;
     }
 
-    dispatch(type: string, payload: any) {
-        let event = new CustomEvent(type, {
-            detail: {
-                payload: payload,
-                bubbles: true,
-                composed: true,
-            },
+
+    dispatch<T>(type: PayloadEventType<T>, payload: T) {
+        let event = new CustomEvent<T>(type.name, {
+            detail: payload,
+            bubbles: true,
+            composed: true,
         });
         document.dispatchEvent(event);
     }
 
-    listen(type: string, callback: (payload: any, e: CustomEvent) => void) {
-        let listener = (e: CustomEvent) => {
+    listen<T>(type: PayloadEventType<T>, callback: (payload: T, e: CustomEvent<T>) => void) {
+        let listener = (e: CustomEvent<T>) => {
+            
             //@ts-ignore
-            callback(e.detail.payload, e);
+            callback(e.detail, e);
         }
-        this.listeners.set(type, listener);
+        this.listeners.set(type.name, listener);
 
         //@ts-ignore
-        document.addEventListener(type, listener);
+        document.addEventListener(type.name, listener);
     }
 
     abstract connectedCallback(): any;

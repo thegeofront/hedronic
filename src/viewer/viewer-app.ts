@@ -1,8 +1,8 @@
-import { createModuleDeclaration } from "typescript";
 import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh } from "../../../engine/src/lib";
+import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 
-export const VisualizeEvent = "visualizestate";
+export const VisualizeEvent = new PayloadEventType<{state: any, id: string}>("visualizestate");
 
 export class ViewerApp extends App {
 
@@ -21,15 +21,12 @@ export class ViewerApp extends App {
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.debug = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
-        this.listen();
-    }
 
-    listen() {
         HTML.listen(VisualizeEvent, (payload) => {
+            console.log(payload);
             let {state, id} = payload;
-            this.tryVisualize(String(id), state);
+            this.tryVisualize(id, state);
         })
-        return 
     }
 
     async start() {

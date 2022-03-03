@@ -1,5 +1,12 @@
-import { Template } from "../util";
+import { Menu } from "../../menu/menu";
+import { Catalogue } from "../../modules/catalogue";
+import { PayloadEventType } from "../payload-event";
+import { html, HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
+
+export const UpdateCatalogueEvent = new PayloadEventType<Catalogue>("updatecatalogue");
+
+export const UpdateMenuEvent = new PayloadEventType<Menu>("updatemenu");
 
 customElements.define('my-header', 
 class MyHeader extends WebComponent {
@@ -48,12 +55,12 @@ class MyHeader extends WebComponent {
                 <h1 id="title">Geofront</h1>
             </div>
         </div>
-        <div class="header-section">
-            <my-button>File</my-button>
+        <div id="action-categories" class="header-section">
+            <!-- <my-button>File</my-button>
             <my-button>Edit</my-button>
             <my-button>Add</my-button>
             <my-button>View</my-button>
-            <my-button>Help</my-button>
+            <my-button>Help</my-button> -->
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">
             <my-button>Settings</my-button>
@@ -64,6 +71,41 @@ class MyHeader extends WebComponent {
         
     connectedCallback() {
         this.addFrom(MyHeader.template);
+        this.listen(UpdateCatalogueEvent, this.onUpdateCatalogue.bind(this));
+        this.listen(UpdateMenuEvent, this.onUpdateMenu.bind(this));
     }  
+
+    onUpdateMenu(menu: Menu) {
+        if (!(menu instanceof Menu)) {
+            console.error("expect menu...");
+            return;
+        }
+
+        let str = `
+        ${menu.actions.forEach((cat, catName) => {
+            html`<my-button>${catName}</my-button>`   
+        })}
+        `;
+
+        console.log(str);
+
+        // generate the needed html
+        // let htmls: string[] = [];
+        // for (let [catName, cat] of menu.actions) {
+        //     let btn = html`<my-button>${catName}</my-button>`;
+        //     htmls.push(btn);
+        // }
+
+        // set
+        // this.get("action-categories").innerHTML = htmls.join("");
+    }
+
+    onUpdateCatalogue(catalogue: Catalogue) {
+        if (!(catalogue instanceof Catalogue)) {
+            console.error("expect catalogue...");
+            return;
+        }
+        // catalogue
+    }
 
 });

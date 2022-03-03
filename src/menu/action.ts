@@ -1,5 +1,5 @@
-import { Key } from "../../../../engine/src/lib";
-import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { Key } from "../../../engine/src/lib";
+import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
 /**
  * @example 

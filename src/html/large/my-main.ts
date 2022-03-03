@@ -1,3 +1,4 @@
+import { PayloadEventType } from "../payload-event";
 import { html, Template } from "../util";
 import { WebComponent } from "../web-component";
 
@@ -58,8 +59,7 @@ export class MyMain extends WebComponent {
 
     }
 
-    doTab(selected?: MainTab) {
-        
+    doTab(selected: MainTab) {
         for (let option in MainTab) {
 
             // always render viewer in background
@@ -78,9 +78,9 @@ export class MyMain extends WebComponent {
 
 customElements.define('my-main', MyMain);
 
-export const TabMainEvent = "tabmain";
+export const TabMainEvent = new PayloadEventType<MainTab>("tabmain");
 
-export const CanvasResizeEvent = "canvasresize";
+export const CanvasResizeEvent = new PayloadEventType<any>("canvasresize");
 
 export enum MainTab {
     Demo="Demo",

@@ -1,8 +1,9 @@
+import { PayloadEventType } from "../payload-event";
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
-export const hideRightPanel = "hiderightpanel";
-export const showRightPanel = "showrightpanel";
+export const hideRightPanel = new PayloadEventType("hiderightpanel");
+export const showRightPanel = new PayloadEventType<ShowRightPanelPayload>("showrightpanel");
 export type ShowRightPanelPayload = {title: string, subtitle: string, content: string};
 
 customElements.define('my-right-panel', 
@@ -43,17 +44,12 @@ class MyRightPanel extends WebComponent {
         this.style.display = "none";
     }
 
-    show(payload?: any) {
-        
+    show(payload: ShowRightPanelPayload) { 
         // HIGHJACK
         return;
-        if (!payload) {
-            return;
-        }
-        let message = payload as ShowRightPanelPayload;
         this.style.display = "";
-        this.get("header").innerText = message.title;
-        this.get("subheader").innerText = message.subtitle;
-        this.get("body").innerHTML = message.content;
+        this.get("header").innerText = payload.title;
+        this.get("subheader").innerText = payload.subtitle;
+        this.get("body").innerHTML = payload.content;
     }
 });

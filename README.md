@@ -78,17 +78,16 @@ finally, serve the `public` folder using something like
 - Module Loading
   - [✔️] Dynamically load js, 
   - [✔️] build a LibraryShim so we can reason about it
-  - [ ] Rework the library shims  
-  - [ ] Load `*.d.ts` header files. 
-    - [ ] Ensure type savety from these headers
-    - [ ]  
+  - [✔️] Rework the library shims  
+  - [✔️] Load `*.d.ts` header files. 
+    - [✔️] Ensure type savety from these headers 
   - [✔️] Load a WebAssembly module created using wasm-pack       
 
 - Types 
-  - [ ] How to represent basic types ? 
-  - [ ] How to represent nested types (a list of numbers)
-  - [ ] How to represent custom types ? (== structs | interfaces | classes)
-  - [ ] How to show this on the canvas ?  
+  - [✔️] How to represent basic types ? 
+  - [✔️] How to represent nested types (a list of numbers)
+  - [✔️] How to represent custom types ? (== structs | interfaces | classes)
+  - [✔️] How to show this on the canvas ?  
      - [ ] Introduce a Variable Node 
 
 
@@ -161,14 +160,14 @@ The Utilities are still not completely done:
 ### Menu Overhaul
 - [ ] use lit or something
 - [ ] build homepage, tabs, settings page, dropdown menu's, etc.
-- [ ] double click -> add component functionality
+- [✔️] double click -> add component functionality
 - [ ] right click menu
   - [ ] on empty
   - [ ] on cable
   - [ ] on block
   - [ ] on selection
-- [ ] One settings page, nothing more
-- [ ] Paint / Visualize window
+- [✔️] One settings page, nothing more
+- [✔️] Paint / Visualize window
 
 ### Quality of Life Graph Editing
 - [ ] Copy & Paste parts of the flowchart 🚧
@@ -271,7 +270,7 @@ The current widgets are not properly scalable, and hard to maintain.
 
 <br>
 
-## Phase 5 - Geometry 🛑
+## Phase 5 - Geometry 
 > Note: unsure about this part
 - Make this application ready for geo business & wasm. 
   - Make the components accept json-serializable data. 
@@ -295,6 +294,20 @@ could be used to represent basicly anything. It will be the function's problem t
 
 > Note: what am i doing? this is just a normal js Object. lets just use that, but gain full control over it
 
+> Note: we need an additional basic type: the Matrix: A wasm-based, typed array / buffer of a fixed size. its needed as an analogy to something like `numpy`
+
+> Format: 
+> ```Javascript
+> 
+> // 1D, 2D, 3D
+> {
+>    data: Float32Array,
+>    width?: number,
+>    height?: number,
+>    depth?: number,
+>    dimensions: number,
+> }
+> ```
 <br>
 
 ## Phase 6 - Geospatial 🛑

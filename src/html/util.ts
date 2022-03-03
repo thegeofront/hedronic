@@ -5,6 +5,8 @@
  * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw
  */
 
+import { PayloadEventType } from "./payload-event";
+
 /**
  * This passthrough function serves as syntax highlighting
  */
@@ -20,25 +22,23 @@ export function css(template: TemplateStringsArray, ...args: any[]) {
 }
 
 export namespace HTML {
-    export function dispatch(eventType: string, payload?: any) {
-        let event = new CustomEvent(eventType, {
-            detail: {
-                payload,
-                bubbles: true,
-                composed: true,
-            },
+    export function dispatch<T>(type: PayloadEventType<T>, payload?: T) {
+        let event = new CustomEvent<T>(type.name, {
+            detail: payload,
+            bubbles: true,
+            composed: true,
         });
         document.dispatchEvent(event);
     }
-    
-    export function listen(type: string, callback: (payload: any, e: CustomEvent) => void) {
+
+    export function listen<T>(type: PayloadEventType<T>, callback: (payload: T, e: CustomEvent) => void) {
         let listener = (e: CustomEvent) => {
             //@ts-ignore
-            callback(e.detail.payload, e);
+            callback(e.detail, e);
         }
     
         //@ts-ignore
-        document.addEventListener(type, listener);
+        document.addEventListener(type.name, listener);
     }
 }
 
