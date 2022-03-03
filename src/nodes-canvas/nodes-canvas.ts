@@ -98,7 +98,7 @@ export class NodesCanvas {
      */
     setupControlKeyActions() {
 
-        document.addEventListener("keydown", (e) => {
+        this.ctx.canvas.addEventListener("keydown", (e) => {
             
             // TODO: give these actions different files or something, maybe like the history actions
             let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
@@ -107,7 +107,7 @@ export class NodesCanvas {
 
             if (control && key == 'a')
                 this.onSelectAll();
-            else if ((control && key =='p') || (control && shift && key == 'p')) 
+            else if ((control && key =='p') || (control && shift && key == 'p') || key == 'enter') 
                 this.onPrompt();
             else if (control && key == 's')
                 this.onSave();
@@ -805,9 +805,9 @@ export class NodesCanvas {
             // we clicked an empty spot: deselect
             if (!shift) this.deselect();
             
-            if (doubleClick) {
-                this.promptForNode(gp);
-            }
+            // if (doubleClick) {
+            //     this.promptForNode(gp);
+            // }
 
             // deselect and draw a box
             this.startBox(gp);

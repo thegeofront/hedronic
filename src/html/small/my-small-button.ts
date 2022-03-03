@@ -29,6 +29,10 @@ class MySmallButton extends WebComponent {
             color: var(--background-color-1)
         }
 
+        button:active {
+            transform: translateY(2px);
+        }
+
         </style>
         <button id="button"><p><slot></slot></p></button>
     `;

@@ -23,10 +23,19 @@ class MyButton extends WebComponent {
             background-color: transparent;
             color: grey;
         }
+/* 
+        .clicked {
+            background-color: black;
+            color: white;
+        } */
+
+        button:active {
+            transform: translateY(2px);
+        }
 
         button:hover {
             background-color: white;
-            color: var(--background-color-1)
+            color: var(--background-color-1);
         }
 
         </style>
@@ -35,6 +44,9 @@ class MyButton extends WebComponent {
         
     connectedCallback() {
         this.addFrom(MyButton.template);
+        this.addEventListener("click", () => {
+
+        })
     }  
 
 });
