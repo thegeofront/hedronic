@@ -15,10 +15,13 @@ class MyNodesCanvas extends WebComponent {
     <style>
     #nodes-canvas {
         outline: none;
+        /* background-color: var(--background); */
+        /* opacity: 0; */
+        background-color: rgba(0, 0, 0, .15);  
+        backdrop-filter: blur(5px);
         display: block;
         width: 100%;
-        height: var(--main-height);
-        background-color: var(--background);
+        height: calc(var(--main-height));
     }
 
     #nodes-panel {

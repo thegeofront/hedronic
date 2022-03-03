@@ -9,8 +9,20 @@ export class MyMain extends WebComponent {
         #root {
             width: 100%;
             height: 100%;
-            background: yellow;
+            display: grid;
         }
+
+        #Graph {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        #Viewer {
+            grid-column: 1;
+            grid-row: 1;
+            z-index: -1;
+        }
+
     </style>
     <main id="root">
         <div id="Demo">
@@ -48,8 +60,13 @@ export class MyMain extends WebComponent {
 
     }
 
-    doTab(selected: MainTab) {
+    doTab(selected?: MainTab) {
+        
         for (let option in MainTab) {
+
+            // always render viewer in background
+            if (option == MainTab.Viewer) continue;
+
             //@ts-ignore
             let tab = MainTab[option] as string;
             if (tab == selected) {
@@ -70,5 +87,5 @@ export const CanvasResizeEvent = "canvasresize";
 export enum MainTab {
     Demo="Demo",
     Graph="Graph",
-    Viewer="Viewer"
+    Viewer="Viewer",
 }

@@ -5,13 +5,11 @@ import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
-import { makeOperationsGlobal } from "./model/graph-conversion";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
 import { Catalogue, CoreType } from "../modules/catalogue";
 import { ModuleShim } from "../modules/shims/module-shim";
 import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
-import { Menu } from "./ui/menu";
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
@@ -46,9 +44,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         private graph: NodesGraph,
-        public graphHistory: History,
-        public menu: Menu,
-        
+        public graphHistory: History,        
         public catalogue: Catalogue
         ) {}
 
@@ -65,9 +61,9 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-        const menu = Menu.new(ui, htmlCanvas);
+        // const menu = Menu.new(ui, htmlCanvas);
 
-        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue);
+        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue);
     }
 
 
@@ -91,7 +87,7 @@ export class NodesCanvas {
 
         // publish catalogue and ui 
         this.ui();
-        this.menu.updateCategories(this);
+        // this.menu.updateCategories(this);
         this.testGraph();
     }
 
@@ -322,7 +318,7 @@ export class NodesCanvas {
             this.catalogue.addLibrary(mod);
         }
         this.ui();
-        this.menu.updateCategories(this);
+        // this.menu.updateCategories(this);
     }
 
     async testGraph() {
@@ -376,9 +372,9 @@ export class NodesCanvas {
     ui() {
         
         // hook up UI 
-        this.menu.updateCategories(this);
-        this.menu.renderNav();
-        makeOperationsGlobal(this.catalogue);
+        // this.menu.updateCategories(this);
+        // this.menu.renderNav();
+        // makeOperationsGlobal(this.catalogue);
     }
 
 

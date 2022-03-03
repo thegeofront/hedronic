@@ -115,24 +115,37 @@ export class Catalogue {
 }
 
 function createStdWidgets(cat: Catalogue) {
-        // create widgets
-        let widgets: Widget[] = [
-            ButtonWidget.new(false),
-            InputWidget.new("hello world"),
-            LampWidget.new(false),
-            ConsoleWidget.new(false),
-            ImageWidget.new("<image>"),
-            ViewWidget.new(false)
-        ]
+    // create widgets
+    let widgets: Widget[] = [
+        ButtonWidget.new(false),
+        InputWidget.new("hello world"),
+        LampWidget.new(false),
+        ConsoleWidget.new(false),
+        ImageWidget.new("<image>"),
+        ViewWidget.new(false)
+    ]
 
-        // add them to a map
-        let wmap = new Map<string, Widget>();
-        for (let w of widgets) {
-            wmap.set(w.name, w);
-        }
+    // add them to a map
+    let wmap = new Map<string, Widget>();
+    for (let w of widgets) {
+        wmap.set(w.name, w);
+    }
 
-        // use the map to create a library
-        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
-        cat.addLibrary(widMod);
-        return cat;
+    // use the map to create a library
+    let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
+    cat.addLibrary(widMod);
+    return cat;
+}
+
+/**
+ * To make sure nested operations work, we need to publish the catalogue globally. 
+ */
+ export function makeOperationsGlobal(catalogue: Catalogue, namespace="GEON") {
+    
+    let space = {};
+    Object.defineProperty(window, namespace, { value: space, configurable: true});
+
+    // for (let op of catalogue.allOperations()) {
+    //     Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
+    // }
 }

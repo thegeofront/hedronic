@@ -40,7 +40,7 @@ export class ViewerApp extends App {
 
     tryVisualize(id: string, item: any) {
         console.log("visualize something:", id, item);
-        let unit = tempConvert(item);
+        let unit = tryConvert(item);
         if (unit) {
             this.debug.set(unit, id);
         }
@@ -65,7 +65,7 @@ export class ViewerApp extends App {
 /**
  * Try to convert a general type to a type we can render
  */
-function tempConvert(item: any) : RenderableUnit | undefined {
+function tryConvert(item: any) : RenderableUnit | undefined {
     if (typeof item !== 'object' || item === null) return undefined;
     
     //@ts-ignore

@@ -231,15 +231,3 @@ export function graphToFunction(graph: NodesGraph, name: string) {
     return fn;
 }
 
-/**
- * To make sure nested operations work, we need to publish the catalogue globally. 
- */
-export function makeOperationsGlobal(catalogue: Catalogue, namespace="GEON") {
-    
-    let space = {};
-    Object.defineProperty(window, namespace, { value: space, configurable: true});
-
-    // for (let op of catalogue.allOperations()) {
-    //     Object.defineProperty(space, op.func.name, { value: op.func, configurable: true});
-    // }
-}

@@ -34,7 +34,7 @@ class MyLeftPanel extends WebComponent {
         this.get("show-viewer-btn").addEventListener("click", () => this.onToggleMainButtonPressed(MainTab.Viewer));
     }  
 
-    onToggleMainButtonPressed(tab: MainTab) {
+    onToggleMainButtonPressed(tab?: MainTab) {
         this.dispatch(TabMainEvent, tab);
     }
 });

@@ -60,7 +60,6 @@ class MyScreen extends WebComponent {
             top: var(--header-height); 
             width: calc(100vw - var(--left-width));
             height: var(---main-height); 
-            background: green;
         }
 
         my-right-panel {
