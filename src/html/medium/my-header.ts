@@ -58,11 +58,11 @@ class MyHeader extends WebComponent {
             </div>
         </div>
         <div id="action-categories" class="header-section">
-            <!-- <my-button>File</my-button>
+            <my-button>File</my-button>
             <my-button>Edit</my-button>
             <my-button>Add</my-button>
             <my-button>View</my-button>
-            <my-button>Help</my-button> -->
+            <my-button>Help</my-button>
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">
             <my-button>Settings</my-button>
@@ -86,19 +86,35 @@ class MyHeader extends WebComponent {
         // generate the needed html
         let str: string[] = [];
         for (let [catName, cat] of menu.actions) {
+            console.log(cat);
             let btn = html`
             <my-dropdown-button>
-                <p slot="title">${catName}</p>
-                <ul>
-                    <li>thingie</li>
-                    <li>thingiepingie</li>
+                <span slot="title">${catName}</span>
+                <ul slot="list">
+                    ${cat.map((action) => 
+                        html`
+                        <li>
+                            <a data-cat="${catName}">${action.name}</a>
+                        </li>`).join('')}
                 </ul>
             </my-dropdown-button>`;
             str.push(btn);
         }
+        let htmlPiece = str.join('');
+        
+        // convert to DOM
+        let actionsHTML = this.get("action-categories");
+        actionsHTML.innerHTML = htmlPiece;
 
-        let htmlPiece = str.join('\n');
-        this.get("action-categories").innerHTML = htmlPiece;
+        // add listeners
+        for (let a of actionsHTML.querySelectorAll('a')) {
+            a.addEventListener('click', () => {
+                console.log("click!");
+                // let catName = a.getAttribute('data-cat');
+                // let catName = a.getAttribute('data-cat');
+                // menu.actions.get(catName)?.find((m) => m.name == )
+            })
+        }
     }
 
     onUpdateCatalogue(catalogue: Catalogue) {

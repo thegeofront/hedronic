@@ -61,17 +61,12 @@ class MyDropdownButton extends WebComponent {
 		}
 	</style>
 	<ul>
-		<li>
+		<li id="wrapper">
 			<my-button ><slot name="title"></slot>
 			</my-button>
-			<ul>
-				<slot name="items"></slot>
+			<!-- <ul slot="list">
 				<li>
-					<a>Monotremes</a>
-					<ul>
-						<li><a>Echidnas</a></li>
-						<li><a>Platypus</a></li>
-					</ul>
+					<a>Kaas </a>
 				</li>
 				<li>
 					<a>Marsupials -> </a>
@@ -82,28 +77,28 @@ class MyDropdownButton extends WebComponent {
 						<li><a>Kangaroos, koalas, wombats, etc.</a></li>
 					</ul>
 				</li>
-				<li>
-					<a>Placentals</a>
-					<p></p>
-					<ul>
-						<li><a>Primates, ungulates, etc.</a></li>
-						<li><a>Anteaters, sloths, etc.</a></li>
-						<li><a>Elephants, etc.</a></li>
-					</ul>
-				</li>
-			</ul>
+			</ul> -->
 		</li>
 	</ul>
     `;
         
+	constructor() {
+		super()
+	}
+
     connectedCallback() {
         this.addFrom(MyDropdownButton.template);
         // this.get("dropbtn").addEventListener("click", () => this.onCLick.bind(this));
         
-        console.log("TESTING 123")
-        this.shadow.querySelectorAll("ul").forEach((el) => {
-            console.log(el);
-        })
+        // console.log("TESTING 123")
+        // this.shadow.querySelectorAll("ul").forEach((el) => {
+        //     console.log(el);
+        // })
+
+		let list = this.querySelector(`ul[slot="list"]`);
+		if (!list) return; 
+		this.get("wrapper").appendChild(list);
+		
     }  
 
     onCLick() {
@@ -121,13 +116,3 @@ class MyDropdownButton extends WebComponent {
 };
 
 customElements.define('my-dropdown-button', MyDropdownButton);
-
-declare global {
-    interface HTMLElementTagNameMap {
-        "my-dropdown-button": MyDropdownButton;
-    }
-
-    interface WindowEventMap {
-        // "message": CustomEvent;
-    }
-}
