@@ -23,7 +23,6 @@ export class ViewerApp extends App {
         this.scene = new Scene(camera);
 
         HTML.listen(VisualizeEvent, (payload) => {
-            console.log(payload);
             let {state, id} = payload;
             this.tryVisualize(id, state);
         })
@@ -36,7 +35,7 @@ export class ViewerApp extends App {
     }
 
     tryVisualize(id: string, item: any) {
-        console.log("visualize something:", id, item);
+        // console.log("visualize something:", id, item);
         let unit = tryConvert(item);
         if (unit) {
             this.debug.set(unit, id);
@@ -67,7 +66,7 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     
     //@ts-ignore
     let typename = item.constructor.name;
-    console.log(typename);
+    // console.log(typename);
 
     if (typename == "Vector") return MultiVector3.fromData([item.x, item.y, item.z]);
     if (typename == "Line") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));

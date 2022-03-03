@@ -43,7 +43,7 @@ export class MyMain extends WebComponent {
     `;
         
     constructor(
-        private currentTab: MainTab = MainTab.Graph,
+        private currentTab: MainTab = MainTab.Demo,
     ) {
         super();
     }

@@ -47,7 +47,7 @@ export class TypeShim {
      */
     isAcceptableType(other: TypeShim) : boolean {
 
-        console.log("this", this.typeToString(), "other", other.typeToString())
+        // console.log("this", this.typeToString(), "other", other.typeToString())
 
         // Any is difficult, it could potentially lead to unsafe circumstances. 
         // however, if the 'other' is any, we can accept everything 

@@ -14,7 +14,7 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
-import { hideRightPanel, showRightPanel, ShowRightPanelPayload } from "../html/registry";
+import { hideRightPanel, showRightPanel, ShowRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
 
 /**
@@ -66,7 +66,7 @@ export class NodesCanvas {
         const menu = Menu.newDefault();
 
         // fill the html of menu now that menu is created
-        // HTML.dispatch()
+        HTML.dispatch(UpdateMenuEvent, menu);
 
         return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue);
     }

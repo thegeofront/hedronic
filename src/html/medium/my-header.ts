@@ -1,5 +1,6 @@
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
+import { mapmap } from "../../nodes-canvas/util/misc";
 import { PayloadEventType } from "../payload-event";
 import { html, HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
@@ -81,23 +82,15 @@ class MyHeader extends WebComponent {
             return;
         }
 
-        let str = `
-        ${menu.actions.forEach((cat, catName) => {
-            html`<my-button>${catName}</my-button>`   
-        })}
-        `;
-
-        console.log(str);
-
         // generate the needed html
-        // let htmls: string[] = [];
-        // for (let [catName, cat] of menu.actions) {
-        //     let btn = html`<my-button>${catName}</my-button>`;
-        //     htmls.push(btn);
-        // }
+        let str: string[] = [];
+        for (let [catName, cat] of menu.actions) {
+            let btn = html`<my-button>${catName}</my-button>`;
+            str.push(btn);
+        }
 
-        // set
-        // this.get("action-categories").innerHTML = htmls.join("");
+        let htmlPiece = str.join('\n');
+        this.get("action-categories").innerHTML = htmlPiece;
     }
 
     onUpdateCatalogue(catalogue: Catalogue) {
@@ -105,6 +98,10 @@ class MyHeader extends WebComponent {
             console.error("expect catalogue...");
             return;
         }
+
+
+
+        console.log("updating catalogue...");
         // catalogue
     }
 

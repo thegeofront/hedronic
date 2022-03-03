@@ -23,7 +23,7 @@ export class ModuleShim {
         ) {}
 
     select(key: string, type: CoreType, catalogue: Catalogue) {
-        console.log(`select name: ${key} type: ${type}`);
+        // console.log(`select name: ${key} type: ${type}`);
         let core;
         if (type == CoreType.Operation) {
             core = tryFilter(this.blueprints, (item) => {return item.name == key});
