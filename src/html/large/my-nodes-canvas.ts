@@ -19,7 +19,6 @@ class MyNodesCanvas extends WebComponent {
         background-color: rgba(0, 0, 0, .15);  
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
-        
         display: block;
         width: 100%;
         height: var(--main-height);
