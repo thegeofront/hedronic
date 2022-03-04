@@ -1,3 +1,4 @@
+import { Key } from "../../../../engine/src/lib";
 import { MenuAction } from "../../menu/items/menu-action";
 import { MenuDivider } from "../../menu/items/menu-divider";
 import { MenuItem } from "../../menu/items/menu-item";
@@ -117,9 +118,13 @@ class MyHeader extends WebComponent {
 
     itemToHTML(item: MenuItem) {
         if (item instanceof MenuAction) {
+            let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
             return html`
             <li>
-                <a>${item.name}</a>
+                <a>
+                    <span style="float: left">${item.name}</span>
+                    <span style="float: right">${keys}</span>
+                </a>
             </li>`
         } 
         if (item instanceof MenuDivider) {

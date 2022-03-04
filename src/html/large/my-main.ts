@@ -34,7 +34,10 @@ export class MyMain extends WebComponent {
                         <a>Kaas </a>
                     </li>
                     <li>
-                        <a>Marsupials -> </a>
+                        <a>
+                            <span style="float: left">Marsupials</span>
+                            <span style="float: right">Ctrl + D</span>
+                        </a>
                         <ul>
                             <li><a>Opossums</a></li>
                             <div></div>

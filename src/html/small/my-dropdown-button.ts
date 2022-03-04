@@ -12,7 +12,6 @@ class MyDropdownButton extends WebComponent {
 		* {
 			margin: 0;
 			padding: 0;
-			font: "comic sans";
 			z-index: 10;
 		}
 
@@ -28,9 +27,9 @@ class MyDropdownButton extends WebComponent {
 		}
 
 		a {
-			display: block;
+			/* display: block; */
 			text-decoration: none;
-			padding: 4px 15px;
+			padding: 4px 10px 4px 30px;
 			color: var(--default-color-2);
 			font: var(--font-body);
 			font-size: 10pt;
@@ -52,6 +51,7 @@ class MyDropdownButton extends WebComponent {
 			padding-bottom: 10px;
             display: none;
 			box-shadow: 0 0 4px #111;
+			border-radius: 4px
 		}
 	
 		ul ul ul {
@@ -69,7 +69,6 @@ class MyDropdownButton extends WebComponent {
 	
 		li li:hover > a {
 			color: white;
-			cursor: pointer;
 		}
 
 		li:hover > ul {
