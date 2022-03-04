@@ -1,3 +1,6 @@
+import { MenuAction } from "../../menu/items/menu-action";
+import { MenuDivider } from "../../menu/items/menu-divider";
+import { MenuItem } from "../../menu/items/menu-item";
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { mapmap } from "../../nodes-canvas/util/misc";
@@ -85,17 +88,14 @@ class MyHeader extends WebComponent {
 
         // generate the needed html
         let str: string[] = [];
-        for (let [catName, cat] of menu.actions) {
-            console.log(cat);
+        for (let [name, category] of menu.categories) {
+
             let btn = html`
             <my-dropdown-button>
-                <span slot="title">${catName}</span>
+                <span slot="title">${name}</span>
                 <ul slot="list">
-                    ${cat.map((action) => 
-                        html`
-                        <li>
-                            <a data-cat="${catName}">${action.name}</a>
-                        </li>`).join('')}
+                    ${category.map((action) => this.itemToHTML(action)).join('')}
+  
                 </ul>
             </my-dropdown-button>`;
             str.push(btn);
@@ -115,6 +115,21 @@ class MyHeader extends WebComponent {
                 // menu.actions.get(catName)?.find((m) => m.name == )
             })
         }
+    }
+
+    itemToHTML(item: MenuItem) {
+        if (item instanceof MenuAction) {
+            return html`
+            <li>
+                <a>${item.name}</a>
+            </li>`
+        } 
+        if (item instanceof MenuDivider) {
+            return html`
+                <div><p>--</p></div>
+            `
+        }
+        return "";
     }
 
     onUpdateCatalogue(catalogue: Catalogue) {

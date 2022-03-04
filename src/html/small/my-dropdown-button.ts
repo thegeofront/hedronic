@@ -28,8 +28,8 @@ class MyDropdownButton extends WebComponent {
 			text-decoration: none;
 			padding: 4px 15px;
 			color: white;
-			font-size: 12pt;
-			font: arial;
+			font: var(--font-body);
+			font-size: 10pt;
 		}
 
 		ul {
@@ -58,6 +58,12 @@ class MyDropdownButton extends WebComponent {
 	
 		li:hover > ul {
             display: block;
+		}
+
+		div {
+			margin: 10px;
+			min-width: 10px;
+			min-height: 10px;
 		}
 	</style>
 	<ul>

@@ -1,21 +1,27 @@
-import { FileActions } from "./file";
-import { MenuAction } from "./action";
+import { MenuAction } from "./items/menu-action";
+import { FileActions } from "./categories/file";
+import { MenuItem } from "./items/menu-item";
+
 
 export class Menu {
 
     private constructor(
-        public actions = new Map<string, MenuAction[]>(),
+        public categories = new Map<string, MenuItem[]>(),
     ) {}
 
     static newDefault() {
-        let actions = new Map();
-        actions.set("File", FileActions);
-        actions.set("Edit", []);
-        actions.set("Add", []);
-        actions.set("View", []);
-        actions.set("Help", []);
+        let categories = new Map();
+        categories.set("File", FileActions);
 
-        return new Menu(actions);
+        categories.set("Edit", []);
+
+        categories.set("Add", []);
+
+        categories.set("View", []);
+
+        categories.set("Help", []);
+
+        return new Menu(categories);
     }
 
 }

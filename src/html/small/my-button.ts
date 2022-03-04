@@ -38,6 +38,10 @@ class MyButton extends WebComponent {
             color: var(--background-color-1);
         }
 
+        ::slotted(*) {
+           font: var(--font-body);
+        }
+
         </style>
         <button id="button"><p><slot></slot></p></button>
     `;

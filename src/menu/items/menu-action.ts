@@ -1,5 +1,6 @@
-import { Key } from "../../../engine/src/lib";
-import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
+import { Key } from "../../../../engine/src/lib";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { MenuItem } from "./menu-item";
 
 /**
  * @example 
@@ -11,14 +12,16 @@ import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
  * }
  * ```
  */
-export class MenuAction {
+export class MenuAction extends MenuItem {
 
     constructor(
         public name: string,
         public action: (n: NodesCanvas) => void,
         public defaultShortcut?: Key[],
         public defaultAltShortcut?: Key[],
-        ) {}   
+        ) {
+            super();
+        }   
     
     static new(
         name: string,
