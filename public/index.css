@@ -6,7 +6,11 @@
     --background-color-3: hsl(240, 5%, 22%);
     --background-color-4: hsl(240, 7%, 38%);
     
-    --accent-color-1: rgb(255, 69, 0);
+    --accent-color-1: rgb(255, 20, 0);
+
+    --default-color-1: #ffffff;
+    --default-color-2: #d9e1eb;
+    --default-color-3: #aeafb1;
 
     --antracite-light: #666f7a;
     --antracite: #292C33;

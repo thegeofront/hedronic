@@ -24,4 +24,9 @@ export class Menu {
         return new Menu(categories);
     }
 
+    call(a: HTMLAnchorElement) {
+        console.log("message recieved!!");
+        console.log(a);
+
+    }
 }

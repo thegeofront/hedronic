@@ -5,6 +5,7 @@ import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { mapmap } from "../../nodes-canvas/util/misc";
 import { PayloadEventType } from "../payload-event";
+import { AddRounterEvent } from "../registry";
 import { html, HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
 
@@ -95,7 +96,6 @@ class MyHeader extends WebComponent {
                 <span slot="title">${name}</span>
                 <ul slot="list">
                     ${category.map((action) => this.itemToHTML(action)).join('')}
-  
                 </ul>
             </my-dropdown-button>`;
             str.push(btn);
@@ -107,14 +107,12 @@ class MyHeader extends WebComponent {
         actionsHTML.innerHTML = htmlPiece;
 
         // add listeners
-        for (let a of actionsHTML.querySelectorAll('a')) {
-            a.addEventListener('click', () => {
-                console.log("click!");
-                // let catName = a.getAttribute('data-cat');
-                // let catName = a.getAttribute('data-cat');
-                // menu.actions.get(catName)?.find((m) => m.name == )
-            })
+        for (let dd of this.shadow.querySelectorAll("my-dropdown-button")) {
+            
+            //@ts-ignore
+            // dd.setRouter((a) => {menu.call(a)})
         }
+        this.dispatchShadow(AddRounterEvent, menu.call);
     }
 
     itemToHTML(item: MenuItem) {
@@ -126,7 +124,7 @@ class MyHeader extends WebComponent {
         } 
         if (item instanceof MenuDivider) {
             return html`
-                <div><p>--</p></div>
+                <div></div>
             `
         }
         return "";

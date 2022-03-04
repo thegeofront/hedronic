@@ -46,7 +46,7 @@ class MyRightPanel extends WebComponent {
 
     show(payload: ShowRightPanelPayload) { 
         // HIGHJACK
-        return;
+        // return;
         this.style.display = "";
         this.get("header").innerText = payload.title;
         this.get("subheader").innerText = payload.subtitle;

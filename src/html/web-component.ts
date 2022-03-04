@@ -42,6 +42,15 @@ export abstract class WebComponent extends HTMLElement {
         document.dispatchEvent(event);
     }
 
+    dispatchShadow<T>(type: PayloadEventType<T>, payload: T) {
+        let event = new CustomEvent<T>(type.name, {
+            detail: payload,
+            bubbles: true,
+            composed: true,
+        });
+        this.shadow.dispatchEvent(event);
+    }
+
     listen<T>(type: PayloadEventType<T>, callback: (payload: T, e: CustomEvent<T>) => void) {
         let listener = (e: CustomEvent<T>) => {
             
