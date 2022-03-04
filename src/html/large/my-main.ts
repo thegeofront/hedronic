@@ -29,7 +29,21 @@ export class MyMain extends WebComponent {
             <p>This is just some html sample</p>
             <my-dropdown-button>
                 <span slot="title">File</span>
-			</ul>
+              	<ul slot="list">
+                    <li>
+                        <a>Kaas </a>
+                    </li>
+                    <li>
+                        <a>Marsupials -> </a>
+                        <ul>
+                            <li><a>Opossums</a></li>
+                            <div></div>
+                            <li><a>Numbats, etc.</a></li>
+                            <li><a>Bandicoots, etc.</a></li>
+                            <li><a>Kangaroos, koalas, wombats, etc.</a></li>
+                        </ul>
+                    </li>
+                </ul>  
             </my-dropdown-button>
         </div>
         <div id="Graph">

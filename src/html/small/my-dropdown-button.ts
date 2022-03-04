@@ -56,7 +56,7 @@ class MyDropdownButton extends WebComponent {
 	
 		ul ul ul {
 			left: 100%;
-			top: 0;
+			top: -10px;
 		}
 	
 		li:hover {
@@ -64,12 +64,12 @@ class MyDropdownButton extends WebComponent {
 		}
 
 		li li:hover {
-			cursor: pointer;
 			background: var(--accent-color-1);
 		}
 	
 		li li:hover > a {
 			color: white;
+			cursor: pointer;
 		}
 
 		li:hover > ul {
@@ -82,26 +82,13 @@ class MyDropdownButton extends WebComponent {
 			margin: 10px;
 			min-width: calc(100% - 20px);
 			min-height: 1px;
+			cursor: default;
 		}
 	</style>
 	<ul>
 		<li id="wrapper">
 			<my-button id="button"><slot name="title"></slot>
 			</my-button>
-			<!-- <ul slot="list">
-				<li>
-					<a>Kaas </a>
-				</li>
-				<li>
-					<a>Marsupials -> </a>
-					<ul>
-						<li><a>Opossums</a></li>
-						<li><a>Numbats, etc.</a></li>
-						<li><a>Bandicoots, etc.</a></li>
-						<li><a>Kangaroos, koalas, wombats, etc.</a></li>
-					</ul>
-				</li>
-			</ul> -->
 		</li>
 	</ul>
     `;
