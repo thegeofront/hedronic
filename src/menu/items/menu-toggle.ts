@@ -12,13 +12,15 @@ import { MenuItem } from "./menu-item";
  * }
  * ```
  */
-export class MenuAction extends MenuItem {
+export class MenuToggle extends MenuItem {
 
     active = true;
+    checked = false;
 
     constructor(
         public name: string,
-        public action: Function,
+        public onCheck: Function,
+        public onUncheck: Function,
         public defaultShortcut?: Key[],
         ) {
             super();
@@ -26,13 +28,21 @@ export class MenuAction extends MenuItem {
     
     static new(
         name: string,
-        action: Function,
+        onCheck: Function,
+        onUncheck: Function,
         defaultShortcut?: Key[],
+        defaultAltShortcut?: Key[],
         ) {
-        return new MenuAction(name, action, defaultShortcut);
+        return new MenuToggle(name, onCheck, onUncheck, defaultShortcut);
     }
 
     do() {
-        this.action();
+        if (this.active) {
+            this.active = false;
+            this.onUncheck()
+        } else {
+            this.active = true;
+            this.onCheck()
+        }
     }
 }

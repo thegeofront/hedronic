@@ -1,6 +1,8 @@
 import { MenuAction } from "./items/menu-action";
-import { FileActions } from "./categories/file";
+import { getFileActions } from "./categories/file";
 import { MenuItem } from "./items/menu-item";
+import { getViewActions } from "./categories/view";
+import { getEditActions } from "./categories/edit";
 
 
 export class Menu {
@@ -10,14 +12,14 @@ export class Menu {
     ) {}
 
     static newDefault() {
-        let categories = new Map();
-        categories.set("File", FileActions);
+        let categories = new Map<string, MenuItem[]>();
+        categories.set("File", getFileActions());
 
-        categories.set("Edit", []);
+        categories.set("Edit", getEditActions());
 
         categories.set("Add", []);
 
-        categories.set("View", []);
+        categories.set("View", getViewActions());
 
         categories.set("Help", []);
 
@@ -27,6 +29,5 @@ export class Menu {
     call(a: HTMLAnchorElement) {
         console.log("message recieved!!");
         console.log(a);
-
     }
 }

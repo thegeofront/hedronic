@@ -3,6 +3,7 @@ import { MenuAction } from "../../menu/items/menu-action";
 import { MenuDivider } from "../../menu/items/menu-divider";
 import { MenuItem } from "../../menu/items/menu-item";
 import { MenuList } from "../../menu/items/menu-list";
+import { MenuToggle } from "../../menu/items/menu-toggle";
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { mapmap } from "../../nodes-canvas/util/misc";
@@ -80,10 +81,10 @@ class MyHeader extends WebComponent {
     connectedCallback() {
         this.addFrom(MyHeader.template);
         this.listen(UpdateCatalogueEvent, this.onUpdateCatalogue.bind(this));
-        this.listen(UpdateMenuEvent, this.onUpdateMenu.bind(this));
+        this.listen(UpdateMenuEvent, this.renderMenu.bind(this));
     }  
 
-    onUpdateMenu(menu: Menu) {
+    renderMenu(menu: Menu) {
         if (!(menu instanceof Menu)) {
             console.error("expect menu...");
             return;
@@ -97,7 +98,7 @@ class MyHeader extends WebComponent {
             <my-dropdown-button>
                 <span slot="title">${name}</span>
                 <ul slot="list">
-                    ${category.map((action) => this.itemToHTML(action)).join('')}
+                    ${category.map((action) => this.renderItem(action)).join('')}
                 </ul>
             </my-dropdown-button>`;
             str.push(btn);
@@ -112,26 +113,25 @@ class MyHeader extends WebComponent {
         for (let dd of this.shadow.querySelectorAll("my-dropdown-button")) {
             
             //@ts-ignore
-            // dd.setRouter((a) => {menu.call(a)})
+            dd.setRouter((a) => {menu.call(a)})
         }
-        this.dispatchShadow(AddRounterEvent, menu.call);
+        // this.dispatchShadow(AddRounterEvent, menu.call);
     }
 
-    itemToHTML(item: MenuItem) : string {
-        if (item instanceof MenuList) {
+    renderItem(item: MenuItem) : string {
+        if (item instanceof MenuAction) {
+            let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
             return html`
             <li>
                 <a>
-                    <span class="icon"><my-icon-save></my-icon-save></span>
+                    <span class="icon">${""}</span>
                     <span class="fill">${item.name}</span>
-                    <span class="icon right">➤</span>
+                    <span class="right">${keys}</span>
+                    <span class="icon right"></span>
                 </a>
-                <ul>
-                    ${item.items.map((action) => this.itemToHTML(action)).join('')}
-                </ul>
             </li>`
         }
-        if (item instanceof MenuAction) {
+        if (item instanceof MenuToggle) {
             let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
             return html`
             <li>
@@ -143,6 +143,19 @@ class MyHeader extends WebComponent {
                 </a>
             </li>`
         } 
+        if (item instanceof MenuList) {
+            return html`
+            <li>
+                <a>
+                    <span class="icon"><my-icon-save></my-icon-save></span>
+                    <span class="fill">${item.name}</span>
+                    <span class="icon right">➤</span>
+                </a>
+                <ul>
+                    ${item.items.map((action) => this.renderItem(action)).join('')}
+                </ul>
+            </li>`
+        }
         if (item instanceof MenuDivider) {
             return html`
                 <div></div>
@@ -156,8 +169,6 @@ class MyHeader extends WebComponent {
             console.error("expect catalogue...");
             return;
         }
-
-
 
         console.log("updating catalogue...");
         // catalogue
