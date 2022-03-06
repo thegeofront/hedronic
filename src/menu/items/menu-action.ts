@@ -14,6 +14,9 @@ import { MenuItem } from "./menu-item";
  */
 export class MenuAction extends MenuItem {
 
+    active = true;
+    checked = false;
+
     constructor(
         public name: string,
         public action: (n: NodesCanvas) => void,

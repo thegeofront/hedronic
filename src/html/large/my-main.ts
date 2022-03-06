@@ -31,12 +31,19 @@ export class MyMain extends WebComponent {
                 <span slot="title">File</span>
               	<ul slot="list">
                     <li>
-                        <a>Kaas </a>
+                        <a>
+                            <span class="icon"></span>
+                            <span class="fill">Kaas</span>
+                            <span class="right"></span>
+                            <span class="icon right"></span>
+                        </a>
                     </li>
                     <li>
                         <a>
-                            <span style="float: left">Marsupials</span>
-                            <span style="float: right">Ctrl + D</span>
+                            <span class="icon">✓</span>
+                            <span class="fill">Hallo</span>
+                            <span class="right">Ctrl + D</span>
+                            <span class="icon right">➤</span>
                         </a>
                         <ul>
                             <li><a>Opossums</a></li>

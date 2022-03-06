@@ -1,6 +1,8 @@
 /**
  * This is where we register all components currently in use
  */
+export * from "./icon/save-icon"
+
 export * from "./large/my-main";
 export * from "./large/my-nodes-canvas";
 export * from "./large/my-screen";

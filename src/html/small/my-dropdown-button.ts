@@ -4,6 +4,10 @@ import { WebComponent } from "../web-component";
 
 export const AddRounterEvent = new PayloadEventType<(a: HTMLAnchorElement) => void>("addmainmenurouter");
 
+/**
+ * NOTE: right now this webcomponent is very specific to being a menu dropdown...
+ * TODO: make a more general version :)
+ */
 class MyDropdownButton extends WebComponent {
     
     static readonly template = Template.html`
@@ -23,16 +27,33 @@ class MyDropdownButton extends WebComponent {
 		}
 	
 		li li {
-			width: 200px;
+			width: 240px;
 		}
 
 		a {
 			/* display: block; */
+			padding: 4px 8px 4px 8px;
+			
 			text-decoration: none;
-			padding: 4px 10px 4px 30px;
 			color: var(--default-color-2);
 			font: var(--font-body);
 			font-size: 10pt;
+
+			display: flex;
+			flex-direction: row; 
+			justify-content: flex-start;
+			gap: 5px;
+
+			cursor: pointer;
+		}
+
+		a .icon {
+			width: 20px;
+			text-align: center;
+		}
+
+		a .fill {
+			flex-grow:1;
 		}
 
 		ul {

@@ -2,6 +2,7 @@ import { Key } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { MenuAction } from "../items/menu-action";
 import { MenuDivider } from "../items/menu-divider";
+import { MenuList } from "../items/menu-list";
 
 
 export const FileActions = [
@@ -10,8 +11,19 @@ export const FileActions = [
     MenuAction.new("Load json",  fileLoadJson, [Key.Ctrl, Key.O]),
     MenuAction.new("Load js",    fileLoadJs),
     MenuDivider.new(),
-    MenuAction.new("Save as json",  fileSaveJson, [Key.Ctrl, Key.S]),
-    MenuAction.new("Save as js",    fileSaveJs)
+    MenuAction.new("Save",  fileSaveJson, [Key.Ctrl, Key.S]),
+    MenuAction.new("Save as...",    fileSaveJs),
+    MenuDivider.new(),
+    MenuAction.new("Import...",  fileSaveJson, [Key.Ctrl, Key.S]),
+    MenuAction.new("Export...",    fileSaveJs),
+    MenuDivider.new(),
+    
+    MenuList.new("items", [
+        MenuAction.new("Save as js",    test),
+        MenuAction.new("Save as js",    test),
+        MenuAction.new("Save as js",    test),
+    ])
+
 ] 
 
 function fileNew(n: NodesCanvas) {
@@ -32,6 +44,10 @@ function fileSaveJson(n: NodesCanvas) {
 
 function fileSaveJs(n: NodesCanvas) {
     console.log("save js");
+}
+
+function test(this: NodesCanvas) {
+
 }
 
 

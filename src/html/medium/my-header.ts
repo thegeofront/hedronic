@@ -2,6 +2,7 @@ import { Key } from "../../../../engine/src/lib";
 import { MenuAction } from "../../menu/items/menu-action";
 import { MenuDivider } from "../../menu/items/menu-divider";
 import { MenuItem } from "../../menu/items/menu-item";
+import { MenuList } from "../../menu/items/menu-list";
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { mapmap } from "../../nodes-canvas/util/misc";
@@ -116,14 +117,29 @@ class MyHeader extends WebComponent {
         this.dispatchShadow(AddRounterEvent, menu.call);
     }
 
-    itemToHTML(item: MenuItem) {
+    itemToHTML(item: MenuItem) : string {
+        if (item instanceof MenuList) {
+            return html`
+            <li>
+                <a>
+                    <span class="icon"><my-icon-save></my-icon-save></span>
+                    <span class="fill">${item.name}</span>
+                    <span class="icon right">➤</span>
+                </a>
+                <ul>
+                    ${item.items.map((action) => this.itemToHTML(action)).join('')}
+                </ul>
+            </li>`
+        }
         if (item instanceof MenuAction) {
             let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
             return html`
             <li>
                 <a>
-                    <span style="float: left">${item.name}</span>
-                    <span style="float: right">${keys}</span>
+                    <span class="icon">${item.checked ? "✓" : ""}</span>
+                    <span class="fill">${item.name}</span>
+                    <span class="right">${keys}</span>
+                    <span class="icon right"></span>
                 </a>
             </li>`
         } 
