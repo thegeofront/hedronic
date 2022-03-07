@@ -82,7 +82,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         let name = l.rest;
         let json = commentToJson(l.comment);
         let state = stringToState(json.state);
-        console.log("state", state);
+        // console.log("state", state);
         let nodeKey = trySpawnNode(graph, catalogue, json.widget, CoreType.Widget, Vector2.new(json.x, json.y), "widgets", state)!;
         createCable(name, nodeKey, 0);
     }
@@ -95,7 +95,7 @@ export function jsToGraph(js: string, catalogue: Catalogue, graph = NodesGraph.n
         let json = commentToJson(l.comment);
         // console.log({rest, json});
         let call = extractCallFunctionElements(rest)!;
-        console.log(call.lib)
+        // console.log(call.lib)
         let nodeKey = trySpawnNode(graph, catalogue, call.name, CoreType.Operation, Vector2.new(json.x, json.y), call.lib)!;
 
         for (let j = 0 ; j < call.outputs.length; j++) {

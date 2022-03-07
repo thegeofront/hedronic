@@ -1,15 +1,15 @@
 import { Key } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { MenuAction } from "../items/menu-action";
-import { MenuDivider } from "../items/menu-divider";
-import { MenuItem } from "../items/menu-item";
-import { MenuList } from "../items/menu-list";
+import { MenuAction } from "../logic/menu-action";
+import { MenuDivider } from "../logic/menu-divider";
+import { MenuItem } from "../logic/menu-item";
+import { MenuList } from "../logic/menu-list";
 
 
-export function getEditActions() : MenuItem[] {
+export function getEditActions(context: NodesCanvas) : MenuItem[] {
     return [
-        MenuAction.new("Undo", undo, [Key.Ctrl, Key.Z]),
-        MenuAction.new("Redo", redo, [Key.Ctrl, Key.Y]),
+        MenuAction.new(context, "Undo", undo, [Key.Ctrl, Key.Z]),
+        MenuAction.new(context, "Redo", redo, [Key.Ctrl, Key.Y]),
     ];
 } 
 

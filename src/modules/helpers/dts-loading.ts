@@ -282,9 +282,9 @@ export namespace DTSLoading {
             if (node.kind == ts.SyntaxKind.MethodDeclaration && !Help.isStatic(node)) {
                 
                 // convert the method to a static method
-                console.log("FOUND A NORMAL METHOD!");
-                console.log(node);
-                console.log(callStack);
+                // console.log("FOUND A NORMAL METHOD!");
+                // console.log(node);
+                // console.log(callStack);
                 isNonStaticMethod = true;
 
                 // add the 'this' object as the first input.
@@ -334,7 +334,7 @@ export namespace DTSLoading {
             } 
             let theFunction = js[name];
             if (isNonStaticMethod) {
-                console.log("dealing with non-static boy")
+                // console.log("dealing with non-static boy")
                 // console.log(js);
                 // console.log(js['prototype'][name]);
                 // console.log(js['prototype'][name])

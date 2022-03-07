@@ -63,19 +63,19 @@ export namespace ModuleLoading {
         let types = new Map<string, TypeShim>();
         
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types, typeBlacklist);
-        console.log(types);
+        // console.log(types);
         
         let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, js, types, funcBlacklist);
         const module = ModuleShim.new(nickname, icon, jsPath, js, shims, []);
 
-        console.log(shims);
+        // console.log(shims);
 
         return module;
     }
 
 
     export async function loadModule(jsPath: string, dtsPath: string, dtsName: string) {
-        console.log("loading", jsPath, "and", dtsPath)
+        // console.log("loading", jsPath, "and", dtsPath)
         let js = await JSLoading.loadModule(jsPath);
         let syntaxTree = await DTSLoading.load(dtsPath, dtsName, {});
 

@@ -45,8 +45,7 @@ export class NodesCanvas {
         private readonly camera: CtxCamera,
         private readonly input: InputState,
         private graph: NodesGraph,
-        public graphHistory: History,
-        public menu: Menu,        
+        public graphHistory: History,       
         public catalogue: Catalogue
         ) {}
 
@@ -63,12 +62,12 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-        const menu = Menu.newDefault();
 
         // fill the html of menu now that menu is created
-        HTML.dispatch(UpdateMenuEvent, menu);
+        
 
-        return new NodesCanvas(ctx, camera, state, graph, graphDecoupler, menu, catalogue);
+        let canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue);
+        return canvas;
     }
 
 
@@ -167,9 +166,9 @@ export class NodesCanvas {
     }
 
     async onChange() {
-        if (this.graph.areConnectionsCorrect()) {
-            console.log("correct!");
-        }
+        // if (this.graph.areConnectionsCorrect()) {
+        //     console.log("correct!");
+        // }
         let [cache, visuals] = await this.graph.calculate();
         this.cableVisuals = visuals;
         this.requestRedraw();

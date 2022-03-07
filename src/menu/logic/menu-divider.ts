@@ -1,4 +1,4 @@
-import { Node } from "../../html/util";
+import { Element } from "../../html/util";
 import { MenuItem } from "./menu-item";
 
 export class MenuDivider extends MenuItem {
@@ -8,6 +8,8 @@ export class MenuDivider extends MenuItem {
     }
 
     render() : Node {
-        return Node.html`<div></div>`;
+        return Element.html`<div></div>`;
     }
 }
+
+// let div = Node.html`<div><a>Hallo</a></div>`;

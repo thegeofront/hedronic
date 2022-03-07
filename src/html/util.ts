@@ -83,7 +83,7 @@ export namespace HTML {
 }
 
 
-export namespace Node {
+export namespace Element {
 
     /**
      * This prevents us from creating templates over and over again
@@ -96,9 +96,9 @@ export namespace Node {
      * - Only returns first root level node
      * - (not technically needed, just promotes cleanliness)
      */
-    export function html(template: TemplateStringsArray, ...args: any[]) : Node {
+    export function html(template: TemplateStringsArray, ...args: any[]) : HTMLElement {
         Template.innerHTML = Str._htmlStrip(template, ...args);
-        return Template.content.firstChild!.cloneNode(true);;
+        return Template.content.firstChild! as HTMLElement;
         // return temp.content.childNodes;
     }
 }
@@ -122,10 +122,10 @@ export namespace Compose {
     /**
      * Composes a node from multiple html 
      */
-    export function html(template: TemplateStringsArray, ...args: Node[]) : Node {
+    export function html(template: TemplateStringsArray, ...args: (Node | Node[])[]) : Node {
         
-        // create, but for every node: dont insert, instead create replacement token
-        const TOKEN = "geon-substitude";
+        // create, but for every node: dont insert, instead create substitute token
+        const TOKEN = "geon-substitute";
         let raw = Str._trimTemplate(template).join(`<${TOKEN}></${TOKEN}>`);
         Template.innerHTML = raw;
   
@@ -134,11 +134,15 @@ export namespace Compose {
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
             let replacer = args[i];
-            token.replaceWith(replacer);
+            if (replacer instanceof Array) {
+                token.replaceWith(...replacer);
+            } else {
+                token.replaceWith(replacer);
+            }
         }  
         
-        // and return this template
-        return Template.content.firstChild!.cloneNode(true);
+        // and return the result of the template
+        return Template.content.firstChild!;
     }
 }
 
@@ -149,14 +153,12 @@ function test() {
     let someVar = "kaas";
     let something = Compose.html`
     <div>
-        ${Node.html`<p>${someVar}</p>`}
-        ${Node.html`<p>r frejioerioogierjoerig j</p>`}
-        ${Node.html`<p>HENKIEPINKEE</p>`}
+        ${Element.html`<p>${someVar}</p>`}
+        ${Element.html`<p>r frejioerioogierjoerig j</p>`}
+        ${Element.html`<p>HENKIEPINKEE</p>`}
     </div>`;
 
     // DOM.html`<p>r frejioerioogierjoerig j</p>`
 
     console.log(something);
 }
-
-test();

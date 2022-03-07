@@ -5,7 +5,7 @@ import { DTSLoading } from "./dts-loading";
 export namespace WasmLoading {
 
     export async function moduleFromWasmPack(jsPath: string, dtsPath: string, wasmPath: string) {
-        console.log("creating a wasm shim")
+        // console.log("creating a wasm shim")
         let code = await WebIO.getText(jsPath);
         // let fakeWasmPath = "wasm-modules/cityjson_validator_bg.wasm";
         let wasmModule = fetch(wasmPath);

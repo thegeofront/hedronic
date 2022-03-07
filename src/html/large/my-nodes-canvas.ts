@@ -1,8 +1,10 @@
 import { visitNode } from "typescript";
+import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { ModuleLoading } from "../../modules/loading";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Template } from "../util";
+import { UpdateMenuEvent } from "../registry";
+import { HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
 import { CanvasResizeEvent } from "./my-main";
 
@@ -90,6 +92,10 @@ class MyNodesCanvas extends WebComponent {
         // nodes
         this.nodes = NodesCanvas.new(html_canvas, catalogue)!;
         this.nodes.start();
+
+        // menu 
+        const menu = Menu.newDefault(this.nodes);
+        HTML.dispatch(UpdateMenuEvent, menu);
 
         // timing
         let acc_time = 0;

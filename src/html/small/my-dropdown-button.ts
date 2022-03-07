@@ -131,9 +131,9 @@ class MyDropdownButton extends WebComponent {
 		this.get("wrapper").appendChild(list);
 
 		// make all anchor tags call the router
-		for (let a of this.shadow.querySelectorAll('a')) {
-			a.addEventListener("click", this.onRouted.bind(this));
-		}
+		// for (let a of this.shadow.querySelectorAll('a')) {
+		// 	a.addEventListener("click", this.onRouted.bind(this));
+		// }
 		
 		this.listen(AddRounterEvent, this.setRouter.bind(this))
     }  
