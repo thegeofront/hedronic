@@ -6,6 +6,7 @@ export class MenuToggle extends MenuItem {
 
     active = true;
     checked = false;
+    element?: HTMLElement;
 
     constructor(
         public name: string,
@@ -26,13 +27,14 @@ export class MenuToggle extends MenuItem {
     }
 
     do() {
-        if (this.active) {
-            this.active = false;
+        if (this.checked) {
+            this.checked = false;
             this.onUncheck()
         } else {
-            this.active = true;
+            this.checked = true;
             this.onCheck()
         }
+        this.update();
     }
 
     render() : Node {
@@ -40,7 +42,7 @@ export class MenuToggle extends MenuItem {
         let element = Element.html`
         <li>
             <a>
-                <span class="icon">${this.checked ? "✓" : ""}</span>
+                <span id="checker" class="icon">${this.checked ? "✓" : ""}</span>
                 <span class="fill">${this.name}</span>
                 <span>${keys}</span>
                 <span class="icon"></span>
@@ -48,6 +50,13 @@ export class MenuToggle extends MenuItem {
         </li>`
 
         element.onclick = () => this.do();
+        this.element = element;
         return element;
+    }
+
+    update() {
+        if (!this.element) return;
+        let el = this.element.querySelector("#checker")!;
+        el.innerHTML = this.checked ? "✓" : "";
     }
 }
