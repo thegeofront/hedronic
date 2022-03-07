@@ -1,7 +1,7 @@
 // author : Jos Feenstra
 // purpose: wrapper for dealing with the 'whole of nodes'
 
-import { Vector2, InputState, Domain2, MultiVector2 } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, Key } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
@@ -102,63 +102,59 @@ export class NodesCanvas {
      */
     setupControlKeyActions() {
 
-        this.ctx.canvas.addEventListener("keydown", (e) => {
+        // this.ctx.canvas.addEventListener("keydown", (e) => {
             
-            // TODO: give these actions different files or something, maybe like the history actions
-            let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
-            let shift = e.shiftKey;      
-            var key = e.key.toLowerCase(); 
-
-            if (control && key == 'a')
-                this.onSelectAll();
-            else if ((control && key =='p') || (control && shift && key == 'p') || key == 'enter') 
-                this.onPrompt();
-            else if (control && key == 's')
-                this.onSave();
-            else if (control && key == 'l')
-                this.onLoad();
-            else if (control && key == 'z') 
-                this.onUndo();
-            else if (control && key == 'd') 
-                this.onDuplicate();
-            else if (control && key == 'y') 
-                this.onRedo();
-            else if (control && key == ' ') 
-                this.onTest();
-            else if (control && key == 'k')
-                this.onPrint();
-            else    
-                return;
+        //     // TODO: give these actions different files or something, maybe like the history actions
+        //     let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
+        //     let shift = e.shiftKey;      
+        //     let key = e.key.toLowerCase(); 
             
-            e.preventDefault();
+        //     if (control && key == 'a')
+        //         this.onSelectAll();
+        //     else if ((control && key =='p') || (control && shift && key == 'p') || key == 'enter') 
+        //         this.onPrompt();
+        //     else if (control && key == 's')
+        //         this.onSave();
+        //     else if (control && key == 'l')
+        //         this.onLoad();
+        //     else if (control && key == 'd') 
+        //         this.onDuplicate();
+        //     else if (control && key == ' ') 
+        //         this.onTest();
+        //     else if (control && key == 'k')
+        //         this.onPrint();
+        //     else    
+        //         return;
+            
+        //     e.preventDefault();
 
-        }, false);
+        // }, false);
 
-        document.addEventListener("cut", (e) => {
-            console.log("cutting...");
-            e.clipboardData!.setData("text/plain", this.onCut());
-            e.preventDefault();
-        })
+        // this.ctx.canvas.addEventListener("cut", (e) => {
+        //     console.log("cutting...");
+        //     e.clipboardData!.setData("text/plain", this.onCut());
+        //     e.preventDefault();
+        // })
 
-        // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
-        document.addEventListener("copy", (e) => {
-            console.log("copying...");
-            e.clipboardData!.setData("text/plain", this.onCopy());
-            e.preventDefault();
-        })
+        // // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
+        // this.ctx.canvas.addEventListener("copy", (e) => {
+        //     console.log("copying...");
+        //     e.clipboardData!.setData("text/plain", this.onCopy());
+        //     e.preventDefault();
+        // })
 
-        document.addEventListener("paste", (e) => {
-            console.log("paste");
-            if (!e.clipboardData) {
-                // alert("I would like a string, please");
-                return;
-            }
-            if (e.clipboardData.items.length != 1) {
-                // alert("I would like just one string, please");
-                return;
-            }
-            e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
-        });
+        // this.ctx.canvas.addEventListener("paste", (e) => {
+        //     console.log("paste");
+        //     if (!e.clipboardData) {
+        //         // alert("I would like a string, please");
+        //         return;
+        //     }
+        //     if (e.clipboardData.items.length != 1) {
+        //         // alert("I would like just one string, please");
+        //         return;
+        //     }
+        //     e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
+        // });
     }
 
     onPrint() {

@@ -96,6 +96,7 @@ class MyNodesCanvas extends WebComponent {
         // menu 
         const menu = Menu.newDefault(this.nodes);
         HTML.dispatch(UpdateMenuEvent, menu);
+        menu.bindEventListeners(html_canvas);
 
         // timing
         let acc_time = 0;

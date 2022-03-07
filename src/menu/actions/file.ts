@@ -9,7 +9,7 @@ import { MenuList } from "../logic/menu-list";
 export function getFileActions(context: NodesCanvas) : MenuItem[] {
     
     return [
-        MenuAction.new(context, "New", fileNew, [Key.Ctrl, Key.N]),
+        MenuAction.new(context, "New", fileNew, [Key.Ctrl, Key.Shift, Key.N]),
         MenuDivider.new(),
         MenuAction.new(context, "Load json", fileLoadJson, [Key.Ctrl, Key.O]),
         MenuAction.new(context, "Load js", fileLoadJs),

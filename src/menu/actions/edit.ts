@@ -10,13 +10,19 @@ export function getEditActions(context: NodesCanvas) : MenuItem[] {
     return [
         MenuAction.new(context, "Undo", undo, [Key.Ctrl, Key.Z]),
         MenuAction.new(context, "Redo", redo, [Key.Ctrl, Key.Y]),
+        MenuDivider.new(),
+        MenuAction.new(context, "Cut", () => {}, [Key.Ctrl, Key.X]),
+        MenuAction.new(context, "Copy", () => {}, [Key.Ctrl, Key.C]),
+        MenuAction.new(context, "Paste", () => {}, [Key.Ctrl, Key.V]),
     ];
 } 
 
-function undo(n: NodesCanvas) {
-    console.log("yay undo");
+function undo(nodes: NodesCanvas) {
+    let change = nodes.graphHistory.undo(); 
+    if (change) nodes.onChange();
 }
 
-function redo(n: NodesCanvas) {
-    console.log("yay redo");
+function redo(nodes: NodesCanvas) {
+    let change = nodes.graphHistory.redo(); 
+    if (change) nodes.onChange();
 }

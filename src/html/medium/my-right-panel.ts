@@ -2,7 +2,7 @@ import { PayloadEventType } from "../payload-event";
 import { Template } from "../util";
 import { WebComponent } from "../web-component";
 
-export const hideRightPanel = new PayloadEventType("hiderightpanel");
+export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 export const showRightPanel = new PayloadEventType<ShowRightPanelPayload>("showrightpanel");
 export type ShowRightPanelPayload = {title: string, subtitle: string, content: string};
 
@@ -45,9 +45,8 @@ class MyRightPanel extends WebComponent {
     }
 
     show(payload: ShowRightPanelPayload) { 
-        // HIGHJACK
-        // return;
         this.style.display = "";
+        if (!payload) return;
         this.get("header").innerText = payload.title;
         this.get("subheader").innerText = payload.subtitle;
         this.get("body").innerHTML = payload.content;

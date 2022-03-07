@@ -90,13 +90,7 @@ class MyHeader extends WebComponent {
 
         // get the context we will render into
         let context = this.get("action-categories");
-        context.replaceChildren(...menu.categories.map(cat => Compose.html`
-        <my-dropdown-button>
-            ${Element.html`<span slot="title">${cat.name}</span>`}
-            <ul slot="list">
-                ${cat.items.map((action) => action.render())}
-            </ul>
-        </my-dropdown-button>`));
+        context.replaceChildren(...menu.render());
     }
 
 
