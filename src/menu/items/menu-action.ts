@@ -35,4 +35,8 @@ export class MenuAction extends MenuItem {
     do() {
         this.action();
     }
+
+    render(): HTMLElement {
+        throw new Error("Method not implemented.");
+    }
 }

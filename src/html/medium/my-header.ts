@@ -1,4 +1,4 @@
-import { Key } from "../../../../engine/src/lib";
+import { Debug, Key } from "../../../../engine/src/lib";
 import { MenuAction } from "../../menu/items/menu-action";
 import { MenuDivider } from "../../menu/items/menu-divider";
 import { MenuItem } from "../../menu/items/menu-item";
@@ -6,10 +6,11 @@ import { MenuList } from "../../menu/items/menu-list";
 import { MenuToggle } from "../../menu/items/menu-toggle";
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
+import { Dom } from "../../nodes-canvas/util/dom-writer";
 import { mapmap } from "../../nodes-canvas/util/misc";
 import { PayloadEventType } from "../payload-event";
 import { AddRounterEvent } from "../registry";
-import { html, HTML, Template } from "../util";
+import { Node, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
 
 export const UpdateCatalogueEvent = new PayloadEventType<Catalogue>("updatecatalogue");
@@ -65,11 +66,6 @@ class MyHeader extends WebComponent {
             </div>
         </div>
         <div id="action-categories" class="header-section">
-            <my-button>File</my-button>
-            <my-button>Edit</my-button>
-            <my-button>Add</my-button>
-            <my-button>View</my-button>
-            <my-button>Help</my-button>
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">
             <my-button>Settings</my-button>
@@ -94,14 +90,14 @@ class MyHeader extends WebComponent {
         let str: string[] = [];
         for (let [name, category] of menu.categories) {
 
-            let btn = html`
-            <my-dropdown-button>
-                <span slot="title">${name}</span>
-                <ul slot="list">
-                    ${category.map((action) => this.renderItem(action)).join('')}
-                </ul>
-            </my-dropdown-button>`;
-            str.push(btn);
+            let dropdownBtn = Str.html`
+                <my-dropdown-button>
+                    <span slot="title">${name}</span>
+                    <ul slot="list">
+                        ${category.map((action) => this.renderItem(action)).join('')}
+                    </ul>
+                </my-dropdown-button>`;
+            str.push(dropdownBtn);
         }
         let htmlPiece = str.join('');
         
@@ -118,33 +114,33 @@ class MyHeader extends WebComponent {
         // this.dispatchShadow(AddRounterEvent, menu.call);
     }
 
-    renderItem(item: MenuItem) : string {
+    renderItem(item: MenuItem) : any {
         if (item instanceof MenuAction) {
             let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
-            return html`
+            return Str.html`
             <li>
                 <a>
                     <span class="icon">${""}</span>
                     <span class="fill">${item.name}</span>
-                    <span class="right">${keys}</span>
-                    <span class="icon right"></span>
+                    <span>${keys}</span>
+                    <span class="icon"></span>
                 </a>
             </li>`
         }
         if (item instanceof MenuToggle) {
             let keys = item.defaultShortcut ? item.defaultShortcut.map((k) => Key[k]).join(" + ") : ""; 
-            return html`
+            return Str.html`
             <li>
                 <a>
                     <span class="icon">${item.checked ? "✓" : ""}</span>
                     <span class="fill">${item.name}</span>
-                    <span class="right">${keys}</span>
-                    <span class="icon right"></span>
+                    <span>${keys}</span>
+                    <span class="icon"></span>
                 </a>
             </li>`
         } 
         if (item instanceof MenuList) {
-            return html`
+            return Str.html`
             <li>
                 <a>
                     <span class="icon"><my-icon-save></my-icon-save></span>
@@ -157,11 +153,11 @@ class MyHeader extends WebComponent {
             </li>`
         }
         if (item instanceof MenuDivider) {
-            return html`
+            return Str.html`
                 <div></div>
             `
         }
-        return "";
+        return undefined;
     }
 
     onUpdateCatalogue(catalogue: Catalogue) {

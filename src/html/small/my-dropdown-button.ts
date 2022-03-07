@@ -60,8 +60,7 @@ class MyDropdownButton extends WebComponent {
 			background: var(--background-color-1);
 			float: left;
 			color: white;
-			/* -webkit-transition: .9s;
-			transition: .9s; */
+			/* z-index: 20; */
 		}
         
 		ul ul {
@@ -71,8 +70,9 @@ class MyDropdownButton extends WebComponent {
 			padding-top: 10px;
 			padding-bottom: 10px;
             display: none;
-			box-shadow: 0 0 4px #111;
-			border-radius: 4px
+			box-shadow: 0 0px 5px 1px #111;
+			border-radius: 4px;
+			/* z-index: 10; */
 		}
 	
 		ul ul ul {
