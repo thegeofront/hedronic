@@ -37,7 +37,7 @@ export class MenuToggle extends MenuItem {
 
     render() : Node {
         let keys = this.shortcut ? this.shortcut.map((k) => Key[k]).join(" + ") : ""; 
-        return Element.html`
+        let element = Element.html`
         <li>
             <a>
                 <span class="icon">${this.checked ? "✓" : ""}</span>
@@ -46,5 +46,8 @@ export class MenuToggle extends MenuItem {
                 <span class="icon"></span>
             </a>
         </li>`
+
+        element.onclick = () => this.do();
+        return element;
     }
 }
