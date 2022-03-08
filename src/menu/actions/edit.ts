@@ -14,30 +14,48 @@ export function getEditActions(context: NodesCanvas) : MenuItem[] {
         MenuAction.new(context, "Cut", cut, [Key.Ctrl, Key.X]),
         MenuAction.new(context, "Copy", copy, [Key.Ctrl, Key.C]),
         MenuAction.new(context, "Paste", paste, [Key.Ctrl, Key.V]),
+        MenuAction.new(context, "Duplcate", duplicate, [Key.Ctrl, Key.D]),
+        MenuDivider.new(),
+        MenuAction.new(context, "Select all", selectAll, [Key.Ctrl, Key.A]),
     ];
 } 
+
 
 function undo(nodes: NodesCanvas) {
     let change = nodes.graphHistory.undo(); 
     if (change) nodes.onChange();
 }
 
+
 function redo(nodes: NodesCanvas) {
     let change = nodes.graphHistory.redo(); 
     if (change) nodes.onChange();
 }
+
 
 async function cut(nodes: NodesCanvas) {
     let str = nodes.onCut();
     navigator.clipboard.writeText(str);
 }
 
+
 async function copy(nodes: NodesCanvas) {
     let str = nodes.onCopy();
     navigator.clipboard.writeText(str);
 }
 
+
 async function paste(nodes: NodesCanvas) {
     let str = await navigator.clipboard.readText();
     nodes.onPaste(str);
+}
+
+
+function duplicate(nodes: NodesCanvas) {
+    nodes.onDuplicate();
+}
+
+
+function selectAll(nodes: NodesCanvas) {
+    nodes.onSelectAll();
 }

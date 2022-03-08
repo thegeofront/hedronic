@@ -6,13 +6,12 @@ import { MenuDivider } from "../logic/menu-divider";
 import { MenuItem } from "../logic/menu-item";
 import { MenuList } from "../logic/menu-list";
 
-
 export function getNodesActions(context: NodesCanvas) : MenuItem[] {
     return [
         MenuAction.new(context, "Prompt...", prompt, [Key.Enter]),
         MenuList.new("Debug", [
-            MenuAction.new(context, "Test 1", test1),
-            MenuAction.new(context, "Test 2", test2),
+            MenuAction.new(context, "Print catalogue", print, [Key.Ctrl, Key.K]),
+            MenuAction.new(context, "Check connections", checkConnections, [Key.Ctrl, Key.I]),
             MenuAction.new(context, "Test 3", test3),
         ])
     ];
@@ -22,12 +21,23 @@ function prompt(nodes: NodesCanvas) {
     nodes.onPrompt();
 }
 
-function test1(nodes: NodesCanvas) {
-    console.log("test1");
+function print(nodes: NodesCanvas) {
+    nodes.catalogue.print();
 }
 
-function test2(nodes: NodesCanvas) {
-    console.log("test2");
+function checkConnections(nodes: NodesCanvas) {
+    try {
+        let check = nodes.graph.areConnectionsCorrect();
+        if (check) {
+            console.log("Correct!");
+        } else {
+            console.warn("Incorrect connections!");
+        }
+    } catch(e: any) {
+        console.warn("Not at all correct: ");
+        console.error(e);
+    }
+    
 }
 
 function test3(nodes: NodesCanvas) {

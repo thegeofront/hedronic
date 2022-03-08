@@ -33,7 +33,7 @@ export class NodesCanvas {
     private hoverSocket?: Socket;
     private mgpStart? = Vector2.new(); // mouse grid point start of selection
     private mgpEnd? = Vector2.new(); // mouse grid point end of selection 
-    private mgpHover = Vector2.new(); // mouse grid point hover
+    public mgpHover = Vector2.new(); // mouse grid point hover
 
     // used to box select
     private boxStart: Vector2 | undefined;
@@ -46,7 +46,7 @@ export class NodesCanvas {
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
         private readonly input: InputState,
-        private graph: NodesGraph,
+        public graph: NodesGraph,
         public graphHistory: History,       
         public catalogue: Catalogue
         ) {}
@@ -89,95 +89,41 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
-        this.setupControlKeyActions();
-
-        // publish catalogue and ui 
-        this.ui();
         // this.menu.updateCategories(this);
         this.testGraph();
     }
 
     
-    /**
-     * This also defines wrapper functions to handle the Dom Events 
-     * TODO: add an overview of all avaiable Ctrl + [abc] shortcuts, make this scalable, etc...
-     */
-    setupControlKeyActions() {
-        
+    async testGraph() {
+        // let js = `
+        // function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
+        // ) {
+        //     let [aFixed] = various.toBoolean(a) /* "x": 3 | "y": -1 */;
+        //     let [cFixed] = various.toBoolean(c) /* "x": 3 | "y": 2 */;
 
-        // this.ctx.canvas.addEventListener("keydown", (e) => {
-            
-        //     // TODO: give these actions different files or something, maybe like the history actions
-        //     let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
-        //     let shift = e.shiftKey;      
-        //     let key = e.key.toLowerCase(); 
-            
-        //     if (control && key == 'a')
-        //         this.onSelectAll();
-        //     else if ((control && key =='p') || (control && shift && key == 'p') || key == 'enter') 
-        //         this.onPrompt();
-        //     else if (control && key == 's')
-        //         this.onSave();
-        //     else if (control && key == 'l')
-        //         this.onLoad();
-        //     else if (control && key == 'd') 
-        //         this.onDuplicate();
-        //     else if (control && key == ' ') 
-        //         this.onTest();
-        //     else if (control && key == 'k')
-        //         this.onPrint();
-        //     else    
-        //         return;
-            
-        //     e.preventDefault();
-
-        // }, false);
-
-        // this.ctx.canvas.addEventListener("cut", (e) => {
-        //     console.log("cutting...");
-        //     e.clipboardData!.setData("text/plain", this.onCut());
-        //     e.preventDefault();
-        // })
-
-        // // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
-        // this.ctx.canvas.addEventListener("copy", (e) => {
-        //     console.log("copying...");
-        //     e.clipboardData!.setData("text/plain", this.onCopy());
-        //     e.preventDefault();
-        // })
-
-        // this.ctx.canvas.addEventListener("paste", (e) => {
-        //     console.log("paste");
-        //     if (!e.clipboardData) {
-        //         // alert("I would like a string, please");
-        //         return;
-        //     }
-        //     if (e.clipboardData.items.length != 1) {
-        //         // alert("I would like just one string, please");
-        //         return;
-        //     }
-        //     e.clipboardData.items[0].getAsString(this.onPaste.bind(this));
-        // });
-    }
-
-    onPrint() {
-        this.catalogue.print();
-    }
-
-    async onChange() {
-        // if (this.graph.areConnectionsCorrect()) {
-        //     console.log("correct!");
+        //     let [b] = bool.not(aFixed) /* "x": 8 | "y": -1 */;
+        //     let [d] = bool.or(aFixed, cFixed) /* "x": 8 | "y": 2 */;
+        //     let [e] = bool.and(b, d) /* "x": 13 | "y": 0 */;
+        //     return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
         // }
-        let [cache, visuals] = await this.graph.calculate();
-        this.cableVisuals = visuals;
-        this.requestRedraw();
-    }
+        // `;
 
-    onNew() {
-        console.log("new...");
-        this.resetGraph();
-    }
+        let js = `
+        function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
+        ) {
+            let [aFixed] = various.toNumber(a) /* "x": 3 | "y": -1 */;
+            let [cFixed] = various.toNumber(c) /* "x": 3 | "y": 3 */;
+            let [d] = vector.newVector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
+            let [e] = vector.newVector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
+            let [f] = vector.newLine(d, e) /* "x": 13 | "y": 5 */;
+            return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
+        }
+        `;
 
+        this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
+        // this.graph.log();
+        return;
+    }
 
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
@@ -187,11 +133,10 @@ export class NodesCanvas {
 
     /////////////////////////////////////////////////////////////////
 
-    /**
-     * Ctrl + Spacebar
-     */
-    onTest() {
-
+    async onChange() {
+        let [cache, visuals] = await this.graph.calculate();
+        this.cableVisuals = visuals;
+        this.requestRedraw();
     }
 
     /**
@@ -200,10 +145,6 @@ export class NodesCanvas {
     onDuplicate() {
         let str = this.onCopy();
         this.onPaste(str, false);
-    }
-
-    onPrompt() {
-        this.promptForNode(this.mgpHover);
     }
 
 
@@ -310,49 +251,6 @@ export class NodesCanvas {
         if (change) this.onChange();
     }
 
-    async loadModules(stdPath: string) {
-
-        // TODO move this to Catalogue, its catalogue's responsibility to manage modules
-        let json = await IO.fetchJson(stdPath);
-        for (let config of json.std) {
-            let libString = await IO.importLibrary(config.path);
-            let mod = ModuleShim.fromJsObject(config.name, config.icon, config.fullPath, config.path, libString);
-            this.catalogue.addLibrary(mod);
-        }
-        this.ui();
-        // this.menu.updateCategories(this);
-    }
-
-    async testGraph() {
-        // let js = `
-        // function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
-        // ) {
-        //     let [aFixed] = various.toBoolean(a) /* "x": 3 | "y": -1 */;
-        //     let [cFixed] = various.toBoolean(c) /* "x": 3 | "y": 2 */;
-
-        //     let [b] = bool.not(aFixed) /* "x": 8 | "y": -1 */;
-        //     let [d] = bool.or(aFixed, cFixed) /* "x": 8 | "y": 2 */;
-        //     let [e] = bool.and(b, d) /* "x": 13 | "y": 0 */;
-        //     return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
-        // }
-        // `;
-
-        let js = `
-        function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
-        ) {
-            let [aFixed] = various.toNumber(a) /* "x": 3 | "y": -1 */;
-            let [cFixed] = various.toNumber(c) /* "x": 3 | "y": 3 */;
-            let [d] = vector.newVector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
-            let [e] = vector.newVector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
-            let [f] = vector.newLine(d, e) /* "x": 13 | "y": 5 */;
-            return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
-        }
-        `;
-
-        this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
-        // this.graph.log();
-        return;
-    }
 
     // TODO make this nicer...
     collapseCounter = 1;
@@ -367,18 +265,9 @@ export class NodesCanvas {
         } else {
             this.catalogue.addLibrary(ModuleShim.new("graphs", "braces", "", {},[graph], []));
         }
-        this.ui();
+        // update the UI...
+        console.warn("TODO UPDATE THE NEW UI");
     }
-
-
-    ui() {
-        
-        // hook up UI 
-        // this.menu.updateCategories(this);
-        // this.menu.renderNav();
-        // makeOperationsGlobal(this.catalogue);
-    }
-
 
     /**
      * NOTE: this is sort of the main loop of the whole node canvas
@@ -706,7 +595,7 @@ export class NodesCanvas {
         return undefined;
     }
 
-    promptForNode(gp: Vector2) {
+    public promptForNode(gp: Vector2) {
         let text = prompt("", "");
         
         if (!text) {
