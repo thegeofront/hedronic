@@ -20,6 +20,8 @@ export enum CoreType {
     Widget
 }
 
+export type Core = FunctionShim | Widget;
+
 /**
  * Catalogue containing shim Modules
  * Shims are wrappers of functions and variables. 
@@ -77,7 +79,6 @@ export class Catalogue {
     }
 
     select(lib: string, key: string, type: CoreType) {
-
         this.modules.get(lib)!.select(key, type, this);
     }
 

@@ -18,7 +18,7 @@ export class MenuList extends MenuItem {
         return Compose.html`
         <li>
             <a>
-                <span class="icon"><my-icon-save></my-icon-save></span>
+                <span class="icon"></span>
                 ${Element.html`<span class="fill">${this.name}</span>`}
                 <span class="icon right">➤</span>
             </a>

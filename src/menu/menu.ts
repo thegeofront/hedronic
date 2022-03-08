@@ -9,6 +9,8 @@ import { Compose, Element } from "../html/util";
 import { MenuAction } from "./logic/menu-action";
 import { MenuToggle } from "./logic/menu-toggle";
 import { Key } from "../../../engine/src/lib";
+import { getNodesActions } from "./actions/nodes";
+import { getAddActions } from "./actions/add";
 
 
 export class Menu {
@@ -25,16 +27,16 @@ export class Menu {
         let actions = MenuList.new("Actions", [
             MenuList.new("File", getFileActions(nodesCanvas)),
             MenuList.new("Edit", getEditActions(nodesCanvas)),
-            MenuList.new("Add", getFileActions(nodesCanvas)),
-            MenuList.new("View", getViewActions(nodesCanvas)),
-            MenuList.new("Help", getFileActions(nodesCanvas))
+            MenuList.new("Add", getAddActions(nodesCanvas.catalogue)),
+            MenuList.new("Nodes", getNodesActions(nodesCanvas)),
+            MenuList.new("View", getViewActions(nodesCanvas))
         ]);
         return new Menu(nodesCanvas, actions);
     }
 
     bindEventListeners(context: HTMLElement) {
 
-        context.addEventListener("keydown", this.onKeyDown.bind(this), false);
+        document.addEventListener("keydown", this.onKeyDown.bind(this), false);
 
         // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
         document.addEventListener("cut", this.onCut.bind(this));
@@ -74,6 +76,9 @@ export class Menu {
         });
     }
 
+    /**
+     * Check all registered shortcuts, and fire the appropriate action or toggle
+     */
     onKeyDown(e: KeyboardEvent) {
   
         let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
@@ -86,7 +91,7 @@ export class Menu {
             e.preventDefault();
         }
 
-        // we handle these separately
+        // ignore shortcut system
         if (code == Key.Ctrl || code == Key.Shift) return;
 
         // figure out if the action is pressed 
@@ -105,6 +110,7 @@ export class Menu {
         // do not prevent default for these three, they are handled separately, 
         // but we still want them to show up at the menu
         if (item.name == "Cut" || item.name == "Copy" || item.name == "Paste") {
+            item.do();
             return;
         }
 

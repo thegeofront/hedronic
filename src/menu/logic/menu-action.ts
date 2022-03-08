@@ -10,7 +10,7 @@ export class MenuAction<T> extends MenuItem {
     constructor(
         public name: string,
         public context: T,
-        public action: (context: T) => void,
+        public action: (context: T, caller: MenuAction<T>) => void,
         public shortcut?: Key[],
         ) {
             super();
@@ -19,14 +19,14 @@ export class MenuAction<T> extends MenuItem {
     static new<T>(
         context: T,
         name: string,
-        action: (context: T) => void,
+        action: (context: T, caller: MenuAction<T>) => void,
         shortcut?: Key[],
         ) {
         return new MenuAction(name, context, action, shortcut);
     }
 
     do() {
-        this.action(this.context);
+        this.action(this.context, this);
     }
 
     render() : Node {
