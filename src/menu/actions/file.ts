@@ -16,41 +16,37 @@ export function getFileActions(context: NodesCanvas) : MenuItem[] {
         MenuDivider.new(),
         MenuAction.new(context, "Save", fileSaveJson, [Key.Ctrl, Key.S]),
         MenuAction.new(context, "Save as...", fileSaveJs),
-        MenuDivider.new(),
-        MenuAction.new(context, "Import...", fileSaveJson),
-        MenuAction.new(context, "Export...", fileSaveJs),
-        MenuDivider.new(),
-        MenuList.new("items", [
-            MenuAction.new(context, "Save as js", test),
-            MenuAction.new(context, "Save as js", test),
-            MenuAction.new(context, "Save as js", test),
-        ])
+        // MenuDivider.new(),
+        // MenuAction.new(context, "Import...", fileSaveJson),
+        // MenuAction.new(context, "Export...", fileSaveJs),
+        // MenuDivider.new(),
     ];
 } 
 
 function fileNew(n: NodesCanvas) {
     console.log("new");
+    n.onNew();
 }
 
 function fileLoadJson(n: NodesCanvas) {
     console.log("load json");
+    n.onLoad();
 }
 
 function fileLoadJs(n: NodesCanvas) {
     console.log("load js");
+    n.onLoadJs();
 }
 
 function fileSaveJson(n: NodesCanvas) {
     console.log("save json");
+    n.onSave();
 }
 
 function fileSaveJs(n: NodesCanvas) {
     console.log("save js");
+    n.onSaveJs();
 }
-
-function test(n: NodesCanvas) {
-}
-
 
 
 

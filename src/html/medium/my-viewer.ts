@@ -25,6 +25,7 @@ class MyViewer extends WebComponent {
         
     connectedCallback() {
         this.addFrom(MyViewer.template);
+        return;
         this.initialize();
     }  
 

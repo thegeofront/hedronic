@@ -18,7 +18,7 @@ class MyNodesCanvas extends WebComponent {
         outline: none;
         /* background-color: var(--background); */
         /* opacity: 0; */
-        background-color: rgba(0, 0, 0, .15);  
+        /* background-color: rgba(0, 0, 0, .15);   */
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
         display: block;
@@ -74,6 +74,12 @@ class MyNodesCanvas extends WebComponent {
         let catalogue = await this.setupCatalogue();
         // this.listen(CanvasResizeEvent, this.resizeCanvas);
         window.addEventListener("resize", this.resizeCanvas.bind(this));
+        let canvas = this.get("nodes-canvas");
+
+        // document.addEventListener("cut", this.onDomCut.bind(this));
+        // document.addEventListener("copy", this.onDomCopy.bind(this));
+        // document.addEventListener("paste", this.onDomPaste.bind(this));
+
         this.resizeCanvas();
         this.setupGraphEditor(catalogue);
     }
@@ -134,5 +140,32 @@ class MyNodesCanvas extends WebComponent {
 
         // canvas.width = newWidth;
         // canvas.height = newHeight;
+    }
+
+    onDomCut(e: ClipboardEvent) {
+        console.log("dom cut on ", e.target);
+        // e.clipboardData!.setData("text/plain", this.nodes.onCut());
+        // e.preventDefault();
+    }
+
+    onDomCopy(e: ClipboardEvent) {
+        console.log("dom copy")
+        // e.clipboardData!.setData("text/plain", this.nodes.onCopy());
+        // e.preventDefault();
+    }
+
+    onDomPaste(e: ClipboardEvent) {
+        console.log("dom paste")
+        // if (!e.clipboardData) {
+        //     // alert("I would like a string, please");
+        //     return;
+        // }
+        // if (e.clipboardData.items.length != 1) {
+        //     // alert("I would like just one string, please");
+        //     return;
+        // }
+        // e.clipboardData.items[0].getAsString((pastedString: string) => {
+        //     this.nodes.onPaste(pastedString);
+        // });
     }
 });

@@ -27,14 +27,17 @@ function redo(nodes: NodesCanvas) {
     if (change) nodes.onChange();
 }
 
-function cut() {
-    console.log("hello");
+async function cut(nodes: NodesCanvas) {
+    let str = nodes.onCut();
+    navigator.clipboard.writeText(str);
 }
 
-function copy() {
-    console.log("hello");
+async function copy(nodes: NodesCanvas) {
+    let str = nodes.onCopy();
+    navigator.clipboard.writeText(str);
 }
 
-function paste() {
-    console.log("hello");
+async function paste(nodes: NodesCanvas) {
+    let str = await navigator.clipboard.readText();
+    nodes.onPaste(str);
 }

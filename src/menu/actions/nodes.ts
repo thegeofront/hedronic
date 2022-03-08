@@ -10,11 +10,26 @@ import { MenuList } from "../logic/menu-list";
 export function getNodesActions(context: NodesCanvas) : MenuItem[] {
     return [
         MenuAction.new(context, "Prompt...", prompt, [Key.Enter]),
-        // MenuDivider.new(),
+        MenuList.new("Debug", [
+            MenuAction.new(context, "Test 1", test1),
+            MenuAction.new(context, "Test 2", test2),
+            MenuAction.new(context, "Test 3", test3),
+        ])
     ];
 } 
 
-
 function prompt(nodes: NodesCanvas) {
-    console.log("prompto")
+    nodes.onPrompt();
+}
+
+function test1(nodes: NodesCanvas) {
+    console.log("test1");
+}
+
+function test2(nodes: NodesCanvas) {
+    console.log("test2");
+}
+
+function test3(nodes: NodesCanvas) {
+    console.log("test3");
 }

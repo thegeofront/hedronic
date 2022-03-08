@@ -40,6 +40,8 @@ export class NodesCanvas {
 
     private cableVisuals!: Map<string, CableState>;
 
+    public clipboardStorage?: string;
+
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
@@ -101,6 +103,7 @@ export class NodesCanvas {
      * TODO: add an overview of all avaiable Ctrl + [abc] shortcuts, make this scalable, etc...
      */
     setupControlKeyActions() {
+        
 
         // this.ctx.canvas.addEventListener("keydown", (e) => {
             
@@ -216,7 +219,6 @@ export class NodesCanvas {
     onLoad() {
         console.log("loading...");
         IO.promptLoadTextFile((str) => {
-            
             // TODO check if valid. etc. etc. 
             if (!str) {
                 return;

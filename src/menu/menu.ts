@@ -34,46 +34,16 @@ export class Menu {
         return new Menu(nodesCanvas, actions);
     }
 
-    bindEventListeners(context: HTMLElement) {
-
+    bindEventListeners(context: HTMLCanvasElement) {
+        
+        // for now, listen on a global level 
         document.addEventListener("keydown", this.onKeyDown.bind(this), false);
-
-        // to special things with Ctrl + C and Ctrl + V, we need access to the clipboard using these specific events...
-        document.addEventListener("cut", this.onCut.bind(this));
-        document.addEventListener("copy", this.onCopy.bind(this));
-        document.addEventListener("paste", this.onPaste.bind(this));
         
         // add this message to make users reconsider saving
+        // dont do this while debugging, gets annoying real quick
         // window.onbeforeunload = function() {
         //     return true;
         // };
-    }
-
-    onCut(e: ClipboardEvent) {
-        console.log("cut");
-        e.clipboardData!.setData("text/plain", this.nodes.onCut());
-        e.preventDefault();
-    }
-
-    onCopy(e: ClipboardEvent) {
-        console.log("copy")
-        e.clipboardData!.setData("text/plain", this.nodes.onCopy());
-        e.preventDefault();
-    }
-
-    onPaste(e: ClipboardEvent) {
-        console.log("paste")
-        if (!e.clipboardData) {
-            // alert("I would like a string, please");
-            return;
-        }
-        if (e.clipboardData.items.length != 1) {
-            // alert("I would like just one string, please");
-            return;
-        }
-        e.clipboardData.items[0].getAsString((pastedString: string) => {
-            this.nodes.onPaste(pastedString);
-        });
     }
 
     /**
@@ -87,7 +57,9 @@ export class Menu {
         let code = e.keyCode; 
 
         // none of that quitting, printing, or other unexpected behaviour
-        if (control) {
+        // however, we DO want the copy / paste behaviour to be 'normal';
+        // on another note: we can also just do this ourselves
+        if (control && ((code != Key.X) && (code != Key.C) && (code != Key.V))) {
             e.preventDefault();
         }
 
@@ -99,9 +71,7 @@ export class Menu {
             if (!(item instanceof MenuToggle) && !(item instanceof MenuAction)) return;
             if (!item.shortcut) return;
             let keys = item.shortcut;
-            if (keys.includes(Key.Ctrl) && !control) return;
-            if (keys.includes(Key.Shift) && !shift) return;
-            if (!keys.includes(code)) return;
+            if (!perfectMatch(keys, control, shift, code)) return;
             return item;
         })
         
@@ -115,7 +85,7 @@ export class Menu {
         }
 
         // do something with the item
-        console.log(item.shortcut!.map(k => Key[k]), "was pressed");
+        // console.log(item.shortcut!.map(k => Key[k]), "was pressed");
         item.do();
         e.preventDefault();
     }
@@ -145,4 +115,18 @@ export class Menu {
             </my-dropdown-button>`
         });
     }
+}
+
+function perfectMatch(shortcut: Key[], control: boolean, shift: boolean, key: number) {
+    
+    if (control && !shortcut.includes(Key.Ctrl)) return false;
+    if (shift && !shortcut.includes(Key.Shift)) return false;
+    if (!shortcut.includes(key)) return false;
+
+    return true;
+    
+    if (shortcut.includes(Key.Ctrl) && !control) return;
+    if (shortcut.includes(Key.Shift) && !shift) return;
+    if (!shortcut.includes(key)) return;
+    return false;
 }
