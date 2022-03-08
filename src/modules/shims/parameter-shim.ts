@@ -123,7 +123,7 @@ export class TypeShim {
             case Type.Union:
                 return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
             case Type.Reference:
-                return `Ref->${this.child![0].typeToString()}`;  
+                return `${this.child![0].name}`;  
         }
     }
 

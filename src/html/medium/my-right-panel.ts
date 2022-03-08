@@ -1,3 +1,4 @@
+import { Type } from "../../modules/shims/parameter-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
@@ -37,6 +38,13 @@ class MyRightPanel extends WebComponent {
 
     code {
         color: lime;
+    }
+
+    span {
+        display: flex;
+        /* gap: 20px; */
+        justify-content: space-between;
+
     }
 
     #panel {
@@ -106,14 +114,44 @@ class MyRightPanel extends WebComponent {
     setWithNode(node: GeonNode) {
         let title = node.process.nameLower || "-";
         let subtitle = node.operation?.path.join(".") || "widget";
-        let content = JSON.stringify(node.operation?.toJson(), null, 2);
-
+        // let content = JSON.stringify(node.operation?.toJson(), null, 2);
+        let ops = node.operation;
+        
+        let inputHTML = ops?.ins.map((type, i) => {
+            let data = node.inputs[i];
+            return Str.html`
+            <div class="row">
+                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
+                <p class="col"><code>${data}</code></p>
+            </div>`
+        }).join("");
+        
+        let outputHTML = ops?.outs.map((type, i) => {
+            let data = node.outputs[i];
+            return Str.html`
+            <div class="row">
+                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
+                <p class="col"><code>${data}</code></p>
+            </div>`
+        }).join("");
 
         this.get("title").innerText = "Node";
         this.get("the-body").innerHTML = Str.html`
-            <p>name: ${title}</p>
-            <p>path: ${subtitle}</p>
-            <p><code>${content}</code></p>
+            <p>name: <code>${title}</code></p>
+            <p>path: <code>${subtitle}</code></p>
+            <!-- <div class="row">
+                <p class="col">inputs: <code>${ops?.inCount}</code></p>
+                <p class="col">outputs: <code>${ops?.outCount}</code></p>
+            </div> -->
+            <div class="divider"></div>
+            <h6>Input</h6>
+            ${inputHTML}
+            <div class="divider"></div>
+            <h6>Process</h6>
+            <!-- <p>took: <code>${"???"}</code>ms</p> -->
+            <div class="divider"></div>
+            <h6>Output</h6>
+            ${outputHTML}
             <div class="divider"></div>
         `;
     }
@@ -127,16 +165,10 @@ class MyRightPanel extends WebComponent {
     }
 
     setDefault() {
-        this.get("title").innerText = "Default";
+        this.get("title").innerText = "Geofront";
         this.get("the-body").innerHTML = Str.html`
-            <h6>Description</h6>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                Dolorem eaque iusto asperiores recusandae voluptatum aspernatur totam
-                molestiae obcaecati esse eveniet sapiente id, odit laborum culpa 
-                possimus officia natus adipisci ipsa ratione? Obcaecati temporibus 
-                dignissimos laborum tenetur excepturi optio sapiente, officia autem 
-                eius necessitatibus ipsa deleniti maxime? Est aliquam nihil 
-                adipisci!</p>
+            <h6>Welcome</h6>
+            <p>Welcome to geofront! </p>
             <div class="divider"></div>
         `;
     }

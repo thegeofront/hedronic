@@ -363,16 +363,18 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
 function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
+    var style = getComputedStyle(document.body);
+    // console.log(style.getPropertyValue('--accent-color-2'));
     ctx.strokeStyle = "#cecdd1";
     ctx.fillStyle = "#1b1b1e";
     ctx.lineWidth = 1;
 
     if (state == DrawState.OpSelected   && component == componentDrawn) {
-        ctx.strokeStyle = "#ff0000";
-        ctx.fillStyle = "#332222";
+        ctx.strokeStyle = style.getPropertyValue('--accent-color-0');
+        ctx.fillStyle = style.getPropertyValue('--accent-color-3');;
         ctx.lineWidth = 4;
     } else if (state == DrawState.OpHover && component == componentDrawn) {
-        ctx.strokeStyle = "#dd0000";
+        ctx.strokeStyle = style.getPropertyValue('--accent-color-1') || "#dd0000";
         ctx.lineWidth = 2;
     } else if (state == DrawState.OpPlacement) {
         ctx.lineWidth = 0.5;
@@ -384,9 +386,9 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
     }
 
     if (isWidget) {
-        let temp = ctx.fillStyle;
-        ctx.fillStyle = ctx.strokeStyle
-        ctx.strokeStyle = temp;
+        // let temp = ctx.fillStyle;
+        // ctx.fillStyle = ctx.strokeStyle
+        // ctx.strokeStyle = temp;
     }
 }
 
