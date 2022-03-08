@@ -37,7 +37,7 @@ class MyRightPanel extends WebComponent {
     }
 
     code {
-        color: lime;
+        color: var(--accent-color-1);
     }
 
     span {
@@ -60,13 +60,14 @@ class MyRightPanel extends WebComponent {
         min-width: 100%;
         min-height: 1px;
         cursor: default;
-        margin-bottom: 6px;
+        padding-top: 8px;
+        /* padding-bottom: 6px; */
     }
 
     </style>
     <div id="panel">
         <h4 id="title" class="pt-3">Canvas</h4>
-        <div class="divider"></div>
+        <!-- <div class="divider"></div> -->
         <div id="the-body"></div>
     </div>  
     `;
@@ -116,24 +117,32 @@ class MyRightPanel extends WebComponent {
         let subtitle = node.operation?.path.join(".") || "widget";
         // let content = JSON.stringify(node.operation?.toJson(), null, 2);
         let ops = node.operation;
-        
+
         let inputHTML = ops?.ins.map((type, i) => {
-            let data = node.inputs[i];
+            let data = node.inputs[i] || "Empty";
             return Str.html`
             <div class="row">
-                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
                 <p class="col"><code>${data}</code></p>
+                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
             </div>`
         }).join("");
         
         let outputHTML = ops?.outs.map((type, i) => {
-            let data = node.outputs[i];
+            let data: any = node.outputs[i];
+            if (data.length == 0) {
+                data = "Empty";
+            }
             return Str.html`
             <div class="row">
                 <p class="col">${type.name} [ ${type.typeToString()} ] </p>
                 <p class="col"><code>${data}</code></p>
             </div>`
         }).join("");
+
+        if (!inputHTML || !outputHTML) {
+            inputHTML = "";
+            outputHTML = "";
+        }
 
         this.get("title").innerText = "Node";
         this.get("the-body").innerHTML = Str.html`
@@ -144,11 +153,11 @@ class MyRightPanel extends WebComponent {
                 <p class="col">outputs: <code>${ops?.outCount}</code></p>
             </div> -->
             <div class="divider"></div>
+            <h6>Process</h6>
+            <p>took: <code>${"???"}</code>ms</p>
+            <div class="divider"></div>
             <h6>Input</h6>
             ${inputHTML}
-            <div class="divider"></div>
-            <h6>Process</h6>
-            <!-- <p>took: <code>${"???"}</code>ms</p> -->
             <div class="divider"></div>
             <h6>Output</h6>
             ${outputHTML}
