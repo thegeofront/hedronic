@@ -10,7 +10,7 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanel = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-export type SetRightPanelPayload = NodesCanvas | GeonNode;
+export type SetRightPanelPayload = NodesCanvas | GeonNode | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -31,9 +31,17 @@ class MyRightPanel extends WebComponent {
 
     p {
         font-size: 90%;
+        color: var(--default-color-3);
     }
 
+    h6 {
+
+    }
     
+    code {
+        color: lime;
+    }
+
     #panel {
         height: var(--main-height);
         background-color: var(--background-color-2);
@@ -47,12 +55,12 @@ class MyRightPanel extends WebComponent {
         min-width: 100%;
         min-height: 1px;
         cursor: default;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
     </style>
     <div id="panel">
-        <h5 id="title" class="pt-3">Canvas</h3>
+        <h4 id="title" class="pt-3">Canvas</h4>
         <div class="divider"></div>
         <div id="the-body"></div>
         <div class="divider"></div>
@@ -80,9 +88,14 @@ class MyRightPanel extends WebComponent {
 
         if (data instanceof GeonNode) {
             this.setWithNode(data);
+            return;
         } 
         if (data instanceof NodesCanvas) {
             this.setWithCanvas(data);
+            return
+        }
+        if (data instanceof Array) {
+            this.setWithGroup(data);
         }
     }
 
@@ -109,12 +122,17 @@ class MyRightPanel extends WebComponent {
     }
 
     setWithGroup(nodes: GeonNode[]) {
-        this.get("title").innerText = "Group";
+        let count = nodes.length;
+        this.get("title").innerText = `Group (${count})`;
+        this.get("the-body").innerHTML = Str.html`
+            <p></p>
+        `;
     }
 
     setDefault() {
         this.get("title").innerText = "Default";
         this.get("the-body").innerHTML = Str.html`
+            <h6>Description</h6>
             <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
                 Dolorem eaque iusto asperiores recusandae voluptatum aspernatur totam
                 molestiae obcaecati esse eveniet sapiente id, odit laborum culpa 

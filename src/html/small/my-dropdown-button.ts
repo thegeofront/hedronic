@@ -85,7 +85,7 @@ class MyDropdownButton extends WebComponent {
 		}
 
 		li li:hover {
-			background: var(--accent-color-1);
+			background: var(--accent-color-2);
 		}
 	
 		li li:hover > a {

@@ -230,9 +230,15 @@ export class NodesCanvas {
 
     // Ctrl + A
     onSelectAll() {
+
+        // i do this so the last selection will send a message
+        let length = this.graph.nodes.size;
+        let count = 0;
+
         console.log("selecting all...");
         for (let [k,_] of this.graph.nodes) {
-            this.select(Socket.new(k, 0), false);
+            count += 1;
+            this.select(Socket.new(k, 0), count == length);
         }
         this.requestRedraw();
     }
@@ -478,18 +484,22 @@ export class NodesCanvas {
 
     
     select(s: Socket, doDispatch=true) {
-        // dispatch a message containing some info 
-        if (doDispatch) {
-            let node = this.graph.getNode(s.hash)!;
-            HTML.dispatch(setRightPanel, node);
-        }
-
-        // actually select the thing
         let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);
         } else {
             ex.cloneFrom(s);
+        }
+
+        // dispatch a message containing some info 
+        if (doDispatch) {
+            if (this.selectedSockets.length > 1) {
+                let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
+                HTML.dispatch(setRightPanel, nodes);
+            } else {
+                let node = this.graph.getNode(s.hash)!;
+                HTML.dispatch(setRightPanel, node);
+            }
         }
     }
  

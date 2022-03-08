@@ -6,23 +6,24 @@
     --background-color-2: hsl(240, 7%, 18%);
     --background-color-3: hsl(240, 8%, 22%);
     --background-color-4: hsl(240, 9%, 38%);
-    
-    --accent-color-1: rgb(255, 20, 0);
-    --accent-color-3: rgb(133, 10, 10);
+
+    --accent-color-0: hsl(120, 61%, 50%);
+    --accent-color-1: hsl(125, 61%, 40%);
+    --accent-color-2: hsl(140, 61%, 25%);
+    --accent-color-3: hsl(160, 61%, 10%);
 
     --default-color-1: #ffffff;
     --default-color-2: #d9e1eb;
-    --default-color-3: #aeafb1;
-
-    --antracite-light: #666f7a;
-    --antracite: #292C33;
-    --background: #3d3f44;
-    --antracite-dark: #232427;
-    --white: #faf0e6;
-    --highlight: rgb(255, 69, 0); 
+    --default-color-3: hsl(220, 2%, 72%);
 
     --font-lead: "Rajdhani", sans-serif;
     --font-body: "aktiv-grotesk", "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+#old {
+    --accent-color-0: rgb(255, 100, 0);
+    --accent-color-1: rgb(255, 20, 0);
+    --accent-color-3: rgb(133, 10, 10);
 }
 
 * {
