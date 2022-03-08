@@ -18,7 +18,7 @@ export function getNodesActions(context: NodesCanvas) : MenuItem[] {
 } 
 
 function prompt(nodes: NodesCanvas) {
-    nodes.onPrompt();
+    nodes.promptForNode(nodes.mgpHover);
 }
 
 function print(nodes: NodesCanvas) {

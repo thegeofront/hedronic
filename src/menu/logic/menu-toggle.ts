@@ -5,7 +5,6 @@ import { MenuItem } from "./menu-item";
 export class MenuToggle extends MenuItem {
 
     active = true;
-    checked = false;
     element?: HTMLElement;
 
     constructor(
@@ -13,6 +12,7 @@ export class MenuToggle extends MenuItem {
         public onCheck: Function,
         public onUncheck: Function,
         public shortcut?: Key[],
+        public checked = true,
         ) {
             super();
         }   

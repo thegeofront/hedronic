@@ -17,10 +17,10 @@ class MyScreen extends WebComponent {
             width: 100vw;
             height: 100vh;
 
-            --header-height: 60px;
-            --footer-height: 20px;
-            --left-width: 30px;
-            --right-width: 270px;
+            --header-height: 64px;
+            --footer-height: 16px;
+            --left-width: 24px;
+            --right-width: 208px;
             --main-height: calc(100vh - var(--header-height) - var(--footer-height)); 
 
             left: 0px;

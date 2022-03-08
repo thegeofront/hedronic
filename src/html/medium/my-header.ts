@@ -69,7 +69,7 @@ class MyHeader extends WebComponent {
             <!-- Filled Dynamically with the menu -->
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">
-            <my-button>Settings</my-button>
+            <my-button id="settingsToggle">Settings</my-button>
         </div>
     </header>
         
@@ -92,7 +92,6 @@ class MyHeader extends WebComponent {
         let context = this.get("action-categories");
         context.replaceChildren(...menu.render());
     }
-
 
     onUpdateCatalogue(catalogue: Catalogue) {
         if (!(catalogue instanceof Catalogue)) {
