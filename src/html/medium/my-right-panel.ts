@@ -32,12 +32,9 @@ class MyRightPanel extends WebComponent {
     p {
         font-size: 90%;
         color: var(--default-color-3);
+        font-style: arial;
     }
 
-    h6 {
-
-    }
-    
     code {
         color: lime;
     }
@@ -63,7 +60,6 @@ class MyRightPanel extends WebComponent {
         <h4 id="title" class="pt-3">Canvas</h4>
         <div class="divider"></div>
         <div id="the-body"></div>
-        <div class="divider"></div>
     </div>  
     `;
         
@@ -118,6 +114,7 @@ class MyRightPanel extends WebComponent {
             <p>name: ${title}</p>
             <p>path: ${subtitle}</p>
             <p><code>${content}</code></p>
+            <div class="divider"></div>
         `;
     }
 
@@ -140,6 +137,7 @@ class MyRightPanel extends WebComponent {
                 dignissimos laborum tenetur excepturi optio sapiente, officia autem 
                 eius necessitatibus ipsa deleniti maxime? Est aliquam nihil 
                 adipisci!</p>
+            <div class="divider"></div>
         `;
     }
 });

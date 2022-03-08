@@ -69,7 +69,7 @@ class MyHeader extends WebComponent {
             <!-- Filled Dynamically with the menu -->
         </div>
         <div class="header-section" style="margin-left: auto; margin-right: 1rem">
-            <my-button id="settingsToggle">Settings</my-button>
+            <!-- <my-button id="settingsToggle"><bs-gear-icon></bs-gear-icon></my-button> -->
         </div>
     </header>
         

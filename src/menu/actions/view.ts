@@ -9,7 +9,7 @@ import { MenuToggle } from "../logic/menu-toggle";
 export function getViewActions(nodesCanvas: NodesCanvas) : MenuItem[] {
     return [
         MenuToggle.new("Show right panel", activateSidebar, deactivateSidebar, [Key.Ctrl, Key.J]),
-        MenuToggle.new("Show left panel", ()=>{}, ()=>{}, [Key.Ctrl, Key.J]),
+        // MenuToggle.new("Show left panel", ()=>{}, ()=>{}, [Key.Ctrl, Key.J]),
     ];
 }
 
