@@ -42,9 +42,9 @@ body {
     background-color: var(--background-color-3);
 }
 
-p, a {
+/* p, a { */
     /* font-family: var(--font-body); */
-}
+/* } */
 
 :not(:defined) {
     visibility: hidden;

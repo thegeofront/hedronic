@@ -684,7 +684,7 @@ export class NodesCanvas {
     }
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {
-
+        if (doubleClick) return;
         // console.log(doubleClick);
         
         // console.log("down!");

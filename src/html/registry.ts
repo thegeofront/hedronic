@@ -15,10 +15,11 @@ export * from "./medium/my-left-panel";
 export * from "./medium/my-right-panel";
 export * from "./medium/my-viewer";
 
-export * from "./small/my-counter"
-export * from "./small/my-logo"
-export * from "./small/my-styler"
-export * from "./small/my-button"
-export * from "./small/my-small-button"
-export * from "./small/my-dropdown-button"
-export * from "./small/bs-dropdown"
+export * from "./small/my-counter";
+export * from "./small/my-logo";
+export * from "./small/my-styler";
+export * from "./small/my-button";
+export * from "./small/my-small-button";
+export * from "./small/my-dropdown-button";
+export * from "./small/bs-dropdown";
+export * from "./small/my-details";

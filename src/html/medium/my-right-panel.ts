@@ -1,7 +1,7 @@
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
-import { Element, Str, Template } from "../util";
+import { Compose, Element, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
 
 export const showRightPanel = new PayloadEventType<void>("showrightpanel");
@@ -23,19 +23,13 @@ class MyRightPanel extends WebComponent {
     <link rel="stylesheet" type="text/css" href="./bootstrap.css">  
     <style>
 
-    * {
-        /* background-color: red; */
-        border: 5px;
-        border-color: red;
-    }
-
     p {
         font-size: 90%;
         color: var(--default-color-3);
         /* font-style: arial; */
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1, h2, h3, h4, h5, h6, b {
         font-family: var(--font-lead);
     }
 
@@ -46,8 +40,12 @@ class MyRightPanel extends WebComponent {
     span {
         display: flex;
         /* gap: 20px; */
-        justify-content: space-between;
+    }
 
+    details {
+        border: 1px solid var(--background-color-3);
+        padding: 5px;
+        border-radius: 2px;
     }
 
     #panel {
@@ -55,7 +53,7 @@ class MyRightPanel extends WebComponent {
         background-color: var(--background-color-2);
         border-left: 1px solid var(--background-color-3);
         /* border-right: 1px; */
-        padding: 8px;
+        
     }
 
     .divider {
@@ -135,16 +133,15 @@ class MyRightPanel extends WebComponent {
             let socket = node.inputs[i];
             let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
             return Str.html`
-            <div>
-                <h6>${i}</h6>
+            <details>
+                <summary slot="title"><b>${type.name}</b></summary>
                 <div class="row">
-                    <p class="col">name: <code>${type.name}</code></p>
+                    <!-- <p class="col">name: <code>${type.name}</code></p> -->
                     <p class="col">type: <code>${type.typeToString()}</code></p>
                 </div>
                 <p>value:</p>
                 <p>con: <code>${connection}</code></p>
-            </div>
-            <div class="divider"></div>
+            </details>
             `
         }).join("");
         
@@ -216,7 +213,13 @@ function makeCanvasMenu(nodes: NodesCanvas) {
             nodes.getZoom().toString(), 
             (val) => {nodes.setZoom(Number(val))})
     ]
-    return elements;
+    let html = Compose.html`
+    <details>
+        <summary><b>details</b></summary>
+        ${elements}
+    </details>
+    `;
+    return [html];
 }
 
 
