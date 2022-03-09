@@ -8,6 +8,7 @@ export enum CableState {
     String,
     Number,
     Boolean,
+    Dragging,
 }
 
 export class CableVisual {

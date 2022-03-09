@@ -16,6 +16,8 @@ import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
 import { hideRightPanel, setRightPanel, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
+import { Input } from "./model/input";
+import { Output } from "./model/output";
 
 /**
  * Represents the entire canvas of nodes.
@@ -128,19 +130,23 @@ export class NodesCanvas {
         return;
     }
 
+
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
         this.onChange();
     }
 
+
     /////////////////////////////////////////////////////////////////
+
 
     async onChange() {
         let [cache, visuals] = await this.graph.calculate();
         this.cableVisuals = visuals;
         this.requestRedraw();
     }
+
 
     /**
      * Ctrl + D
@@ -149,6 +155,7 @@ export class NodesCanvas {
         let str = this.onCopy();
         this.onPaste(str, false);
     }
+
 
     // Ctrl + S
     onSave() {
@@ -245,12 +252,14 @@ export class NodesCanvas {
         this.requestRedraw();
     }
 
+
     // Ctrl + Z
     onUndo() {
         console.log("undoing...");      
         let change = this.graphHistory.undo(); 
         if (change) this.onChange();
     }
+
 
     // Ctrl + Y
     onRedo() {
@@ -276,6 +285,7 @@ export class NodesCanvas {
         // update the UI...
         console.warn("TODO UPDATE THE NEW UI");
     }
+
 
     /**
      * NOTE: this is sort of the main loop of the whole node canvas
@@ -355,13 +365,28 @@ export class NodesCanvas {
         // draw grid 
         this.drawGrid(ctx);
 
+        let isCableSelected = (socket: Socket, con: Socket) => {
+            for (let selected of this.selectedSockets) {
+                if (socket.equals(selected)) return true;
+                if (con.equals(selected)) return true;
+            }
+            return false;
+        }
+
         // draw cables 
         for (let [hash, node] of this.graph.nodes) {
             node.forEachOutputSocket((socket, connections) => {
-                if (connections.length == 0) return;
-                let cableHash = socket.toString();
-                let visual = this.cableVisuals.get(cableHash) || CableState.Null;
-                drawCable(ctx, socket, connections, visual, this, this.graph);
+                for (let con of connections) {
+                    if (connections.length == 0) return;
+                    let cableHash = socket.toString();
+                    
+                    let visual = this.cableVisuals.get(cableHash) || CableState.Null;
+                    
+                    // figure out if selected
+                    if (isCableSelected(socket, con)) visual = CableState.Selected;
+    
+                    drawCable(ctx, socket, con, visual, this, this.graph);
+                }
             })
         }
 
@@ -372,9 +397,9 @@ export class NodesCanvas {
                 let p = fromNode.getConnectorGridPosition(socket.idx)!;
     
                 if (socket.side == SocketSide.Input) {
-                    drawCableBetween(ctx, g, p, this, CableState.Selected);
+                    drawCableBetween(ctx, g, p, this, CableState.Dragging);
                 } else if (socket.side == SocketSide.Output) {
-                    drawCableBetween(ctx, p, g, this, CableState.Selected);
+                    drawCableBetween(ctx, p, g, this, CableState.Dragging);
                 }
             }
         }
@@ -451,6 +476,7 @@ export class NodesCanvas {
         ctx.restore();
     }
 
+
     // -----
 
 
@@ -466,6 +492,7 @@ export class NodesCanvas {
         return gv.scaled(this._size);
     }
 
+
     // ----- --------------------- -----
     // -----       Selection       -----
     // ----- --------------------- -----
@@ -476,6 +503,7 @@ export class NodesCanvas {
         if (this.selectedSockets.length == 0) return;
         let socket = this.selectedSockets[0];
         let side = socket.side;
+
         if (this.selectedSockets.length == 1 && side == SocketSide.Input) {
             console.log("input")
             
@@ -509,6 +537,7 @@ export class NodesCanvas {
     
     }
 
+
     hover(s?: Socket) {
         this.hoverSocket = s;
     }
@@ -535,8 +564,10 @@ export class NodesCanvas {
             } else if (s.side == SocketSide.Body) {
                 let node = this.graph.getNode(s.hash)!;
                 HTML.dispatch(setRightPanel, node);
-            } else {
-                HTML.dispatch(setRightPanel, s);
+            } else if (s.side == SocketSide.Input) {
+                HTML.dispatch(setRightPanel, new Input());
+            } else if (s.side == SocketSide.Output) {
+                HTML.dispatch(setRightPanel, new Output());
             }
         }
     }
@@ -606,16 +637,20 @@ export class NodesCanvas {
         // this.mgpHover = undefined;
     }
 
+
     ///////////////////////////////////////////////////////////////////////////
+
 
     setZoom(zoom: number) {
         this._size = GeonMath.clamp(zoom, 10, 50);
     }
 
+
     getZoom() {
         return this._size;
     }
 
+    
     // ------ Events
 
     
@@ -644,7 +679,8 @@ export class NodesCanvas {
         return undefined;
     }
 
-    public promptForNode(gp: Vector2) {
+
+    promptForNode(gp: Vector2) {
         let text = prompt("", "");
         
         if (!text) {
@@ -718,6 +754,7 @@ export class NodesCanvas {
         this.requestRedraw();
         return "";
     }
+
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {
         if (doubleClick) return;

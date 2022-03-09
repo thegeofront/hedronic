@@ -9,6 +9,8 @@ import { CableState } from "./cable-visual";
 import { Socket } from "../model/socket";
 import { NodesGraph } from "../model/graph";
 
+const Style = getComputedStyle(document.body);
+
 export const MUTED_WHITE = '#cecdd1';
 
 /**
@@ -206,7 +208,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 }
 
 
-export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableState, canvas: NodesCanvas, graph: NodesGraph) {
+export function drawCable(ctx: CTX, from: Socket, to: Socket, state: CableState, canvas: NodesCanvas, graph: NodesGraph) {
 
     // return;
     // console.log("draw", from, tos);
@@ -214,15 +216,14 @@ export function drawCable(ctx: CTX, from: Socket, tos: Socket[], state: CableSta
     // console.log(from);
     // console.log(canvas.graph.nodes)
     // console.log(from.hash);
+    canvas
+
     let fromNode = graph.nodes.get(from.hash)!;
-    // console.log(fromNode);
     let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;
 
-    for (let to of tos) {
-        let toNode = graph.nodes.get(to.hash)!;
-        let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-        drawCableBetween(ctx, fromGridPos, toGridPos, canvas, state);
-    }
+    let toNode = graph.nodes.get(to.hash)!;
+    let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
+    drawCableBetween(ctx, fromGridPos, toGridPos, canvas, state);
 }
 
 /**
@@ -333,7 +334,7 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     if (state == CableState.Null) {
         ctx.strokeStyle = "#222222";
     } else if (state == CableState.Selected) {
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = Style.getPropertyValue("--accent-color-0");
     } else {
         ctx.strokeStyle = MUTED_WHITE;
     } 
@@ -363,20 +364,20 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
 
 function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
-    var style = getComputedStyle(document.body);
+    // var style = getComputedStyle(document.body);
     // console.log(style.getPropertyValue('--accent-color-2'));
     ctx.strokeStyle = "#cecdd1";
     ctx.fillStyle = "#1b1b1e";
     ctx.lineWidth = 1;
 
-    ctx.font = style.getPropertyValue("--font-lead");
+    ctx.font = Style.getPropertyValue("--font-lead");
 
     if (state == DrawState.OpSelected   && component == componentDrawn) {
-        ctx.strokeStyle = style.getPropertyValue('--accent-color-0');
-        ctx.fillStyle = style.getPropertyValue('--accent-color-3');;
+        ctx.strokeStyle = Style.getPropertyValue('--accent-color-0');
+        ctx.fillStyle = Style.getPropertyValue('--accent-color-3');;
         ctx.lineWidth = 4;
     } else if (state == DrawState.OpHover && component == componentDrawn) {
-        ctx.strokeStyle = style.getPropertyValue('--accent-color-1') || "#dd0000";
+        ctx.strokeStyle = Style.getPropertyValue('--accent-color-1') || "#dd0000";
         ctx.lineWidth = 2;
     } else if (state == DrawState.OpPlacement) {
         ctx.lineWidth = 0.5;

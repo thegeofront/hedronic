@@ -1,5 +1,7 @@
 import { TypeShim } from "../../modules/shims/parameter-shim";
+import { Input } from "../../nodes-canvas/model/input";
 import { GeonNode } from "../../nodes-canvas/model/node";
+import { Output } from "../../nodes-canvas/model/output";
 import { Socket } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
@@ -12,7 +14,7 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanel = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-export type SetRightPanelPayload = Socket | NodesCanvas | GeonNode | GeonNode[];
+export type SetRightPanelPayload = Input | Output | NodesCanvas | GeonNode | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -55,7 +57,7 @@ class MyRightPanel extends WebComponent {
         background-color: var(--background-color-2);
         border-left: 1px solid var(--background-color-3);
         /* border-right: 1px; */
-        
+        padding: 4px 8px;
     }
 
     .divider {
@@ -116,8 +118,14 @@ class MyRightPanel extends WebComponent {
             return;
         }
 
-        if (data instanceof Socket) {
-            this.setWithParam(data);
+        if (data instanceof Input) {
+            this.setWithInput(data);
+            this.data = data;
+            return;
+        }
+
+        if (data instanceof Output) {
+            this.setWithOutput(data);
             this.data = data;
             return;
         }
@@ -181,21 +189,29 @@ class MyRightPanel extends WebComponent {
             <h5>Process</h5>
             <p>took: <code>${"???"}</code>ms</p>
             <div class="divider"></div>
-            <h5>Input</h5>
+            <h5>Inputs</h5>
             ${inputHTML}
             <div class="divider"></div>
-            <h5>Output</h5>
+            <h5>Outputs</h5>
             ${outputHTML}
             <div class="divider"></div>
         `;
     }
 
-    setWithParam(s: Socket) {
-        this.get("title").innerText = "Parameter";
+    setWithInput(s: Input) {
+        this.get("title").innerText = "Input";
         this.get("the-body").innerHTML = Str.html`
             <p></p>
         `;
     }
+
+    setWithOutput(s: Output) {
+        this.get("title").innerText = "Output";
+        this.get("the-body").innerHTML = Str.html`
+            <p></p>
+        `;
+    }
+
 
     setWithGroup(nodes: GeonNode[]) {
         let count = nodes.length;
