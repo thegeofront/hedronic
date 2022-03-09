@@ -46,7 +46,13 @@ export class GeonNode {
         }
     }
     
-    static new(gridpos: Vector2, process: FunctionShim | Widget, inputs?: (Socket | undefined)[], outputs?: Socket[][], hash = createRandomGUID()) {
+    static new(
+        gridpos: Vector2, 
+        process: FunctionShim | Widget, 
+        inputs?: (Socket | undefined)[], 
+        outputs?: Socket[][], 
+        hash = createRandomGUID().substring(0, 13)) {
+
         if (process instanceof Widget) {
             // TODO This should not be, this is dumb
             process = process.clone(); // Widgets contain unique state, while Operations are prototypes 

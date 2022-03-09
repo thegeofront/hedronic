@@ -229,7 +229,7 @@ export class NodesGraph {
         for (let [key, node] of other.nodes) {
             if (this.nodes.has(key)) {
                 console.warn("double!!");
-                key = createRandomGUID();
+                key = createRandomGUID().substring(0, 13);
                 return;   
             } 
             this.nodes.set(key, node);

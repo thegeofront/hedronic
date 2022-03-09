@@ -29,6 +29,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    /* font-family: var(--font-lead); */
 }
 
 *:focus {
@@ -37,16 +38,12 @@
 
 body {
     color: white;
-    font-family: var(--font-lead);
+    /* font-family: var(--font-lead); */
     background-color: var(--background-color-3);
 }
 
 p, a {
-    font-family: var(--font-body);
-}
-
-h1, h2, h3 {
-    font-family: var(--font-lead);
+    /* font-family: var(--font-body); */
 }
 
 :not(:defined) {

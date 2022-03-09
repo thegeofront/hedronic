@@ -121,12 +121,13 @@ function perfectMatch(shortcut: Key[], control: boolean, shift: boolean, key: nu
     
     if (control && !shortcut.includes(Key.Ctrl)) return false;
     if (shift && !shortcut.includes(Key.Shift)) return false;
+    if (shortcut.includes(Key.Ctrl) && !control) return false;
+    if (shortcut.includes(Key.Shift) && !shift) return false;
     if (!shortcut.includes(key)) return false;
 
     return true;
     
-    if (shortcut.includes(Key.Ctrl) && !control) return;
-    if (shortcut.includes(Key.Shift) && !shift) return;
+
     if (!shortcut.includes(key)) return;
     return false;
 }

@@ -1,8 +1,7 @@
-import { Type } from "../../modules/shims/parameter-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
-import { Str, Template } from "../util";
+import { Element, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
 
 export const showRightPanel = new PayloadEventType<void>("showrightpanel");
@@ -33,7 +32,11 @@ class MyRightPanel extends WebComponent {
     p {
         font-size: 90%;
         color: var(--default-color-3);
-        font-style: arial;
+        /* font-style: arial; */
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-lead);
     }
 
     code {
@@ -72,6 +75,8 @@ class MyRightPanel extends WebComponent {
     </div>  
     `;
         
+    data?: SetRightPanelPayload
+
     connectedCallback() {
         this.addFrom(MyRightPanel.template);
         this.listen(setRightPanel, this.set.bind(this))
@@ -91,25 +96,33 @@ class MyRightPanel extends WebComponent {
     set(data: SetRightPanelPayload) {
         if (!data) return this.setDefault();
 
+        if (data == this.data) {
+            return;
+        }
+
         if (data instanceof GeonNode) {
             this.setWithNode(data);
+            this.data = data;
             return;
         } 
         if (data instanceof NodesCanvas) {
             this.setWithCanvas(data);
+            this.data = data;
             return
         }
         if (data instanceof Array) {
             this.setWithGroup(data);
+            this.data = data;
+            return;
         }
     }
 
     setWithCanvas(canvas: NodesCanvas) {
-        this.get("panel").innerHTML = Str.html`
-            <h5 class="pt-3"></h3>
-            <p></p>
-            <p></p>
-        `;
+        this.get("title").innerText = "Canvas";
+        let body = this.get("the-body");
+        body.replaceChildren(
+           ...makeCanvasMenu(canvas)
+        );
     }
 
     setWithNode(node: GeonNode) {
@@ -119,23 +132,32 @@ class MyRightPanel extends WebComponent {
         let ops = node.operation;
 
         let inputHTML = ops?.ins.map((type, i) => {
-            let data = node.inputs[i] || "Empty";
+            let socket = node.inputs[i];
+            let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
             return Str.html`
-            <div class="row">
-                <p class="col"><code>${data}</code></p>
-                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
-            </div>`
+            <div>
+                <h6>${i}</h6>
+                <div class="row">
+                    <p class="col">name: <code>${type.name}</code></p>
+                    <p class="col">type: <code>${type.typeToString()}</code></p>
+                </div>
+                <p>value:</p>
+                <p>con: <code>${connection}</code></p>
+            </div>
+            <div class="divider"></div>
+            `
         }).join("");
         
         let outputHTML = ops?.outs.map((type, i) => {
-            let data: any = node.outputs[i];
-            if (data.length == 0) {
-                data = "Empty";
+            let sockets = node.outputs[i];
+            let data = "Empty";
+            if (sockets.length != 0) {
+                data = sockets.map((s) => `${s.hash}[${s.normalIndex()}]`).join(" , ")
             }
             return Str.html`
             <div class="row">
-                <p class="col">${type.name} [ ${type.typeToString()} ] </p>
-                <p class="col"><code>${data}</code></p>
+                <p class="col-6">${type.name} [ ${type.typeToString()} ] </p>
+                <p class="col-6"><code>${data}</code></p>
             </div>`
         }).join("");
 
@@ -148,18 +170,19 @@ class MyRightPanel extends WebComponent {
         this.get("the-body").innerHTML = Str.html`
             <p>name: <code>${title}</code></p>
             <p>path: <code>${subtitle}</code></p>
+            <p>hash: <code>${node.hash}</code></p>
             <!-- <div class="row">
                 <p class="col">inputs: <code>${ops?.inCount}</code></p>
                 <p class="col">outputs: <code>${ops?.outCount}</code></p>
             </div> -->
             <div class="divider"></div>
-            <h6>Process</h6>
+            <h5>Process</h5>
             <p>took: <code>${"???"}</code>ms</p>
             <div class="divider"></div>
-            <h6>Input</h6>
+            <h5>Input</h5>
             ${inputHTML}
             <div class="divider"></div>
-            <h6>Output</h6>
+            <h5>Output</h5>
             ${outputHTML}
             <div class="divider"></div>
         `;
@@ -182,3 +205,43 @@ class MyRightPanel extends WebComponent {
         `;
     }
 });
+
+
+function makeCanvasMenu(nodes: NodesCanvas) {
+    let elements = [
+        makeButton("this is button", () => {console.log("yes hello")}),
+        makeEnum(
+            "Zoom", 
+            ["20", "30", "40"], 
+            nodes.getZoom().toString(), 
+            (val) => {nodes.setZoom(Number(val))})
+    ]
+    return elements;
+}
+
+
+function makeButton(name: string, onClick?: (ev: Event) => void) {
+    let button = Element.html`<button class="btn btn-sm btn-secondary">${name}</button>`;
+    if (onClick) button.onclick = onClick;
+    return button;
+}
+
+
+function makeEnum(name: string, ops: string[], def: string, onChange?: (value: string) => void) {
+    let enumerator = Element.html`
+    <div class="form-group">
+        <label for="${name}">${name}</label>
+        <select class="form-control" id="${name}">${ops.map(op => 
+            Str.html`<option ${op == def ? "selected" : ""} value="${op}">${op}`).join("")
+            }
+        </select>
+    </div>`;
+
+    if (onChange) enumerator.onchange = function (ev: Event) {
+        //@ts-ignore
+        let value:string = ev.target!.value;
+        onChange(value);
+    }
+
+    return enumerator;
+}

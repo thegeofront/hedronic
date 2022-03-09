@@ -62,7 +62,7 @@ class MyHeader extends WebComponent {
         <div style="display: flex; align-items: center">
             <my-logo></my-logo>
             <div>
-                <h1 id="title">Geofront</h1>
+                <h1 id="title" style="font-family: var(--font-lead)">Geofront</h1>
             </div>
         </div>
         <div id="action-categories" class="header-section">

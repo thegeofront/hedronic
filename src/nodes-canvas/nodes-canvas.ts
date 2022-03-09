@@ -1,7 +1,7 @@
 // author : Jos Feenstra
 // purpose: wrapper for dealing with the 'whole of nodes'
 
-import { Vector2, InputState, Domain2, MultiVector2, Key } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, Key, GeonMath } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
@@ -25,7 +25,7 @@ import { Menu } from "../menu/menu";
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 35;
+    private _size = 32;
     get size() { return this._size; }
 
     // selection state 
@@ -91,6 +91,9 @@ export class NodesCanvas {
 
         // this.menu.updateCategories(this);
         this.testGraph();
+
+        // show the settings page of the canvas
+        HTML.dispatch(setRightPanel, this);
     }
 
     
@@ -146,7 +149,6 @@ export class NodesCanvas {
         let str = this.onCopy();
         this.onPaste(str, false);
     }
-
 
     // Ctrl + S
     onSave() {
@@ -505,7 +507,7 @@ export class NodesCanvas {
  
 
     deselect() {
-        HTML.dispatch(setRightPanel);
+        HTML.dispatch(setRightPanel, this);
         this.selectedSockets = [];
     }
 
@@ -566,6 +568,16 @@ export class NodesCanvas {
         // reset the box
         this.boxStart = undefined;
         // this.mgpHover = undefined;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    setZoom(zoom: number) {
+        this._size = GeonMath.clamp(zoom, 10, 50);
+    }
+
+    getZoom() {
+        return this._size;
     }
 
     // ------ Events

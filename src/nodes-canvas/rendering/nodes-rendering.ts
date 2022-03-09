@@ -153,8 +153,8 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw operation text
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `small-caps bold 14px sans-serif`;
-
+    // ctx.font = `small-caps bold 14px sans-serif`;
+    
     if (!isWidget) {
         
         // TODO: do somemthing smart with the name to make it fit
@@ -179,7 +179,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     }
 
     // draw input text
-    ctx.font = '12px courier new';
+    ctx.font = '11px arial';
     for (let i = 0 ; i < node.process.inCount; i++) {
         setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         let vec = textCenters.get(1 + i);
@@ -368,6 +368,8 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
     ctx.strokeStyle = "#cecdd1";
     ctx.fillStyle = "#1b1b1e";
     ctx.lineWidth = 1;
+
+    ctx.font = style.getPropertyValue("--font-lead");
 
     if (state == DrawState.OpSelected   && component == componentDrawn) {
         ctx.strokeStyle = style.getPropertyValue('--accent-color-0');
