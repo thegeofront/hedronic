@@ -1,6 +1,6 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { HTML } from "../../html/util";
-import { VisualizeEvent } from "../../viewer/viewer-app";
+import { StopVisualizeEvent, VisualizeEvent } from "../../viewer/viewer-app";
 import { State } from "../model/state";
 import { Widget, WidgetSide } from "../model/widget";
 
@@ -24,6 +24,10 @@ export class ViewWidget extends Widget {
 
     clone() {
         return ViewWidget.new(this.state);
+    }
+
+    onDestroy(): void {
+        HTML.dispatch(StopVisualizeEvent, {id: this.count.toString()});
     }
 
 }

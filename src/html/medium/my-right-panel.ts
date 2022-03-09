@@ -1,4 +1,6 @@
+import { TypeShim } from "../../modules/shims/parameter-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
+import { Socket } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Str, Template } from "../util";
@@ -10,7 +12,7 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanel = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-export type SetRightPanelPayload = NodesCanvas | GeonNode | GeonNode[];
+export type SetRightPanelPayload = Socket | NodesCanvas | GeonNode | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -113,6 +115,12 @@ class MyRightPanel extends WebComponent {
             this.data = data;
             return;
         }
+
+        if (data instanceof Socket) {
+            this.setWithParam(data);
+            this.data = data;
+            return;
+        }
     }
 
     setWithCanvas(canvas: NodesCanvas) {
@@ -129,20 +137,21 @@ class MyRightPanel extends WebComponent {
         // let content = JSON.stringify(node.operation?.toJson(), null, 2);
         let ops = node.operation;
 
-        let inputHTML = ops?.ins.map((type, i) => {
-            let socket = node.inputs[i];
-            let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
+        let makeParamEntry = (type: TypeShim, connection: string) => {
+            let t = type.typeToString();
             return Str.html`
             <details>
-                <summary slot="title"><b>${type.name}</b></summary>
-                <div class="row">
-                    <!-- <p class="col">name: <code>${type.name}</code></p> -->
-                    <p class="col">type: <code>${type.typeToString()}</code></p>
-                </div>
+                <summary slot="title"><b>${type.name}: </b><code>${t}</code></summary>
                 <p>value:</p>
                 <p>con: <code>${connection}</code></p>
             </details>
             `;
+        }
+
+        let inputHTML = ops?.ins.map((type, i) => {
+            let socket = node.inputs[i];
+            let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
+            return makeParamEntry(type, connection);
         }).join("");
         
         let outputHTML = ops?.outs.map((type, i) => {
@@ -151,17 +160,7 @@ class MyRightPanel extends WebComponent {
             if (sockets.length != 0) {
                 connection = sockets.map((s) => `${s.hash}[${s.normalIndex()}]`).join(" , ")
             }
-            return Str.html`
-            <details>
-                <summary slot="title"><b>${type.name}</b></summary>
-                <div class="row">
-                    <!-- <p class="col">name: <code>${type.name}</code></p> -->
-                    <p class="col">type: <code>${type.typeToString()}</code></p>
-                </div>
-                <p>value:</p>
-                <p>con: <code>${connection}</code></p>
-            </details>
-            `;
+            return makeParamEntry(type, connection);
         }).join("");
 
         if (!inputHTML || !outputHTML) {
@@ -188,6 +187,13 @@ class MyRightPanel extends WebComponent {
             <h5>Output</h5>
             ${outputHTML}
             <div class="divider"></div>
+        `;
+    }
+
+    setWithParam(s: Socket) {
+        this.get("title").innerText = "Parameter";
+        this.get("the-body").innerHTML = Str.html`
+            <p></p>
         `;
     }
 

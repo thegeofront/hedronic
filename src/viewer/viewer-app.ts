@@ -2,7 +2,9 @@ import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawS
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 
-export const VisualizeEvent = new PayloadEventType<{state: any, id: string}>("visualizestate");
+export const VisualizeEvent = new PayloadEventType<{state: any, id: string, preview?: boolean}>("visualizestate");
+
+export const StopVisualizeEvent = new PayloadEventType<{id: string}>("stopvisualizestate");
 
 export class ViewerApp extends App {
 
@@ -26,6 +28,11 @@ export class ViewerApp extends App {
             let {state, id} = payload;
             this.tryVisualize(id, state);
         })
+
+        HTML.listen(StopVisualizeEvent, (payload) => {
+            let {id} = payload;
+            this.removeVisualize(id);
+        })
     }
 
     async start() {
@@ -40,6 +47,11 @@ export class ViewerApp extends App {
         if (unit) {
             this.debug.set(unit, id);
         }
+    }
+
+    removeVisualize(id: string) {
+        this.debug.delete(id);
+        this.debug.delete("henkiepienkie")
     }
 
     startGrid() {

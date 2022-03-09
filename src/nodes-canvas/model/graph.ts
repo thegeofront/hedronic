@@ -259,6 +259,7 @@ export class NodesGraph {
 
         // remove the widget pointer
         if (node.process instanceof Widget) {
+            node.process.onDestroy();
             this.widgets.delete(hash);
         }
 
@@ -269,17 +270,17 @@ export class NodesGraph {
 
     getOutputConnectionsAt(local: Socket) : Socket[] {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
-        return this.nodes.get(local.hash)!.outputs[local.idx-1];
+        return this.nodes.get(local.hash)!.outputs[local.normalIndex()];
     }
     
     setOutputConnectionsAt(local: Socket, foreign: Socket[]) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
-        this.nodes.get(local.hash)!.outputs[local.idx-1] = foreign;
+        this.nodes.get(local.hash)!.outputs[local.normalIndex()] = foreign;
     }
     
     hasOutputConnectionAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
-        let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
+        let list = this.nodes.get(local.hash)!.outputs[local.normalIndex()];
         // find and remove
         for (let i = 0 ; i < list.length; i++) {
             if (list[i].hash != foreign.hash || list[i].idx != foreign.idx) continue;
@@ -290,15 +291,16 @@ export class NodesGraph {
 
     addOutputConnectionsAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
-        this.nodes.get(local.hash)!.outputs[local.idx-1].push(foreign);
+        this.nodes.get(local.hash)!.outputs[local.normalIndex()].push(foreign);
     }
     
     removeOutputConnectionAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
-        let list = this.nodes.get(local.hash)!.outputs[local.idx-1];
+        let list = this.nodes.get(local.hash)!.outputs[local.normalIndex()];
+
         // find and remove
         for (let i = 0 ; i < list.length; i++) {
-            if (list[i].hash != foreign.hash) continue;
+            if (!list[i].equals(foreign)) continue;
             list.splice(i, 1);
             return 
         }
@@ -345,17 +347,17 @@ export class NodesGraph {
 
     hasInputConnectionAt(local: Socket) {
         if (local.side != SocketSide.Input) throw new Error("NOPE");
-        return this.nodes.get(local.hash)!.inputs[(-local.idx) - 1] != undefined;
+        return this.nodes.get(local.hash)!.inputs[local.normalIndex()] != undefined;
     }
 
     getInputConnectionAt(local: Socket) : Socket | undefined {
         if (local.side != SocketSide.Input) throw new Error("NOPE");
-        return this.nodes.get(local.hash)!.inputs[(-local.idx) - 1];
+        return this.nodes.get(local.hash)!.inputs[local.normalIndex()];
     }
     
     setInputConnectionAt(local: Socket, foreign?: Socket) {
         if (local.side != SocketSide.Input) throw new Error("NOPE");
-        this.nodes.get(local.hash)!.inputs[(-local.idx) - 1] = foreign;
+        this.nodes.get(local.hash)!.inputs[local.normalIndex()] = foreign;
     }
 
     ///////

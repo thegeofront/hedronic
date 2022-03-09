@@ -136,5 +136,9 @@ export class Widget {
         canvas.deselect();
     }
 
+    onDestroy() {
+        
+    }
+
     // TODO : customize the heck out of this thing: onLoad, onRun, afterRun, spawnHTML, whatever!
 }

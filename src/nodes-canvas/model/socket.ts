@@ -86,4 +86,10 @@ export class Socket {
         return `${this.hash}${this.idx}`;
     }
 
+    equals(other: Socket) {
+        if (this.hash != other.hash) return false;
+        if (this.idx != other.idx) return false;
+        return true;
+    }
+
 }

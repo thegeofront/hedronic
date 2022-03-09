@@ -119,7 +119,7 @@ export class NodesCanvas {
             let [d] = vector.newVector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
             let [e] = vector.newVector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
             let [f] = vector.newLine(d, e) /* "x": 13 | "y": 5 */;
-            return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
+            return [d /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "lamp" | "x": 18 | "y": 2 */, f /* "widget": "lamp" | "x": 18 | "y": 5 */];
         }
         `;
 
@@ -306,11 +306,7 @@ export class NodesCanvas {
         }
 
         if (this.input.IsKeyPressed("delete")) {
-            if (this.selectedSockets.length > 0) {
-                this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.hash));
-                this.deselect();
-                this.requestRedraw();
-            }
+            this.onDelete();
         }
 
         if (this.input.IsKeyPressed("m")) {
@@ -475,6 +471,44 @@ export class NodesCanvas {
     // ----- --------------------- -----
 
 
+    onDelete() {
+        console.log("DELETE");
+        if (this.selectedSockets.length == 0) return;
+        let socket = this.selectedSockets[0];
+        let side = socket.side;
+        if (this.selectedSockets.length == 1 && side == SocketSide.Input) {
+            console.log("input")
+            
+            let con = this.graph.getInputConnectionAt(socket);
+            if (!con) return;
+            this.graphHistory.removeConnection(con, socket);
+            this.deselect();
+            this.requestRedraw();
+            return;
+        }
+
+        if (this.selectedSockets.length == 1 && side == SocketSide.Output) {
+            console.log("output")
+            let cons = this.graph.getOutputConnectionsAt(socket);
+            if (cons.length == 0) return;
+            console.log(cons.length);
+            for (let i = cons.length - 1 ; i > -1; i-=1) {
+                console.log("repeat");
+                this.graphHistory.removeConnection(socket, cons[i]);
+            }
+            this.deselect();
+            this.requestRedraw();
+            return;
+        }
+
+
+        this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.hash));
+        this.deselect();
+        this.requestRedraw();
+        return;
+    
+    }
+
     hover(s?: Socket) {
         this.hoverSocket = s;
     }
@@ -498,9 +532,11 @@ export class NodesCanvas {
             if (this.selectedSockets.length > 1) {
                 let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
                 HTML.dispatch(setRightPanel, nodes);
-            } else {
+            } else if (s.side == SocketSide.Body) {
                 let node = this.graph.getNode(s.hash)!;
                 HTML.dispatch(setRightPanel, node);
+            } else {
+                HTML.dispatch(setRightPanel, s);
             }
         }
     }
