@@ -16,8 +16,7 @@ import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
 import { hideRightPanel, setRightPanel, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
-import { Input } from "./model/input";
-import { Output } from "./model/output";
+import { State } from "./model/state";
 
 /**
  * Represents the entire canvas of nodes.
@@ -41,6 +40,7 @@ export class NodesCanvas {
     private boxStart: Vector2 | undefined;
 
     private cableVisuals!: Map<string, CableState>;
+    private cache?: Map<string, State>;
 
     public clipboardStorage?: string;
 
@@ -144,6 +144,7 @@ export class NodesCanvas {
     async onChange() {
         let [cache, visuals] = await this.graph.calculate();
         this.cableVisuals = visuals;
+        this.cache = cache;
         this.requestRedraw();
     }
 
@@ -160,8 +161,9 @@ export class NodesCanvas {
     // Ctrl + S
     onSave() {
         console.log("saving...");
-        let text = this.onCopy();
-        IO.promptSaveFile("graph.json", text);
+        let json = NodesGraph.toJson(this.graph);
+        let str = JSON.stringify(json, null, 2)
+        IO.promptSaveFile("graph.json", str);
     }
 
 
@@ -565,9 +567,12 @@ export class NodesCanvas {
                 let node = this.graph.getNode(s.hash)!;
                 HTML.dispatch(setRightPanel, node);
             } else if (s.side == SocketSide.Input) {
-                HTML.dispatch(setRightPanel, new Input());
+                let key = this.graph.getInputConnectionAt(s)?.toString() || "";
+                let state = this.cache?.get(key);
+                HTML.dispatch(setRightPanel, {state, socket: s});
             } else if (s.side == SocketSide.Output) {
-                HTML.dispatch(setRightPanel, new Output());
+                let state = this.cache?.get(s.toString());
+                HTML.dispatch(setRightPanel, {state, socket: s});
             }
         }
     }

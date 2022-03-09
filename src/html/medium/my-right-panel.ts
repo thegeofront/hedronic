@@ -1,8 +1,8 @@
+import { RightMenu } from "../../menu/right-menu";
 import { TypeShim } from "../../modules/shims/parameter-shim";
-import { Input } from "../../nodes-canvas/model/input";
 import { GeonNode } from "../../nodes-canvas/model/node";
-import { Output } from "../../nodes-canvas/model/output";
-import { Socket } from "../../nodes-canvas/model/socket";
+import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
+import { State } from "../../nodes-canvas/model/state";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Str, Template } from "../util";
@@ -14,7 +14,9 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanel = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-export type SetRightPanelPayload = Input | Output | NodesCanvas | GeonNode | GeonNode[];
+type Parameter = {state?: State, socket: Socket };
+
+export type SetRightPanelPayload = Parameter | NodesCanvas | GeonNode | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -107,28 +109,44 @@ class MyRightPanel extends WebComponent {
             this.data = data;
             return;
         } 
+        
         if (data instanceof NodesCanvas) {
             this.setWithCanvas(data);
             this.data = data;
             return
         }
+
         if (data instanceof Array) {
             this.setWithGroup(data);
             this.data = data;
             return;
         }
 
-        if (data instanceof Input) {
+        if (data.socket.side == SocketSide.Input) {
             this.setWithInput(data);
             this.data = data;
             return;
         }
 
-        if (data instanceof Output) {
+        if (data.socket.side == SocketSide.Output) {
             this.setWithOutput(data);
             this.data = data;
             return;
         }
+
+        console.warn("side panel cannot draw settings for this data");
+
+        // if (data instanceof Input) {
+        //     this.setWithInput(data);
+        //     this.data = data;
+        //     return;
+        // }
+
+        // if (data instanceof Output) {
+        //     this.setWithOutput(data);
+        //     this.data = data;
+        //     return;
+        // }
     }
 
     setWithCanvas(canvas: NodesCanvas) {
@@ -198,18 +216,14 @@ class MyRightPanel extends WebComponent {
         `;
     }
 
-    setWithInput(s: Input) {
+    setWithInput(param: Parameter) {
         this.get("title").innerText = "Input";
-        this.get("the-body").innerHTML = Str.html`
-            <p></p>
-        `;
+        this.get("the-body").innerHTML = makeFromJson(param);
     }
 
-    setWithOutput(s: Output) {
+    setWithOutput(param: Parameter) {
         this.get("title").innerText = "Output";
-        this.get("the-body").innerHTML = Str.html`
-            <p></p>
-        `;
+        this.get("the-body").innerHTML = makeFromJson(param);
     }
 
 
@@ -230,6 +244,14 @@ class MyRightPanel extends WebComponent {
         `;
     }
 });
+
+function makeFromJson(json: any) {
+    let strs: string[] = []; 
+    for (let key in json) {
+        strs.push(Str.html`<p>${key}: <code>${json[key]}</code></p>`);
+    }
+    return strs.join("");
+}
 
 
 function makeCanvasMenu(nodes: NodesCanvas) {

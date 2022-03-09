@@ -1,10 +1,15 @@
-import { Key } from "../../../../engine/src/lib";
+import { BillboardShader, Key } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { MenuAction } from "../logic/menu-action";
 import { MenuDivider } from "../logic/menu-divider";
 import { MenuItem } from "../logic/menu-item";
 import { MenuList } from "../logic/menu-list";
 
+const clip: string = "";
+document.onpaste = (e: ClipboardEvent) => {
+    let data = e.clipboardData;
+    console.log(data);
+}
 
 export function getEditActions(context: NodesCanvas) : MenuItem[] {
     return [
@@ -46,8 +51,23 @@ async function copy(nodes: NodesCanvas) {
 
 
 async function paste(nodes: NodesCanvas) {
-    let str = await navigator.clipboard.readText();
-    nodes.onPaste(str);
+    console.log("pastypasty");
+    //@ts-ignore
+    try {
+        let items = await navigator.clipboard.readText();
+    } catch (e) {
+        if (!(e instanceof TypeError)) throw e;
+        
+    }
+    // nodes.onPaste(items);
+    
+    // for (let item of items) {
+    //     if (!item.types.includes("text/plain")) return;
+    //     let data = await item.getType("image/png");
+    //     let text = await data.text();
+    //     console.log("pasted the following text: ", text);
+    //     nodes.onPaste(text);
+    // }
 }
 
 
@@ -59,3 +79,22 @@ function duplicate(nodes: NodesCanvas) {
 function selectAll(nodes: NodesCanvas) {
     nodes.onSelectAll();
 }
+
+
+// function something() {
+//     navigator.permissions.query({ name: "clipboard-read" }).then((result) => {
+//         if (result.state == "granted" || result.state == "prompt") {
+//           navigator.clipboard.read().then((data) => {
+//             for (let i = 0; i < data.length; i++) {
+//               if (!data[i].types.includes("image/png")) {
+//                 alert("Clipboard contains non-image data. Unable to access it.");
+//               } else {
+//                 data[i].getType("image/png").then((blob) => {
+//                   imgElem.src = URL.createObjectURL(blob);
+//                 });
+//               }
+//             }
+//           });
+//         }
+//       });
+// }
