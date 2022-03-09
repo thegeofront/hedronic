@@ -142,20 +142,26 @@ class MyRightPanel extends WebComponent {
                 <p>value:</p>
                 <p>con: <code>${connection}</code></p>
             </details>
-            `
+            `;
         }).join("");
         
         let outputHTML = ops?.outs.map((type, i) => {
             let sockets = node.outputs[i];
-            let data = "Empty";
+            let connection = "Empty";
             if (sockets.length != 0) {
-                data = sockets.map((s) => `${s.hash}[${s.normalIndex()}]`).join(" , ")
+                connection = sockets.map((s) => `${s.hash}[${s.normalIndex()}]`).join(" , ")
             }
             return Str.html`
-            <div class="row">
-                <p class="col-6">${type.name} [ ${type.typeToString()} ] </p>
-                <p class="col-6"><code>${data}</code></p>
-            </div>`
+            <details>
+                <summary slot="title"><b>${type.name}</b></summary>
+                <div class="row">
+                    <!-- <p class="col">name: <code>${type.name}</code></p> -->
+                    <p class="col">type: <code>${type.typeToString()}</code></p>
+                </div>
+                <p>value:</p>
+                <p>con: <code>${connection}</code></p>
+            </details>
+            `;
         }).join("");
 
         if (!inputHTML || !outputHTML) {
