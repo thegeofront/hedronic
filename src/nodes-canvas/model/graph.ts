@@ -311,7 +311,9 @@ export class NodesGraph {
             node.forEachInputSocket((input: Socket, foreignOutput: Socket | undefined) => {
                 if (!foreignOutput) return;
                 if (this.nodes.has(foreignOutput.hash)) {
-                    this.addOutputConnectionsAt(foreignOutput, input);
+                    if (!this.hasOutputConnectionAt(foreignOutput, input)) {
+                        this.addOutputConnectionsAt(foreignOutput, input);
+                    }
                 } else {
                     this.setInputConnectionAt(input, undefined);
                     return
@@ -383,6 +385,8 @@ export class NodesGraph {
 
     addOutputConnectionsAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
+        let outputs = this.nodes.get(local.hash)!.outputs[local.normalIndex()];
+        if (outputs.some((o)=> o.equals(foreign))) throw new Error("EXISTS");
         this.nodes.get(local.hash)!.outputs[local.normalIndex()].push(foreign);
     }
     
