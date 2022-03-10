@@ -68,8 +68,7 @@ export function filletPolyline(line: MultiVector2, radius: number) : MultiVector
 }
 
 
-export function strokePolyline(ctx: CTX, pl: MultiVector2) {
-    ctx.beginPath();
+export function movePolyline(ctx: CTX, pl: MultiVector2) {
     let v = pl.get(0);
     ctx.moveTo(v.x, v.y);
 
@@ -77,7 +76,6 @@ export function strokePolyline(ctx: CTX, pl: MultiVector2) {
         let v = pl.get(i);
         ctx.lineTo(v.x, v.y);
     }
-    ctx.stroke();
 }
 
 export function drawPolygon(ctx: CTX, polygon: MultiVector2) {

@@ -44,6 +44,7 @@ export class NodesGraph {
         for (let hash in json.nodes) {
             let node = json.nodes[hash];
             let type: CoreType = node.type;
+            
             if (type == CoreType.Widget) {
                 let lib = "widgets";
                 let name = node.process.name;

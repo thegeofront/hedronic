@@ -9,7 +9,7 @@ import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
 import { Catalogue, CoreType } from "../modules/catalogue";
 import { ModuleShim } from "../modules/shims/module-shim";
-import { drawCable, drawCableBetween, drawNode, DrawState } from "./rendering/nodes-rendering";
+import { drawMultiCable, generateCableLine, drawNode, DrawState, renderCable } from "./rendering/nodes-rendering";
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
@@ -26,7 +26,7 @@ import { State } from "./model/state";
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 32;
+    private _size = 24;
     get size() { return this._size; }
 
     // selection state 
@@ -377,26 +377,40 @@ export class NodesCanvas {
 
         let isCableSelected = (socket: Socket, con: Socket) => {
             for (let selected of this.selectedSockets) {
-                if (socket.hash == selected.hash) return true;
-                if (con.hash == selected.hash) return true;
+                if (selected.side == SocketSide.Body) {
+                    if (socket.hash == selected.hash) return true;
+                    if (con.hash == selected.hash) return true;
+                } else {
+                    if (socket.equals(selected)) return true;
+                    if (con.equals(selected)) return true;
+                }
             }
             return false;
         }
 
         // draw cables 
         for (let [hash, node] of this.graph.nodes) {
-            node.forEachOutputSocket((socket, connections) => {
-                for (let con of connections) {
-                    if (connections.length == 0) return;
-                    let cableHash = socket.toString();
-                    
-                    let visual = this.cableVisuals.get(cableHash) || CableState.Null;
-                    
-                    // figure out if selected
-                    if (isCableSelected(socket, con)) visual = CableState.Selected;
-    
-                    drawCable(ctx, socket, con, visual, this, this.graph);
+            node.forEachOutputSocket((socket, cons) => {
+                if (cons.length == 0) return;
+                
+                let normalCons = []
+                let selectedCons = [];
+
+                // figure out if selected
+                for (let con of cons) {
+                    if (isCableSelected(socket, con)) {
+                        selectedCons.push(con);
+                    } else {
+                        normalCons.push(con);
+                    }
                 }
+
+                // draw accordingly
+                let cableHash = socket.toString();
+                let visual = this.cableVisuals.get(cableHash) || CableState.Null;
+                drawMultiCable(ctx, socket, normalCons, visual, this, this.graph);
+                if (selectedCons.length > 0) 
+                    drawMultiCable(ctx, socket, selectedCons, CableState.Selected, this, this.graph);
             })
         }
 
@@ -407,9 +421,9 @@ export class NodesCanvas {
                 let p = fromNode.getConnectorGridPosition(socket.idx)!;
     
                 if (socket.side == SocketSide.Input) {
-                    drawCableBetween(ctx, g, p, this, CableState.Dragging);
+                    renderCable(ctx, g, p, this, CableState.Dragging);
                 } else if (socket.side == SocketSide.Output) {
-                    drawCableBetween(ctx, p, g, this, CableState.Dragging);
+                    renderCable(ctx, p, g, this, CableState.Dragging);
                 }
             }
         }

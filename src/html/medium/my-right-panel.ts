@@ -259,7 +259,7 @@ function makeCanvasMenu(nodes: NodesCanvas) {
         makeButton("this is button", () => {console.log("yes hello")}),
         makeEnum(
             "Zoom", 
-            ["20", "30", "40"], 
+            ["24", "32", "48"], 
             nodes.getZoom().toString(), 
             (val) => {nodes.setZoom(Number(val))})
     ]

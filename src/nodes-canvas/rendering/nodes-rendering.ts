@@ -1,17 +1,22 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
-import { CTX, drawPolygon, filletPolyline, strokePolyline } from "./ctx/ctx-helpers";
+import { CTX, drawPolygon, filletPolyline, movePolyline } from "./ctx/ctx-helpers";
 import { NODE_WIDTH, GeonNode } from "../model/node";
 import { Widget } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
-import { CableState } from "./cable-visual";
+import { CableState as CableStyle } from "./cable-visual";
 import { Socket } from "../model/socket";
 import { NodesGraph } from "../model/graph";
 
-const Style = getComputedStyle(document.body);
+export const MUTED_WHITE = "#cecdd1";
 
-export const MUTED_WHITE = '#cecdd1';
+const Style = getComputedStyle(document.body);
+const SECONDARY_3 = Style.getPropertyValue("--secondary-color-3");
+const SECONDARY_5 = Style.getPropertyValue("--secondary-color-5");
+const NODE_COLOR = Style.getPropertyValue("--node-color");
+const NODE_EDGE = Style.getPropertyValue("--node-edge");
+
 
 /**
  * NOTE: maybe give this a svg-style overhaul...
@@ -137,7 +142,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     ctx.beginPath();
 
     // draw body
-    setStyle(ctx, style, component, 0, isWidget); // isWidget
+    setNodeStyle(ctx, style, component, 0, isWidget); // isWidget
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
@@ -148,7 +153,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw thing in the middle
     ctx.beginPath();
     drawPolygon(ctx, centerPolygon);
-    ctx.fillStyle = isWidget ? "Yellow" : "#292C33";
+    ctx.fillStyle = isWidget ? "" : "#292C33";
     ctx.fill();
     // ctx.stroke();
 
@@ -182,7 +187,8 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw input text
     ctx.font = '11px arial';
     for (let i = 0 ; i < node.process.inCount; i++) {
-        setStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
+        setNodeStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
+        ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + i);
         // ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         let text = node.operation?.ins[i].render() || "in";
@@ -191,7 +197,8 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     
     // draw output text
     for (let i = 0 ; i < node.process.outCount; i++) {
-        setStyle(ctx, style, component, i + 1, isWidget);
+        setNodeStyle(ctx, style, component, i + 1, isWidget);
+        ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + node.process.inCount + i);
         let text = node.operation?.outs[i].render() || "out";
         // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
@@ -201,34 +208,99 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // render widget
     if (isWidget) {
         let widget = node.process as Widget;
-        setStyle(ctx, style, component, 0, isWidget);
+        setNodeStyle(ctx, style, component, 0, isWidget);
         widget.render(ctx, pos, component, canvas.size);
     }
 }
 
 
-export function drawCable(ctx: CTX, from: Socket, to: Socket, state: CableState, canvas: NodesCanvas, graph: NodesGraph) {
+function setNodeStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
 
-    // return;
-    // console.log("draw", from, tos);
-    // use the components in the graph to figure out the from and to position
-    // console.log(from);
-    // console.log(canvas.graph.nodes)
-    // console.log(from.hash);
-    canvas
+    // var style = getComputedStyle(document.body);
+    // console.log(style.getPropertyValue('--accent-color-2'));
+    ctx.strokeStyle = NODE_EDGE;
+    ctx.fillStyle = NODE_COLOR;
+    ctx.lineWidth = 1;
 
+    ctx.font = Style.getPropertyValue("--font-lead");
+
+    if (state == DrawState.OpSelected   && component == componentDrawn) {
+        ctx.strokeStyle = Style.getPropertyValue('--accent-color-0');
+        ctx.fillStyle = Style.getPropertyValue('--accent-color-3');
+        ctx.lineWidth = 4;
+        return;
+    } else if (state == DrawState.OpHover && component == componentDrawn) {
+        ctx.strokeStyle = Style.getPropertyValue('--accent-color-1') || "#dd0000";
+        ctx.lineWidth = 2;
+    } else if (state == DrawState.OpPlacement) {
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = ctx.strokeStyle + "44"
+    }
+
+    if (isWidget) {
+        ctx.strokeStyle = NODE_COLOR;
+        ctx.fillStyle = NODE_EDGE;
+    }
+}
+
+
+export function drawMultiCable(ctx: CTX, from: Socket, tos: Socket[], style: CableStyle, canvas: NodesCanvas, graph: NodesGraph) {
+
+    // draw a bunch of lines
+    let lines = [];
     let fromNode = graph.nodes.get(from.hash)!;
     let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;
+    for (let to of tos) {
+        let toNode = graph.nodes.get(to.hash)!;
+        let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
+        let line = generateCableLine(fromGridPos, toGridPos, canvas);
+        if (line) lines.push(line);
+    }
+    strokeLines(ctx, style, lines);
+}
 
-    let toNode = graph.nodes.get(to.hash)!;
-    let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-    drawCableBetween(ctx, fromGridPos, toGridPos, canvas, state);
+export function renderCable(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, style: CableStyle) {
+    let line = generateCableLine(fromGridPos, toGridPos, canvas);
+    if (line) strokeLines(ctx, style, [line]);
+}
+
+export function strokeLines(ctx: CTX, state: CableStyle, lines: MultiVector2[]) {
+    
+    // apply style
+    let mainColor = "white";
+    let edgeColor = "black";
+
+    if (state == CableStyle.Null) {
+        mainColor = NODE_COLOR
+        edgeColor = "black";
+    } else if (state == CableStyle.Selected) {
+        mainColor = Style.getPropertyValue("--accent-color-0");
+        // mainColor = "white";
+        edgeColor = Style.getPropertyValue("--accent-color-3");
+    } else if (state == CableStyle.Dragging) {
+        mainColor = "white";
+        edgeColor = "white";
+    } else { // if (state == CableStyle.Boolean)
+        mainColor = "white"
+        edgeColor = "black"
+    }
+
+    // draw the line twice with different settings
+    ctx.lineCap = "round"; 
+    ctx.strokeStyle = edgeColor;
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    for (let line of lines) movePolyline(ctx, line);
+    ctx.stroke();
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth = 6;
+    ctx.stroke();
 }
 
 /**
  *  line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
  */
-export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, state: CableState) {
+export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas) {
 
     let size = canvas.size;
     let hgs = canvas.size / 2;
@@ -330,99 +402,5 @@ export function drawCableBetween(ctx: CTX, fromGridPos: Vector2, toGridPos: Vect
     }
 
     line = filletPolyline(line, fillet);
-    if (state == CableState.Null) {
-        ctx.strokeStyle = "#222222";
-    } else if (state == CableState.Selected) {
-        ctx.strokeStyle = Style.getPropertyValue("--accent-color-0");
-    } else {
-        ctx.strokeStyle = MUTED_WHITE;
-    } 
-    // if (state == CableState.Null) {
-    //     ctx.strokeStyle = "#222222";
-    // } else if (state == CableState.Boolean) {
-    //     ctx.strokeStyle = "#08FD4E";
-    // } else if (state == CableState.Number) {
-    //     ctx.strokeStyle = "#FD08B7";
-    // } else if (state == CableState.String) {
-    //     ctx.strokeStyle = "#FDC908";
-    // } else if (state == CableState.Object) {
-    //     ctx.strokeStyle = "#083DFD";
-    // } else if (state == CableState.Selected) {
-    //     ctx.strokeStyle = "#cc0000";
-    // } else {
-    //     ctx.strokeStyle = "#222222";
-    // }
-
-    
-    ctx.lineCap = "round";
-    // ctx.lineJoin = "bevel";
-    ctx.lineWidth = 8;
-    strokePolyline(ctx, line);
-}
-
-
-function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn: number, isWidget: boolean) {
-
-    // var style = getComputedStyle(document.body);
-    // console.log(style.getPropertyValue('--accent-color-2'));
-    ctx.strokeStyle = "#cecdd1";
-    ctx.fillStyle = "#1b1b1e";
-    ctx.lineWidth = 1;
-
-    ctx.font = Style.getPropertyValue("--font-lead");
-
-    if (state == DrawState.OpSelected   && component == componentDrawn) {
-        ctx.strokeStyle = Style.getPropertyValue('--accent-color-0');
-        ctx.fillStyle = Style.getPropertyValue('--accent-color-3');
-        ctx.lineWidth = 4;
-    } else if (state == DrawState.OpHover && component == componentDrawn) {
-        ctx.strokeStyle = Style.getPropertyValue('--accent-color-1') || "#dd0000";
-        ctx.lineWidth = 2;
-    } else if (state == DrawState.OpPlacement) {
-        ctx.lineWidth = 0.5;
-        ctx.strokeStyle = ctx.strokeStyle + "44"
-    }
-
-    if (componentDrawn != 0) {
-        ctx.fillStyle = ctx.strokeStyle;
-    }
-
-    if (isWidget) {
-        // let temp = ctx.fillStyle;
-        ctx.fillStyle = Style.getPropertyValue('--default-color-3');
-        // ctx.strokeStyle = temp;
-    }
-}
-
-
-function getStyle(state: DrawState) {
-    // ctx.strokeStyle = "#aaaaaa";
-    // ctx.fillStyle = "#222222";
-    // ctx.lineWidth = 1;
-
-    switch (state) {
-        case DrawState.Op:
-            return new StyleSet("white", "#aaaaaa", "#222222", 1);
-        case DrawState.OpHover:
-            return new StyleSet("white", "#aaaaaa", "#222222", 1);
-        case DrawState.OpSelected:
-            return new StyleSet("white", "#aaaaaa", "#222222", 1);
-        case DrawState.OpPlacement:
-            return new StyleSet("white", "#aaaaaa", "#222222", 1);
-    }
-}
-
-
-function gizmoShape(ctx: CTX, pos: Vector2, input: boolean, output: boolean, wh: Vector2, size: number) {
-    let part = 5;
-    let step = size / part;
-    let coord = (x: number,y: number) => {
-        return Vector2.new(pos.x + y*step, pos.y + x*step);
-    }
-    let moveTo = (x: number, y: number) => {
-        ctx.moveTo(pos.x + y*step, pos.y + x*step);
-    }
-    let lineTo = (x: number, y: number) => {
-        ctx.lineTo(pos.x + y*step, pos.y + x*step);
-    }
+    return line;
 }
