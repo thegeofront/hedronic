@@ -137,7 +137,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     ctx.beginPath();
 
     // draw body
-    setStyle(ctx, style, component, 0, false); // isWidget
+    setStyle(ctx, style, component, 0, isWidget); // isWidget
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
@@ -148,7 +148,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw thing in the middle
     ctx.beginPath();
     drawPolygon(ctx, centerPolygon);
-    ctx.fillStyle = "#292C33";
+    ctx.fillStyle = isWidget ? "Yellow" : "#292C33";
     ctx.fill();
     // ctx.stroke();
 
@@ -168,7 +168,6 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
             name = `${name.slice(0, maxSize-1)}..`;   
         }
         
-
         ctx.fillStyle = MUTED_WHITE;
         
         // ctx.rotate
@@ -374,7 +373,7 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
 
     if (state == DrawState.OpSelected   && component == componentDrawn) {
         ctx.strokeStyle = Style.getPropertyValue('--accent-color-0');
-        ctx.fillStyle = Style.getPropertyValue('--accent-color-3');;
+        ctx.fillStyle = Style.getPropertyValue('--accent-color-3');
         ctx.lineWidth = 4;
     } else if (state == DrawState.OpHover && component == componentDrawn) {
         ctx.strokeStyle = Style.getPropertyValue('--accent-color-1') || "#dd0000";
@@ -390,7 +389,7 @@ function setStyle(ctx: CTX, state: DrawState, component: number, componentDrawn:
 
     if (isWidget) {
         // let temp = ctx.fillStyle;
-        // ctx.fillStyle = ctx.strokeStyle
+        ctx.fillStyle = Style.getPropertyValue('--default-color-3');
         // ctx.strokeStyle = temp;
     }
 }

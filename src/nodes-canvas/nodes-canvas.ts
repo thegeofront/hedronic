@@ -221,18 +221,26 @@ export class NodesCanvas {
 
     // Ctrl + V
     onPaste(str: string, fromJs=false) {
+
+        // generate a new graph from a string 
+        console.log(str);
         let newGraph;
         if (fromJs) {
             newGraph = NodesGraph.fromJs(str, this.catalogue)!;
         } else {
             newGraph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
         }
+
+        // move all the nodes to make the addition distinct
+        newGraph.nodes.forEach((n)=> n.position.addn(1,1));
+
+        // add it
+
         this.graph.addGraph(newGraph);
 
         // select all new nodes
         this.deselect();
         for (let [k, v] of newGraph.nodes) {
-            v.position.add(Vector2.new(1, 1));
             this.select(Socket.new(k, 0));
         }
         this.onChange();

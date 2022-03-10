@@ -1,17 +1,16 @@
 import { BillboardShader, Key } from "../../../../engine/src/lib";
+import { PayloadEventType } from "../../html/payload-event";
+import { HTML } from "../../html/util";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { MenuAction } from "../logic/menu-action";
 import { MenuDivider } from "../logic/menu-divider";
 import { MenuItem } from "../logic/menu-item";
 import { MenuList } from "../logic/menu-list";
 
-const clip: string = "";
-document.onpaste = (e: ClipboardEvent) => {
-    let data = e.clipboardData;
-    console.log(data);
-}
-
 export function getEditActions(context: NodesCanvas) : MenuItem[] {
+    
+    // HTML.listen(DelayedPasteEvent, (str) => context.onPaste(str));
+    
     return [
         MenuAction.new(context, "Undo", undo, [Key.Ctrl, Key.Z]),
         MenuAction.new(context, "Redo", redo, [Key.Ctrl, Key.Y]),
@@ -51,15 +50,16 @@ async function copy(nodes: NodesCanvas) {
 
 
 async function paste(nodes: NodesCanvas) {
-    console.log("pastypasty");
-    //@ts-ignore
+    // console.log("pastypasty");
+    let str: string;
     try {
-        let items = await navigator.clipboard.readText();
+        str = await navigator.clipboard.readText();
     } catch (e) {
-        if (!(e instanceof TypeError)) throw e;
-        
+        alert("Pasting does not work in firefox...")
+        return;
     }
-    // nodes.onPaste(items);
+
+    nodes.onPaste(str);
     
     // for (let item of items) {
     //     if (!item.types.includes("text/plain")) return;
@@ -98,3 +98,30 @@ function selectAll(nodes: NodesCanvas) {
 //         }
 //       });
 // }
+
+// const DelayedPasteEvent = new PayloadEventType<string>("delayedpasteevent");
+
+// /**
+//  * To deal with dumb browser issues, handle a normal clipboard event
+//  */
+//  function hack() {
+
+//     document.onpaste = (e: ClipboardEvent) => {
+//         console.log("is this a race?");
+//         if (!e.clipboardData) {
+//             // alert("I would like a string, please");
+//             return;
+//         }
+//         if (e.clipboardData.items.length != 1) {
+//             // alert("I would like just one string, please");
+//             return;
+//         }
+//         e.clipboardData.items[0].getAsString((str) => {
+//             HTML.dispatch(DelayedPasteEvent, str);
+//         });
+//     }
+// }
+
+// hack()
+
+// let clip: string = "";

@@ -81,7 +81,7 @@ export class GeonNode {
 
     static fromJson(data: any, process: FunctionShim | Widget) {
 
-        console.log(data);
+        // console.log(data);
 
         let fromJsonOrNull = (s: any) => {
             if (s !== 0) 

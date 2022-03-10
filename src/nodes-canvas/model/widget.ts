@@ -73,12 +73,19 @@ export class Widget {
         }
     }
 
+    static fromJson() {
+        // this will be specific per widget
+    }
+
     toJson() {
         return {
-            namespace: "widgets",
             name: this.name,
             state: this.state,
         }
+    }
+
+    toJs(inputVariableNames: string[], outputVariableNames: string[]) {
+        // this will also be specific per widget
     }
 
     run(...args: State[]) : State[] {

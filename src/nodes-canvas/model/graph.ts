@@ -1,5 +1,5 @@
 import { createRandomGUID } from "../../../../engine/src/lib";
-import { Catalogue } from "../../modules/catalogue";
+import { Catalogue, CoreType } from "../../modules/catalogue";
 import { TypeShim, Type } from "../../modules/shims/parameter-shim";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
@@ -39,32 +39,48 @@ export class NodesGraph {
 
     static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph {
 
-        console.log("from json...")
-
         let json = JSON.parse(str);
         let graph = NodesGraph.new();
-        for (let key in json.nodes) {
-            let value = json.nodes[key];
-            let lib = value.process.namespace;
-            let name = value.process.name;
-            let type = value.type;
-
-            let process = catalogue.trySelect(lib, name, type);
-            if (!process) {
-                console.error(`process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
-                continue;
-            } 
-            let node = GeonNode.fromJson(value, process);
-            if (!node) {
-                console.error(`process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
-                continue;
+        for (let hash in json.nodes) {
+            let node = json.nodes[hash];
+            let type: CoreType = node.type;
+            if (type == CoreType.Widget) {
+                let lib = "widgets";
+                let name = node.process.name;
+                
+                let process = catalogue.trySelect(lib, name, type);
+                if (!process) {
+                    console.error(`widget process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
+                    continue;
+                } 
+                let geonNode = GeonNode.fromJson(node, process);
+                if (!geonNode) {
+                    console.error(`widget process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
+                    continue;
+                }
+                graph.nodes.set(hash, geonNode);  
+                continue; 
             }
-            graph.nodes.set(key, node);
-            
+
+            if (type == CoreType.Operation) {
+                let lib = node.process.path[0];
+                let name = node.process.name;
+                
+                let process = catalogue.trySelect(lib, name, type);
+                if (!process) {
+                    console.error(`operation process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
+                    continue;
+                } 
+                let geonNode = GeonNode.fromJson(node, process);
+                if (!geonNode) {
+                    console.error(`operation process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
+                    continue;
+                }
+                graph.nodes.set(hash, geonNode);  
+                continue; 
+            }
         }
-
         catalogue.deselect();
-
         return graph;
     }
 
@@ -79,7 +95,6 @@ export class NodesGraph {
         
         return {
                 nodes: mapToJson(nodes, GeonNode.toJson),
-                // cables: mapToJson(cables, Cable.toJson),
         }
     }
 
@@ -225,15 +240,50 @@ export class NodesGraph {
 
     }
 
+    replaceHash(oldHash: string, newHash: string) {
+        
+        console.log({oldHash, newHash});
+
+        let node = this.nodes.get(oldHash);
+        if (!node) {
+            return;
+        }
+
+        node.forEachInputSocket((input: Socket, foreignOutput: Socket | undefined) => {
+            if (!foreignOutput) return;
+            this.removeOutputConnectionAt(foreignOutput, input);
+        })
+
+        node.forEachOutputSocket((output: Socket, foreignInputs: Socket[]) => {
+            if (foreignInputs.length == 0) return
+            for (let foreignInput of foreignInputs) {
+                this.setInputConnectionAt(foreignInput, undefined);
+            }
+        })
+
+        // replace the key itself
+        // node.hash = newHash;
+        // this.nodes.set(newHash, node);
+        // this.nodes.delete(oldHash);
+    }
+
     addGraph(other: NodesGraph) { 
+
+        // first, for every double hash, subsitute in the other graph
         for (let [key, node] of other.nodes) {
             if (this.nodes.has(key)) {
-                console.warn("double!!");
-                key = createRandomGUID().substring(0, 13);
+                console.warn("REPLACE!!");
+                let newKey = createRandomGUID().substring(0, 13);
+                other.replaceHash(key, newKey);
                 return;   
             } 
-            this.nodes.set(key, node);
         }
+
+        // then, add them one by one
+        for (let [key, node] of other.nodes) {
+            this.addNode(node);
+        }
+
         return this;
     }
 
