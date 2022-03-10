@@ -377,8 +377,8 @@ export class NodesCanvas {
 
         let isCableSelected = (socket: Socket, con: Socket) => {
             for (let selected of this.selectedSockets) {
-                if (socket.equals(selected)) return true;
-                if (con.equals(selected)) return true;
+                if (socket.hash == selected.hash) return true;
+                if (con.hash == selected.hash) return true;
             }
             return false;
         }
