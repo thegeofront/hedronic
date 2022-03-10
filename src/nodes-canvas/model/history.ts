@@ -19,6 +19,8 @@ import { FunctionShim } from "../../modules/shims/function-shim";
  */
 export class History {
     
+    readonly maxActions = 30;
+
     constructor(
         private graph: NodesGraph,
         private actions: Action[] = [],
@@ -50,19 +52,19 @@ export class History {
      * Called when we want to record a piece of history
      */
     record(action: Action) {
-        console.log("recording something")
+        // console.log("recording something")
         this.redoActions = []; // upon a new record, we must remove the redo list
         this.actions.push(action);
-        console.log(this.actions)
+        this.tryTrim();
     }
 
     /**
      * Ctrl + Z
      */
     undo() {
-        console.log("undoing something")
+        // console.log("undoing something")
         if (this.actions.length == 0) {
-            console.log("nothing left to undo...");
+            // console.log("nothing left to undo...");
             return false;
         }
         let a = this.actions.pop()!;
@@ -75,15 +77,25 @@ export class History {
      * Ctrl + Y
      */
     redo() {
-        console.log("redoing something")
+        // console.log("redoing something")
         if (this.redoActions.length == 0) {
-            console.log("we cant redo anything...");
+            // console.log("we cant redo anything...");
             return false;
         }
         let a = this.redoActions.pop()!;
         a.do(this.graph);
         this.actions.push(a);
+        this.tryTrim();
         return true;
+    }
+
+    /**
+     * Trim the lists if they start to become too long 
+     */
+    tryTrim() {
+        if (this.actions.length > this.maxActions) {
+            this.actions.splice(0, this.actions.length - this.maxActions);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////    
@@ -96,12 +108,13 @@ export class History {
         return this.do(new CableDeleteAction(from, to));
     }
 
-    addNodes(selected: FunctionShim | Widget, gp: Vector2, state?: State) {
+    addNode(selected: FunctionShim | Widget, gp: Vector2, state?: State) {
         return this.do(new NodeAddAction(selected, gp, state))
     }
 
     recordAddNodes(nodes: GeonNode[]) {
-        let actions = nodes.map(node => new NodeAddAction(node.process, node.position, node.widget?.state));
+        let actions = nodes.map(node => { 
+            return new NodeAddAction(node.process, node.position, node.widget?.state, node.hash)});
         return this.record(new MultiAction(actions))
     }
 

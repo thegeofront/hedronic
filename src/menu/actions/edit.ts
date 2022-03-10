@@ -55,19 +55,18 @@ async function paste(nodes: NodesCanvas) {
     try {
         str = await navigator.clipboard.readText();
     } catch (e) {
-        alert("Pasting does not work in firefox...")
+        // for (let item of items) {
+        //     if (!item.types.includes("text/plain")) return;
+        //     let data = await item.getType("image/png");
+        //     let text = await data.text();
+        //     console.log("pasted the following text: ", text);
+        //     nodes.onPaste(text);
+        // }
+        alert("Pasting works different in firefox, not yet implemented...")
         return;
     }
 
     nodes.onPaste(str);
-    
-    // for (let item of items) {
-    //     if (!item.types.includes("text/plain")) return;
-    //     let data = await item.getType("image/png");
-    //     let text = await data.text();
-    //     console.log("pasted the following text: ", text);
-    //     nodes.onPaste(text);
-    // }
 }
 
 

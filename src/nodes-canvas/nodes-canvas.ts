@@ -18,6 +18,7 @@ import { hideRightPanel, setRightPanel, SetRightPanelPayload, UpdateMenuEvent } 
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
+import { StopVisualizeEvent, StopVisualizePreviewEvent, VisualizeEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 
 /**
  * Represents the entire canvas of nodes.
@@ -141,6 +142,24 @@ export class NodesCanvas {
 
     /////////////////////////////////////////////////////////////////
 
+    getSelectedOutputs() {
+        let outputs: Socket[] = [];
+        for (let socket of this.selectedSockets) {
+            if (socket.side == SocketSide.Output) {
+                outputs.push(socket);
+            } else if (socket.side == SocketSide.Body) {
+                let node = this.graph.getNode(socket.hash)!;
+                node.forEachOutputSocket(s => outputs.push(s));
+            }
+        }
+        return outputs;
+    }
+
+    tryGetCache(outputSocket: Socket) {
+        return this.cache?.get(outputSocket.toString()); 
+    }
+
+    /////////////////////////////////////////////////////////////////
 
     async onChange() {
         let [cache, visuals] = await this.graph.calculate();
@@ -229,8 +248,6 @@ export class NodesCanvas {
     // Ctrl + V
     onPaste(str: string) {
 
-        console.log(str);
-
         // TODO check if it is a json...
         // TODO check if it is a valid json...
 
@@ -250,15 +267,17 @@ export class NodesCanvas {
             addition.replaceHash(oldHash, newKey);
         }
 
-        //
+        // add those nodes directly, but do 
         this.graph.addGraph(addition);
+        this.graphHistory.recordAddNodes(Array.from(addition.nodes.values()));
         
-
         // select all new nodes
         this.deselect();
         for (let [k, v] of addition.nodes) {
             this.select(Socket.new(k, 0));
         }
+
+        // recalc
         this.onChange();
     }
 
@@ -588,17 +607,38 @@ export class NodesCanvas {
     }
 
     
-    select(s: Socket, doDispatch=true) {
+    select(s: Socket, setMenu=true) {
         let ex = this.tryGetSelectedSocket(s.hash);
         if (!ex) {
             this.selectedSockets.push(s);
         } else {
             ex.cloneFrom(s);
         }
+        this.onSelectionChange(setMenu);
+    }
+ 
 
-        // dispatch a message containing some info 
-        if (doDispatch) {
-            if (this.selectedSockets.length > 1) {
+    deselect() {
+        this.selectedSockets = [];
+        this.onSelectionChange(true);
+    }
+
+
+    onSelectionChange(setMenu=true) {
+
+        // possibly visualize some geometry
+        if (this.selectedSockets.length == 0) {
+            HTML.dispatch(StopVisualizePreviewEvent)
+        } else {
+            HTML.dispatch(VisualizePreviewEvent, this);
+        }
+        
+        // possibly open up a menu
+        let s = this.selectedSockets[0];
+        if (setMenu) {
+            if (this.selectedSockets.length == 0 ) {
+                HTML.dispatch(setRightPanel, this);
+            } else if (this.selectedSockets.length > 1) {
                 let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
                 HTML.dispatch(setRightPanel, nodes);
             } else if (s.side == SocketSide.Body) {
@@ -613,12 +653,6 @@ export class NodesCanvas {
                 HTML.dispatch(setRightPanel, {state, socket: s});
             }
         }
-    }
- 
-
-    deselect() {
-        HTML.dispatch(setRightPanel, this);
-        this.selectedSockets = [];
     }
 
 
@@ -780,7 +814,7 @@ export class NodesCanvas {
             for (let lib of this.catalogue.modules.keys()) {
                 let blueprint = this.tryGetbpFromLibrary(lib, name);
                 if (blueprint) {
-                    this.graphHistory.addNodes(blueprint, gp, initState);
+                    this.graphHistory.addNode(blueprint, gp, initState);
                     this.requestRedraw();
                     return "";
                 }
@@ -796,7 +830,7 @@ export class NodesCanvas {
             console.warn("no blueprint found");
             return undefined;
         }
-        this.graphHistory.addNodes(thing, gp);
+        this.graphHistory.addNode(thing, gp);
         this.requestRedraw();
         return "";
     }
@@ -812,7 +846,7 @@ export class NodesCanvas {
 
         if (this.catalogue.selected) {
             // we are placing a new node
-            this.graphHistory.addNodes(this.catalogue.selected!, gp);
+            this.graphHistory.addNode(this.catalogue.selected!, gp);
             // this.graph.addNode(this.catalogue.spawn(gp)!);
             if (!this.input.IsKeyDown("control")) {
                 this.catalogue.deselect();

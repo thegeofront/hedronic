@@ -54,7 +54,7 @@ export class NodesGraph {
                     console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
                     continue;
                 }
-                 
+
                 widget.state = node.process.state;
 
                 let geonNode = GeonNode.fromJson(node, widget);
@@ -264,7 +264,7 @@ export class NodesGraph {
     
     replaceHash(oldHash: string, newHash: string) {
         
-        console.log({oldHash, newHash});
+        // console.log({oldHash, newHash});
 
         let node = this.nodes.get(oldHash);
         if (!node) {

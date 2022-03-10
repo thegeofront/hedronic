@@ -1,16 +1,22 @@
 import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh } from "../../../engine/src/lib";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
+import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
 export const VisualizeEvent = new PayloadEventType<{state: any, id: string, preview?: boolean}>("visualizestate");
 
+export const VisualizePreviewEvent = new PayloadEventType<NodesCanvas>("visualizepreview");
+
 export const StopVisualizeEvent = new PayloadEventType<{id: string}>("stopvisualizestate");
+
+export const StopVisualizePreviewEvent = new PayloadEventType<void>("stopvisualizepreview");
 
 export class ViewerApp extends App {
 
     // render
     scene: Scene;
-    debug: DebugRenderer;
+    various: DebugRenderer;
+    preview: DebugRenderer;
     grid: LineShader;
     
 
@@ -21,7 +27,8 @@ export class ViewerApp extends App {
         let camera = new Camera(canvas, -2, true);
         camera.setState([4.0424, 3.7067, -4.3147, -53.16840193074478, 1.1102909321189378,22.843839502199657]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
-        this.debug = DebugRenderer.new(gl);
+        this.various = DebugRenderer.new(gl);
+        this.preview = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
 
         HTML.listen(VisualizeEvent, (payload) => {
@@ -33,25 +40,42 @@ export class ViewerApp extends App {
             let {id} = payload;
             this.removeVisualize(id);
         })
+
+        HTML.listen(VisualizePreviewEvent, this.setPreview.bind(this));
+        HTML.listen(StopVisualizePreviewEvent, this.clearPreview.bind(this));
     }
 
     async start() {
-        this.startGrid();
-        // this.debug.set(MultiVector3.fromData([1,2,3]));
-        // fill some state | fill up shaders    
+        this.startGrid();  
     }
 
     tryVisualize(id: string, item: any) {
-        // console.log("visualize something:", id, item);
         let unit = tryConvert(item);
         if (unit) {
-            this.debug.set(unit, id);
+            this.various.set(unit, id);
         }
     }
 
     removeVisualize(id: string) {
-        this.debug.delete(id);
-        this.debug.delete("henkiepienkie")
+        this.various.delete(id);
+    }
+
+    setPreview(canvas: NodesCanvas) {
+        console.log("setting...")
+        this.preview.clear();
+        let outputs = canvas.getSelectedOutputs();
+        for (let output of outputs) {
+            let data = canvas.tryGetCache(output);
+            if (!data) continue;
+            let unit = tryConvert(data);
+            if (!unit) continue;
+            this.preview.set(unit, output.toString())
+        }
+    }
+
+    clearPreview() {
+        this.preview.clear();
+        console.log("clearing...")
     }
 
     startGrid() {
@@ -65,7 +89,8 @@ export class ViewerApp extends App {
 
     draw() {
         this.grid.render(this.scene);
-        this.debug.render(this.scene);
+        this.various.render(this.scene);
+        this.preview.render(this.scene);
     }
 }
 
