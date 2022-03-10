@@ -256,12 +256,12 @@ function makeFromJson(json: any) {
 
 function makeCanvasMenu(nodes: NodesCanvas) {
     let elements = [
-        makeButton("this is button", () => {console.log("yes hello")}),
         makeEnum(
             "Zoom", 
             ["24", "32", "48"], 
             nodes.getZoom().toString(), 
-            (val) => {nodes.setZoom(Number(val))})
+            (val) => {nodes.setZoom(Number(val))}),
+        makeToggle("preview selection", nodes.settings.previewSelection, () => {nodes.settings.previewSelection = !nodes.settings.previewSelection; nodes.onSelectionChange();}),
     ]
     let html = Compose.html`
     <details>
@@ -273,21 +273,22 @@ function makeCanvasMenu(nodes: NodesCanvas) {
 }
 
 
-function makeButton(name: string, onClick?: (ev: Event) => void) {
+function makeButton(name: string, onClick: (ev: Event) => void) {
     let button = Element.html`<button class="btn btn-sm btn-secondary">${name}</button>`;
     if (onClick) button.onclick = onClick;
     return button;
 }
 
 
-function makeEnum(name: string, ops: string[], def: string, onChange?: (value: string) => void) {
+function makeEnum(name: string, ops: string[], def: string, onChange: (value: string) => void) {
     let enumerator = Element.html`
-    <div class="form-group">
-        <label for="${name}">${name}</label>
+    <div class="form-check">
+        <label class="form-check-label" for="${name}">${name}</label>
         <select class="form-control" id="${name}">${ops.map(op => 
             Str.html`<option ${op == def ? "selected" : ""} value="${op}">${op}`).join("")
-            }
+        }
         </select>
+        
     </div>`;
 
     if (onChange) enumerator.onchange = function (ev: Event) {
@@ -297,4 +298,17 @@ function makeEnum(name: string, ops: string[], def: string, onChange?: (value: s
     }
 
     return enumerator;
+}
+
+function makeToggle(name: string, def: boolean, onChange?: (ev: Event) => void) {
+    let toggle = Element.html`
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" ${def ? "checked " : ""} id="${name}">
+        <label class="form-check-label" for="${name}">
+            ${name}
+        </label>
+    </div>
+    `;
+    if (onChange) toggle.onchange = onChange;
+    return toggle;
 }

@@ -61,7 +61,6 @@ export class ViewerApp extends App {
     }
 
     setPreview(canvas: NodesCanvas) {
-        console.log("setting...")
         this.preview.clear();
         let outputs = canvas.getSelectedOutputs();
         for (let output of outputs) {

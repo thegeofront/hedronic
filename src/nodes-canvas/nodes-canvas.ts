@@ -19,6 +19,7 @@ import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
 import { StopVisualizeEvent, StopVisualizePreviewEvent, VisualizeEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
+import { Settings } from "./model/settings";
 
 /**
  * Represents the entire canvas of nodes.
@@ -52,7 +53,8 @@ export class NodesCanvas {
         private readonly input: InputState,
         public graph: NodesGraph,
         public graphHistory: History,       
-        public catalogue: Catalogue
+        public catalogue: Catalogue,
+        public settings: Settings,
         ) {}
 
 
@@ -68,11 +70,10 @@ export class NodesCanvas {
         const state = InputState.new(ctx.canvas);
         const graph = NodesGraph.new();
         const graphDecoupler = History.new(graph);
-
+        const settings = new Settings();
         // fill the html of menu now that menu is created
         
-
-        let canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue);
+        let canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue, settings);
         return canvas;
     }
 
@@ -614,44 +615,45 @@ export class NodesCanvas {
         } else {
             ex.cloneFrom(s);
         }
-        this.onSelectionChange(setMenu);
+        if (setMenu) this.onSelectionChange();
     }
  
 
     deselect() {
         this.selectedSockets = [];
-        this.onSelectionChange(true);
+        this.onSelectionChange();
     }
 
 
-    onSelectionChange(setMenu=true) {
+    onSelectionChange() {
 
         // possibly visualize some geometry
-        if (this.selectedSockets.length == 0) {
-            HTML.dispatch(StopVisualizePreviewEvent)
-        } else {
-            HTML.dispatch(VisualizePreviewEvent, this);
+        if (this.settings.previewSelection) {
+            if (this.selectedSockets.length == 0) {
+                HTML.dispatch(StopVisualizePreviewEvent)
+            } else {
+                HTML.dispatch(VisualizePreviewEvent, this);
+            }
         }
+
         
         // possibly open up a menu
         let s = this.selectedSockets[0];
-        if (setMenu) {
-            if (this.selectedSockets.length == 0 ) {
-                HTML.dispatch(setRightPanel, this);
-            } else if (this.selectedSockets.length > 1) {
-                let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
-                HTML.dispatch(setRightPanel, nodes);
-            } else if (s.side == SocketSide.Body) {
-                let node = this.graph.getNode(s.hash)!;
-                HTML.dispatch(setRightPanel, node);
-            } else if (s.side == SocketSide.Input) {
-                let key = this.graph.getInputConnectionAt(s)?.toString() || "";
-                let state = this.cache?.get(key);
-                HTML.dispatch(setRightPanel, {state, socket: s});
-            } else if (s.side == SocketSide.Output) {
-                let state = this.cache?.get(s.toString());
-                HTML.dispatch(setRightPanel, {state, socket: s});
-            }
+        if (this.selectedSockets.length == 0 ) {
+            HTML.dispatch(setRightPanel, this);
+        } else if (this.selectedSockets.length > 1) {
+            let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
+            HTML.dispatch(setRightPanel, nodes);
+        } else if (s.side == SocketSide.Body) {
+            let node = this.graph.getNode(s.hash)!;
+            HTML.dispatch(setRightPanel, node);
+        } else if (s.side == SocketSide.Input) {
+            let key = this.graph.getInputConnectionAt(s)?.toString() || "";
+            let state = this.cache?.get(key);
+            HTML.dispatch(setRightPanel, {state, socket: s});
+        } else if (s.side == SocketSide.Output) {
+            let state = this.cache?.get(s.toString());
+            HTML.dispatch(setRightPanel, {state, socket: s});
         }
     }
 
