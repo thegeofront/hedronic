@@ -1,3 +1,4 @@
+import { Parameter } from "../../../../engine/src/lib";
 import { RightMenu } from "../../menu/right-menu";
 import { TypeShim } from "../../modules/shims/parameter-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
@@ -14,9 +15,9 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanel = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-type Parameter = {state?: State, socket: Socket };
+type Payload = {state?: State, socket: Socket };
 
-export type SetRightPanelPayload = Parameter | NodesCanvas | GeonNode | GeonNode[];
+export type SetRightPanelPayload = Payload | NodesCanvas | GeonNode | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -216,12 +217,12 @@ class MyRightPanel extends WebComponent {
         `;
     }
 
-    setWithInput(param: Parameter) {
+    setWithInput(param: Payload) {
         this.get("title").innerText = "Input";
         this.get("the-body").innerHTML = makeFromJson(param);
     }
 
-    setWithOutput(param: Parameter) {
+    setWithOutput(param: Payload) {
         this.get("title").innerText = "Output";
         this.get("the-body").innerHTML = makeFromJson(param);
     }
@@ -262,10 +263,11 @@ function makeCanvasMenu(nodes: NodesCanvas) {
             nodes.getZoom().toString(), 
             (val) => {nodes.setZoom(Number(val))}),
         makeToggle("preview selection", nodes.settings.previewSelection, () => {nodes.settings.previewSelection = !nodes.settings.previewSelection; nodes.onSelectionChange();}),
+        makeSlider(Parameter.new("setting", 1, 0, 5,0.5), (p) => {console.log(p.get())}),
     ]
     let html = Compose.html`
     <details>
-        <summary><b>details</b></summary>
+        <summary><b></b></summary>
         ${elements}
     </details>
     `;
@@ -311,4 +313,21 @@ function makeToggle(name: string, def: boolean, onChange?: (ev: Event) => void) 
     `;
     if (onChange) toggle.onchange = onChange;
     return toggle;
+}
+
+
+function makeSlider(param: Parameter, callback: (p: Parameter) => void) {
+    let slider = Element.html`
+    <div class="form">
+        <label for="${param.name}" class="form-label">${param.name}</label>
+        <input type="range" class="form-range" min="${param.min}" max="${param.max}" step="${param.step}" value="${param.state}" id="${param.name}">
+    </div>
+    `;
+    slider.onchange = (ev: Event) => {
+        //@ts-ignore
+        let value: string = ev.target.value;
+        param.set(Number(value)); 
+        callback(param);
+    };
+    return slider;
 }

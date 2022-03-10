@@ -74,7 +74,6 @@ export class ViewerApp extends App {
 
     clearPreview() {
         this.preview.clear();
-        console.log("clearing...")
     }
 
     startGrid() {

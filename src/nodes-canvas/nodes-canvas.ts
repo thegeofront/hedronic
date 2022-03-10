@@ -636,7 +636,6 @@ export class NodesCanvas {
             }
         }
 
-        
         // possibly open up a menu
         let s = this.selectedSockets[0];
         if (this.selectedSockets.length == 0 ) {
