@@ -274,7 +274,7 @@ function makeCanvasMenu(nodes: NodesCanvas) {
 
 
 function makeButton(name: string, onClick: (ev: Event) => void) {
-    let button = Element.html`<button class="btn btn-sm btn-secondary">${name}</button>`;
+    let button = Element.html`<button class="btn btn-sm btn-dark">${name}</button>`;
     if (onClick) button.onclick = onClick;
     return button;
 }
@@ -284,7 +284,7 @@ function makeEnum(name: string, ops: string[], def: string, onChange: (value: st
     let enumerator = Element.html`
     <div class="form-check">
         <label class="form-check-label" for="${name}">${name}</label>
-        <select class="form-control" id="${name}">${ops.map(op => 
+        <select class="form-control dark" id="${name}">${ops.map(op => 
             Str.html`<option ${op == def ? "selected" : ""} value="${op}">${op}`).join("")
         }
         </select>
