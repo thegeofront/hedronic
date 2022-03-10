@@ -1,4 +1,4 @@
-import { createRandomGUID } from "../../../../engine/src/lib";
+import { createRandomGUID, Graph } from "../../../../engine/src/lib";
 import { Catalogue, CoreType } from "../../modules/catalogue";
 import { TypeShim, Type } from "../../modules/shims/parameter-shim";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
@@ -37,7 +37,9 @@ export class NodesGraph {
         }
     }
 
-    static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph {
+    static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph | undefined {
+
+        try {
 
         let json = JSON.parse(str);
         let graph = NodesGraph.new();
@@ -59,7 +61,7 @@ export class NodesGraph {
                     console.error(`widget process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
                     continue;
                 }
-                graph.nodes.set(hash, geonNode);  
+                graph.addNode(geonNode);
                 continue; 
             }
 
@@ -83,17 +85,16 @@ export class NodesGraph {
         }
         catalogue.deselect();
         return graph;
+        } catch (e) {
+            console.error("something went wrong during json parsing:");
+            console.error(e);
+            return undefined;
+        }
     }
 
-    static toJson(graph: NodesGraph, selection?: string[]) {
+    static toJson(graph: NodesGraph) {
         
         let nodes = graph.nodes;
-        
-        // O(n*n)
-        if (selection) {
-            nodes = filterMap(nodes, (key) => selection.includes(key));
-        }
-        
         return {
                 nodes: mapToJson(nodes, GeonNode.toJson),
         }
@@ -126,7 +127,7 @@ export class NodesGraph {
 
             let visual = CableVisualState.Null;
             if (value) {
-                visual = CableVisualState.Boolean;
+                visual = CableVisualState.On;
             } 
             
             visuals.set(key, visual);
@@ -241,6 +242,25 @@ export class NodesGraph {
 
     }
 
+    /**
+     * Extract a copy of a certain selection
+     * @param selection 
+     */
+    subgraph(selection: string[]) {
+        
+        // create a subgraph from the selection
+        let selected = this.nodes;
+        if (selection) {
+            selected = filterMap(selected, (key) => selection.includes(key));
+        }
+        let graph = NodesGraph.new();
+        for (let node of selected.values()) {
+            graph.addNode(node);
+        }
+
+        return graph;
+    }
+    
     replaceHash(oldHash: string, newHash: string) {
         
         console.log({oldHash, newHash});
@@ -252,37 +272,60 @@ export class NodesGraph {
 
         node.forEachInputSocket((input: Socket, foreignOutput: Socket | undefined) => {
             if (!foreignOutput) return;
+            if (!this.nodes.has(foreignOutput.hash)) return // ignore unknown sockets for copy-paste
             this.removeOutputConnectionAt(foreignOutput, input);
+            this.addOutputConnectionsAt(foreignOutput, Socket.new(newHash, input.idx));
         })
 
         node.forEachOutputSocket((output: Socket, foreignInputs: Socket[]) => {
             if (foreignInputs.length == 0) return
             for (let foreignInput of foreignInputs) {
-                this.setInputConnectionAt(foreignInput, undefined);
+                if (!this.nodes.has(foreignInput.hash)) continue // ignore unknown sockets for copy-paste
+                this.setInputConnectionAt(foreignInput, Socket.new(newHash, output.idx));
             }
         })
 
         // replace the key itself
-        // node.hash = newHash;
-        // this.nodes.set(newHash, node);
-        // this.nodes.delete(oldHash);
+        node.hash = newHash;
+        this.nodes.set(newHash, node);
+        this.nodes.delete(oldHash);
     }
 
     addGraph(other: NodesGraph) { 
 
-        // first, for every double hash, subsitute in the other graph
-        for (let [key, node] of other.nodes) {
-            if (this.nodes.has(key)) {
-                console.warn("REPLACE!!");
-                let newKey = createRandomGUID().substring(0, 13);
-                other.replaceHash(key, newKey);
-                return;   
-            } 
-        }
+        // this new graph can be externally connected to invalid / unmutual things. 
+        // allow existing inputs if they can be found on the existing canvas
+        // but remove all others
 
-        // then, add them one by one
+        // add one by one, make connections mutual
         for (let [key, node] of other.nodes) {
+            
+            // make sure that whatever we add, we wont override existing keys
+            if (this.nodes.has(key)) {
+                console.warn("DUPLCATES NOT ALLOWED!")
+                continue;   
+            } 
             this.addNode(node);
+
+            // make inputs mutual if possible, else remove them
+            node.forEachInputSocket((input: Socket, foreignOutput: Socket | undefined) => {
+                if (!foreignOutput) return;
+                if (this.nodes.has(foreignOutput.hash)) {
+                    this.addOutputConnectionsAt(foreignOutput, input);
+                } else {
+                    this.setInputConnectionAt(input, undefined);
+                    return
+                }
+            })
+    
+            node.forEachOutputSocket((output: Socket, foreignInputs: Socket[]) => {
+                if (foreignInputs.length == 0) return
+                let fis = foreignInputs.map(i => Socket.new(i.hash, i.idx))
+                for (let fi of fis) {
+                    if (other.nodes.has(fi.hash)) continue;
+                    this.removeOutputConnectionAt(output, fi);
+                }
+            })
         }
 
         return this;
@@ -332,10 +375,8 @@ export class NodesGraph {
     hasOutputConnectionAt(local: Socket, foreign: Socket) {
         if (local.side != SocketSide.Output) throw new Error("NOPE");
         let list = this.nodes.get(local.hash)!.outputs[local.normalIndex()];
-        // find and remove
-        for (let i = 0 ; i < list.length; i++) {
-            if (list[i].hash != foreign.hash || list[i].idx != foreign.idx) continue;
-            return true;
+        for (let socket of list) {
+            if (socket.equals(foreign)) return true
         }
         return false;
     }
@@ -530,23 +571,28 @@ export class NodesGraph {
         
         for (let [hash, node] of this.nodes) {
 
-            node.forEachInputSocket((socket, connection) => {
-                if (connection == undefined) return;
-                if (!this.hasOutputConnectionAt(connection, socket)) {
-                    console.warn(`${{socket, connection}}, "is not mutual! ${this.getOutputConnectionsAt(connection)} instead...`);
-                    return false;
+            let correct = true;
+
+            node.forEachInputSocket((socket, con) => {
+                if (con == undefined) return;
+                if (!this.hasOutputConnectionAt(con, socket)) {
+                    console.warn(`${{socket, con}}, "is not mutual! ${this.getOutputConnectionsAt(con)} instead...`);
+                    correct = false;
                 }
             });
             
-            node.forEachOutputSocket((socket, connections) => {
-                if (connections == []) return;
-                for (let connection of connections) {
-                    if (!this.hasInputConnectionAt(connection)) {
-                        console.warn(`${{socket, connection}}, "is not mutual! ${this.getOutputConnectionsAt(connection)} instead...`);
-                        return false;
+            node.forEachOutputSocket((socket, cons) => {
+                if (cons == []) return;
+                for (let con of cons) {
+                    if (!this.hasInputConnectionAt(con) || 
+                        !this.getInputConnectionAt(con)!.equals(socket)) {
+                        console.warn(`${{socket, connection: con}}, "is not mutual! ${this.getInputConnectionAt(con)} instead...`);
+                        correct = false;
                     }
                 }
-            }); 
+            });
+            
+            if (!correct) return false;
         }
         
         return true;

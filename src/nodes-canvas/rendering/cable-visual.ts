@@ -4,11 +4,10 @@ import { Socket } from "../model/socket";
 export enum CableState {
     Null,
     Selected,
-    Object,
-    String,
-    Number,
-    Boolean,
     Dragging,
+    On,
+    List,
+    Object,
 }
 
 export class CableVisual {

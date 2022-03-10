@@ -1,7 +1,7 @@
 // author : Jos Feenstra
 // purpose: wrapper for dealing with the 'whole of nodes'
 
-import { Vector2, InputState, Domain2, MultiVector2, Key, GeonMath } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, Key, GeonMath, createRandomGUID } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
@@ -17,6 +17,7 @@ import { HTML } from "../html/util";
 import { hideRightPanel, setRightPanel, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
+import { mapmap } from "./util/misc";
 
 /**
  * Represents the entire canvas of nodes.
@@ -154,7 +155,7 @@ export class NodesCanvas {
      */
     onDuplicate() {
         let str = this.onCopy();
-        this.onPaste(str, false);
+        this.onPaste(str);
     }
 
 
@@ -202,7 +203,10 @@ export class NodesCanvas {
 
     // Ctrl + X
     onCut() : string {  
-        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.hash)));
+        let hashes = this.selectedSockets.map((s => s.hash));
+        this.graphHistory.deleteNodes(hashes); 
+        let subgraph = this.graph.subgraph(hashes);
+        let json = NodesGraph.toJson(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -211,8 +215,9 @@ export class NodesCanvas {
 
     // Ctrl + C
     onCopy() : string {
-        // let str = this.graph.toJs("GRAPH").toString();
-        let json = NodesGraph.toJson(this.graph, this.selectedSockets.map((s => s.hash)));
+        let hashes = this.selectedSockets.map((s => s.hash));
+        let subgraph = this.graph.subgraph(hashes);
+        let json = NodesGraph.toJson(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -220,27 +225,35 @@ export class NodesCanvas {
 
 
     // Ctrl + V
-    onPaste(str: string, fromJs=false) {
+    onPaste(str: string) {
+
+        console.log(str);
+
+        // TODO check if it is a json...
+        // TODO check if it is a valid json...
 
         // generate a new graph from a string 
-        console.log(str);
-        let newGraph;
-        if (fromJs) {
-            newGraph = NodesGraph.fromJs(str, this.catalogue)!;
-        } else {
-            newGraph = NodesGraph.fromSerializedJson(str, this.catalogue)!;
-        }
+        let addition = NodesGraph.fromSerializedJson(str, this.catalogue);
+        if (!addition) return;
 
         // move all the nodes to make the addition distinct
-        newGraph.nodes.forEach((n)=> n.position.addn(1,1));
+        addition.nodes.forEach((n)=>n.position.addn(1,1));
 
-        // add it
+        // replace hashes
+        let oldHashes = mapmap(addition.nodes, (k, v) => v.hash); // dont edit list while iterating it
+        for (let oldHash of oldHashes) {
+            if (!this.graph.nodes.has(oldHash)) continue;
+            let newKey = createRandomGUID().substring(0, 13);
+            addition.replaceHash(oldHash, newKey);
+        }
 
-        this.graph.addGraph(newGraph);
+        //
+        this.graph.addGraph(addition);
+        
 
         // select all new nodes
         this.deselect();
-        for (let [k, v] of newGraph.nodes) {
+        for (let [k, v] of addition.nodes) {
             this.select(Socket.new(k, 0));
         }
         this.onChange();
@@ -392,7 +405,6 @@ export class NodesCanvas {
         for (let [hash, node] of this.graph.nodes) {
             node.forEachOutputSocket((socket, cons) => {
                 if (cons.length == 0) return;
-                
                 let normalCons = []
                 let selectedCons = [];
 
@@ -407,6 +419,7 @@ export class NodesCanvas {
 
                 // draw accordingly
                 let cableHash = socket.toString();
+                
                 let visual = this.cableVisuals.get(cableHash) || CableState.Null;
                 drawMultiCable(ctx, socket, normalCons, visual, this, this.graph);
                 if (selectedCons.length > 0) 
@@ -617,8 +630,11 @@ export class NodesCanvas {
 
 
     trySelect(gridPos: Vector2) : Socket | undefined {
-        for (let [key, value] of this.graph.nodes) {
-            let res = value.trySelect(gridPos);
+        // go in reverse order
+        let revKeys = Array.from(this.graph.nodes.keys()).reverse();
+        for (let key of revKeys) {
+            let node = this.graph.getNode(key)!;
+            let res = node.trySelect(gridPos);
             if (res !== undefined) {
                 return Socket.new(key, res);
             }

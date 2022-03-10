@@ -264,25 +264,45 @@ export function renderCable(ctx: CTX, fromGridPos: Vector2, toGridPos: Vector2, 
     if (line) strokeLines(ctx, style, [line]);
 }
 
-export function strokeLines(ctx: CTX, state: CableStyle, lines: MultiVector2[]) {
+export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) {
     
     // apply style
     let mainColor = "white";
     let edgeColor = "black";
 
-    if (state == CableStyle.Null) {
+    if (style == CableStyle.Null) {
         mainColor = NODE_COLOR
         edgeColor = "black";
-    } else if (state == CableStyle.Selected) {
+    } else if (style == CableStyle.Selected) {
         mainColor = Style.getPropertyValue("--accent-color-0");
         // mainColor = "white";
         edgeColor = Style.getPropertyValue("--accent-color-3");
-    } else if (state == CableStyle.Dragging) {
+    } else if (style == CableStyle.Dragging) {
         mainColor = "white";
         edgeColor = "white";
-    } else { // if (state == CableStyle.Boolean)
+    } else if (style == CableStyle.On) {
         mainColor = "white"
         edgeColor = "black"
+    }
+
+    if (style == CableStyle.List) {
+        // draw the line twice with different settings
+        ctx.beginPath();
+        for (let line of lines) movePolyline(ctx, line);
+        ctx.lineCap = "round"; 
+        ctx.strokeStyle = edgeColor;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = 6;
+        ctx.stroke();
+        ctx.strokeStyle = edgeColor;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        return;
     }
 
     // draw the line twice with different settings
