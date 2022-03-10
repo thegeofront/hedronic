@@ -162,7 +162,7 @@ export class NodesCanvas {
     // Ctrl + S
     onSave() {
         console.log("saving...");
-        let json = NodesGraph.toJson(this.graph);
+        let json = NodesGraph.toJSON(this.graph);
         let str = JSON.stringify(json, null, 2)
         IO.promptSaveFile("graph.json", str);
     }
@@ -171,12 +171,14 @@ export class NodesCanvas {
     // Ctrl + L
     onLoad() {
         console.log("loading...");
-        IO.promptLoadTextFile((str) => {
+        IO.promptLoadTextFile((textFile) => {
             // TODO check if valid. etc. etc. 
-            if (!str) {
+            if (!textFile) {
                 return;
             }
-            this.resetGraph(NodesGraph.fromSerializedJson(str.toString(), this.catalogue)!);
+            let str = textFile.toString();
+            let json = JSON.parse(str);
+            this.resetGraph(NodesGraph.fromJSON(json, this.catalogue)!);
         })
     }
 
@@ -206,7 +208,7 @@ export class NodesCanvas {
         let hashes = this.selectedSockets.map((s => s.hash));
         this.graphHistory.deleteNodes(hashes); 
         let subgraph = this.graph.subgraph(hashes);
-        let json = NodesGraph.toJson(subgraph);
+        let json = NodesGraph.toJSON(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -217,7 +219,7 @@ export class NodesCanvas {
     onCopy() : string {
         let hashes = this.selectedSockets.map((s => s.hash));
         let subgraph = this.graph.subgraph(hashes);
-        let json = NodesGraph.toJson(subgraph);
+        let json = NodesGraph.toJSON(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -233,7 +235,8 @@ export class NodesCanvas {
         // TODO check if it is a valid json...
 
         // generate a new graph from a string 
-        let addition = NodesGraph.fromSerializedJson(str, this.catalogue);
+        let json = JSON.parse(str);
+        let addition = NodesGraph.fromJSON(json, this.catalogue);
         if (!addition) return;
 
         // move all the nodes to make the addition distinct

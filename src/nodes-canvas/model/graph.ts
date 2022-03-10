@@ -37,11 +37,9 @@ export class NodesGraph {
         }
     }
 
-    static fromSerializedJson(str: string, catalogue: Catalogue) : NodesGraph | undefined {
+    static fromJSON(json: any, catalogue: Catalogue) : NodesGraph | undefined {
 
         try {
-
-        let json = JSON.parse(str);
         let graph = NodesGraph.new();
         for (let hash in json.nodes) {
             let node = json.nodes[hash];
@@ -51,14 +49,17 @@ export class NodesGraph {
                 let lib = "widgets";
                 let name = node.process.name;
                 
-                let process = catalogue.trySelect(lib, name, type);
-                if (!process) {
-                    console.error(`widget process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
+                let widget = catalogue.trySelect(lib, name, type) as Widget;
+                if (!widget) {
+                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
                     continue;
-                } 
-                let geonNode = GeonNode.fromJson(node, process);
+                }
+                 
+                widget.state = node.process.state;
+
+                let geonNode = GeonNode.fromJson(node, widget);
                 if (!geonNode) {
-                    console.error(`widget process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
+                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
                     continue;
                 }
                 graph.addNode(geonNode);
@@ -92,7 +93,7 @@ export class NodesGraph {
         }
     }
 
-    static toJson(graph: NodesGraph) {
+    static toJSON(graph: NodesGraph) {
         
         let nodes = graph.nodes;
         return {

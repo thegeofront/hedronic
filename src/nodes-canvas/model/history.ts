@@ -100,6 +100,11 @@ export class History {
         return this.do(new NodeAddAction(selected, gp, state))
     }
 
+    recordAddNodes(nodes: GeonNode[]) {
+        let actions = nodes.map(node => new NodeAddAction(node.process, node.position, node.widget?.state));
+        return this.record(new MultiAction(actions))
+    }
+
     deleteNodes(keys: string[]) {
         let actions = keys.map(key => new NodeDeleteAction(key));
         return this.do(new MultiAction(actions));

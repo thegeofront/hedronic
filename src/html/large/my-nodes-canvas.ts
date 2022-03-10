@@ -1,4 +1,3 @@
-import { visitNode } from "typescript";
 import { Menu } from "../../menu/menu";
 import { Catalogue } from "../../modules/catalogue";
 import { ModuleLoading } from "../../modules/loading";
@@ -6,7 +5,6 @@ import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { UpdateMenuEvent } from "../registry";
 import { HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
-import { CanvasResizeEvent } from "./my-main";
 
 
 customElements.define('my-nodes-canvas', 
