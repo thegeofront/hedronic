@@ -19,15 +19,15 @@ export const hideRightPanel = new PayloadEventType<void>("hiderightpanel");
 
 export const setRightPanelOld = new PayloadEventType<SetRightPanelPayload>("setrightpanel");
 
-export const setMenu = new PayloadEventType<SetMenuPayload<MenuData>>("setmenu");
+export const setMenu = new PayloadEventType<SetMenuPayload>("setmenu");
 
-export type MenuData = any;
-
-export type SetMenuPayload<T> = {title: string, data: T, fillMenuCallback: (data: T) => Node[]}
+export type SetMenuPayload = {title: string, data: any, callback: (data: any) => Node[]}
 
 type Payload = {state?: State, socket: Socket };
 
-export type SetRightPanelPayload = Payload | NodesCanvas | GeonNode | GeonNode[];
+type GeonNodePayload = {node: GeonNode, nodes: NodesCanvas}
+
+export type SetRightPanelPayload = Payload | NodesCanvas | GeonNode[];
 
 /**
  * The Right Panel is a properties panel. 
@@ -59,11 +59,11 @@ class MyRightPanel extends WebComponent {
         /* gap: 20px; */
     }
 
-    details {
+    /* details {
         border: 1px solid var(--background-color-3);
         padding: 5px;
         border-radius: 2px;
-    }
+    } */
 
     #panel {
         height: var(--main-height);
@@ -90,7 +90,7 @@ class MyRightPanel extends WebComponent {
     </div>  
     `;
         
-    data?: SetRightPanelPayload
+    payload?: any
 
     connectedCallback() {
         this.addFrom(MyRightPanel.template);
@@ -108,55 +108,55 @@ class MyRightPanel extends WebComponent {
         this.style.display = "";
     }
 
-    setMenu(payload: SetMenuPayload<MenuData>) {
+    setMenu(payload: SetMenuPayload) {
+        
+        // cache, dont rerender if not needed 
+        if (!payload) return this.setDefault();
+        if (payload == this.payload) {
+            console.log("same");
+            return;
+        }
+        this.payload = payload;
+
+        // set it
         this.get("title").innerText = payload.title;
         let body = this.get("menu-body");
         body.replaceChildren(
-           ...payload.fillMenuCallback(payload.data)
+           ...payload.callback(payload.data)
         );
     }
 
-    set(data: SetRightPanelPayload) {
+    set(payload: SetRightPanelPayload) {
 
         // TODO abstract this router in some way
 
-        if (!data) return this.setDefault();
+        if (!payload) return this.setDefault();
 
-        if (data == this.data) {
+        if (payload == this.payload) {
             return;
         }
-
-        if (data instanceof GeonNode) {
-            if (data.type == CoreType.Operation) {
-                this.setWithNode(data);
-            } else {
-                this.setWithWidget(data);
-            }
-            this.data = data;
-            return;
-        } 
         
-        if (data instanceof NodesCanvas) {
-            this.setWithCanvas(data);
-            this.data = data;
+        if (payload instanceof NodesCanvas) {
+            this.setWithCanvas(payload);
+            this.payload = payload;
             return
         }
 
-        if (data instanceof Array) {
-            this.setWithGroup(data);
-            this.data = data;
+        if (payload instanceof Array) {
+            this.setWithGroup(payload);
+            this.payload = payload;
             return;
         }
 
-        if (data.socket.side == SocketSide.Input) {
-            this.setWithInput(data);
-            this.data = data;
+        if (payload.socket.side == SocketSide.Input) {
+            this.setWithInput(payload);
+            this.payload = payload;
             return;
         }
 
-        if (data.socket.side == SocketSide.Output) {
-            this.setWithOutput(data);
-            this.data = data;
+        if (payload.socket.side == SocketSide.Output) {
+            this.setWithOutput(payload);
+            this.payload = payload;
             return;
         }
 
@@ -180,13 +180,6 @@ class MyRightPanel extends WebComponent {
         this.get("menu-body").replaceChildren(
            ...makeCanvasMenu(canvas)
         );
-    }
-
-    setWithNode(node: GeonNode) {
-        this.get("title").innerText = "Node";
-        this.get("menu-body").replaceChildren(
-            ...makeMenuFromNode(node)
-         );
     }
 
     setWithWidget(node: GeonNode) {

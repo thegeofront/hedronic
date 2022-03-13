@@ -53,18 +53,31 @@ export function makeToggle(name: string, def: boolean, onChange?: (ev: Event) =>
 }
 
 
-export function makeSlider(param: Parameter, callback: (p: Parameter) => void) {
+export function makeSlider(param: Parameter, onChangeCallback?: (p: Parameter) => void, onInputCallback?: (p: Parameter) => void) {
     let slider = Element.html`
     <div class="form">
         <label for="${param.name}" class="form-label">${param.name}</label>
         <input type="range" class="form-range" min="${param.min}" max="${param.max}" step="${param.step}" value="${param.state}" id="${param.name}">
     </div>
     `;
-    slider.onchange = (ev: Event) => {
-        //@ts-ignore
-        let value: string = ev.target.value;
-        param.set(Number(value)); 
-        callback(param);
-    };
+
+    if (onInputCallback) {
+        slider.oninput = (ev: Event) => {
+            //@ts-ignore
+            let value: string = ev.target.value;
+            param.set(Number(value)); 
+            onInputCallback(param);
+        };
+    }
+
+    if (onChangeCallback) {
+        slider.onchange = (ev: Event) => {
+            //@ts-ignore
+            let value: string = ev.target.value;
+            param.set(Number(value)); 
+            onChangeCallback(param);
+        };
+    }
+
     return slider;
 }

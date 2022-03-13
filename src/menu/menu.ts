@@ -37,13 +37,25 @@ export class Menu {
     bindEventListeners(context: HTMLCanvasElement) {
         
         // for now, listen on a global level 
-        document.addEventListener("keydown", this.onKeyDown.bind(this), false);
+        document.addEventListener("keydown", this.onGlobalKeyDown.bind(this), false);
+        // dont know why i said this, global level Enter is not good
+        context.addEventListener("keydown", this.onKeyDown.bind(this), false);
         
         // add this message to make users reconsider saving
         // dont do this while debugging, gets annoying real quick
         // window.onbeforeunload = function() {
         //     return true;
         // };
+    }
+
+    onGlobalKeyDown(e: KeyboardEvent) {
+        let control = (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey);
+        let shift = e.shiftKey;      
+        let key = e.key.toLowerCase(); 
+        let code = e.keyCode; 
+
+        // TODO hookup certain things like Ctrl + S, 
+        // TODO disable other things like Ctrl + P
     }
 
     /**

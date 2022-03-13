@@ -19,6 +19,8 @@ import { Core, CoreType } from "../../nodes-canvas/model/core";
  */
 export class NodesGraph {
 
+    onWidgetChangeCallback?: Function;
+
     constructor(
         public nodes: Map<string, GeonNode>, 
         private widgets: Set<string>) {}
@@ -106,6 +108,11 @@ export class NodesGraph {
 
     toJs(name: string) {
         return graphToFunction(this, name);
+    }
+
+    onWidgetChange() {
+        // for now, just recalculate
+        if (this.onWidgetChangeCallback) this.onWidgetChangeCallback();
     }
 
     // ---- True Graph Business 
@@ -343,6 +350,7 @@ export class NodesGraph {
         this.nodes.set(node.hash, node);
         if (node.core instanceof Widget) {
             this.widgets.add(node.hash);
+            node.widget!.onChangeCallback = this.onWidgetChange.bind(this);
         }
         return node.hash;
     }
@@ -360,7 +368,10 @@ export class NodesGraph {
         // remove the widget pointer
         if (node.core instanceof Widget) {
             node.core.onDestroy();
+            node.widget!.onChangeCallback = undefined; // remove callback just to be sure
             this.widgets.delete(hash);
+
+            // TODO remove the widget itself??
         }
 
         return this.nodes.delete(hash);

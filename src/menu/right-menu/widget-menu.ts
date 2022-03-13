@@ -1,4 +1,4 @@
-import { Element, Str } from "../../html/util";
+import { Compose, Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 
@@ -19,6 +19,8 @@ export function makeMenuFromWidget(node: GeonNode) : Node[] {
         `;
     }
 
+    let widgetHTML = node.widget!.makeMenu();
+
     let inputHTML = core.ins.map((type, i) => {
         let socket = node.inputs[i];
         let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
@@ -34,25 +36,37 @@ export function makeMenuFromWidget(node: GeonNode) : Node[] {
         return makeParamEntry(type, connection);
     }).join("");
 
-    return [Element.html`
+    return [Compose.html`
         <div id="node-menu">
-            <p>name: <code>${title}</code></p>
-            <p>path: <code>${subtitle}</code></p>
-            <p>hash: <code>${node.hash}</code></p>
-            <!-- <div class="row">
-                <p class="col">inputs: <code>${core?.inCount}</code></p>
-                <p class="col">outputs: <code>${core?.outCount}</code></p>
-            </div> -->
+            ${Element.html`
+            <details open>
+                <summary></summary>
+                <p>name: <code>${title}</code></p>
+                <p>path: <code>${subtitle}</code></p>
+                <p>hash: <code>${node.hash}</code></p>
+            </details>`}
             <div class="divider"></div>
-            <h5>Process</h5>
-            <p>took: <code>${"???"}</code>ms</p>
+
+            <details open>
+                <summary>Widget</summary>
+                ${widgetHTML}
+            </details>
             <div class="divider"></div>
-            <h5>Inputs</h5>
-            ${inputHTML}
+
+            ${Element.html`
+            <details open>
+                <summary>Inputs: ${node.core.inCount}</summary>
+                ${inputHTML}
+            </details>`}
             <div class="divider"></div>
-            <h5>Outputs</h5>
-            ${outputHTML}
+
+            ${Element.html`
+            <details open>
+                <summary>Outputs: ${node.core.outCount}</summary>
+                ${outputHTML}
+            </details>`}
             <div class="divider"></div>
+
         </div>
     `];
 }

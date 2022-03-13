@@ -14,13 +14,15 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
-import { hideRightPanel, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
+import { hideRightPanel, setMenu, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
 import { StopVisualizeEvent, StopVisualizePreviewEvent, VisualizeEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 import { Settings } from "./model/settings";
 import { Core, CoreType } from "./model/core";
+import { makeMenuFromWidget } from "../menu/right-menu/widget-menu";
+import { makeMenuFromNode } from "../menu/right-menu/node-menu";
 
 
 /**
@@ -139,6 +141,7 @@ export class NodesCanvas {
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
+        this.graph.onWidgetChangeCallback = this.onChange.bind(this);
         this.onChange();
     }
 
@@ -659,8 +662,13 @@ export class NodesCanvas {
             let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
             HTML.dispatch(setRightPanelOld, nodes);
         } else if (s.side == SocketSide.Body) {
+            // new way of opening a menu
             let node = this.graph.getNode(s.hash)!;
-            HTML.dispatch(setRightPanelOld, node);
+            if (node.type == CoreType.Operation) {
+                HTML.dispatch(setMenu, {title: "Operation", data: {node, nodes: this}, callback: makeMenuFromNode})
+            } else {
+                HTML.dispatch(setMenu, {title: "Widget", data: node, callback: makeMenuFromWidget})
+            }
         } else if (s.side == SocketSide.Input) {
             let key = this.graph.getInputConnectionAt(s)?.toString() || "";
             let state = this.cache?.get(key);

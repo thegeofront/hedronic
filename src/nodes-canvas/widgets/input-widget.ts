@@ -5,6 +5,7 @@ import { Widget, WidgetSide } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
+import { Element } from "../../html/util";
 
 export class InputWidget extends Widget {
 
@@ -21,16 +22,51 @@ export class InputWidget extends Widget {
         renderTextInWidget(this, `${this.state}`, ctx, pos, component, cellSize);
     }
 
+    makeMenu(): HTMLElement[] {
+        let el = Element.html`
+        <div class="form-group">
+           <label for="comment">Text:</label>
+           <textarea class="form-control" rows="5" id="comment">${this.state}</textarea>
+       </div>
+       `;
+        
+        let comment = el.querySelector("#comment") as HTMLElement;
+        // comment.oninput = (e: Event) => {
+        //     console.log("change!!!");
+        //     let target = e.target as HTMLTextAreaElement
+        //     let input = target.textContent || "";
+        //     this.setState(input);
+        // }
+        comment.onkeydown = (ev) => {
+            if (ev.code != "Enter") return;
+            if (ev.shiftKey || ev.ctrlKey || ev.metaKey) return;
+            ev.stopPropagation();
+            ev.preventDefault();
+            let target = ev.target as HTMLTextAreaElement
+            let input = target.value || "";
+            this.setState(input);
+        };
+
+        return [el];
+    }
+
+    setState(state: string) {
+        console.log(state);
+        this.state = state;
+        this.onChange();
+    }
+
     onClick(canvas: NodesCanvas) {
-        let text = prompt("Input:", "data");
-        if (text) {
-            try {
-                this.state = JSON.parse(text);
-            } catch(error) {
-                this.state = (error as Error).message;
-            }
-        }
+        // let text = prompt("Input:", "data");
+        // if (text) {
+        //     try {
+        //         this.state = JSON.parse(text);
+        //     } catch(error) {
+        //         this.state = (error as Error).message;
+        //     }
+        // }
         canvas.deselect();
+        // canvas.select();
         canvas.onChange();
     }
 }

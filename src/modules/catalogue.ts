@@ -11,6 +11,7 @@ import { TypeShim } from "./shims/type-shim";
 import { FunctionShim } from "./shims/function-shim";
 import { ViewWidget } from "../nodes-canvas/widgets/view-widget";
 import { CoreType } from "../nodes-canvas/model/core";
+import { getDefaultWidgets } from "../nodes-canvas/widgets/_registry";
 
 /**
  * Catalogue containing shim Modules
@@ -107,14 +108,7 @@ export class Catalogue {
 
 function createStdWidgets(cat: Catalogue) {
     // create widgets
-    let widgets: Widget[] = [
-        ButtonWidget.new(false),
-        InputWidget.new("hello world"),
-        LampWidget.new(false),
-        ConsoleWidget.new(false),
-        ImageWidget.new("<image>"),
-        ViewWidget.new(false)
-    ]
+    let widgets = getDefaultWidgets();
 
     // add them to a map
     let wmap = new Map<string, Widget>();

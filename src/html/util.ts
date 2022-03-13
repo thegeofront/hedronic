@@ -122,11 +122,20 @@ export namespace Compose {
     /**
      * Composes a node from multiple html 
      */
-    export function html(template: TemplateStringsArray, ...args: (Node | Node[])[]) : Node {
+    export function html(template: TemplateStringsArray, ...args: (Node | Node[] | string)[]) : Node {
         
         // create, but for every node: dont insert, instead create substitute token
         const TOKEN = "geon-substitute";
-        let raw = Str._trimTemplate(template).join(`<${TOKEN}></${TOKEN}>`);
+        let mappedArgs = args.map((arg) => {
+            if (arg instanceof Node || 
+                arg instanceof Array) {
+                return `<${TOKEN}></${TOKEN}>`;
+            } else {
+                return arg;
+            }
+        });
+
+        let raw = Str._htmlStrip(template, ...mappedArgs);
         Template.innerHTML = raw;
   
         // now substitute those tokens for the real deal

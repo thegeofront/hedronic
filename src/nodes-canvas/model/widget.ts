@@ -42,6 +42,7 @@ export class Widget {
 
     nameLower: string;
     domain: Domain2;
+    onChangeCallback?: Function;
 
     protected constructor(
         public readonly name: string,
@@ -146,6 +147,10 @@ export class Widget {
      */
     onClick(canvas: NodesCanvas) {
         canvas.deselect();
+    }
+
+    onChange() {
+        if (this.onChangeCallback) this.onChangeCallback();
     }
 
     onDestroy() {

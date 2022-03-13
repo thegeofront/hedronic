@@ -56,8 +56,9 @@ export class MyMain extends WebComponent {
                 </ul>  
             </my-dropdown-button>
         </div>
-        <div id="Graph">
+        <div id="Graph" style="position: relative">
             <my-nodes-canvas></my-nodes-canvas>
+            <my-canvas-overlay></my-canvas-overlay>
         </div>
         <div id="Viewer">
             <my-viewer></my-viewer>
