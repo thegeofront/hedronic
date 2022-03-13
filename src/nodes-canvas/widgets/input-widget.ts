@@ -3,11 +3,14 @@ import { CTX } from "../rendering/ctx/ctx-helpers";
 import { State } from "../model/state";
 import { Widget, WidgetSide } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
+import { TypeShim } from "../../modules/shims/type-shim";
+import { Type } from "../../modules/types/type";
 
 export class InputWidget extends Widget {
 
     static new(state: State) {
-        return new InputWidget("input", WidgetSide.Input, Vector2.new(4,1), state);
+        let outs = [TypeShim.new("text", Type.string)];
+        return new InputWidget("input", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
     }
 
     clone() {
@@ -33,10 +36,10 @@ export class InputWidget extends Widget {
 }
 
 export function renderTextInWidget(w: Widget, text: string, ctx: CTX, pos: Vector2, component: number, cellSize: number) {
-    let size = w.bounds.size().scaled(cellSize);
+    let size = w.domain.size().scaled(cellSize);
     pos = pos.clone();
-    pos.x += w.bounds.x.t0 * cellSize;
-    pos.y += w.bounds.y.t0 * cellSize;
+    pos.x += w.domain.x.t0 * cellSize;
+    pos.y += w.domain.y.t0 * cellSize;
     let center = pos.added(w.size.scaled(0.5));
 
     // border

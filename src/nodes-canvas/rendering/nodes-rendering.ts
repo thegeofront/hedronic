@@ -135,7 +135,7 @@ export class StyleSet {
 export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, component: number, style: DrawState) {
 
     // convert style 
-    let isWidget = node.process instanceof Widget;
+    let isWidget = node.core instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
     const BAR_WIDTH = 5;
@@ -146,7 +146,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     if (node.errorState != "") {
         ctx.fillStyle = "orangered"
     }
-    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.process.inCount, node.process.outCount, node.getHeight(), canvas.size);
+    let [textCenters, centerPolygon] = nodeShape(ctx, pos, node.core.inCount, node.core.outCount, node.getHeight(), canvas.size);
     ctx.fill();
     ctx.stroke();
     ctx.fill();
@@ -165,7 +165,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     if (!isWidget) {
         
         // TODO: do somemthing smart with the name to make it fit
-        let name = node.process.name;
+        let name = node.core.name;
         // name = "www";
         let maxSize = 3 + (node.getHeight() -1) * 7;
         if (name.length > maxSize) {
@@ -186,28 +186,28 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
 
     // draw input text
     ctx.font = '11px arial';
-    for (let i = 0 ; i < node.process.inCount; i++) {
+    for (let i = 0 ; i < node.core.inCount; i++) {
         setNodeStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + i);
         // ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
-        let text = node.operation?.ins[i].render() || "in";
+        let text = node.core.ins[i].render();
         ctx.fillText(text, vec.x, vec.y);
     }
     
     // draw output text
-    for (let i = 0 ; i < node.process.outCount; i++) {
+    for (let i = 0 ; i < node.core.outCount; i++) {
         setNodeStyle(ctx, style, component, i + 1, isWidget);
         ctx.fillStyle = ctx.strokeStyle;
-        let vec = textCenters.get(1 + node.process.inCount + i);
-        let text = node.operation?.outs[i].render() || "out";
+        let vec = textCenters.get(1 + node.core.inCount + i);
+        let text = node.core.outs[i].render();
         // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         ctx.fillText(text, vec.x, vec.y);
     }
 
     // render widget
     if (isWidget) {
-        let widget = node.process as Widget;
+        let widget = node.core as Widget;
         setNodeStyle(ctx, style, component, 0, isWidget);
         widget.render(ctx, pos, component, canvas.size);
     }

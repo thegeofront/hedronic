@@ -1,7 +1,6 @@
-import { Parameter } from "../../../../engine/src/lib";
-import { RightMenu } from "../../menu/right-menu";
 import { makeCanvasMenu } from "../../menu/right-menu/canvas-menu";
 import { makeMenuFromNode } from "../../menu/right-menu/node-menu";
+import { makeMenuFromWidget } from "../../menu/right-menu/widget-menu";
 import { makeFromJson } from "../../menu/util/make";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
@@ -11,6 +10,8 @@ import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
+import { Core, CoreType } from "../../nodes-canvas/model/core";
+
 
 export const showRightPanel = new PayloadEventType<void>("showrightpanel");
 
@@ -116,6 +117,9 @@ class MyRightPanel extends WebComponent {
     }
 
     set(data: SetRightPanelPayload) {
+
+        // TODO abstract this router in some way
+
         if (!data) return this.setDefault();
 
         if (data == this.data) {
@@ -123,7 +127,11 @@ class MyRightPanel extends WebComponent {
         }
 
         if (data instanceof GeonNode) {
-            this.setWithNode(data);
+            if (data.type == CoreType.Operation) {
+                this.setWithNode(data);
+            } else {
+                this.setWithWidget(data);
+            }
             this.data = data;
             return;
         } 
@@ -178,6 +186,13 @@ class MyRightPanel extends WebComponent {
         this.get("title").innerText = "Node";
         this.get("menu-body").replaceChildren(
             ...makeMenuFromNode(node)
+         );
+    }
+
+    setWithWidget(node: GeonNode) {
+        this.get("title").innerText = "Node";
+        this.get("menu-body").replaceChildren(
+            ...makeMenuFromWidget(node)
          );
     }
 

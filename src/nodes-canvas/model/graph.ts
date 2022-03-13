@@ -1,5 +1,5 @@
 import { createRandomGUID, Graph } from "../../../../engine/src/lib";
-import { Catalogue, CoreType } from "../../modules/catalogue";
+import { Catalogue } from "../../modules/catalogue";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
@@ -9,6 +9,8 @@ import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { Widget, WidgetSide } from "./widget";
+import { Core, CoreType } from "../../nodes-canvas/model/core";
+
 
 /**
  * A Collection of Nodes, Gizmo's & Cables. 
@@ -339,7 +341,7 @@ export class NodesGraph {
 
     addNode(node: GeonNode) {
         this.nodes.set(node.hash, node);
-        if (node.process instanceof Widget) {
+        if (node.core instanceof Widget) {
             this.widgets.add(node.hash);
         }
         return node.hash;
@@ -356,8 +358,8 @@ export class NodesGraph {
         this.removeAllConnections(hash);
 
         // remove the widget pointer
-        if (node.process instanceof Widget) {
-            node.process.onDestroy();
+        if (node.core instanceof Widget) {
+            node.core.onDestroy();
             this.widgets.delete(hash);
         }
 
@@ -416,10 +418,10 @@ export class NodesGraph {
         }
 
         // check for widget
-        let op = node.operation;
-        if (!op) {
-            return TypeShim.new("widget-param", Type.any);
-        }
+        let op = node.core;
+        // if (!op) {
+        //     return TypeShim.new("widget-param", Type.any);
+        // }
 
         // deal with different sides
         switch(socket.side) {
@@ -463,7 +465,7 @@ export class NodesGraph {
     removeAllConnections(hash: string) {
         let node = this.getNode(hash)!;
 
-        for (let i = 0 ; i < node.process.outCount; i++) {
+        for (let i = 0 ; i < node.core.outCount; i++) {
             let foreigns = node.outputs[i];
             if (!foreigns) continue;
             let local = Socket.fromNode(hash, i, SocketSide.Output);
@@ -473,7 +475,7 @@ export class NodesGraph {
             this.setOutputConnectionsAt(local, []);
         }
         
-        for (let i = 0 ; i < node.process.inCount; i++) {
+        for (let i = 0 ; i < node.core.inCount; i++) {
             let foreign = node.inputs[i];
             if (!foreign) continue;
             let local = Socket.fromNode(hash, i, SocketSide.Input);
@@ -617,7 +619,7 @@ export class NodesGraph {
         for (let [nkey, node] of this.nodes) {
             console.log(" node");
             console.log(" L key : ", nkey);
-            console.log(" L name: ", node.process.name);
+            console.log(" L name: ", node.core.name);
             console.log(" L output-connections: ");
             node.forEachOutputSocket((socket, connections) => {
                 console.log("    L ", socket.idx, " ----> ");

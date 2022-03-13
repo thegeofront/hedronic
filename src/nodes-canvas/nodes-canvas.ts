@@ -7,7 +7,7 @@ import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
-import { Catalogue, CoreType } from "../modules/catalogue";
+import { Catalogue } from "../modules/catalogue";
 import { ModuleShim } from "../modules/shims/module-shim";
 import { drawMultiCable, generateCableLine, drawNode, DrawState, renderCable } from "./rendering/nodes-rendering";
 import { IO } from "./util/io";
@@ -20,6 +20,8 @@ import { State } from "./model/state";
 import { mapmap } from "./util/misc";
 import { StopVisualizeEvent, StopVisualizePreviewEvent, VisualizeEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 import { Settings } from "./model/settings";
+import { Core, CoreType } from "./model/core";
+
 
 /**
  * Represents the entire canvas of nodes.
@@ -124,7 +126,7 @@ export class NodesCanvas {
             let [d] = vector.newVector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
             let [e] = vector.newVector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
             let [f] = vector.newLine(d, e) /* "x": 13 | "y": 5 */;
-            return [d /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "lamp" | "x": 18 | "y": 2 */, f /* "widget": "lamp" | "x": 18 | "y": 5 */];
+            return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
         }
         `;
 
@@ -904,7 +906,7 @@ export class NodesCanvas {
         this.select(socket);
         if (socket?.side == SocketSide.Widget && !doubleClick) {
             // we just clicked a widget! let the widget figure out what to do
-            (this.graph.getNode(socket.hash)?.process as Widget).onClick(this);
+            (this.graph.getNode(socket.hash)?.core as Widget).onClick(this);
         } 
         
         this.requestRedraw();   

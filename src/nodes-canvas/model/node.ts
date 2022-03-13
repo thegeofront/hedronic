@@ -3,9 +3,10 @@ import { Widget } from "./widget";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
-import { CoreType } from "../../modules/catalogue";
 import { FunctionShim } from "../../modules/shims/function-shim";
 import { TypeShim } from "../../modules/shims/type-shim";
+import { Core, CoreType } from "../../nodes-canvas/model/core";
+
 
 export const NODE_WIDTH = 4;
 
@@ -16,30 +17,30 @@ export class GeonNode {
     private constructor(
         public hash: string,                   // guid or some other unique identifier to this node 
         public position: Vector2,              // position on the canvas, in grid space
-        public process: FunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
+        public core: FunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
         // outputState
         ) {}
 
     get operation() : FunctionShim | undefined {
-        if (this.process instanceof FunctionShim) {
-            return this.process as FunctionShim;
+        if (this.core instanceof FunctionShim) {
+            return this.core as FunctionShim;
         } else {
             return undefined;
         }
     }
 
     get widget() : Widget | undefined {
-        if (this.process instanceof Widget) {
-            return this.process as Widget;
+        if (this.core instanceof Widget) {
+            return this.core as Widget;
         } else {
             return undefined;
         }
     }
 
     get type() : CoreType {
-        if (this.process instanceof Widget) {
+        if (this.core instanceof Widget) {
             return CoreType.Widget;
         } else {
             return CoreType.Operation;
@@ -112,7 +113,7 @@ export class GeonNode {
                 y: node.position.y,
             },
             type: node.type,
-            process: node.process.toJson(),
+            process: node.core.toJson(),
             inputs: node.inputs.map(toJsonOrNull),
             outputs: node.outputs.map(list => list.map(toJsonOrNull)),
         }
@@ -126,7 +127,7 @@ export class GeonNode {
         console.log(`node at ${this.position}`);
         // this.operation.name
         console.log("operation: ");
-        this.process.log();
+        this.core.log();
     }
 
     // ---- Getters
@@ -135,7 +136,7 @@ export class GeonNode {
         if (this.type == CoreType.Widget) {
             return this.widget!.size.y;
         } else {
-            return Math.max(2, this.process.inCount, this.process.outCount);
+            return Math.max(2, this.core.inCount, this.core.outCount);
         }
     }
 
@@ -146,7 +147,7 @@ export class GeonNode {
      */
     getCablesAtOutput() : string[] {
         let sockets: string[] = [];
-        for (let i = 0; i < this.process.outCount; i++) {
+        for (let i = 0; i < this.core.outCount; i++) {
             let socket = Socket.new(this.hash, i+1);
             sockets.push(socket.toString());
         }
@@ -173,11 +174,11 @@ export class GeonNode {
 
     GetComponentLocalGridPosition(c: SocketIdx) {
         
-        if (c + 1 > -this.process.inCount && c < 0) {
+        if (c + 1 > -this.core.inCount && c < 0) {
             // input
             let input = (c * -1) - 1;
             return Vector2.new(0, input);
-        } else if (c > 0 && c-1 < this.process.outCount) {
+        } else if (c > 0 && c-1 < this.core.outCount) {
             // output 
             let output = c - 1;
             return Vector2.new(NODE_WIDTH-1, output);
@@ -191,8 +192,8 @@ export class GeonNode {
         let local = gp.subbed(this.position);
 
         // check if we select the widget
-        if (this.process instanceof Widget) {
-            let result = this.process.trySelect(local);
+        if (this.core instanceof Widget) {
+            let result = this.core.trySelect(local);
             if (result) {
                 return result;
             }
@@ -203,7 +204,7 @@ export class GeonNode {
             // quickly return if we dont even come close
             return undefined;
         } else if (local.x == 0) {
-            if (local.y < this.process.inCount) {
+            if (local.y < this.core.inCount) {
                 return -(local.y + 1) // selected input
             } else {
                 return 0; // selected body
@@ -211,7 +212,7 @@ export class GeonNode {
         } else if (local.x > 0 && local.x < NODE_WIDTH-1) {
             return 0; // selected body
         } else if (local.x == NODE_WIDTH-1) {
-            if (local.y < this.process.outCount) {
+            if (local.y < this.core.outCount) {
                 return local.y + 1 // selected output
             } else {
                 return 0; // selected body
@@ -221,13 +222,13 @@ export class GeonNode {
     }
 
     forEachInputSocket(callback: (local: Socket, connection: Socket | undefined, shim?: TypeShim) => void) {
-        for (let i = 0; i < this.process.inCount; i++) {
+        for (let i = 0; i < this.core.inCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Input), this.inputs[i], this.operation?.ins[i])
         }
     }
 
     forEachOutputSocket(callback: (local: Socket, connections: Socket[], shim?: TypeShim) => void) {
-        for (let i = 0; i < this.process.outCount; i++) {
+        for (let i = 0; i < this.core.outCount; i++) {
             callback(Socket.fromNode(this.hash, i, SocketSide.Output), this.outputs[i], this.operation?.outs[i])
         }
     }

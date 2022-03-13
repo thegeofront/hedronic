@@ -1,5 +1,6 @@
-import { Catalogue, Core } from "../../modules/catalogue";
+import { Catalogue } from "../../modules/catalogue";
 import { ModuleShim } from "../../modules/shims/module-shim";
+import { Core } from "../../nodes-canvas/model/core";
 import { MenuAction } from "../logic/menu-action";
 import { MenuItem } from "../logic/menu-item";
 import { MenuList } from "../logic/menu-list";

@@ -2,8 +2,9 @@
 // note:    since this graph->js business is very specific and weird, I thought it best to split it away from `graph.ts`
 
 import { Vector2 } from "../../../../engine/src/lib";
-import { Catalogue, CoreType } from "../../modules/catalogue";
+import { Catalogue } from "../../modules/catalogue";
 import { Casing, Permutator } from "../util/permutator";
+import { CoreType } from "./core";
 import { NodesGraph } from "./graph";
 import { GeonNode } from "./node";
 import { Socket } from "./socket";
@@ -16,7 +17,7 @@ export function trySpawnNode(graph: NodesGraph, catalogue: Catalogue, name: stri
         let node = catalogue.spawn(pos)!;
         if (type == CoreType.Widget) {
             // @ts-ignore
-            node.process.state = state!;
+            node.core.state = state!;
         }
         let key = graph.addNode(node);
         catalogue.deselect();

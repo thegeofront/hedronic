@@ -114,7 +114,7 @@ export class History {
 
     recordAddNodes(nodes: GeonNode[]) {
         let actions = nodes.map(node => { 
-            return new NodeAddAction(node.process, node.position, node.widget?.state, node.hash)});
+            return new NodeAddAction(node.core, node.position, node.widget?.state, node.hash)});
         return this.record(new MultiAction(actions))
     }
 

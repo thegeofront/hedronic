@@ -16,6 +16,7 @@ import { CTX } from "../rendering/ctx/ctx-helpers";
 import { NodesCanvas } from "../nodes-canvas";
 import { State } from "./state";
 import { MUTED_WHITE } from "../rendering/nodes-rendering";
+import { TypeShim } from "../../modules/shims/type-shim";
 
 export enum WidgetSide {
     Input, // static input or UI 
@@ -40,20 +41,26 @@ export enum WidgetSide {
 export class Widget {
 
     nameLower: string;
-    bounds: Domain2;
-    inCount: number;
-    outCount: number
+    domain: Domain2;
 
-    public constructor(
+    protected constructor(
         public readonly name: string,
         public readonly side: WidgetSide,
         public readonly size: Vector2,
+        public ins: TypeShim[],
+        public outs: TypeShim[],
         public state: State,
     ) {
         this.nameLower = name.toLowerCase();
-        this.inCount = side == WidgetSide.Input ? 0 : 1;
-        this.outCount = side == WidgetSide.Output ? 0 : 1;
-        this.bounds = Widget.determineWidgetSize(this.side, this.size);
+        this.domain = Widget.determineWidgetSize(this.side, this.size);
+    }
+
+    get inCount() {
+        return this.ins.length;
+    }
+
+    get outCount() {
+        return this.outs.length;
     }
 
     static determineWidgetSize(side: WidgetSide, size?: Vector2) {
@@ -98,12 +105,12 @@ export class Widget {
     }
 
     clone() {
-        return new Widget(this.name, this.side, this.size, this.state);
+        return new Widget(this.name, this.side, this.size, this.ins, this.outs, this.state);
     }
 
     trySelect(local: Vector2) : number | undefined {
    
-        if (this.bounds.includesEx(local)) {
+        if (this.domain.includesEx(local)) {
             return Infinity;
         }
         return undefined;
@@ -111,13 +118,13 @@ export class Widget {
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
 
-        let size = this.bounds.size().scaled(cellSize);
+        let size = this.domain.size().scaled(cellSize);
         const A = 4; // offset A
         const B = 4; // offset B
 
         pos = pos.clone();
-        pos.x += this.bounds.x.t0 * cellSize;
-        pos.y += this.bounds.y.t0 * cellSize;
+        pos.x += this.domain.x.t0 * cellSize;
+        pos.y += this.domain.y.t0 * cellSize;
 
         ctx.fillStyle = this.state ? "ffffff" : "#292C33";
 
@@ -143,6 +150,16 @@ export class Widget {
 
     onDestroy() {
         
+    }
+
+    makeMenu() : HTMLElement[] {
+        // what do we need to render in the
+        return []; 
+    }
+
+    makeHTMLWidget() : HTMLElement[] {
+        // what do we render within spawned html?
+        return []; 
     }
 
     // TODO : customize the heck out of this thing: onLoad, onRun, afterRun, spawnHTML, whatever!

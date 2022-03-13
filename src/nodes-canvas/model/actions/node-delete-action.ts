@@ -19,7 +19,7 @@ export class NodeDeleteAction implements Action {
     do(graph: NodesGraph) {
         let node = graph.getNode(this.key)!;
         this.data = node.toJson()
-        this.process = node.process;
+        this.process = node.core;
         graph.deleteNode(this.key);
     }
     

@@ -2,11 +2,11 @@ import { Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 
-export function makeMenuFromNode(node: GeonNode) : Node[] {
+export function makeMenuFromWidget(node: GeonNode) : Node[] {
     let title = node.core.nameLower || "-";
-    let subtitle = node.operation?.path.join(".") || "widget";
+    let subtitle = "widget!!!";
     // let content = JSON.stringify(node.operation?.toJson(), null, 2);
-    let ops = node.operation;
+    let core = node.core;
 
     let makeParamEntry = (type: TypeShim, connection: string) => {
         let t = type.typeToString();
@@ -19,13 +19,13 @@ export function makeMenuFromNode(node: GeonNode) : Node[] {
         `;
     }
 
-    let inputHTML = ops?.ins.map((type, i) => {
+    let inputHTML = core.ins.map((type, i) => {
         let socket = node.inputs[i];
         let connection = socket ? `${socket.hash}[${socket.normalIndex()}]` : "Empty";
         return makeParamEntry(type, connection);
     }).join("");
     
-    let outputHTML = ops?.outs.map((type, i) => {
+    let outputHTML = core.outs.map((type, i) => {
         let sockets = node.outputs[i];
         let connection = "Empty";
         if (sockets.length != 0) {
@@ -34,19 +34,14 @@ export function makeMenuFromNode(node: GeonNode) : Node[] {
         return makeParamEntry(type, connection);
     }).join("");
 
-    if (!inputHTML || !outputHTML) {
-        inputHTML = "";
-        outputHTML = "";
-    }
-
     return [Element.html`
         <div id="node-menu">
             <p>name: <code>${title}</code></p>
             <p>path: <code>${subtitle}</code></p>
             <p>hash: <code>${node.hash}</code></p>
             <!-- <div class="row">
-                <p class="col">inputs: <code>${ops?.inCount}</code></p>
-                <p class="col">outputs: <code>${ops?.outCount}</code></p>
+                <p class="col">inputs: <code>${core?.inCount}</code></p>
+                <p class="col">outputs: <code>${core?.outCount}</code></p>
             </div> -->
             <div class="divider"></div>
             <h5>Process</h5>

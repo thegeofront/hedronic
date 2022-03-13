@@ -3,13 +3,16 @@ import { CTX } from "../rendering/ctx/ctx-helpers";
 import { State } from "../model/state";
 import { Widget, WidgetSide } from "../model/widget";
 import { renderTextInWidget } from "./input-widget";
+import { TypeShim } from "../../modules/shims/type-shim";
+import { Type } from "../../modules/types/type";
 
 export class ConsoleWidget extends Widget {
 
     str = "";
 
     static new(state: State) {
-        return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), state);
+        let ins = [TypeShim.new("I", Type.any)];
+        return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), ins, [], state);
     }
 
     run(...args: State[]) : State[] {
@@ -22,6 +25,11 @@ export class ConsoleWidget extends Widget {
         return [];
     }
 
+    set(data: string) {
+        this.str = data;
+        // TODO RECALC / INVALIDATE / REQUEST RECALCULATION
+    }
+
     clone() {
         return ConsoleWidget.new(this.state);
     }
@@ -30,4 +38,8 @@ export class ConsoleWidget extends Widget {
         renderTextInWidget(this, this.str, ctx, pos, component, cellSize);
     }
 
+    makeMenu(): HTMLElement[] {
+        // TODO render a text field
+        return [];   
+    }
 }

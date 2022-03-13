@@ -1,9 +1,10 @@
 // purpose: module, or library representation
-import { Catalogue, CoreType } from "../catalogue";
+import { Catalogue } from "../catalogue";
 import { Widget } from "../../nodes-canvas/model/widget";
 import { tryFilter } from "../../nodes-canvas/util/misc";
 import { FN } from "../helpers/js-loading";
 import { FunctionShim } from "./function-shim";
+import { Core, CoreType } from "../../nodes-canvas/model/core";
 
 
 /**
