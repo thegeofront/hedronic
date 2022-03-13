@@ -409,7 +409,7 @@ export class NodesCanvas {
         let g = this.toGrid(this.camera.mousePos);
 
         // draw grid 
-        this.drawGrid(ctx);
+        // this.drawGrid(ctx);
 
         let isCableSelected = (socket: Socket, con: Socket) => {
             for (let selected of this.selectedSockets) {
@@ -607,14 +607,27 @@ export class NodesCanvas {
         this.hoverSocket = undefined;
     }
 
-    
-    select(s: Socket, setMenu=true) {
-        let ex = this.tryGetSelectedSocket(s.hash);
-        if (!ex) {
-            this.selectedSockets.push(s);
-        } else {
-            ex.cloneFrom(s);
+    selectMultiple(sockets: Socket[], setMenu=true) {
+        for (let socket of sockets) {
+            let ex = this.tryGetSelectedSocket(socket.hash);
+            if (!ex) {
+                this.selectedSockets.push(socket);
+            } else {
+                ex.cloneFrom(socket);
+            }
         }
+        if (setMenu) this.onSelectionChange();
+    }
+
+    select(socket: Socket, setMenu=true) { 
+
+        let ex = this.tryGetSelectedSocket(socket.hash);
+        if (!ex) {
+            this.selectedSockets.push(socket);
+        } else {
+            ex.cloneFrom(socket);
+        }
+        
         if (setMenu) this.onSelectionChange();
     }
  
@@ -707,12 +720,14 @@ export class NodesCanvas {
         // console.log(box.x.t0, box.x.t1, box.y.t0, box.y.t1);
         box.offset([-2,1,-2,1])
         // console.log(box);
+        let selection = [];
         for (let [key, node] of this.graph.nodes) {
-            
             if (box.includesEx(node.position)) {
-                this.select(Socket.new(key, 0));
+                selection.push(Socket.new(key, 0));
             }
         }
+        this.selectMultiple(selection);
+
         // reset the box
         this.boxStart = undefined;
         // this.mgpHover = undefined;

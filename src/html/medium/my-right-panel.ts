@@ -259,7 +259,7 @@ function makeCanvasMenu(nodes: NodesCanvas) {
     let elements = [
         makeEnum(
             "Zoom", 
-            ["24", "32", "48"], 
+            ["16", "24", "32", "48"], 
             nodes.getZoom().toString(), 
             (val) => {nodes.setZoom(Number(val))}),
         makeToggle("preview selection", nodes.settings.previewSelection, () => {nodes.settings.previewSelection = !nodes.settings.previewSelection; nodes.onSelectionChange();}),
