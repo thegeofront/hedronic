@@ -1,7 +1,7 @@
 import { Parameter } from "../../../../engine/src/lib";
 import { Compose } from "../../html/util";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { makeEnum, makeSlider, makeToggle } from "./make";
+import { makeEnum, makeSlider, makeToggle } from "../util/make";
 
 export function makeCanvasMenu(nodes: NodesCanvas) {
     let elements = [

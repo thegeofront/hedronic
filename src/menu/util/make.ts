@@ -3,6 +3,14 @@ import { Str, Compose, Element } from "../../html/util";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 
 
+export function makeFromJson(json: any) {
+    let strs: string[] = []; 
+    for (let key in json) {
+        strs.push(Str.html`<p>${key}: <code>${json[key]}</code></p>`);
+    }
+    return strs.join("");
+}
+
 
 export function makeButton(name: string, onClick: (ev: Event) => void) {
     let button = Element.html`<button class="btn btn-sm btn-dark">${name}</button>`;

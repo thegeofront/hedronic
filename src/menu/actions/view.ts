@@ -1,5 +1,5 @@
 import { Key } from "../../../../engine/src/lib";
-import { hideRightPanel, setRightPanel, showRightPanel } from "../../html/registry";
+import { hideRightPanel, showRightPanel } from "../../html/registry";
 import { HTML } from "../../html/util";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { MenuAction } from "../logic/menu-action";

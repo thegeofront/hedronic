@@ -14,7 +14,7 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
-import { hideRightPanel, setRightPanel, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
+import { hideRightPanel, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
@@ -98,7 +98,7 @@ export class NodesCanvas {
         this.testGraph();
 
         // show the settings page of the canvas
-        HTML.dispatch(setRightPanel, this);
+        HTML.dispatch(setRightPanelOld, this);
     }
 
     
@@ -652,20 +652,20 @@ export class NodesCanvas {
         // possibly open up a menu
         let s = this.selectedSockets[0];
         if (this.selectedSockets.length == 0 ) {
-            HTML.dispatch(setRightPanel, this);
+            HTML.dispatch(setRightPanelOld, this);
         } else if (this.selectedSockets.length > 1) {
             let nodes = this.selectedSockets.map((s) => this.graph.getNode(s.hash)!);
-            HTML.dispatch(setRightPanel, nodes);
+            HTML.dispatch(setRightPanelOld, nodes);
         } else if (s.side == SocketSide.Body) {
             let node = this.graph.getNode(s.hash)!;
-            HTML.dispatch(setRightPanel, node);
+            HTML.dispatch(setRightPanelOld, node);
         } else if (s.side == SocketSide.Input) {
             let key = this.graph.getInputConnectionAt(s)?.toString() || "";
             let state = this.cache?.get(key);
-            HTML.dispatch(setRightPanel, {state, socket: s});
+            HTML.dispatch(setRightPanelOld, {state, socket: s});
         } else if (s.side == SocketSide.Output) {
             let state = this.cache?.get(s.toString());
-            HTML.dispatch(setRightPanel, {state, socket: s});
+            HTML.dispatch(setRightPanelOld, {state, socket: s});
         }
     }
 
