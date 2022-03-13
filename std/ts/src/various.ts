@@ -20,6 +20,10 @@ export function toString(n: any): string {
     return String(n);
 }
 
+export function toJson(text: string): any {
+    return JSON.parse(text)
+}
+
 export function numberFromBinary(a: boolean,b: boolean,c: boolean,d: boolean,e: boolean,f: boolean,g: boolean,h: boolean) {
     let n = 0;
     let bools = [a,b,c,d,e,f,g,h];

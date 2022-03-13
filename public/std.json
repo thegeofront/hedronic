@@ -35,7 +35,7 @@
     "wasm": [
         {
             "icon": "bi-puzzle-fill",
-            "nickname": "hello",
+            "nickname": "wasm",
             "filename": "wasm_nodes",
             "localPath": "wasm-modules/hello-wasm/",
             "url": "josfeenstra.nl/project/nodes/wasm-modules/"

@@ -4,9 +4,13 @@ import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Template } from "../util";
 import { WebComponent } from "../web-component";
 
+export type addItemPayload = {node: Node, id: string, x: number, y: number}
+export type setItemPayload = {id: string, x: number, y: number}
+
+
 export const removeOverlayItemEvent = new PayloadEventType<string>("onoffsetCanvas");
-export const setOverlayItemEvent = new PayloadEventType<{id: string, x: number, y: number}>("onoffsetCanvas");
-export const addOverlayItemEvent = new PayloadEventType<{node: Node, id: string, x: number, y: number}>("onoffsetCanvas");
+export const setOverlayItemEvent = new PayloadEventType<setItemPayload>("onoffsetCanvas");
+export const addOverlayItemEvent = new PayloadEventType<addItemPayload>("onoffsetCanvas");
 export const offsetOverlayEvent = new PayloadEventType<Vector2>("onoffsetCanvas");
 export const scaleOverlayEvent = new PayloadEventType<Vector2>("onoffsetCanvas");
 
@@ -29,7 +33,7 @@ class MyCanvasOverlay extends WebComponent {
     `;
         
     offset = Vector2.new(0,0);
-    scale = 1;
+    scale = 24;
 
     connectedCallback() {
         this.addFrom(MyCanvasOverlay.template);
@@ -41,16 +45,17 @@ class MyCanvasOverlay extends WebComponent {
     }  
 
     test() {
-        this.onAddItem({node: Element.html`henk`, x: 10, y: 10, id: "henk"})
-        this.onAddItem({node: Element.html`kaasje`, x: 10, y: 40, id: "kaas"})
+        this.onAddItem({node: Element.html`henk`, x: 0, y: 1, id: "henk"})
+        this.onAddItem({node: Element.html`kaasje`, x: 0, y: 2, id: "kaas"})
         // console.log(this.get("container"));
         this.onChange();
     }
 
-    onAddItem(payload: {node: Node, id: string, x: number, y: number}) {
+    onAddItem(payload: addItemPayload) {
         let {node, x, y, id} = payload;
         this.get("container").appendChild(
-            Compose.html`<div class="item" 
+            Compose.html`
+            <div class="item" 
                 id="${id}"
                 data-x="${x.toString()}" 
                 data-y="${y.toString()}">
@@ -58,7 +63,7 @@ class MyCanvasOverlay extends WebComponent {
             </div>`);
     }
 
-    onSetItemPos(payload: {id: string, x: number, y: number}) {
+    onSetItemPos(payload: setItemPayload) {
         let {x, y, id} = payload;
         let item = this.get(id);
         if (!item) return;

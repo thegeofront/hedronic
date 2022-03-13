@@ -58,7 +58,7 @@ export class MyMain extends WebComponent {
         </div>
         <div id="Graph" style="position: relative">
             <my-nodes-canvas></my-nodes-canvas>
-            <my-canvas-overlay></my-canvas-overlay>
+            <!-- <my-canvas-overlay></my-canvas-overlay> -->
         </div>
         <div id="Viewer">
             <my-viewer></my-viewer>
