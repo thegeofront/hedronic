@@ -5,7 +5,7 @@ import { WasmLoading } from "./helpers/wasm-loading";
 import { DTSLoading } from "./helpers/dts-loading";
 import { JSLoading } from "./helpers/js-loading";
 import ts from "typescript";
-import { TypeShim } from "./shims/parameter-shim";
+import { TypeShim } from "./shims/type-shim";
 import { Misc } from "../nodes-canvas/util/misc";
 
 export namespace ModuleLoading {

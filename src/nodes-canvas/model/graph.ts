@@ -1,6 +1,7 @@
 import { createRandomGUID, Graph } from "../../../../engine/src/lib";
 import { Catalogue, CoreType } from "../../modules/catalogue";
-import { TypeShim, Type } from "../../modules/shims/parameter-shim";
+import { TypeShim } from "../../modules/shims/type-shim";
+import { Type } from "../../modules/types/type";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { graphToFunction, jsToGraph } from "./graph-conversion";

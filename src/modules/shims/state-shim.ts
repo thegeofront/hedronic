@@ -1,14 +1,13 @@
-import { Type, TypeShim } from "./parameter-shim";
+import { State } from "../../nodes-canvas/model/state";
+import { TypeShim } from "./type-shim";
 
 /**
  * NOTE: dont know if this will be used, but its an idea!
  */
-export class StateShim {
+export class Parameter {
 
     constructor(
-        public state: any,             // the data to represent this state
-        public location: TypeShim, // the variable the state occupies. it can hop from 
-    ) {
-
-    }
+        public value: State,
+        public type: TypeShim, 
+    ) {}
 }

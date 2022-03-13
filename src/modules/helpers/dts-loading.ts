@@ -5,7 +5,8 @@ import { BillboardShader, Debug, WebIO } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
-import { Type, TypeShim } from "../shims/parameter-shim";
+import { TypeShim } from "../shims/type-shim";
+import { Type } from "../types/type";
 
 namespace Help {
 

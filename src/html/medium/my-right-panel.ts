@@ -1,6 +1,6 @@
 import { Parameter } from "../../../../engine/src/lib";
 import { RightMenu } from "../../menu/right-menu";
-import { TypeShim } from "../../modules/shims/parameter-shim";
+import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { State } from "../../nodes-canvas/model/state";

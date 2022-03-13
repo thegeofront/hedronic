@@ -1,22 +1,13 @@
 
-// Node ---- Operation ----
-//             L Gizmo
-//                L getState() -> store it in cable
-//                L render() 
-//                L onMouseAtCertainPosition() -> 
-//                L  
-// 
-
-import { State } from "../../nodes-canvas/model/state";
-import { FN, JSLoading } from "../helpers/js-loading";
-import { Type, TypeShim } from "./parameter-shim";
+import { JSLoading } from "../helpers/js-loading";
+import { Type } from "../types/type";
+import { TypeShim } from "./type-shim";
 
 /**
  * Offers a blueprint for creating a new node
  * wrap a function, and delivers some useful information
  * This is needed, so we can reason about the functionalities of operations
  * Not the same as a Node, Because multiple nodes will point to the same FunctionShim
- * 
  */
 export class FunctionShim {
 
@@ -31,12 +22,6 @@ export class FunctionShim {
         public readonly isMethod = false,
         ) {
         this.nameLower = name.toLowerCase();
-        
-        // if (this.isMethod) {
-        //     this.run = (...inputs: any) => this.func.call(inputs[0], ...inputs.slice(1));
-        // } else {
-        //     this.run = (...inputs: any) => this.func(...inputs);
-        // }
     }
 
     get inCount() {
@@ -47,6 +32,9 @@ export class FunctionShim {
         return this.outs.length;
     }
 
+    /**
+     * @deprecated
+     */
     static newFromFunction(func: Function, name="function", namespace="custom") {
 
         let inCount = JSLoading.countInputsFromRawFunction(func);

@@ -2,7 +2,7 @@ import { Domain2, Vector2 } from "../../../../engine/src/lib";
 import { CTX } from "../rendering/ctx/ctx-helpers";
 import { State } from "../model/state";
 import { Widget, WidgetSide } from "../model/widget";
-import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { NodesCanvas } from "../nodes-canvas";
 
 export class InputWidget extends Widget {
 

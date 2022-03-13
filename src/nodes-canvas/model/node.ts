@@ -5,7 +5,7 @@ import { State } from "./state";
 import { mapFromJson, mapToJson } from "../util/serializable";
 import { CoreType } from "../../modules/catalogue";
 import { FunctionShim } from "../../modules/shims/function-shim";
-import { TypeShim } from "../../modules/shims/parameter-shim";
+import { TypeShim } from "../../modules/shims/type-shim";
 
 export const NODE_WIDTH = 4;
 

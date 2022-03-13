@@ -1,6 +1,7 @@
 // import { TypeKind } from "./type-kind";
 
 import { State } from "../../nodes-canvas/model/state";
+import { Type } from "../types/type";
 
 /**
  * This is what the Flow would like to know about a certain variable
@@ -149,29 +150,4 @@ export class TypeShim {
                 return this.child![0].render();  
         } 
     }
-}
-
-// https://www.sheshbabu.com/posts/rust-for-javascript-developers-pattern-matching-and-enums/
-// *sigh*, if only we could write something like this. 
-// ```
-// enum TypeKind {
-//     Any,
-//     Boolean,
-//     Number,
-//     String,
-//     List(TypeKind),
-//     Tuple(TypeKind[]),
-// }
-// ``` 
-// thats really all we need. Now, we need to do weird things with children
-export enum Type {
-    any,
-    boolean,
-    number,
-    string,
-    List,
-    Tuple,
-    Object,
-    Union,
-    Reference,
 }
