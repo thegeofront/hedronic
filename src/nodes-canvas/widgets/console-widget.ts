@@ -18,7 +18,7 @@ export class ConsoleWidget extends Widget {
     run(...args: State[]) : State[] {
         this.state = args[0];
         try {
-            this.str = JSON.stringify(this.state, null, 2);
+            this.str = this.state.toString()
         } catch(error) {
             this.str = `<Error: Could not parse json. \nReason: ${(error as Error).message}>`
         }
