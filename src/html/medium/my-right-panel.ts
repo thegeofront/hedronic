@@ -1,5 +1,6 @@
 import { Parameter } from "../../../../engine/src/lib";
 import { RightMenu } from "../../menu/right-menu";
+import { makeCanvasMenu } from "../../menu/right-menu/canvas-menu";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
@@ -87,7 +88,6 @@ class MyRightPanel extends WebComponent {
         this.listen(setRightPanel, this.set.bind(this))
         this.listen(hideRightPanel, this.hide.bind(this))
         this.listen(showRightPanel, this.show.bind(this))
-        // this.setDefault();
     }  
 
     hide() {
@@ -252,82 +252,4 @@ function makeFromJson(json: any) {
         strs.push(Str.html`<p>${key}: <code>${json[key]}</code></p>`);
     }
     return strs.join("");
-}
-
-
-function makeCanvasMenu(nodes: NodesCanvas) {
-    let elements = [
-        makeEnum(
-            "Zoom", 
-            ["16", "24", "32", "48"], 
-            nodes.getZoom().toString(), 
-            (val) => {nodes.setZoom(Number(val))}),
-        makeToggle("preview selection", nodes.settings.previewSelection, () => {nodes.settings.previewSelection = !nodes.settings.previewSelection; nodes.onSelectionChange();}),
-        makeSlider(Parameter.new("setting", 1, 0, 5,0.5), (p) => {console.log(p.get())}),
-    ]
-    let html = Compose.html`
-    <details>
-        <summary><b></b></summary>
-        ${elements}
-    </details>
-    `;
-    return [html];
-}
-
-
-function makeButton(name: string, onClick: (ev: Event) => void) {
-    let button = Element.html`<button class="btn btn-sm btn-dark">${name}</button>`;
-    if (onClick) button.onclick = onClick;
-    return button;
-}
-
-
-function makeEnum(name: string, ops: string[], def: string, onChange: (value: string) => void) {
-    let enumerator = Element.html`
-    <div class="form-check">
-        <label class="form-check-label" for="${name}">${name}</label>
-        <select class="form-control dark" id="${name}">${ops.map(op => 
-            Str.html`<option ${op == def ? "selected" : ""} value="${op}">${op}`).join("")
-        }
-        </select>
-        
-    </div>`;
-
-    if (onChange) enumerator.onchange = function (ev: Event) {
-        //@ts-ignore
-        let value:string = ev.target!.value;
-        onChange(value);
-    }
-
-    return enumerator;
-}
-
-function makeToggle(name: string, def: boolean, onChange?: (ev: Event) => void) {
-    let toggle = Element.html`
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" ${def ? "checked " : ""} id="${name}">
-        <label class="form-check-label" for="${name}">
-            ${name}
-        </label>
-    </div>
-    `;
-    if (onChange) toggle.onchange = onChange;
-    return toggle;
-}
-
-
-function makeSlider(param: Parameter, callback: (p: Parameter) => void) {
-    let slider = Element.html`
-    <div class="form">
-        <label for="${param.name}" class="form-label">${param.name}</label>
-        <input type="range" class="form-range" min="${param.min}" max="${param.max}" step="${param.step}" value="${param.state}" id="${param.name}">
-    </div>
-    `;
-    slider.onchange = (ev: Event) => {
-        //@ts-ignore
-        let value: string = ev.target.value;
-        param.set(Number(value)); 
-        callback(param);
-    };
-    return slider;
 }
