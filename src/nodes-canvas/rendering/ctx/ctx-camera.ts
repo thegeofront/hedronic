@@ -68,7 +68,7 @@ export class CtxCamera {
         }
 
         // panning
-        if (state.mouseRightDown) {
+        if (state.mouseRightDown && (state.mouseDelta.x != 0 || state.mouseDelta.y != 0)) {
             this.pos.sub(state.mouseDelta);
             redraw = true;
         }

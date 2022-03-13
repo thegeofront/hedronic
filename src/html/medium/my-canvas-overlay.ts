@@ -4,7 +4,11 @@ import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Template } from "../util";
 import { WebComponent } from "../web-component";
 
-const offsetCanvasEvent = new PayloadEventType<Vector2>("onoffsetCanvas");
+export const removeOverlayItemEvent = new PayloadEventType<string>("onoffsetCanvas");
+export const setOverlayItemEvent = new PayloadEventType<{id: string, x: number, y: number}>("onoffsetCanvas");
+export const addOverlayItemEvent = new PayloadEventType<{node: Node, id: string, x: number, y: number}>("onoffsetCanvas");
+export const offsetOverlayEvent = new PayloadEventType<Vector2>("onoffsetCanvas");
+export const scaleOverlayEvent = new PayloadEventType<Vector2>("onoffsetCanvas");
 
 customElements.define('my-canvas-overlay', 
 class MyCanvasOverlay extends WebComponent {
@@ -25,22 +29,25 @@ class MyCanvasOverlay extends WebComponent {
     `;
         
     offset = Vector2.new(0,0);
-    scale!: number;
+    scale = 1;
 
     connectedCallback() {
         this.addFrom(MyCanvasOverlay.template);
-        this.listen(offsetCanvasEvent, this.onMove.bind(this));
+        this.listen(offsetOverlayEvent, this.onMove.bind(this));
+        // this.listen(addOverlayItemEvent, this.onAddItem.bind(this));
+        // this.listen(setOverlayItemEvent, this.onSetItemPos.bind(this));
+        // this.listen(removeOverlayItemEvent, this.onRemoveItem.bind(this));
         this.test()
     }  
 
     test() {
-        this.addItem({node: Element.html`henk`, x: 10, y: 10, id: "henk"})
-        this.addItem({node: Element.html`kaasje`, x: 10, y: 40, id: "kaas"})
-        console.log(this.get("container"));
-        // this.onChange();
+        this.onAddItem({node: Element.html`henk`, x: 10, y: 10, id: "henk"})
+        this.onAddItem({node: Element.html`kaasje`, x: 10, y: 40, id: "kaas"})
+        // console.log(this.get("container"));
+        this.onChange();
     }
 
-    addItem(payload: {node: Node, id: string, x: number, y: number}) {
+    onAddItem(payload: {node: Node, id: string, x: number, y: number}) {
         let {node, x, y, id} = payload;
         this.get("container").appendChild(
             Compose.html`<div class="item" 
@@ -51,7 +58,7 @@ class MyCanvasOverlay extends WebComponent {
             </div>`);
     }
 
-    setItemPos(payload: {id: string, x: number, y: number}) {
+    onSetItemPos(payload: {id: string, x: number, y: number}) {
         let {x, y, id} = payload;
         let item = this.get(id);
         if (!item) return;
@@ -59,7 +66,7 @@ class MyCanvasOverlay extends WebComponent {
         item.setAttribute("data-y", y.toString());
     }
 
-    removeItem(id: string) {
+    onRemoveItem(id: string) {
         this.get(id).remove();
         // this.get("container").removeChild()
     }
@@ -67,16 +74,17 @@ class MyCanvasOverlay extends WebComponent {
     onChange() {
         
         for (let node of this.get("container").childNodes) {
+            if (!(node instanceof HTMLElement)) continue;
             let item = node as HTMLElement;
-            
             let x = Number(item.getAttribute("data-x"));
             let y = Number(item.getAttribute("data-y"));
-            let pos = Vector2.dummy.set(x,y);
-            pos.add(this.offset);
 
-            item.style.top = `${pos.x}px`
-            item.style.left = `${pos.y}px`
-            console.log("set pos to", )
+            let pos = Vector2.dummy.set(x,y);
+            pos.scale(this.scale).sub(this.offset);
+
+            item.setAttribute("style", `left: ${pos.x}px; top: ${pos.y}px`);
+            // item.style.left = `${pos.x }px`;
+            // item.style.top = `${pos.y}px`;
         }
     }
 

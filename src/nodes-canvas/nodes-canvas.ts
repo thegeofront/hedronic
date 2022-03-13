@@ -14,7 +14,7 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
-import { hideRightPanel, setMenu, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
+import { hideRightPanel, offsetOverlayEvent, setMenu, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
@@ -347,6 +347,7 @@ export class NodesCanvas {
 
         let redraw = this.camera.update(this.input);
         if (redraw) {
+            HTML.dispatch(offsetOverlayEvent, this.camera.pos);
             this.requestRedraw();
         }
 
