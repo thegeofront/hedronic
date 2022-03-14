@@ -12,6 +12,7 @@ export function getNodesActions(context: NodesCanvas) : MenuItem[] {
         MenuList.new("Debug", [
             MenuAction.new(context, "Print catalogue", print, [Key.Ctrl, Key.K]),
             MenuAction.new(context, "Check connections", checkConnections, [Key.Ctrl, Key.I]),
+            MenuAction.new(context, "Print types", printTypes, [Key.Ctrl, Key.U]),
             MenuAction.new(context, "Test 3", test3),
         ])
     ];
@@ -37,7 +38,11 @@ function checkConnections(nodes: NodesCanvas) {
         console.warn("Not at all correct: ");
         console.error(e);
     }
-    
+ 
+}
+
+function printTypes(nodes: NodesCanvas) {
+    console.log(nodes.catalogue.types);
 }
 
 function test3(nodes: NodesCanvas) {

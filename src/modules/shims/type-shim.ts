@@ -107,6 +107,8 @@ export class TypeShim {
 
     typeToString() : string {
         switch (this.type) {
+            case Type.void:
+                return "void";
             case Type.any:
                 return "any";
             case Type.boolean:
@@ -117,14 +119,18 @@ export class TypeShim {
                 return "str";
             case Type.Tuple:
                 return `Tuple<${this.child!.map(c => c.typeToString()).join(", ")}>`;
+            case Type.Array:
+                return `Array<${this.child![0].typeToString()}>`;
             case Type.List:
-                return `List<${this.child![0].typeToString()}>`;
+            return `List<${this.child![0].typeToString()}>`;
             case Type.Object:
                 return `Object {${this.child!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
             case Type.Union:
                 return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
             case Type.Reference:
                 return `${this.child![0].name}`;  
+            case Type.Promise:
+                return `Promise->${this.child![0].typeToString()}`; 
         }
     }
 
@@ -133,12 +139,15 @@ export class TypeShim {
         if (this.glyph) return this.glyph;   
 
         switch (this.type) {
+            case Type.void:
+                return "-"
             case Type.any:
             case Type.boolean:
             case Type.number:
             case Type.string:
                 return this.name.charAt(0).toUpperCase();
             
+            case Type.Array:
             case Type.Tuple:
             case Type.List:
                 return `[ ${this.child!.map(c => c.render()).join(" , ")} ]`;
@@ -148,6 +157,8 @@ export class TypeShim {
                 return `[ ${this.child!.map(c => c.render()).join(" | ")} ]`;
             case Type.Reference:
                 return this.child![0].render();  
+            case Type.Promise:
+                return `P->` + this.child![0].render();  
         } 
     }
 }

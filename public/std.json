@@ -26,8 +26,8 @@
         },
         {
             "icon": "bi-arrow",
-            "nickname": "vector",
-            "filename": "vector",
+            "nickname": "types",
+            "filename": "types",
             "path": "./modules/"
         }
     ],

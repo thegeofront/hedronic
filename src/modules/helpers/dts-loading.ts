@@ -224,7 +224,7 @@ export namespace DTSLoading {
                 //@ts-ignore
                 let memberType: ts.TypeNode = member.type;
                 
-                subTypes.push(convertTypeToParameterShim(memberName, memberType, types))
+                subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
             return TypeShim.new(name, Type.Object, undefined, subTypes);
         }
@@ -239,7 +239,7 @@ export namespace DTSLoading {
                 //@ts-ignore
                 let memberType = member.type;
 
-                subTypes.push(convertTypeToParameterShim(memberName, memberType, types))
+                subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
             return TypeShim.new(name, Type.Object, undefined, subTypes);
         }
@@ -247,7 +247,7 @@ export namespace DTSLoading {
         // Alias
         if (ts.isTypeAliasDeclaration(node)) {
             let typeName = Help.getTypeName(node.type);
-            let subType = convertTypeToParameterShim(typeName, node.type, types);
+            let subType = convertTypeToShim(typeName, node.type, types);
             return TypeShim.new(name, Type.Reference, undefined, [subType]);
         }
 
@@ -259,7 +259,7 @@ export namespace DTSLoading {
         source: ts.Node, 
         moduleName: string, 
         jsModule: any, 
-        typeReferences: Map<string, TypeShim>,
+        types: Map<string, TypeShim>,
         blackList?: Set<string>
         ) {
         
@@ -290,7 +290,7 @@ export namespace DTSLoading {
 
                 // add the 'this' object as the first input.
                 let thisObjectType = callStack[callStack.length-1]; 
-                let myType = typeReferences.get(thisObjectType);
+                let myType = types.get(thisObjectType);
                 if (!myType) {
                     console.error("this would be weird");
                     return false;
@@ -312,7 +312,7 @@ export namespace DTSLoading {
                 if (typeNode == undefined) {
                     throw new Error("this is weird");
                 } 
-                return convertTypeToParameterShim(inputName, typeNode, typeReferences);
+                return convertTypeToShim(inputName, typeNode, types);
             });
             if (methodInput) inputs = [methodInput, ...inputs];
 
@@ -321,10 +321,10 @@ export namespace DTSLoading {
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
-                    outputs.push(convertTypeToParameterShim(`Result ${i}`, tuple.elements[i], typeReferences))
+                    outputs.push(convertTypeToShim(`Result ${i}`, tuple.elements[i], types))
                 }
             } else {
-                outputs.push(convertTypeToParameterShim("Result", node.type!, typeReferences))
+                outputs.push(convertTypeToShim("Result", node.type!, types))
             }
 
             // extract function using the name and callstack
@@ -358,16 +358,18 @@ export namespace DTSLoading {
         return shims;
     }
 
-    function convertTypeToParameterShim(name: string, node: ts.TypeNode, typeReferences: Map<string, TypeShim>) : TypeShim {
+    function convertTypeToShim(name: string, node: ts.TypeNode, typeReferences: Map<string, TypeShim>) : TypeShim {
         
-        // 'base' types 
+        // saveguard
         if (!node) {
             console.warn("node does not appear to exist...");
             console.warn(node)
             return TypeShim.new(name, Type.any);
         }
 
+        // 'base' types 
         switch (node.kind) {
+            case ts.SyntaxKind.VoidKeyword: return TypeShim.new(name, Type.void);
             case ts.SyntaxKind.AnyKeyword: return TypeShim.new(name, Type.any);
             case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, Type.boolean);
             case ts.SyntaxKind.NumberKeyword: return TypeShim.new(name, Type.number);
@@ -376,13 +378,13 @@ export namespace DTSLoading {
 
         // list type 
         if (ts.isArrayTypeNode(node)) {
-            let subs = [convertTypeToParameterShim("item", node.elementType, typeReferences)]
+            let subs = [convertTypeToShim("item", node.elementType, typeReferences)]
             return TypeShim.new(name, Type.List, undefined, subs);
         } 
         
         // union type
         if (ts.isUnionTypeNode(node)) {
-            let subs = node.types.map((child, i) => convertTypeToParameterShim(`option ${i}`, child, typeReferences));
+            let subs = node.types.map((child, i) => convertTypeToShim(`option ${i}`, child, typeReferences));
             return TypeShim.new(name, Type.Union, undefined, subs);
         }
         
@@ -396,7 +398,7 @@ export namespace DTSLoading {
                 // @ts-ignore
                 let elementType: ts.TypeNode = element.type;
 
-                return convertTypeToParameterShim(elementName, elementType, typeReferences);
+                return convertTypeToShim(elementName, elementType, typeReferences);
             });
             return TypeShim.new(name, Type.Object, undefined, subs);
         }
@@ -408,6 +410,13 @@ export namespace DTSLoading {
             let typeName = node.typeName.escapedText;
 
             // look up if the reference matches previously defined types
+            if (typeName == "Promise") {
+                // this is a promise, get the subtype
+                console.log("found Promise!");
+                let subs = node.typeArguments!.map(t => convertTypeToShim("promised", t, typeReferences));
+                return TypeShim.new(name, Type.Promise, undefined, subs);
+            }
+
             if (typeReferences.has(typeName)) {
                 return TypeShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
             } else {

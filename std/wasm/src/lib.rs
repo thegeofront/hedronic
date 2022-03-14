@@ -43,8 +43,13 @@ pub fn get_list(a: f32, length: usize) -> Vec<f32> {
 }
 
 #[wasm_bindgen]
+pub fn get_something(a: f32, c: f32, b: f32) -> f32 {
+    return a + b + c;
+}
+
+#[wasm_bindgen]
 pub struct Matrix {
-    width: u32,
+    width: usize,
     data: Vec<f32>
 }
 
@@ -52,24 +57,24 @@ pub struct Matrix {
 impl Matrix {
 
     // #[wasm_bindgen(constructor)]
-    pub fn matrix(width: u32, height: u32) -> Matrix {
-        let data = get_list(0.0, (height * width).try_into().unwrap());
+    pub fn matrix(width: usize, height: usize) -> Matrix {
+        let data = get_list(0.0, height * width);
         Matrix { width, data }
     }
 
-    pub fn width(&self) -> u32 {
+    pub fn width(&self) -> usize {
         self.width
     }
 
-    pub fn height(&self) -> u32 {
-        self.width
+    pub fn height(&self) -> usize {
+        (self.data.len() / self.width)
     }
 
     pub fn size(&self) -> usize {
         self.data.len()
     }
 
-    pub fn pointer(&self) -> *const f32 {
+    pub fn data(&self) -> *const f32 {
         self.data.as_ptr()
     }
 }

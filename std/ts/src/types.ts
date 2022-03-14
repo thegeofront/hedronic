@@ -6,12 +6,8 @@ export class Vector {
         public z: number,
     ) {}
 
-    static newVector(x=0.0, y=0.0, z=0.0) {
+    static vector(x=0.0, y=0.0, z=0.0) {
         return new Vector(x,y,z);
-    }
-
-    decompose() : [number, number, number] {
-        return [this.x, this.y, this.z];
     }
 }
 
@@ -22,11 +18,7 @@ export class Line {
         public b: Vector,
     ) {}
 
-    static newLine(a=Vector.newVector(), b=Vector.newVector()) {
+    static line(a=Vector.vector(), b=Vector.vector()) {
         return new Line(a, b);
-    }
-
-    decompose() : [Vector, Vector] {
-        return [this.a, this.b];
     }
 }

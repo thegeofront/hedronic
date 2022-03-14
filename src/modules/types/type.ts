@@ -10,15 +10,25 @@
 //     Tuple(TypeKind[]),
 // }
 // ``` 
-// thats really all we need. Now, we need to do weird things with children
+// thats really all we need. Now, we need to do weird things
+
 export enum Type {
+    
+    // basics
+    void,
     any,
     boolean,
     number,
     string,
+
+    // constructs 
+    Array,
     List,
     Tuple,
     Object,
+
+    // weirds
     Union,
     Reference,
+    Promise,
 }
