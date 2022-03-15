@@ -15,7 +15,7 @@ A component of my master thesis involves a flowchart-application or VPL (Visual 
 # install
 we need the 3d engine locally present. We use it as a 'header only' dependency at the moment for rapid development
 ```shell
-git clone https://github.com/josfeenstra/geon-engine engine
+git clone https://github.com/thegeofront/engine
 cd engine 
 npm install
 cd ..
@@ -23,100 +23,14 @@ cd ..
 
 then clone and install the actual repo 
 ```shell
-git clone https://github.com/josfeenstra/geon-nodes nodes
-cd nodes
+git clone https://github.com/thegeofront/app
+cd app
 npm install
-npm run build-wasm
-npm run build-std
-npm run build
+npm run build-all
 ```
 finally, serve the `public` folder using something like 
 [live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) or [python's http server](https://docs.python.org/3/library/http.server.html)
 []
-
-===============================================================================
-
-# PHASE 1
-- TODO
-
-===============================================================================
-
-# PHASE 2
-
-## STEP 1 : THE VPL;
-
-- Visuals
-  - [✔️] Try to make the functions look a bit nicer and 'chunkier'
-  - [✔️] Mute the colors, to prepare for some other color coding
-
-- quality of life
-  - [✔️] double click menu
-     - [✔️] MVP
-     - [] _extra: nicer popup window_
-     - [] _extra: filters_
-     - [] _extra: autocomplete_
-  - [🚧] copy-pasting (parts of) the flowchart
-    - _note: I broke this again during the cable refactor..._
-    - [ ] partial copying
-    - [ ] partial pasting
-    - [ ] duplicate (Ctrl + D / D)
-    - [ ] cable copy-pasting 
-  - [✔️] history & ctrl Z & Y support 
-  - [✔️] cable history
-     - [ ] fix minor bugs
-  - [🚧] Cable Refactor
-    - [✔️] We need a better definition and representation of variables. 
-    - [✔️] Must be easier for state management and history
-    - [✔️] Must be easier to reason about
-    - [✔️] Must be easier to translate to js / json or whatever
-    - [ ] Deal
-
-
-
-# STEP 2 : ADVANCED MODULE LOADING & INTRODUCTION OF TYPES
-
-- Module Loading
-  - [✔️] Dynamically load js, 
-  - [✔️] build a LibraryShim so we can reason about it
-  - [✔️] Rework the library shims  
-  - [✔️] Load `*.d.ts` header files. 
-    - [✔️] Ensure type savety from these headers 
-  - [✔️] Load a WebAssembly module created using wasm-pack       
-
-- Types 
-  - [✔️] How to represent basic types ? 
-  - [✔️] How to represent nested types (a list of numbers)
-  - [✔️] How to represent custom types ? (== structs | interfaces | classes)
-  - [✔️] How to show this on the canvas ?  
-     - [ ] Introduce a Variable Node 
-
-
-# STEP 3 : INPUT AND OUTPUT
-
-- Using the types of step 2
-
-- [ ] introduce VariableBlueprint -> Generates VariableNode 
-- [ ] Make a 'file drop' widget
-- [ ] Make a 'visualize geometry' widget
-- [ ] How to make users determine inputs & outputs ?
-
-- [ ] Try to 
-
-> ### Some brainstorming
-> Some categories are emerging. 
-> 1. Flow-language features 
-> - history, copy-pasting, loops, json editing, 
-> - idea for json: use the ideas generated in the 'gazelle' grasshopper plugin
-> - idea for loops: use nested lists, NOT TREES, and use the idea of a loop-box
-> 
-> 
-> 2. Module loading and conversion 
-> - How to deal with classes? types? non-pure functions? 
-> 
-> 
-> Things which affect both: 
->
->
 
 ===============================================================================
 
