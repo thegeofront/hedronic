@@ -1,10 +1,10 @@
-# GEON-NODES / Geofront
+# App
 
 # what is it 
-A component of my master thesis involves a flowchart-application or VPL (Visual Programming Language). I couldn't find any web-based flowchart api which satisfied the requirements, so I set out to create a new one.
+My master thesis involves a flowchart-application or VPL (Visual Programming Language).
 
 # Demo
-[Here](https://josfeenstra.nl/project/nodes)
+[Here](https://geofront.nl)
 
 # Roadmap MVP
 > status 
