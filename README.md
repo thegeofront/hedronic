@@ -1,7 +1,5 @@
-# App
-
-# what is it 
-My master thesis involves a flowchart-application or VPL (Visual Programming Language).
+# The Geofront Application
+a web-based visual programming environment meant for geoprocessing
 
 # Demo
 [Here](http://geofront.nl)
