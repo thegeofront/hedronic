@@ -4,7 +4,7 @@
 My master thesis involves a flowchart-application or VPL (Visual Programming Language).
 
 # Demo
-[Here](https://geofront.nl)
+[Here](http://geofront.nl)
 
 # Roadmap MVP
 > status 
