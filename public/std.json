@@ -39,6 +39,13 @@
             "filename": "wasm_nodes",
             "localPath": "wasm-modules/hello-wasm/",
             "url": "josfeenstra.nl/project/nodes/wasm-modules/"
+        },
+        {
+            "icon": "bi-puzzle-fill",
+            "nickname": "startin",
+            "filename": "gfp_startin",
+            "localPath": "wasm-modules/startin/",
+            "url": "josfeenstra.nl/project/nodes/wasm-modules/"
         }
     ]
 }

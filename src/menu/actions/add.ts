@@ -6,22 +6,39 @@ import { MenuItem } from "../logic/menu-item";
 import { MenuList } from "../logic/menu-list";
 
 export function getAddActions(catalogue: Catalogue) : MenuItem[] {
-    
     let list: MenuItem[] = [];
-
     for (let [name, module] of catalogue.modules) {
-        let sublist: MenuItem[] = [];
-        
-        for (let core of module.widgets) {
-            sublist.push(MenuAction.new({catalogue, core}, core.nameLower, make))
-        }
-
-        for (let core of module.blueprints) {
-            sublist.push(MenuAction.new({catalogue, core}, core.nameLower, make))
-        }
-
-        list.push(MenuList.new(name, sublist));
+        list.push(MenuList.new(name, makeSublist(catalogue, module)));
     }
+    return list;
+}
+
+function makeSublist(catalogue: Catalogue, module: ModuleShim) {
+    let list: MenuItem[] = [];
+    
+    let sublists = new Map<string, MenuList>();
+    for (let core of module.widgets) {
+        list.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+    }
+
+    for (let core of module.blueprints) {
+
+        // group class methods & constructors together
+        if (core.path.length > 2) {
+            let subname = core.path[1];
+            if (!sublists.has(subname)) {
+                let classlist = MenuList.new(subname, []);
+                sublists.set(subname, classlist);
+                list.push(classlist); 
+            } else {
+                let classlist = sublists.get(subname);
+                classlist?.items.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+            }
+        } else {
+            list.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+        }
+    }
+
     
     return list;
 }

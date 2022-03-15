@@ -106,6 +106,11 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     if (typename == "Vector") return MultiVector3.fromData([item.x, item.y, item.z]);
     if (typename == "Line") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
     if (typename == "Sphere") return Mesh.newSphere(item.center, item.radius, 10, 10);
+    if (typename == "Float32Array") return MultiVector3.fromData(item);
+    if (typename == "Float64Array") {
+        console.log("its here!");
+        return MultiVector3.fromData(item);
+    }
     
     return undefined;
 }
