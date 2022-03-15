@@ -34,7 +34,6 @@ jobs:
         with:
           path: app
 
-      - run: cd app
       - run: npm ci
       - run: npm run build
       
