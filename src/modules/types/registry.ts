@@ -3,7 +3,7 @@
  * 
  * Q: This seems weird, why is it needed?
  * A: Certain javascript objects will get additional geofront support (like visualization). 
- *    We must recognice and label these special objects during import.    
+ *    We must recognise and label these special objects during import.    
  */
 
 import { TypeShim } from "../shims/type-shim";
@@ -67,7 +67,7 @@ export function getStandardTypes(suffix="") {
         TypeShim.new("data", Type.F64Buffer),
     ]);
 
-    let line = TypeShim.new(suffix + "Line", Type.Line3, undefined, [
+    let line = TypeShim.new(suffix + "Line3", Type.Line3, undefined, [
         TypeShim.new("a", Type.Reference, undefined, [vector]),
         TypeShim.new("b", Type.Reference, undefined, [vector]),
     ]);

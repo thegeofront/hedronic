@@ -7,7 +7,7 @@ import { JSLoading } from "./helpers/js-loading";
 import ts from "typescript";
 import { TypeShim } from "./shims/type-shim";
 import { Misc } from "../nodes-canvas/util/misc";
-import { getStandardTypesAsDict } from "./types/std-type-registry";
+import { getStandardTypesAsDict } from "./types/registry";
 
 export namespace ModuleLoading {
     

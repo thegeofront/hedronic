@@ -29,7 +29,7 @@ export enum Type {
     string,
 
     // collections 
-    List,
+    List, // TODO remove this? its not a type, its like a 'type of types'
     Tuple,
     Object,
 

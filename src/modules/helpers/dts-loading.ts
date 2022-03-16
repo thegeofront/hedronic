@@ -378,6 +378,7 @@ export namespace DTSLoading {
 
         // list type 
         if (ts.isArrayTypeNode(node)) {
+            // WARN: geofront does not want mix-typed lists. this does not check if that is indeed the case
             let subs = [convertTypeToShim("item", node.elementType, typeReferences)]
             return TypeShim.new(name, Type.List, undefined, subs);
         } 
@@ -392,7 +393,7 @@ export namespace DTSLoading {
         if (ts.isTypeLiteralNode(node)) {
             let subs = node.members.map((element) => {
                 
-                // This is kind of strange... dont know why ts does not recognise the data. Disconnect between data & header?
+                // This is kind of strange... dont know why ts does not recognise these calls. Disconnect between data & header?
                 // @ts-ignore 
                 let elementName: string = element.name.escapedText;
                 // @ts-ignore
@@ -412,7 +413,6 @@ export namespace DTSLoading {
             // look up if the reference matches previously defined types
             if (typeName == "Promise") {
                 // this is a promise, get the subtype
-                console.log("found Promise!");
                 let subs = node.typeArguments!.map(t => convertTypeToShim("promised", t, typeReferences));
                 return TypeShim.new(name, Type.Promise, undefined, subs);
             }
