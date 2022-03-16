@@ -1,20 +1,11 @@
 // import { TypeKind } from "./type-kind";
 
+import { isTypeElement } from "typescript";
 import { State } from "../../nodes-canvas/model/state";
 import { Type } from "../types/type";
 
 /**
- * This is what the Flow would like to know about a certain variable
- * NOTE that this is NOT a StateShim
- * 
- * NOTE: maybe a better name would be 'NamedType'
- * 
- * Example: `new VariableShim("radius", Type.number, "🔘");`
- * Example: `new VariableShim("point", Type.Ojbect, [
- *      new VariableShim("x", Type.number),
- *      new VariableShim("y", Type.number),
- *      new VariableShim("z", Type.number)
- * ]);`
+ * This is what Geofront would like to know about a certain variable's type
  */
 export class TypeShim {
     private constructor(
@@ -30,7 +21,8 @@ export class TypeShim {
         if (child) {
             child.sort((a, b) => {
                 if (a.name == b.name) {
-                    throw new Error("children must have unique names...");
+                    console.error("children must have unique names...", a.name, b.name);
+                    return 0;
                 }
                 if (a.name < b.name) {
                     return -1;
@@ -117,10 +109,9 @@ export class TypeShim {
                 return "num";
             case Type.string:
                 return "str";
+            
             case Type.Tuple:
                 return `Tuple<${this.child!.map(c => c.typeToString()).join(", ")}>`;
-            case Type.Array:
-                return `Array<${this.child![0].typeToString()}>`;
             case Type.List:
             return `List<${this.child![0].typeToString()}>`;
             case Type.Object:
@@ -128,9 +119,37 @@ export class TypeShim {
             case Type.Union:
                 return `${this.child!.map(c => `${c.typeToString()}`).join(" | ")}`;  
             case Type.Reference:
-                return `${this.child![0].name}`;  
+                return `Ref->${this.child![0].name}`;  
             case Type.Promise:
                 return `Promise->${this.child![0].typeToString()}`; 
+
+            case Type.U8Buffer:
+            case Type.I8Buffer:
+            case Type.U16Buffer:
+            case Type.I16Buffer:
+            case Type.U32Buffer:
+            case Type.I32Buffer:
+            case Type.F32Buffer:
+            case Type.F64Buffer:
+                return `Buffer<${this.child![0].typeToString()}>`;
+            
+            // case Type.ByteMatrix:
+            // case Type.UntMatrix:
+            // case Type.IntMatrix:
+            // case Type.FloatMatrix:
+            // case Type.DoubleMatrix:
+            //     return `Matrix<${this.child![0].typeToString()}>`;
+
+            case Type.Vector3:
+                return `Point3`
+            case Type.MultiVector3:
+                return `MultiPoint3`
+            case Type.Line3:
+                return `Line3`
+            case Type.MultiLine3:
+                return `MultiLine3`
+            case Type.Mesh:
+                return `Mesh`
         }
     }
 
@@ -147,7 +166,6 @@ export class TypeShim {
             case Type.string:
                 return this.name.charAt(0).toUpperCase();
             
-            case Type.Array:
             case Type.Tuple:
             case Type.List:
                 return `[ ${this.child!.map(c => c.render()).join(" , ")} ]`;
@@ -159,6 +177,33 @@ export class TypeShim {
                 return this.child![0].render();  
             case Type.Promise:
                 return `P->` + this.child![0].render();  
+            case Type.U8Buffer:
+            case Type.I8Buffer:
+            case Type.U16Buffer:
+            case Type.I16Buffer:
+            case Type.U32Buffer:
+            case Type.I32Buffer:
+            case Type.F32Buffer:
+            case Type.F64Buffer:
+                return `Buffer<${this.child![0].typeToString()}>`;
+            
+            // case Type.ByteMatrix:
+            // case Type.UntMatrix:
+            // case Type.IntMatrix:
+            // case Type.FloatMatrix:
+            // case Type.DoubleMatrix:
+            //     return `Matrix<${this.child![0].typeToString()}>`;
+
+            case Type.Vector3:
+                return `Point3`
+            case Type.MultiVector3:
+                return `MultiPoint3`
+            case Type.Line3:
+                return `Line3`
+            case Type.MultiLine3:
+                return `MultiLine3`
+            case Type.Mesh:
+                return `Mesh`
         } 
     }
 }
