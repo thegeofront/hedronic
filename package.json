@@ -4,8 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build-all": "npm run build-wasm && npm run build-std && npm run build",
-        "build-wasm": "cd ../std && wasm-pack build --out-dir ../../../app/public/wasm-modules/hello-wasm/ --target web",
+        "install-all": "cd ../engine npm install && npm install",
+        "build-all": "npm run build-wasm && npm run build-startin && npm run build-std && npm run build",
+        "build-startin": "cd ../startin && wasm-pack build --out-dir ../app/public/wasm-modules/startin/ --target web",
+        "build-wasm": "cd ../std && wasm-pack build --out-dir ../app/public/wasm-modules/hello-wasm/ --target web",
         "build-std": "cd ../std-ts && tsc",
         "build": "webpack --mode production --env=prod",
         "build-dev": "webpack --env=dev",

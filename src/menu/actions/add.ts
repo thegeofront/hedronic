@@ -23,17 +23,20 @@ function makeSublist(catalogue: Catalogue, module: ModuleShim) {
 
     for (let core of module.blueprints) {
 
-        // group class methods & constructors together
+        
         if (core.path.length > 2) {
+
+            // group class methods & constructors together
             let subname = core.path[1];
             if (!sublists.has(subname)) {
                 let classlist = MenuList.new(subname, []);
                 sublists.set(subname, classlist);
                 list.push(classlist); 
-            } else {
-                let classlist = sublists.get(subname);
-                classlist?.items.push(MenuAction.new({catalogue, core}, core.nameLower, make))
-            }
+            } 
+
+            let classlist = sublists.get(subname);
+            classlist?.items.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+            
         } else {
             list.push(MenuAction.new({catalogue, core}, core.nameLower, make))
         }
