@@ -6,10 +6,78 @@
  * 
  */
 
+import { TypeShim } from "../shims/type-shim";
+import { Type } from "./type";
+
 export enum Trait {
     Vector3, 
     MultiVector3,
     Line3,
     MultiLine3,
     Mesh,
+}
+
+export const TraitShims = getTraitShims();
+
+export function getTraitShims(suffix="") {
+
+    let traitShims = new Map<Trait, TypeShim>();
+
+    // Point3,
+    // MultiPoint3,
+    // Line3,
+    // MultiLine3,
+    // Mesh 
+
+    let vector3 = TypeShim.new("Vector3", Type.Object, undefined, [
+        TypeShim.new("x", Type.number),
+        TypeShim.new("y", Type.number),
+        TypeShim.new("z", Type.number)
+    ]);
+
+    let multiVector3 = TypeShim.new("MultiVector3", Type.Object, undefined, [
+        TypeShim.new("data", Type.F64Buffer),
+    ]);
+
+    let line3 = TypeShim.new("Line3", Type.Object, undefined, [
+        TypeShim.new("a", Type.Reference, undefined, [vector3]),
+        TypeShim.new("b", Type.Reference, undefined, [vector3]),
+    ]);
+
+    let multiLine3 = TypeShim.new("MultiLine3", Type.Object, undefined, [
+        TypeShim.new("vertices", Type.F32Buffer),
+        TypeShim.new("edges", Type.U16Buffer),
+    ]);
+
+    let mesh = TypeShim.new("Mesh", Type.Object, undefined, [
+        TypeShim.new("vertices", Type.F32Buffer),
+        TypeShim.new("triangles", Type.U16Buffer),
+    ]);
+
+    traitShims.set(Trait.Line3, line3);
+    traitShims.set(Trait.Vector3, vector3);
+    traitShims.set(Trait.MultiLine3, multiLine3);
+    traitShims.set(Trait.MultiVector3, multiVector3);
+    traitShims.set(Trait.Mesh, mesh);
+
+    return traitShims
+}
+
+
+/**
+ * if this typeshim deserves traits, give them
+ */
+export function tryApplyTraits(type: TypeShim, traitShims=TraitShims) {
+
+    for (let [trait, shim] of traitShims.entries()) {
+        if (type.isAcceptableType(shim)) {
+            console.log(type, "is acceptable to ", Trait[trait]);
+            type.traits.push(trait);
+        } else if (shim.isAcceptableType(type)) {
+            console.log(type, "is reverse acceptable to ", Trait[trait]);
+            type.traits.push(trait);
+        }
+    }
+
+    return type;
 }

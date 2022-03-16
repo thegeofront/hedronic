@@ -6,6 +6,7 @@ import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
 import { FunctionShim } from "../shims/function-shim";
 import { TypeShim } from "../shims/type-shim";
+import { Trait, tryApplyTraits } from "../types/trait";
 import { Type } from "../types/type";
 
 namespace Help {
@@ -192,25 +193,19 @@ export namespace DTSLoading {
             let type = tryExtractReferenceNode(node, types, blackList);
             if (!type) return false;
 
-            tryRecieveOfficialTypeFlag(type) {
-
-            }
-
             if (types.has(type.name)) {
                 console.warn("duplicate type declaration: ", type.name);
                 return false;
             }
+
+            tryApplyTraits(type);
+
             types.set(type.name, type);
             return true;
         });
 
         return types;
     }
-
-    function tryRecieveOfficialTypeFlag() {
-
-    }
-
 
     function tryExtractReferenceNode(node: ts.Node, types: Map<string, TypeShim>, blacklist?: Set<string>) {
         

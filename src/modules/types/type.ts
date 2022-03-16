@@ -12,6 +12,8 @@
 // ``` 
 // thats really all we need. Now, we need to do weird things
 
+import { TypeShim } from "../shims/type-shim";
+
 // export type BufferLike = Type.IntBuffer | Type.UntBuffer | Type.ByteBuffer | Type.FloatBuffer | Type.DoubleBuffer;
 
 // export type MatrixLike = Type.IntMatrix | Type.UntMatrix | Type.ByteMatrix | Type.FloatMatrix | Type.DoubleMatrix;
@@ -54,4 +56,17 @@ export enum Type {
     // IntMatrix, 
     // FloatMatrix,
     // DoubleMatrix,
+}
+
+export function getBufferTypes() {
+    return [
+        TypeShim.new("Uint8Array", Type.U8Buffer),
+        TypeShim.new("Int8Array", Type.I8Buffer),
+        TypeShim.new("Uint16Array", Type.U16Buffer),
+        TypeShim.new("Int16Array", Type.I16Buffer),
+        TypeShim.new("Uint32Array", Type.U32Buffer),
+        TypeShim.new("Int32Array", Type.I32Buffer),
+        TypeShim.new("Float32Array", Type.F32Buffer),
+        TypeShim.new("Float64Array", Type.F64Buffer),
+    ]
 }

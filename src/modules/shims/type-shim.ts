@@ -2,12 +2,16 @@
 
 import { isTypeElement } from "typescript";
 import { State } from "../../nodes-canvas/model/state";
+import { Trait } from "../types/trait";
 import { Type } from "../types/type";
 
 /**
  * This is what Geofront would like to know about a certain variable's type
  */
 export class TypeShim {
+
+    traits: Trait[] = [];
+
     private constructor(
         public readonly name:  string,  // what to show up as name 
         public readonly type: Type, // the actual type  
@@ -85,8 +89,8 @@ export class TypeShim {
         if (other.type == Type.Tuple || other.type == Type.List || other.type == Type.Object) {   
             let childs = this.child!;
             let others = other.child!;
-            if (!childs || !others) throw new Error("should have children!");
-            if (childs.length != others.length) throw new Error("should have same length!");
+            if (!childs || !others) return false;
+            if (childs.length != others.length) return false;
             for (let i = 0; i < this.child!.length; i++) {
                 if (childs[i].name != others[i].name || !childs[i].isAcceptableType(others[i])) {
                     return false;

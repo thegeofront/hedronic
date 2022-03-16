@@ -1,5 +1,6 @@
 import { Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
+import { Trait } from "../../modules/types/trait";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
@@ -19,6 +20,7 @@ export function makeMenuFromNode(payload: {node: GeonNode, nodes: NodesCanvas}) 
             <summary slot="title"><b>${type.name}: </b><code>${t}</code></summary>
             <p>value: <code>${socket ? nodes.tryGetCache(socket) : ""}</code></p>
             <p>con: <code>${connection}</code></p>
+            <p>traits: <code>${type.traits.map(t => Trait[t]).join()}</code></p>
         </details>
         `;
     }
