@@ -1,7 +1,6 @@
 /**
  * This will make sure we can export and import more complex types from and to something like rust
  */
-
 export function newVector3(x: number, y: number, z: number) {
     return {
         x, y, z
@@ -10,7 +9,7 @@ export function newVector3(x: number, y: number, z: number) {
 
 export function newMultiVector3(data: Float32Array | Float64Array) {
     return {
-        data: Float64Array.from(data)
+        vertices: Float64Array.from(data),
     };
 }
 
@@ -21,9 +20,10 @@ export function newLine3(ax: number, ay: number, az: number, bx: number, by: num
     }
 }
 
-export function newMultiLine3(data: Float32Array | Float64Array) {
+export function newMultiLine3(data: Float32Array | Float64Array, lines: Uint16Array) {
     return {
-        data: Float64Array.from(data)
+        vertices: Float64Array.from(data),
+        lines: Uint16Array.from(lines)
     };
 }
 

@@ -131,7 +131,7 @@ export class TypeShim {
             case Type.I32Buffer:
             case Type.F32Buffer:
             case Type.F64Buffer:
-                return `Buffer<${this.child![0].typeToString()}>`;
+                return `Buffer`;
             
             // case Type.ByteMatrix:
             // case Type.UntMatrix:
@@ -140,16 +140,16 @@ export class TypeShim {
             // case Type.DoubleMatrix:
             //     return `Matrix<${this.child![0].typeToString()}>`;
 
-            case Type.Vector3:
-                return `Point3`
-            case Type.MultiVector3:
-                return `MultiPoint3`
-            case Type.Line3:
-                return `Line3`
-            case Type.MultiLine3:
-                return `MultiLine3`
-            case Type.Mesh:
-                return `Mesh`
+            // case Type.Vector3:
+            //     return `Point3`
+            // case Type.MultiVector3:
+            //     return `MultiPoint3`
+            // case Type.Line3:
+            //     return `Line3`
+            // case Type.MultiLine3:
+            //     return `MultiLine3`
+            // case Type.Mesh:
+            //     return `Mesh`
         }
     }
 
@@ -185,7 +185,7 @@ export class TypeShim {
             case Type.I32Buffer:
             case Type.F32Buffer:
             case Type.F64Buffer:
-                return `Buffer<${this.child![0].typeToString()}>`;
+                return Type[this.type].slice(0, 3);
             
             // case Type.ByteMatrix:
             // case Type.UntMatrix:
@@ -194,16 +194,16 @@ export class TypeShim {
             // case Type.DoubleMatrix:
             //     return `Matrix<${this.child![0].typeToString()}>`;
 
-            case Type.Vector3:
-                return `Point3`
-            case Type.MultiVector3:
-                return `MultiPoint3`
-            case Type.Line3:
-                return `Line3`
-            case Type.MultiLine3:
-                return `MultiLine3`
-            case Type.Mesh:
-                return `Mesh`
+            // case Type.Vector3:
+            //     return `Point3`
+            // case Type.MultiVector3:
+            //     return `MultiPoint3`
+            // case Type.Line3:
+            //     return `Line3`
+            // case Type.MultiLine3:
+            //     return `MultiLine3`
+            // case Type.Mesh:
+            //     return `Mesh`
         } 
     }
 }

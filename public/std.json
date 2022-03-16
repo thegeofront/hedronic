@@ -1,32 +1,26 @@
 ﻿{
     "std": [
         {
-            "icon": "bi-question-diamond",
             "nickname": "various",
+            "icon": "bi-question-diamond",
             "filename": "various",
             "path": "./modules/"
         },
         {
-            "icon": "bi-toggle-on",
             "nickname": "bool",
+            "icon": "bi-toggle-on",
             "filename": "bool",
             "path": "./modules/"
         },
         {
-            "icon": "bi-calculator",
             "nickname": "math",
+            "icon": "bi-calculator",
             "filename": "math",
             "path": "./modules/"
         },
         {
-            "icon": "bi-braces",
-            "nickname": "std",
-            "filename": "std",
-            "path": "./modules/"
-        },
-        {
-            "icon": "bi-arrow",
             "nickname": "types",
+            "icon": "bi-arrow",
             "filename": "types",
             "path": "./modules/"
         }

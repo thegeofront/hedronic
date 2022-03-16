@@ -16,7 +16,7 @@
 
 // export type MatrixLike = Type.IntMatrix | Type.UntMatrix | Type.ByteMatrix | Type.FloatMatrix | Type.DoubleMatrix;
 
-export type GeometryLike = Type.Vector3 | Type.MultiVector3 | Type.Line3 | Type.MultiLine3 | Type.Mesh;
+// export type GeometryLike = Type.Vector3 | Type.MultiVector3 | Type.Line3 | Type.MultiLine3 | Type.Mesh;
 
 
 export enum Type {
@@ -35,7 +35,7 @@ export enum Type {
 
     // weirds
     Union,
-    Reference, // this is how foreign types are represented
+    Reference, // this is how foreign types / objects are represented
     Promise,
 
     // buffers 
@@ -54,11 +54,4 @@ export enum Type {
     // IntMatrix, 
     // FloatMatrix,
     // DoubleMatrix,
-
-    // geometry
-    Vector3,
-    MultiVector3,
-    Line3,
-    MultiLine3,
-    Mesh 
 }

@@ -255,6 +255,7 @@ export class NodesGraph {
 
     /**
      * Extract a copy of a certain selection
+     * TODO: I think this does not work properly...
      * @param selection 
      */
     subgraph(selection: string[]) {

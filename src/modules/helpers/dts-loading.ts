@@ -186,11 +186,16 @@ export namespace DTSLoading {
     /**
      * Catch all declared types, and convert them to a type format we can use
      */
-    export function extractTypeDeclarations(source: ts.Node, types = new Map<string, TypeShim>(), blackList?: Set<string>) {
+    export function extractTypeDeclarations(source: ts.Node, types: Map<string, TypeShim>, blackList?: Set<string>) {
 
         Help.forEachRecursiveNode(source, (node) => {
             let type = tryExtractReferenceNode(node, types, blackList);
             if (!type) return false;
+
+            tryRecieveOfficialTypeFlag(type) {
+
+            }
+
             if (types.has(type.name)) {
                 console.warn("duplicate type declaration: ", type.name);
                 return false;
@@ -201,6 +206,11 @@ export namespace DTSLoading {
 
         return types;
     }
+
+    function tryRecieveOfficialTypeFlag() {
+
+    }
+
 
     function tryExtractReferenceNode(node: ts.Node, types: Map<string, TypeShim>, blacklist?: Set<string>) {
         
@@ -218,12 +228,13 @@ export namespace DTSLoading {
             let subTypes: TypeShim[] = [];
             for (let member of node.members) {
                 if (!ts.isPropertyDeclaration(member)) continue;
-                
                 let memberName = Help.getName(member);
                 
                 //@ts-ignore
                 let memberType: ts.TypeNode = member.type;
                 
+                if (!memberType) continue;
+
                 subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
             return TypeShim.new(name, Type.Object, undefined, subTypes);
@@ -363,7 +374,7 @@ export namespace DTSLoading {
         // saveguard
         if (!node) {
             console.warn("node does not appear to exist...");
-            console.warn(node)
+            console.warn(node, name)
             return TypeShim.new(name, Type.any);
         }
 

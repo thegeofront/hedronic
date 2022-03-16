@@ -125,9 +125,9 @@ export class NodesCanvas {
         ) {
             let [aFixed] = various.toNumber(a) /* "x": 3 | "y": -1 */;
             let [cFixed] = various.toNumber(c) /* "x": 3 | "y": 3 */;
-            let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
-            let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
-            let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;
+            let [d] = types.vector3(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
+            let [e] = types.vector3(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
+            let [f] = types.line3(d, e) /* "x": 13 | "y": 5 */;
             return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
         }
         `;

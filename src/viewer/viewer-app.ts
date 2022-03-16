@@ -103,14 +103,17 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     let typename = item.constructor.name;
     // console.log(typename);
 
-    if (typename == "Vector") return MultiVector3.fromData([item.x, item.y, item.z]);
-    if (typename == "Line") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
-    if (typename == "Sphere") return Mesh.newSphere(item.center, item.radius, 10, 10);
-    if (typename == "Float32Array") return MultiVector3.fromData(item);
-    if (typename == "Float64Array") {
-        console.log("its here!");
-        return MultiVector3.fromData(item);
+    if (typename == "Vector" || typename == "Vector3") return MultiVector3.fromData([item.x, item.y, item.z]);
+    if (typename == "Line" || typename == "Line3") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
+    if (typename == "MultiVector" || typename == "MultiVector3") {
+        return MultiVector3.fromData(item); 
     }
+    // if (typename == "Float32Array") return MultiVector3.fromData(item);
+    // if (typename == "Float64Array") {
+    //     console.log("its here!");
+    //     console.log(item);
+    //     return MultiVector3.fromData(Float32Array.from(item));
+    // }
     
     return undefined;
 }
