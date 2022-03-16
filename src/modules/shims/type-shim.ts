@@ -1,8 +1,6 @@
 // import { TypeKind } from "./type-kind";
 
-import { isTypeElement } from "typescript";
-import { State } from "../../nodes-canvas/model/state";
-import { Trait } from "../types/trait";
+import { Trait, tryApplyTraits } from "../types/trait";
 import { Type } from "../types/type";
 
 /**
@@ -22,6 +20,7 @@ export class TypeShim {
     static new(name: string, type: Type, glyph?: string, child?: TypeShim[]) {
 
         // make sure children are sorted
+        // this is dumb, but relevant for type checking
         if (child) {
             child.sort((a, b) => {
                 if (a.name == b.name) {
@@ -35,7 +34,6 @@ export class TypeShim {
                 }
             })
         }
-
         return new TypeShim(name, type, glyph, child);
     }
 

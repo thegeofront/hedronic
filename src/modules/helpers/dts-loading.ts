@@ -198,8 +198,6 @@ export namespace DTSLoading {
                 return false;
             }
 
-            tryApplyTraits(type);
-
             types.set(type.name, type);
             return true;
         });
@@ -232,7 +230,7 @@ export namespace DTSLoading {
 
                 subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
-            return TypeShim.new(name, Type.Object, undefined, subTypes);
+            return createTraitedTypeShim(name, Type.Object, undefined, subTypes);
         }
 
         // Interface
@@ -247,14 +245,14 @@ export namespace DTSLoading {
 
                 subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
-            return TypeShim.new(name, Type.Object, undefined, subTypes);
+            return createTraitedTypeShim(name, Type.Object, undefined, subTypes);
         }
 
         // Alias
         if (ts.isTypeAliasDeclaration(node)) {
             let typeName = Help.getTypeName(node.type);
             let subType = convertTypeToShim(typeName, node.type, types);
-            return TypeShim.new(name, Type.Reference, undefined, [subType]);
+            return createTraitedTypeShim(name, Type.Reference, undefined, [subType]);
         }
 
         // none
@@ -386,13 +384,13 @@ export namespace DTSLoading {
         if (ts.isArrayTypeNode(node)) {
             // WARN: geofront does not want mix-typed lists. this does not check if that is indeed the case
             let subs = [convertTypeToShim("item", node.elementType, typeReferences)]
-            return TypeShim.new(name, Type.List, undefined, subs);
+            return createTraitedTypeShim(name, Type.List, undefined, subs);
         } 
         
         // union type
         if (ts.isUnionTypeNode(node)) {
             let subs = node.types.map((child, i) => convertTypeToShim(`option ${i}`, child, typeReferences));
-            return TypeShim.new(name, Type.Union, undefined, subs);
+            return createTraitedTypeShim(name, Type.Union, undefined, subs);
         }
         
         // literal object type 
@@ -407,7 +405,7 @@ export namespace DTSLoading {
 
                 return convertTypeToShim(elementName, elementType, typeReferences);
             });
-            return TypeShim.new(name, Type.Object, undefined, subs);
+            return createTraitedTypeShim(name, Type.Object, undefined, subs);
         }
 
         // referenced object type
@@ -424,7 +422,7 @@ export namespace DTSLoading {
             }
 
             if (typeReferences.has(typeName)) {
-                return TypeShim.new(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
+                return createTraitedTypeShim(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
             } else {
                 console.warn("could not find the reference type titled: ", typeName);
                 return TypeShim.new(name, Type.any);
@@ -433,5 +431,14 @@ export namespace DTSLoading {
 
         console.warn("type not implemented: ", Help.getKind(node));
         return TypeShim.new(name, Type.any);
+    }
+
+    /**
+     * Create typeshim, and try to apply traits
+     */
+    function createTraitedTypeShim(name: string, type: Type, glyph?: string | undefined, child?: TypeShim[] | undefined) {
+        let shim = TypeShim.new(name, type, glyph, child);
+        tryApplyTraits(shim);
+        return shim;
     }
 }

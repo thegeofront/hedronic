@@ -23,12 +23,6 @@ export function getTraitShims(suffix="") {
 
     let traitShims = new Map<Trait, TypeShim>();
 
-    // Point3,
-    // MultiPoint3,
-    // Line3,
-    // MultiLine3,
-    // Mesh 
-
     let vector3 = TypeShim.new("Vector3", Type.Object, undefined, [
         TypeShim.new("x", Type.number),
         TypeShim.new("y", Type.number),
@@ -36,7 +30,7 @@ export function getTraitShims(suffix="") {
     ]);
 
     let multiVector3 = TypeShim.new("MultiVector3", Type.Object, undefined, [
-        TypeShim.new("data", Type.F64Buffer),
+        TypeShim.new("vertices", Type.F64Buffer),
     ]);
 
     let line3 = TypeShim.new("Line3", Type.Object, undefined, [
@@ -71,12 +65,14 @@ export function tryApplyTraits(type: TypeShim, traitShims=TraitShims) {
 
     for (let [trait, shim] of traitShims.entries()) {
         if (type.isAcceptableType(shim)) {
-            console.log(type, "is acceptable to ", Trait[trait]);
+            // console.log(type, "is acceptable to ", Trait[trait]);
             type.traits.push(trait);
-        } else if (shim.isAcceptableType(type)) {
-            console.log(type, "is reverse acceptable to ", Trait[trait]);
-            type.traits.push(trait);
-        }
+        } 
+        
+        // else if (shim.isAcceptableType(type)) {
+        //     console.log(type, "is reverse acceptable to ", Trait[trait]);
+        //     type.traits.push(trait);
+        // }
     }
 
     return type;
