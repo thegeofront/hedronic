@@ -24,7 +24,7 @@ export class InputWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
-        return [MenuMaker.textarea(this.state.toString(), this.setState.bind(this))];
+        return [MenuMaker.textarea("text", this.state.toString(), this.setState.bind(this))];
     }
 
     setState(state: string) {

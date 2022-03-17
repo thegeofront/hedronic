@@ -1,8 +1,11 @@
-import { IO, Vector2, WebIO } from "../../../../engine/src/lib";
+import { isTypeAliasDeclaration } from "typescript";
+import { IO, Vector2, WebInput, WebIO } from "../../../../engine/src/lib";
+import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
 import { State } from "../model/state";
 import { Widget, WidgetSide } from "../model/widget";
+import { NodesCanvas } from "../nodes-canvas";
 
 export class FileReadWidget extends Widget {
     
@@ -20,10 +23,35 @@ export class FileReadWidget extends Widget {
         return FileReadWidget.new(this.state);
     }
 
-    // makeMenu(): HTMLElement[] {
-    //     return [MenuUtil.makeButton("Read", this.onClick.bind(this))];
-    // }
+    makeMenu(): HTMLElement[] {
+        return [MenuMaker.file("file", this.onFilesRecieved.bind(this))];
+    }
 
     onClick() {
+        WebInput.askForFile("file", (files: FileList) => {
+            console.log("hoooerraiiii")
+            this.onFilesRecieved(files);
+        })
     }
+
+    async onFilesRecieved(files: FileList | undefined) {
+        if (!files) return;
+        if (files.length == 0) return;
+
+        // for now, just take the first file
+        let data = await WebIO.readFileAsText(files[0]);
+
+        if (data == null) {
+            alert("could not process file as text");
+            return;  
+        } 
+
+        if (data instanceof ArrayBuffer) {
+            alert("array buffer processing not implemented (yet)")
+            return;
+        }
+
+        this.state = data;
+        this.onChange();
+    }   
 }

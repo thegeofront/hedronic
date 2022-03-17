@@ -1,7 +1,11 @@
-import { Parameter } from "../../../../engine/src/lib";
+import { IO, Parameter, WebIO } from "../../../../engine/src/lib";
 import { Str, Compose, Element } from "../../html/util";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 
+/**
+ * This wraps certain bootstrap menu / form items.
+ * With this, we can easely create dynamic menu's
+ */
 export namespace MenuMaker {
     export function json(json: any) {
         let strs: string[] = []; 
@@ -79,15 +83,15 @@ export namespace MenuMaker {
         return slider;
     }
 
-    export function textarea(defaultText: string, callback: (input: string) => void) {
+    export function textarea(label: string, defaultText: string, callback: (input: string) => void) {
         let el = Element.html`
         <div class="form-group">
-           <label for="comment">Text:</label>
-           <textarea class="form-control" rows="5" id="comment">${defaultText}</textarea>
+           <label for="${label}">${label}</label>
+           <textarea class="form-control" rows="5" id="${label}">${defaultText}</textarea>
        </div>
        `;
         
-        let comment = el.querySelector("#comment") as HTMLElement;
+        let comment = el.querySelector(`#${label}`) as HTMLElement;
         // comment.oninput = (e: Event) => {
         //     console.log("change!!!");
         //     let target = e.target as HTMLTextAreaElement
@@ -106,6 +110,29 @@ export namespace MenuMaker {
 
         return el;
     }
+
+    /**
+     * This requires a bit more work to make useful 
+     */
+    export function file(label: string, callback: (files?: FileList) => void) {
+        let el = Element.html`
+        <div class="mb-3">
+            <label for="${label}" class="form-label">${label}</label>
+            <input class="form-control" type="file" id="${label}" multiple>
+        </div>
+        `
+
+        let fileHandler = el.querySelector(`#${label}`) as HTMLElement;
+        fileHandler.onchange = (e: Event) => {
+            let input = e.target as HTMLInputElement
+            let files = input.files;
+            if (files == null) 
+                callback(undefined);
+            else 
+                callback(files);
+        }
+        return el;
+    }      
 }
 
 
