@@ -111,6 +111,35 @@ export namespace MenuMaker {
         return el;
     }
 
+    export function text(label: string, defaultText: string, callback: (input: string) => void) {
+        let el = Element.html`
+        <div class="input-group">
+            <span class="input-group-text" id="${label}">${label}</span>
+            <input type="text" class="form-control" aria-describedby="${label}" value="${defaultText}">
+        </div>
+       `;
+        
+        let comment = el.querySelector(`input`) as HTMLInputElement;
+        // comment.oninput = (e: Event) => {
+        //     console.log("change!!!");
+        //     let target = e.target as HTMLTextAreaElement
+        //     let input = target.textContent || "";
+        //     this.setState(input);
+        // }
+        comment.onchange = (ev) => {
+            console.log("changiechange")
+            // if (ev.code != "Enter") return;
+            // if (ev.shiftKey || ev.ctrlKey || ev.metaKey) return;
+            ev.stopPropagation();
+            ev.preventDefault();
+            let target = ev.target as HTMLTextAreaElement
+            let input = target.value || "";
+            callback(input);
+        };
+
+        return el;
+    }  
+
     export function textarea(label: string, defaultText: string, callback: (input: string) => void) {
         let el = Element.html`
         <div class="form-group">

@@ -7,7 +7,7 @@ import { Widget, WidgetSide } from "../model/widget";
 
 export class FileWriteWidget extends Widget {
 
-    filename = "my-result";
+    filename = "my-result.txt";
     
     get filecontent() : string | undefined {
         return this.state as string || undefined;
@@ -28,7 +28,10 @@ export class FileWriteWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
-        return [MenuMaker.button("Write", this.onClick.bind(this))];
+        return [
+            MenuMaker.text("filename", this.filename, (str) => {this.filename = str}),
+            MenuMaker.button("Write", this.onClick.bind(this))
+        ];
     }
 
     onClick() {
