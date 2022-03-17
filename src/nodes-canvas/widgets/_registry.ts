@@ -1,5 +1,7 @@
 import { ButtonWidget } from "./button-widget";
 import { ConsoleWidget } from "./console-widget";
+import { ListGetWidget } from "./data/list-get-widget";
+import { ListSetWidget } from "./data/list-set-widget";
 import { FileReadWidget } from "./file-read-widget";
 import { FileWriteWidget } from "./file-write-widget";
 import { ImageWidget } from "./image-widget";
@@ -19,5 +21,8 @@ export function getDefaultWidgets() {
         ViewWidget.new(false),
         FileWriteWidget.new(false),
         FileReadWidget.new(false),
+
+        ListGetWidget.new(3),
+        ListSetWidget.new(3),
     ]
 }

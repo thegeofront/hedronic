@@ -20,7 +20,8 @@ import { TypeShim } from "../../modules/shims/type-shim";
 
 export enum WidgetSide {
     Input, // static input or UI 
-    Output // output: save file, or rendering...
+    Output, // output: save file , or rendering...
+    Process // output: save file , or rendering...
 }
 
 /**
@@ -41,13 +42,14 @@ export enum WidgetSide {
 export class Widget {
 
     nameLower: string;
-    domain: Domain2;
+    domain?: Domain2;
     onChangeCallback?: Function;
+    onChangeInOutCallback?: Function;
 
     protected constructor(
         public readonly name: string,
         public readonly side: WidgetSide,
-        public readonly size: Vector2,
+        public readonly size: Vector2 | undefined,
         public ins: TypeShim[],
         public outs: TypeShim[],
         public state: State,
@@ -66,6 +68,10 @@ export class Widget {
 
     static determineWidgetSize(side: WidgetSide, size?: Vector2) {
         // sry for this dumb code
+        if (side == WidgetSide.Process) {
+            return undefined;
+        }
+
         if (!size) {
             if (side == WidgetSide.Input) {
                 return Domain2.fromWH(0,0,1,1);
@@ -110,7 +116,7 @@ export class Widget {
     }
 
     trySelect(local: Vector2) : number | undefined {
-   
+        if (!this.domain) return undefined;
         if (this.domain.includesEx(local)) {
             return Infinity;
         }
@@ -118,6 +124,8 @@ export class Widget {
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
+
+        if (!this.domain) return;
 
         let size = this.domain.size().scaled(cellSize);
         const A = 4; // offset A
@@ -151,6 +159,12 @@ export class Widget {
 
     onChange() {
         if (this.onChangeCallback) this.onChangeCallback();
+    }
+    
+    onUpdateInOutCount() {
+        // TODO hook this up!!!! 
+        // right now, the dynamic input output widgets will cause errors
+        if (this.onChangeInOutCallback) this.onChangeInOutCallback();
     }
 
     onDestroy() {

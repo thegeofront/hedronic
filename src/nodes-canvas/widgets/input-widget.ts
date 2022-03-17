@@ -49,6 +49,10 @@ export class InputWidget extends Widget {
 }
 
 export function renderTextInWidget(w: Widget, text: string, ctx: CTX, pos: Vector2, component: number, cellSize: number) {
+
+    if (!w.domain) return;
+    if (!w.size) return;
+
     let size = w.domain.size().scaled(cellSize);
     pos = pos.clone();
     pos.x += w.domain.x.t0 * cellSize;

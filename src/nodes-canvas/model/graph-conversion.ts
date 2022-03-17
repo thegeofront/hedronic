@@ -207,7 +207,7 @@ export function graphToFunction(graph: NodesGraph, name: string) {
         if (node.operation) { // A | operation 
             let inputs = toEasyNames(node.getCablesAtOutput()).join(", ");
             let outputs = toEasyNames(node.getCablesAtInput()).join(", ");
-            let str = `let [${inputs}] = ${node.operation.path[0]}.${node.operation.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
+            let str = `let [${inputs}] = ${node.operation!.path[0]}.${node.core.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
             processes.push(str);
         } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
             for (let str of toEasyNames(node.getCablesAtOutput())) {
@@ -219,8 +219,12 @@ export function graphToFunction(graph: NodesGraph, name: string) {
                 str += ` /* "widget": "${node.widget?.name}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                 outputs.push(str);
             }
+        } else if (node.widget!.side == WidgetSide.Process) {
+            // TODO : make this 
+            console.warn("we must implement this!");
         } else {
             throw new Error("should never happen");
+
         }
     }
 

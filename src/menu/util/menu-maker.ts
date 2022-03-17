@@ -83,6 +83,34 @@ export namespace MenuMaker {
         return slider;
     }
 
+    export function number(param: Parameter, onChangeCallback?: (p: Parameter) => void, onInputCallback?: (p: Parameter) => void) {
+        let el = Element.html`
+        <div class="form">
+            <label for="${param.name}" class="form-label">${param.name}</label>
+            <input type="number" class="form-number" min="${param.min}" max="${param.max}" step="${param.step}" value="${param.state}" id="${param.name}">
+        </div>
+       `;
+        if (onInputCallback) {
+            el.oninput = (ev: Event) => {
+                //@ts-ignore
+                let value: string = ev.target.value;
+                param.set(Number(value)); 
+                onInputCallback(param);
+            };
+        }
+    
+        if (onChangeCallback) {
+            el.onchange = (ev: Event) => {
+                //@ts-ignore
+                let value: string = ev.target.value;
+                param.set(Number(value)); 
+                onChangeCallback(param);
+            };
+        }
+    
+        return el;
+    }
+
     export function textarea(label: string, defaultText: string, callback: (input: string) => void) {
         let el = Element.html`
         <div class="form-group">

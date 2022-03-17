@@ -28,8 +28,8 @@ export class FileReadWidget extends Widget {
     }
 
     onClick() {
-        WebInput.askForFile("file", (files: FileList) => {
-            console.log("hoooerraiiii")
+        WebInput.askForFile("file", (files: FileList| null) => {
+            if (!files) return;
             this.onFilesRecieved(files);
         })
     }

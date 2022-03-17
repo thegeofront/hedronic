@@ -151,7 +151,7 @@ export class NodesGraph {
             let node = this.getNode(key)!;
 
             // calculate in several ways, depending on the node
-            if (node.operation) { // A | operation -> pull cache from cables & push cache to cables
+            if (node.operation || node.widget?.side == WidgetSide.Process) { // A | operation -> pull cache from cables & push cache to cables
                 
                 let inputs = [];
                 for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!! ?
@@ -160,7 +160,7 @@ export class NodesGraph {
                 let outputs;
                 try {
                     //TODO RUN RUN RUN
-                    outputs = await node.operation.run(inputs);
+                    outputs = await node.core.run(inputs);
                 } catch(e) {
                     let error = e as Error;
                     node.errorState = error.message;
@@ -169,10 +169,10 @@ export class NodesGraph {
                 }
 
                 let outCables = node.getCablesAtOutput();
-                if (node.operation.outCount == 1) {
+                if (node.core.outCount == 1) {
                     setValue(outCables[0], outputs);
                 } else {
-                    for (let i = 0 ; i < node.operation.outCount; i++) {
+                    for (let i = 0 ; i < node.core.outCount; i++) {
                         setValue(outCables[i], outputs[i]);
                     }
                 }

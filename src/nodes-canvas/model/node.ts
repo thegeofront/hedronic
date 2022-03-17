@@ -134,7 +134,10 @@ export class GeonNode {
 
     getHeight() {
         if (this.type == CoreType.Widget) {
-            return this.widget!.size.y;
+            if (this.widget!.size)
+                return Math.max(1, this.widget!.size.y);
+            else 
+                return Math.max(1, this.core.inCount, this.core.outCount);
         } else {
             return Math.max(2, this.core.inCount, this.core.outCount);
         }
