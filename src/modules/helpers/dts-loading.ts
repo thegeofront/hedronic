@@ -431,8 +431,7 @@ export namespace DTSLoading {
         }
 
         if (node.kind == ts.SyntaxKind.LiteralType) {
-            console.log(node);
-            
+          
             //@ts-ignore
             let text = node.literal.text || "";
 

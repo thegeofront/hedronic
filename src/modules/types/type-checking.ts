@@ -17,6 +17,7 @@ export namespace TypeChecking {
             return self.children![0].isAcceptableType(other);
         }
 
+        // the literal can be used as a type flag
         if (self.type == Type.Literal) {
             return self.children![0].name == other.children![0].name;
         }
@@ -32,6 +33,7 @@ export namespace TypeChecking {
             }
             return false;
         }
+
         if (self.type == Type.Union) {
             if (!self.children) throw new Error("should have children!");
             let children = self.children!;

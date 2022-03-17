@@ -22,7 +22,7 @@ export class ViewWidget extends Widget {
 
     run(...args: State[]) : State[] {
         this.state = args[0];
-        HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString() });
+        HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString()});
         return [];
     }
 

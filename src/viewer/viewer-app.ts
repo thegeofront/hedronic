@@ -1,9 +1,17 @@
 import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh } from "../../../engine/src/lib";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
+import { TypeShim } from "../modules/shims/type-shim";
+import { Trait } from "../modules/types/trait";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
-export const VisualizeEvent = new PayloadEventType<{state: any, id: string, preview?: boolean}>("visualizestate");
+export type VisualizePayload = {
+    state: any, 
+    id: string, 
+    preview?: boolean
+}
+
+export const VisualizeEvent = new PayloadEventType<VisualizePayload>("visualizestate");
 
 export const VisualizePreviewEvent = new PayloadEventType<NodesCanvas>("visualizepreview");
 
@@ -101,19 +109,23 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     
     //@ts-ignore
     let typename = item.constructor.name;
-    // console.log(typename);
-
-    if (typename == "Vector" || typename == "Vector3") return MultiVector3.fromData([item.x, item.y, item.z]);
-    if (typename == "Line" || typename == "Line3") return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
-    if (typename == "MultiVector" || typename == "MultiVector3") {
-        return MultiVector3.fromData(item); 
-    }
-    // if (typename == "Float32Array") return MultiVector3.fromData(item);
-    // if (typename == "Float64Array") {
-    //     console.log("its here!");
-    //     console.log(item);
-    //     return MultiVector3.fromData(Float32Array.from(item));
-    // }
     
+    if (typename == "Vector" || typename == "Vector3") 
+        return MultiVector3.fromData([item.x, item.y, item.z]);
+    if (typename == "Line" || typename == "Line3") 
+        return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
+
+    let trait = item.trait;
+
+    if (trait == "multi-vector-3") 
+        return MultiVector3.fromData(item.buffer); 
+
+    if (trait == "multi-line-3") 
+        return MultiLine.new(item.vertices, item.edges); 
+
+    if (trait == "mesh") 
+        return Mesh.new(MultiVector3.fromData(item.vertices), item.triangles); 
+    
+
     return undefined;
 }

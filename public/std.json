@@ -28,7 +28,7 @@
             "nickname": "points",
             "icon": "bi-circle",
             "filename": "points",
-            "path": "./modules/"
+            "path": "./modules/linalg/"
         }
     ],
     "std_old": [],
