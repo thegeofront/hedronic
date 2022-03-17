@@ -1,17 +1,3 @@
-// https://www.sheshbabu.com/posts/rust-for-javascript-developers-pattern-matching-and-enums/
-// *sigh*, if only we could write something like this. 
-// ```
-// enum TypeKind {
-//     Any,
-//     Boolean,
-//     Number,
-//     String,
-//     List(TypeKind),
-//     Tuple(TypeKind[]),
-// }
-// ``` 
-// thats really all we need. Now, we need to do weird things
-
 import { TypeShim } from "../shims/type-shim";
 
 // export type BufferLike = Type.IntBuffer | Type.UntBuffer | Type.ByteBuffer | Type.FloatBuffer | Type.DoubleBuffer;
@@ -21,6 +7,9 @@ import { TypeShim } from "../shims/type-shim";
 // export type GeometryLike = Type.Vector3 | Type.MultiVector3 | Type.Line3 | Type.MultiLine3 | Type.Mesh;
 
 
+/**
+ * The basic 'javascript' types supported by geofront
+ */
 export enum Type {
     
     // basics
@@ -31,7 +20,7 @@ export enum Type {
     string,
 
     // collections 
-    List, // TODO remove this? its not a type, its like a 'type of types'
+    List,
     Tuple,
     Object,
 
@@ -49,13 +38,6 @@ export enum Type {
     I32Buffer, // Vec<i32> // int
     F32Buffer, // Vec<f32> // Float
     F64Buffer, // Vec<f64> // Double
-
-    // matrices
-    // ByteMatrix,
-    // UntMatrix, 
-    // IntMatrix, 
-    // FloatMatrix,
-    // DoubleMatrix,
 }
 
 export function getBufferTypes() {

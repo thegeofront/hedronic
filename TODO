@@ -1,16 +1,22 @@
-
+# Wednesday
 - [X] get the setup over at this side 
 - [X] figure out how to return a tuple from rust 
   -> this is hard. 
   -> option 1: make it all rust objects. They can be converted, and are fine to use when using 'inspectable'
-  -> option 2: foreign objects. 
+  -> option 2: foreign objects.
+  -> I Think [this][game-of-life] is our best chance forward. retrieving a pointer, and buffer size, creating the buffer on the javascript side
+
 - [X] make a very dumb, basic type encoding
   - just based around string enums, and 'thrusting' that the any type contains what we need when it has 'typename'
   - TODO typechecking! 
   -> THIS IS HARD AND IMPORTANT 
   -> we cant do this naively, we will require some sort of extra ensurance that we are dealing with the right types. 
+  -> Edit: came up with a 'trait' idea, where foreign types can 'earn' the right to be treated as if it were a `Point`, `Vector`, or `Mesh`, if it contains the right data.
+   
 
-- [ ] make some sort of data import widget, or a random list of points generator 
+- [X] make some sort of data import widget, or a random list of points generator 
+
+[game-of-life]: https://rustwasm.github.io/book/game-of-life/implementing.html#rendering-to-canvas-directly-from-memory
 
 RNG 
 
