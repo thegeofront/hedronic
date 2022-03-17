@@ -6,7 +6,7 @@ import { NodesCanvas } from "../nodes-canvas";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
 import { Element } from "../../html/util";
-import { makeSlider } from "../../menu/util/make";
+import { MenuMaker } from "../../menu/util/menu-maker";
 
 export class SliderWidget extends Widget {
 
@@ -30,7 +30,7 @@ export class SliderWidget extends Widget {
 
     makeMenu(): HTMLElement[] {
         // TODO make some controls 
-        return [makeSlider(this.parameter, undefined, (p) => this.setState(p.get()))];
+        return [MenuMaker.slider(this.parameter, undefined, (p) => this.setState(p.get()))];
     }
 
     setState(state: number) {

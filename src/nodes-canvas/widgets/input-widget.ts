@@ -6,6 +6,7 @@ import { NodesCanvas } from "../nodes-canvas";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
 import { Element } from "../../html/util";
+import { MenuMaker } from "../../menu/util/menu-maker";
 
 export class InputWidget extends Widget {
 
@@ -23,31 +24,7 @@ export class InputWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
-        let el = Element.html`
-        <div class="form-group">
-           <label for="comment">Text:</label>
-           <textarea class="form-control" rows="5" id="comment">${this.state}</textarea>
-       </div>
-       `;
-        
-        let comment = el.querySelector("#comment") as HTMLElement;
-        // comment.oninput = (e: Event) => {
-        //     console.log("change!!!");
-        //     let target = e.target as HTMLTextAreaElement
-        //     let input = target.textContent || "";
-        //     this.setState(input);
-        // }
-        comment.onkeydown = (ev) => {
-            if (ev.code != "Enter") return;
-            if (ev.shiftKey || ev.ctrlKey || ev.metaKey) return;
-            ev.stopPropagation();
-            ev.preventDefault();
-            let target = ev.target as HTMLTextAreaElement
-            let input = target.value || "";
-            this.setState(input);
-        };
-
-        return [el];
+        return [MenuMaker.textarea(this.state.toString(), this.setState.bind(this))];
     }
 
     setState(state: string) {

@@ -1,7 +1,6 @@
 import { makeCanvasMenu } from "../../menu/right-menu/canvas-menu";
 import { makeMenuFromNode } from "../../menu/right-menu/node-menu";
 import { makeMenuFromWidget } from "../../menu/right-menu/widget-menu";
-import { makeFromJson } from "../../menu/util/make";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
@@ -11,6 +10,7 @@ import { PayloadEventType } from "../payload-event";
 import { Compose, Element, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
+import { MenuMaker } from "../../menu/util/menu-maker";
 
 
 export const showRightPanel = new PayloadEventType<void>("showrightpanel");
@@ -191,12 +191,12 @@ class MyRightPanel extends WebComponent {
 
     setWithInput(param: Payload) {
         this.get("title").innerText = "Input";
-        this.get("menu-body").innerHTML = makeFromJson(param);
+        this.get("menu-body").innerHTML = MenuMaker.json(param);
     }
 
     setWithOutput(param: Payload) {
         this.get("title").innerText = "Output";
-        this.get("menu-body").innerHTML = makeFromJson(param);
+        this.get("menu-body").innerHTML = MenuMaker.json(param);
     }
 
 
