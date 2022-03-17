@@ -378,6 +378,7 @@ export namespace DTSLoading {
             case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, Type.boolean);
             case ts.SyntaxKind.NumberKeyword: return TypeShim.new(name, Type.number);
             case ts.SyntaxKind.StringKeyword: return TypeShim.new(name, Type.string);
+            case ts.SyntaxKind.UndefinedKeyword: return TypeShim.new(name, Type.void);
         } 
 
         // list type 
@@ -427,6 +428,15 @@ export namespace DTSLoading {
                 console.warn("could not find the reference type titled: ", typeName);
                 return TypeShim.new(name, Type.any);
             }
+        }
+
+        if (node.kind == ts.SyntaxKind.LiteralType) {
+            console.log(node);
+            
+            //@ts-ignore
+            let text = node.literal.text || "";
+
+            return TypeShim.new(name, Type.Literal, undefined, [TypeShim.new(text, Type.string)]);    
         }
 
         console.warn("type not implemented: ", Help.getKind(node));

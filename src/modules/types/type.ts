@@ -28,6 +28,7 @@ export enum Type {
     Union,
     Reference, // this is how foreign types / objects are represented
     Promise,
+    Literal,
 
     // buffers 
     U8Buffer,  // Vec<u8>  // Byte

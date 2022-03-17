@@ -16,7 +16,9 @@ export namespace MenuMaker {
     }
     
     export function button(name: string, onClick: (ev: Event) => void) {
-        let button = Element.html`<button class="btn btn-sm btn-dark">${name}</button>`;
+        let button = Element.html`
+        <button class="btn btn-light">${name}</button>
+        `;
         if (onClick) button.onclick = onClick;
         return button;
     }

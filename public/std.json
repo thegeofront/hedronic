@@ -23,6 +23,12 @@
             "icon": "bi-arrow",
             "filename": "types",
             "path": "./modules/"
+        },
+        {
+            "nickname": "points",
+            "icon": "bi-circle",
+            "filename": "points",
+            "path": "./modules/"
         }
     ],
     "std_old": [],
