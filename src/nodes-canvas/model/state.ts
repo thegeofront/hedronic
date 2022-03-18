@@ -2,7 +2,7 @@
  * State represents ANY value which traverses the flowchart
  */
 export type State = 
-    void | 
+    undefined | 
     boolean | 
     string | 
     number | 

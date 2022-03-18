@@ -139,7 +139,6 @@ function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
     
     let list = [];
     for (let i = 0 ; i < item.length; i++) {
-        console.log(item[i]);
         let valueData = tryConvert(item[i]);
         if (valueData) {
             list.push(valueData);
@@ -152,6 +151,5 @@ function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
     }
 
     // TODO allow for other things!!!
-    console.warn("NOT IMPLEMENTED LIST VISUAL")
     return undefined;
 }

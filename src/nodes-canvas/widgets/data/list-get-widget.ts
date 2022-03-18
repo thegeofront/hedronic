@@ -31,7 +31,7 @@ export class ListGetWidget extends Widget {
         return widget;
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         let list = args[0] as Array<any>;
         this.lastListLength = list.length;
         return [...list];

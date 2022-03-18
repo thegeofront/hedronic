@@ -18,7 +18,7 @@ export class FileWriteWidget extends Widget {
         return new FileWriteWidget("Write file", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         this.state = args[0];
         return [];
     }

@@ -26,7 +26,7 @@ export class ListSetWidget extends Widget {
         return new ListSetWidget("list set", WidgetSide.Process, undefined, ins, outs, state);
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         return [[...args]];
     }
 

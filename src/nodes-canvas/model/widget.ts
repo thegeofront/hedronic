@@ -102,8 +102,15 @@ export class Widget {
         // this will also be specific per widget
     }
 
-    run(...args: State[]) : State[] {
-        // something
+    async run(...args: State[]) : Promise<State | State[]> {
+        if (this.side == WidgetSide.Input) {
+            return this.state;
+        } else if (this.side == WidgetSide.Output) {
+            this.state = args;
+            return [];
+        }
+        // this.state = args; // default behaviour
+        // return this.state;
         return [];
     }
 

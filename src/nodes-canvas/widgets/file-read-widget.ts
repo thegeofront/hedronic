@@ -14,11 +14,6 @@ export class FileReadWidget extends Widget {
         return new FileReadWidget("Read file", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
     }
 
-    run(...args: State[]) : State[] {
-        this.state = args[0];
-        return [];
-    }
-
     clone() {
         return FileReadWidget.new(this.state);
     }

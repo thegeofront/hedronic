@@ -43,8 +43,6 @@ export class NodesCanvas {
 
     // used to box select
     private boxStart: Vector2 | undefined;
-    private cables!: Map<string, Cable>;
-
     public clipboardStorage?: string;
 
     private constructor(
@@ -163,15 +161,15 @@ export class NodesCanvas {
     /**
      * TODO this belongs somewhere else...
      */
-    tryGetCache(outputSocket: Socket) {
-        return this.cables?.get(outputSocket.toString())?.state; 
+    tryGetCache(s: Socket) {
+        if (s.side != SocketSide.Output) return undefined;
+        return this.graph.getDatum(s)!.state; 
     }
 
     /////////////////////////////////////////////////////////////////
 
     async onChange() {
-        let cables = await GraphCalculation.full(this.graph);
-        this.cables = cables;
+        let succes = await GraphCalculation.full(this.graph);
         this._requestRedraw();
     }
 
@@ -438,6 +436,8 @@ export class NodesCanvas {
                 let normalCons = []
                 let selectedCons = [];
 
+                let datum = this.graph.getDatum(socket);
+
                 // figure out if selected
                 for (let con of cons) {
                     if (isCableSelected(socket, con)) {
@@ -449,8 +449,8 @@ export class NodesCanvas {
 
                 // draw accordingly
                 let cableHash = socket.toString();
-                
-                let style = this.cables.get(cableHash)?.style || CableStyle.Off;
+
+                let style = datum?.style || CableStyle.Off;
                 drawMultiCable(ctx, socket, normalCons, style, this, this.graph);
                 if (selectedCons.length > 0) 
                     drawMultiCable(ctx, socket, selectedCons, CableStyle.Selected, this, this.graph);
@@ -672,12 +672,12 @@ export class NodesCanvas {
                 HTML.dispatch(setMenu, {title: "Widget", data: node, callback: makeMenuFromWidget})
             }
         } else if (s.side == SocketSide.Input) {
-            let key = this.graph.getInputConnectionAt(s)?.toString() || "";
-            let state = this.cables.get(key)!.state;
-            HTML.dispatch(setRightPanelOld, {state, socket: s});
+            // let outputSocket = this.graph.getInputConnectionAt(s)!;
+            // let state = this.graph.getDatum(outputSocket)!.state;
+            // HTML.dispatch(setRightPanelOld, {state, socket: s});
         } else if (s.side == SocketSide.Output) {
-            let state = this.cables.get(s.toString())!.state;
-            HTML.dispatch(setRightPanelOld, {state, socket: s});
+            // let state = this.graph.getDatum(s)!.state;
+            // HTML.dispatch(setRightPanelOld, {state, socket: s});
         }
     }
 

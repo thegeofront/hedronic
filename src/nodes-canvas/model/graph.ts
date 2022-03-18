@@ -8,10 +8,10 @@ import { State } from "./state";
 import { Widget, WidgetSide } from "./widget";
 import { GraphConversion } from "../logic/graph-conversion";
 import { GraphCalculation } from "../logic/graph-calculation";
-import { CableStyle } from "./cable";
+import { Cable, CableStyle } from "./cable";
 
 /**
- * A Collection of Nodes and Widgets
+ * A Collection of Nodes, Widgets (and Cables)
  * These are doubly linked. (Nodes point to each other)
  * The Graph makes sure these links remain correct
  */
@@ -145,6 +145,43 @@ export class NodesGraph {
         }
 
         return this;
+    }
+
+    //////////////////////////////////// Data /////////////////////////////////////
+
+
+    getDatum(socket: Socket) {
+        // do a bunch of saveguards
+        let node = this.nodes.get(socket.hash)!
+        if (!node) {console.warn("could not find node to store datum"); return }
+        if (socket.side != SocketSide.Output) {console.warn("not a valid datum socket"); return }
+        let index = socket.normalIndex();
+        if (index >= node.datums.length) {console.warn("datum at output", index, "does not exist!"); return }
+
+        return node.datums[index];
+    }
+
+    setDatumState(socket: Socket, state: State) {
+        let datum = this.getDatum(socket);
+        if (!datum) return;
+        datum.state = state;
+    }
+
+        /**
+     * This looks werid, but for graph processes, we want the ID of the 'cables' at our output
+     * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
+     * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
+     */
+    getDataAtOutput(node: GeonNode) : Cable[] {
+        return node.datums;
+    }
+
+    /**
+     * Get a stringified version of all 'cables' the input sockets are pointing to.
+     * NOTE THE CONFUSING BIT: these DO involve the this.input values 
+     */
+    getDataAtInput(node: GeonNode) : (Cable | undefined)[] {
+        return node.inputs.map(connections => connections ? this.getDatum(connections) : undefined);
     }
 
     //////////////////////////////////// Nodes /////////////////////////////////////

@@ -1,4 +1,5 @@
 
+import { State } from "../../nodes-canvas/model/state";
 import { JSLoading } from "../helpers/js-loading";
 import { Type } from "../types/type";
 import { TypeShim } from "./type-shim";
@@ -49,7 +50,7 @@ export class FunctionShim {
         return new FunctionShim(name, [namespace, name], func, ins, outs);
     }
 
-    async run(inputs: any[]) {
+    async run(inputs: State[]) : Promise<any> {
         if (this.isMethod) {
             return await this.func.call(inputs[0], ...inputs.slice(1));
         }

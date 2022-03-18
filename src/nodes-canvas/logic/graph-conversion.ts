@@ -275,17 +275,17 @@ export namespace GraphConversion {
     
             let node = graph.getNode(key)!;
             if (node.operation) { // A | operation 
-                let inputs = toEasyNames(node.getCablesAtOutput()).join(", ");
-                let outputs = toEasyNames(node.getCablesAtInput()).join(", ");
+                let inputs = toEasyNames(node.getSocketKeysAtOutput()).join(", ");
+                let outputs = toEasyNames(node.getSocketKeysAtInput()).join(", ");
                 let str = `let [${inputs}] = ${node.operation!.path[0]}.${node.core.name}(${outputs}) /* "x": ${node.position.x} | "y": ${node.position.y} */;`;
                 processes.push(str);
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
-                for (let str of toEasyNames(node.getCablesAtOutput())) {
+                for (let str of toEasyNames(node.getSocketKeysAtOutput())) {
                     str += ` /* "widget": "${node.widget!.name}" | "state": "${node.widget!.state}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                     inputs.push(str);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget 
-                for (let str of toEasyNames(node.getCablesAtInput())) {
+                for (let str of toEasyNames(node.getSocketKeysAtInput())) {
                     str += ` /* "widget": "${node.widget?.name}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                     outputs.push(str);
                 }

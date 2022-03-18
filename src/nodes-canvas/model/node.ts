@@ -6,6 +6,7 @@ import { mapFromJson, mapToJson } from "../util/serializable";
 import { FunctionShim } from "../../modules/shims/function-shim";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
+import { Cable, CableStyle } from "./cable";
 
 
 export const NODE_WIDTH = 4;
@@ -20,7 +21,7 @@ export class GeonNode {
         public core: FunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
-        // outputState
+        public datums: Cable[],
         ) {}
 
     get operation() : FunctionShim | undefined {
@@ -70,14 +71,21 @@ export class GeonNode {
 
         if (!outputs) {
             outputs = [];
-            for (let i = 0 ; i < process.outCount; i++) outputs.push([]);
+            for (let i = 0 ; i < process.outCount; i++) {
+                outputs.push([]);
+            } 
         } else {
             if (outputs.length != process.outCount) {
                 throw new Error("Inadecuate number of outputs!");
             }
         }
 
-        return new GeonNode(hash, gridpos, process, inputs, outputs);
+        let cables = []
+        for (let i = 0 ; i < process.outCount; i++) {
+            cables.push(Cable.new());
+        } 
+
+        return new GeonNode(hash, gridpos, process, inputs, outputs, cables);
     }
 
     static fromJson(data: any, process: FunctionShim | Widget) {
@@ -148,7 +156,7 @@ export class GeonNode {
      * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
      * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
      */
-    getCablesAtOutput() : string[] {
+    getSocketKeysAtOutput() : string[] {
         let sockets: string[] = [];
         for (let i = 0; i < this.core.outCount; i++) {
             let socket = Socket.new(this.hash, i+1);
@@ -161,7 +169,7 @@ export class GeonNode {
      * Get a stringified version of all 'cables' the input sockets are pointing to.
      * NOTE THE CONFUSING BIT: these DO involve the this.input values 
      */
-    getCablesAtInput() : string[] {
+    getSocketKeysAtInput() : string[] {
         return this.inputs.map(s => s ? s?.toString() : "");
     }
 

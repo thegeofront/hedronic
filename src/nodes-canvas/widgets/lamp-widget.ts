@@ -11,7 +11,7 @@ export class LampWidget extends Widget {
         return new LampWidget("lamp", WidgetSide.Output, Vector2.new(1,1), ins, [], state);
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         this.state = args[0];
         return [];
     }

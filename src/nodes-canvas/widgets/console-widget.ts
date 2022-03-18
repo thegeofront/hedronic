@@ -15,10 +15,10 @@ export class ConsoleWidget extends Widget {
         return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), ins, [], state);
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         this.state = args[0];
         try {
-            this.str = this.state.toString()
+            this.str = this.state!.toString()
         } catch(error) {
             this.str = `<Error: Could not parse json. \nReason: ${(error as Error).message}>`
         }

@@ -51,7 +51,8 @@ RNG
 - [ ] move the list of vectors left
 - [X] add lists to the visualizer
 - [X] refactor graph a bit
-
+- [x] expand full graph recalculation starters to inputless nodes
+- [X] reintroduce cables 
 
 - implement the 'list comparrison' thing
 - [ ] generate random vectors

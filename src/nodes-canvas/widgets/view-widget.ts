@@ -20,7 +20,7 @@ export class ViewWidget extends Widget {
         return widget;
     }
 
-    run(...args: State[]) : State[] {
+    async run(...args: State[]) {
         this.state = args[0];
         HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString()});
         return [];

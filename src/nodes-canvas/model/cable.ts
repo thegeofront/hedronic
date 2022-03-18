@@ -14,7 +14,8 @@ export enum CableStyle {
 }
 
 /**
- * A cable, or datum. Cables are directly linked to the data they carry
+ * A Cable, or Datum. Cables are directly linked to the data they carry
+ * Cables live at the output sockets of nodes. 
  */
 export class Cable {
 
@@ -28,11 +29,17 @@ export class Cable {
         // public polyline?: any,
     ) {}
 
-    static new(state: State, style: CableStyle) {
-        return new Cable(undefined, undefined, state, 0, style);
+    static new() {
+        return new Cable(undefined, undefined, false, 0, CableStyle.Off);
     }
 
-    set(state: State, style: CableStyle) {
+    setState(state: State) {
+
+        let style = CableStyle.Off;
+        if (state) {
+            style = CableStyle.On;
+        } 
+
         this.state = state;
         this.style = style;
     }

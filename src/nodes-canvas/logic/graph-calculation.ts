@@ -24,72 +24,50 @@ export namespace GraphCalculation {
      * Calculate the entire graph:
      * - start with the data from input widgets
      * - calculate all operations 
-     * - store results in output widgets
-     * TODO: build something that can recalculate parts of the graph
+     * - store results in output widgets & datums
      */
-    export async function full(graph: NodesGraph) : Promise<Map<string, Cable>> {
+    export async function full(graph: NodesGraph) : Promise<boolean> {
 
-        let cables = new Map<string, Cable>();
         let orderedNodeKeys = GraphCalculation.kahn(graph);
 
-        let setValue = (key: string, value: State) => {
-            // let cable = this.getOutputConnectionsAt(key)!;
-            // if (!cable) {
-            //     return;
-            // }
-
-            let style = CableStyle.Off;
-            if (value) {
-                style = CableStyle.On;
-            } 
-            cables.set(key, Cable.new(value, style));
-        }
-
-        //start at the widgets (widget keys are the same as the corresponding node)
         for (let key of orderedNodeKeys) {
     
             let node = graph.getNode(key)!;
-
-            // calculate in several ways, depending on the node
-            if (node.operation || node.widget?.side == WidgetSide.Process) { // A | operation -> pull cache from cables & push cache to cables
-                
-                let inputs = [];
-                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!! ?
-                    inputs.push(cables.get(cable)?.state!);
-                }
-                let outputs;
-                try {
-                    //TODO RUN RUN RUN
-                    outputs = await node.core.run(inputs);
-                } catch(e) {
-                    let error = e as Error;
-                    node.errorState = error.message;
-                    console.warn("NODE-ERROR: \n", node.errorState);
-                    continue;
-                }
-
-                let outCables = node.getCablesAtOutput();
-                if (node.core.outCount == 1) {
-                    setValue(outCables[0], outputs);
+            let inData = graph.getDataAtInput(node);
+            let outData = graph.getDataAtOutput(node);
+            let inStates = [];
+            for (let datum of inData) {
+                if (!datum || datum.state == undefined) {
+                    console.error("running a script with undefined data...");
+                    inStates.push(false);
                 } else {
-                    for (let i = 0 ; i < node.core.outCount; i++) {
-                        setValue(outCables[i], outputs[i]);
-                    }
+                    inStates.push(datum.state);
                 }
-                
-            } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-                for (let cable of node.getCablesAtOutput()) {
-                    setValue(cable, node.widget!.state);
-                }
-            } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!!
-                    node.widget!.run(cables.get(cable)!.state!);
-                }
-            } else {
-                throw new Error("should never happen");
             }
+
+            let outputStates;
+            try {
+                //TODO RUN RUN RUN
+                outputStates = await node.core.run(inStates);
+
+            } catch(e) {
+                let error = e as Error;
+                node.errorState = error.message;
+                console.warn("NODE-ERROR: \n", node.errorState);
+                continue;
+            }
+
+            // set the cables
+            if (node.core.outCount == 1) {
+                outData[0].setState(outputStates);
+            } else {
+                for (let i = 0 ; i < outData.length; i++) {
+                    outData[i].setState(outputStates[i]);
+                }
+            } 
         }
-        return cables;
+
+        return true;
     }
 
     /**
@@ -154,7 +132,7 @@ export namespace GraphCalculation {
                 for (let connection of connections) {
                     let m = connection.hash;
                     let allVisited = true;
-                    for (let c of graph.getNode(m)!.getCablesAtInput()) {
+                    for (let c of graph.getNode(m)!.getSocketKeysAtInput()) {
                         if (!visitedCables.has(c)) {
                             allVisited = false;
                             break;
