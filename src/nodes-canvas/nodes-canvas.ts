@@ -1,6 +1,3 @@
-// author : Jos Feenstra
-// purpose: wrapper for dealing with the 'whole of nodes'
-
 import { Vector2, InputState, Domain2, MultiVector2, Key, GeonMath, createRandomGUID } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
@@ -12,19 +9,19 @@ import { ModuleShim } from "../modules/shims/module-shim";
 import { drawMultiCable, generateCableLine, drawNode, DrawState, renderCable } from "./rendering/nodes-rendering";
 import { IO } from "./util/io";
 import { History } from "./model/history";
-import { CableState, CableVisual } from "./rendering/cable-visual";
 import { HTML } from "../html/util";
-import { hideRightPanel, offsetOverlayEvent, setMenu, setRightPanelOld, SetRightPanelPayload, UpdateMenuEvent } from "../html/registry";
+import { offsetOverlayEvent, setMenu, setRightPanelOld } from "../html/registry";
 import { Menu } from "../menu/menu";
 import { State } from "./model/state";
 import { mapmap } from "./util/misc";
-import { StopVisualizeEvent, StopVisualizePreviewEvent, VisualizeEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
+import { StopVisualizePreviewEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 import { Settings } from "./model/settings";
-import { Core, CoreType } from "./model/core";
+import { CoreType } from "./model/core";
 import { makeMenuFromWidget } from "../menu/right-menu/widget-menu";
 import { makeMenuFromNode } from "../menu/right-menu/node-menu";
 import { GraphConversion } from "./logic/graph-conversion";
-
+import { Cable, CableStyle } from "./model/cable";
+import { GraphCalculation } from "./logic/graph-calculation";
 
 /**
  * Represents the entire canvas of nodes.
@@ -46,9 +43,7 @@ export class NodesCanvas {
 
     // used to box select
     private boxStart: Vector2 | undefined;
-
-    private cableVisuals!: Map<string, CableState>;
-    private cache?: Map<string, State>;
+    private cables!: Map<string, Cable>;
 
     public clipboardStorage?: string;
 
@@ -149,6 +144,9 @@ export class NodesCanvas {
 
     /////////////////////////////////////////////////////////////////
 
+    /**
+     * This also belongs somewhere else I think...
+     */
     getSelectedOutputs() {
         let outputs: Socket[] = [];
         for (let socket of this.selectedSockets) {
@@ -162,17 +160,19 @@ export class NodesCanvas {
         return outputs;
     }
 
+    /**
+     * TODO this belongs somewhere else...
+     */
     tryGetCache(outputSocket: Socket) {
-        return this.cache?.get(outputSocket.toString()); 
+        return this.cables?.get(outputSocket.toString())?.state; 
     }
 
     /////////////////////////////////////////////////////////////////
 
     async onChange() {
-        let [cache, visuals] = await this.graph.calculate();
-        this.cableVisuals = visuals;
-        this.cache = cache;
-        this.requestRedraw();
+        let cables = await GraphCalculation.full(this.graph);
+        this.cables = cables;
+        this._requestRedraw();
     }
 
 
@@ -301,7 +301,7 @@ export class NodesCanvas {
             count += 1;
             this.select(Socket.new(k, 0), count == length);
         }
-        this.requestRedraw();
+        this._requestRedraw();
     }
 
 
@@ -349,7 +349,7 @@ export class NodesCanvas {
         let redraw = this.camera.update(this.input);
         if (redraw) {
             HTML.dispatch(offsetOverlayEvent, this.camera.pos);
-            this.requestRedraw();
+            this._requestRedraw();
         }
 
         // mouse
@@ -365,7 +365,7 @@ export class NodesCanvas {
         if (cancelPresed) {
             this.catalogue.deselect();
             this.deselect();
-            this.requestRedraw();
+            this._requestRedraw();
         }
 
         if (this.input.IsKeyPressed("delete")) {
@@ -390,7 +390,7 @@ export class NodesCanvas {
     }
 
 
-    requestRedraw() {
+    _requestRedraw() {
         this.redrawAll = true;
     }
 
@@ -450,10 +450,10 @@ export class NodesCanvas {
                 // draw accordingly
                 let cableHash = socket.toString();
                 
-                let visual = this.cableVisuals.get(cableHash) || CableState.Null;
-                drawMultiCable(ctx, socket, normalCons, visual, this, this.graph);
+                let style = this.cables.get(cableHash)?.style || CableStyle.Off;
+                drawMultiCable(ctx, socket, normalCons, style, this, this.graph);
                 if (selectedCons.length > 0) 
-                    drawMultiCable(ctx, socket, selectedCons, CableState.Selected, this, this.graph);
+                    drawMultiCable(ctx, socket, selectedCons, CableStyle.Selected, this, this.graph);
             })
         }
 
@@ -464,9 +464,9 @@ export class NodesCanvas {
                 let p = fromNode.getConnectorGridPosition(socket.idx)!;
     
                 if (socket.side == SocketSide.Input) {
-                    renderCable(ctx, g, p, this, CableState.Dragging);
+                    renderCable(ctx, g, p, this, CableStyle.Dragging);
                 } else if (socket.side == SocketSide.Output) {
-                    renderCable(ctx, p, g, this, CableState.Dragging);
+                    renderCable(ctx, p, g, this, CableStyle.Dragging);
                 }
             }
         }
@@ -578,7 +578,7 @@ export class NodesCanvas {
             if (!con) return;
             this.graphHistory.removeConnection(con, socket);
             this.deselect();
-            this.requestRedraw();
+            this._requestRedraw();
             return;
         }
 
@@ -592,14 +592,14 @@ export class NodesCanvas {
                 this.graphHistory.removeConnection(socket, cons[i]);
             }
             this.deselect();
-            this.requestRedraw();
+            this._requestRedraw();
             return;
         }
 
 
         this.graphHistory.deleteNodes(this.selectedSockets.map(s => s.hash));
         this.deselect();
-        this.requestRedraw();
+        this._requestRedraw();
         return;
     
     }
@@ -673,10 +673,10 @@ export class NodesCanvas {
             }
         } else if (s.side == SocketSide.Input) {
             let key = this.graph.getInputConnectionAt(s)?.toString() || "";
-            let state = this.cache?.get(key);
+            let state = this.cables.get(key)!.state;
             HTML.dispatch(setRightPanelOld, {state, socket: s});
         } else if (s.side == SocketSide.Output) {
-            let state = this.cache?.get(s.toString());
+            let state = this.cables.get(s.toString())!.state;
             HTML.dispatch(setRightPanelOld, {state, socket: s});
         }
     }
@@ -843,7 +843,7 @@ export class NodesCanvas {
                 let blueprint = this.tryGetbpFromLibrary(lib, name);
                 if (blueprint) {
                     this.graphHistory.addNode(blueprint, gp, initState);
-                    this.requestRedraw();
+                    this.onChange();
                     return "";
                 }
             } 
@@ -859,7 +859,7 @@ export class NodesCanvas {
             return undefined;
         }
         this.graphHistory.addNode(thing, gp);
-        this.requestRedraw();
+        this.onChange();
         return "";
     }
 
@@ -876,10 +876,8 @@ export class NodesCanvas {
             // we are placing a new node
             this.graphHistory.addNode(this.catalogue.selected!, gp);
             // this.graph.addNode(this.catalogue.spawn(gp)!);
-            if (!this.input.IsKeyDown("control")) {
-                this.catalogue.deselect();
-            }
-            this.requestRedraw();
+            this.catalogue.deselect();
+            this.onChange();
             return;
         } 
         
@@ -896,7 +894,7 @@ export class NodesCanvas {
 
             // deselect and draw a box
             this.startBox(gp);
-            this.requestRedraw();
+            this._requestRedraw();
             return;
         } 
 
@@ -919,7 +917,7 @@ export class NodesCanvas {
             (this.graph.getNode(socket.hash)?.core as Widget).onClick(this);
         } 
         
-        this.requestRedraw();   
+        this._requestRedraw();   
         return;   
     }
 
@@ -959,7 +957,7 @@ export class NodesCanvas {
         this.stopBox();
         this.mgpStart = undefined;
         this.mgpEnd = undefined;
-        this.requestRedraw();
+        this._requestRedraw();
     }
 
 
@@ -977,7 +975,7 @@ export class NodesCanvas {
             // console.log(s);
         }
         this.hover(s);
-        this.requestRedraw();
+        this._requestRedraw();
 
         // drag a line perhaps 
         if (!this.mgpStart) {
@@ -1015,6 +1013,6 @@ export class NodesCanvas {
 
     onResize() {
         // resizeCanvas(this.ctx);
-        this.requestRedraw();
+        this._requestRedraw();
     }
 }

@@ -5,9 +5,9 @@ import { CTX, drawPolygon, filletPolyline, movePolyline } from "./ctx/ctx-helper
 import { NODE_WIDTH, GeonNode } from "../model/node";
 import { Widget } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
-import { CableState as CableStyle } from "./cable-visual";
 import { Socket } from "../model/socket";
 import { NodesGraph } from "../model/graph";
+import { CableStyle } from "../model/cable";
 
 export const MUTED_WHITE = "#cecdd1";
 
@@ -270,7 +270,7 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
     let mainColor = "white";
     let edgeColor = "black";
 
-    if (style == CableStyle.Null) {
+    if (style == CableStyle.Off) {
         mainColor = NODE_COLOR
         edgeColor = "black";
     } else if (style == CableStyle.Selected) {
@@ -285,7 +285,7 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
         edgeColor = "black"
     }
 
-    if (style == CableStyle.List) {
+    if (style == CableStyle.Level1) {
         // draw the line twice with different settings
         ctx.beginPath();
         for (let line of lines) movePolyline(ctx, line);

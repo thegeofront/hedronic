@@ -1,7 +1,6 @@
 import { createRandomGUID, Graph } from "../../../../engine/src/lib";
 import { Catalogue } from "../../modules/catalogue";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
@@ -9,6 +8,7 @@ import { State } from "./state";
 import { Widget, WidgetSide } from "./widget";
 import { GraphConversion } from "../logic/graph-conversion";
 import { GraphCalculation } from "../logic/graph-calculation";
+import { CableStyle } from "./cable";
 
 /**
  * A Collection of Nodes and Widgets
@@ -51,19 +51,8 @@ export class NodesGraph {
 
     // ---- True Graph Business 
 
-    /**
-     * Calculate the entire graph:
-     * - start with the data from input widgets
-     * - calculate all operations 
-     * - store results in output widgets
-     * TODO: build something that can recalculate parts of the graph
-     */
-    async calculate() : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
-        return GraphCalculation.full(this);
-    }
-
-    clone() {
-
+    clone() {  
+        throw new Error("TODO");
     }
 
     /**
@@ -166,7 +155,6 @@ export class NodesGraph {
             this.widgets.add(node.hash);
             node.widget!.onChangeCallback = this.onWidgetChange.bind(this);
         }
-        this.calculate();
         return node.hash;
     }
 

@@ -1,8 +1,8 @@
+import { Cable, CableStyle } from "../model/cable";
 import { NodesGraph } from "../model/graph";
 import { Socket } from "../model/socket";
 import { State } from "../model/state";
 import { WidgetSide } from "../model/widget";
-import { CableState as CableVisualState } from "../rendering/cable-visual";
 
 export namespace GraphCalculation {
 
@@ -27,10 +27,9 @@ export namespace GraphCalculation {
      * - store results in output widgets
      * TODO: build something that can recalculate parts of the graph
      */
-    export async function full(graph: NodesGraph) : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
+    export async function full(graph: NodesGraph) : Promise<Map<string, Cable>> {
 
-        let cache = new Map<string, State>();
-        let visuals = new Map<string, CableVisualState>();
+        let cables = new Map<string, Cable>();
         let orderedNodeKeys = GraphCalculation.kahn(graph);
 
         let setValue = (key: string, value: State) => {
@@ -39,13 +38,11 @@ export namespace GraphCalculation {
             //     return;
             // }
 
-            let visual = CableVisualState.Null;
+            let style = CableStyle.Off;
             if (value) {
-                visual = CableVisualState.On;
+                style = CableStyle.On;
             } 
-            
-            visuals.set(key, visual);
-            cache.set(key, value);
+            cables.set(key, Cable.new(value, style));
         }
 
         //start at the widgets (widget keys are the same as the corresponding node)
@@ -58,7 +55,7 @@ export namespace GraphCalculation {
                 
                 let inputs = [];
                 for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!! ?
-                    inputs.push(cache.get(cable)!);
+                    inputs.push(cables.get(cable)?.state!);
                 }
                 let outputs;
                 try {
@@ -86,13 +83,13 @@ export namespace GraphCalculation {
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
                 for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!!
-                    node.widget!.run(cache.get(cable)!);
+                    node.widget!.run(cables.get(cable)!.state!);
                 }
             } else {
                 throw new Error("should never happen");
             }
         }
-        return [cache, visuals];
+        return cables;
     }
 
     /**
