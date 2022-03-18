@@ -59,7 +59,7 @@ export class NodesGraph {
      * TODO: build something that can recalculate parts of the graph
      */
     async calculate() : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
-        return GraphCalculation.calculate(this);
+        return GraphCalculation.full(this);
     }
 
     clone() {
@@ -166,6 +166,7 @@ export class NodesGraph {
             this.widgets.add(node.hash);
             node.widget!.onChangeCallback = this.onWidgetChange.bind(this);
         }
+        this.calculate();
         return node.hash;
     }
 

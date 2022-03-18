@@ -49,6 +49,10 @@ RNG
 # friday
 
 - [ ] move the list of vectors left
+- [X] add lists to the visualizer
+- [X] refactor graph a bit
+
+
 - implement the 'list comparrison' thing
 - [ ] generate random vectors
 - [ ] apply the DT to these points 

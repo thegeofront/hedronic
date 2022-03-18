@@ -7,13 +7,27 @@ import { CableState as CableVisualState } from "../rendering/cable-visual";
 export namespace GraphCalculation {
 
     /**
+     * If a node becomes outdated: propagate this logic to all nodes dependent on this node
+     */
+    export async function setOutdated(key: Node) {
+
+    }
+
+    /**
+     * Only calculate outdated nodes
+     */
+    export async function partial() {
+
+    }
+
+    /**
      * Calculate the entire graph:
      * - start with the data from input widgets
      * - calculate all operations 
      * - store results in output widgets
      * TODO: build something that can recalculate parts of the graph
      */
-    export async function calculate(graph: NodesGraph) : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
+    export async function full(graph: NodesGraph) : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
 
         let cache = new Map<string, State>();
         let visuals = new Map<string, CableVisualState>();
@@ -82,21 +96,42 @@ export namespace GraphCalculation {
     }
 
     /**
-     * An implementation of kahn's algorithm: 
-     * https://en.wikipedia.org/wiki/Topological_sorting
+     * When doing a full recalculation: find the nodes we need to start at
      */
-    export function kahn(graph: NodesGraph) {
-        // fill starting lists
-        let L: string[] = [];
+    export function getGlobalGraphStarters(graph: NodesGraph) {
+
         let S: string[] = [];
-        let visitedCables: Set<string> = new Set<string>();
 
         // use the widgets to identify the starting point
         for (let key of graph.widgets) {
             let widget = graph.getNode(key)!.widget!;
-            if (widget.side != WidgetSide.Input) 
-                continue; 
+            if (widget.side !== WidgetSide.Input) continue; 
             S.push(key);
+        }
+
+        // if a regular node has no inputs, its also a starter 
+        for (let [key, node] of graph.nodes.entries()) {
+            if (node.core.inCount !== 0) continue;
+            S.push(key);
+        }
+
+        return S;
+    }
+
+    /**
+     * An implementation of kahn's algorithm: 
+     * https://en.wikipedia.org/wiki/Topological_sorting
+     */
+    export function kahn(graph: NodesGraph, starterNodes?: string[]) {
+        // fill starting lists
+        let L: string[] = [];
+        let S: string[];
+        let visitedCables: Set<string> = new Set<string>();
+
+        if (!starterNodes) {
+            S = getGlobalGraphStarters(graph);
+        } else {
+            S = starterNodes;
         }
 
         while (true) {
