@@ -23,6 +23,7 @@ import { Settings } from "./model/settings";
 import { Core, CoreType } from "./model/core";
 import { makeMenuFromWidget } from "../menu/right-menu/widget-menu";
 import { makeMenuFromNode } from "../menu/right-menu/node-menu";
+import { GraphConversion } from "./logic/graph-conversion";
 
 
 /**
@@ -187,7 +188,7 @@ export class NodesCanvas {
     // Ctrl + S
     onSave() {
         console.log("saving...");
-        let json = NodesGraph.toJSON(this.graph);
+        let json = GraphConversion.toJSON(this.graph);
         let str = JSON.stringify(json, null, 2)
         IO.promptSaveFile("graph.json", str);
     }
@@ -203,7 +204,7 @@ export class NodesCanvas {
             }
             let str = textFile.toString();
             let json = JSON.parse(str);
-            this.resetGraph(NodesGraph.fromJSON(json, this.catalogue)!);
+            this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
         })
     }
 
@@ -233,7 +234,7 @@ export class NodesCanvas {
         let hashes = this.selectedSockets.map((s => s.hash));
         this.graphHistory.deleteNodes(hashes); 
         let subgraph = this.graph.subgraph(hashes);
-        let json = NodesGraph.toJSON(subgraph);
+        let json = GraphConversion.toJSON(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -244,7 +245,7 @@ export class NodesCanvas {
     onCopy() : string {
         let hashes = this.selectedSockets.map((s => s.hash));
         let subgraph = this.graph.subgraph(hashes);
-        let json = NodesGraph.toJSON(subgraph);
+        let json = GraphConversion.toJSON(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -259,7 +260,7 @@ export class NodesCanvas {
 
         // generate a new graph from a string 
         let json = JSON.parse(str);
-        let addition = NodesGraph.fromJSON(json, this.catalogue);
+        let addition = GraphConversion.fromJSON(json, this.catalogue);
         if (!addition) return;
 
         // move all the nodes to make the addition distinct

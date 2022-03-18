@@ -1,20 +1,18 @@
 import { createRandomGUID, Graph } from "../../../../engine/src/lib";
 import { Catalogue } from "../../modules/catalogue";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
 import { CableState as CableVisualState } from "../rendering/cable-visual";
 import { filterMap, mapFromJson, mapToJson } from "../util/serializable";
-import { graphToFunction, jsToGraph } from "./graph-conversion";
 import { GeonNode } from "./node";
 import { Socket, SocketIdx, SocketSide } from "./socket";
 import { State } from "./state";
 import { Widget, WidgetSide } from "./widget";
-import { Core, CoreType } from "../../nodes-canvas/model/core";
-
+import { GraphConversion } from "../logic/graph-conversion";
+import { GraphCalculation } from "../logic/graph-calculation";
 
 /**
- * A Collection of Nodes, Gizmo's & Cables. 
- * These are doubly linked. (Nodes point to cables, cables point to nodes).
+ * A Collection of Nodes and Widgets
+ * These are doubly linked. (Nodes point to each other)
  * The Graph makes sure these links remain correct
  */
 export class NodesGraph {
@@ -23,7 +21,7 @@ export class NodesGraph {
 
     constructor(
         public nodes: Map<string, GeonNode>, 
-        private widgets: Set<string>) {}
+        public widgets: Set<string>) {}
 
     static new(
         nodes = new Map<string, GeonNode>(),
@@ -33,7 +31,7 @@ export class NodesGraph {
     
     static fromJs(js: string, catalogue: Catalogue) {
         // TODO
-        let graph = jsToGraph(js, catalogue);
+        let graph = GraphConversion.fromJavascript(js, catalogue);
         if (!graph) {
             console.warn("could not create graph from js");
             return NodesGraph.new();
@@ -42,72 +40,8 @@ export class NodesGraph {
         }
     }
 
-    static fromJSON(json: any, catalogue: Catalogue) : NodesGraph | undefined {
-
-        try {
-        let graph = NodesGraph.new();
-        for (let hash in json.nodes) {
-            let node = json.nodes[hash];
-            let type: CoreType = node.type;
-            
-            if (type == CoreType.Widget) {
-                let lib = "widgets";
-                let name = node.process.name;
-                
-                let widget = catalogue.trySelect(lib, name, type) as Widget;
-                if (!widget) {
-                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
-                    continue;
-                }
-
-                widget.state = node.process.state;
-
-                let geonNode = GeonNode.fromJson(node, widget);
-                if (!geonNode) {
-                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
-                    continue;
-                }
-                graph.addNode(geonNode);
-                continue; 
-            }
-
-            if (type == CoreType.Operation) {
-                let lib = node.process.path[0];
-                let name = node.process.name;
-                
-                let process = catalogue.trySelect(lib, name, type);
-                if (!process) {
-                    console.error(`operation process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
-                    continue;
-                } 
-                let geonNode = GeonNode.fromJson(node, process);
-                if (!geonNode) {
-                    console.error(`operation process: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
-                    continue;
-                }
-                graph.nodes.set(hash, geonNode);  
-                continue; 
-            }
-        }
-        catalogue.deselect();
-        return graph;
-        } catch (e) {
-            console.error("something went wrong during json parsing:");
-            console.error(e);
-            return undefined;
-        }
-    }
-
-    static toJSON(graph: NodesGraph) {
-        
-        let nodes = graph.nodes;
-        return {
-                nodes: mapToJson(nodes, GeonNode.toJson),
-        }
-    }
-
     toJs(name: string) {
-        return graphToFunction(this, name);
+        return GraphConversion.toFunction(this, name);
     }
 
     onWidgetChange() {
@@ -125,128 +59,7 @@ export class NodesGraph {
      * TODO: build something that can recalculate parts of the graph
      */
     async calculate() : Promise<[Map<string, State>, Map<string, CableVisualState>]> {
-
-        let cache = new Map<string, State>();
-        let visuals = new Map<string, CableVisualState>();
-        let orderedNodeKeys = this.kahn();
-
-        let setValue = (key: string, value: State) => {
-            // let cable = this.getOutputConnectionsAt(key)!;
-            // if (!cable) {
-            //     return;
-            // }
-
-            let visual = CableVisualState.Null;
-            if (value) {
-                visual = CableVisualState.On;
-            } 
-            
-            visuals.set(key, visual);
-            cache.set(key, value);
-        }
-
-        //start at the widgets (widget keys are the same as the corresponding node)
-        for (let key of orderedNodeKeys) {
-   
-            let node = this.getNode(key)!;
-
-            // calculate in several ways, depending on the node
-            if (node.operation || node.widget?.side == WidgetSide.Process) { // A | operation -> pull cache from cables & push cache to cables
-                
-                let inputs = [];
-                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!! ?
-                    inputs.push(cache.get(cable)!);
-                }
-                let outputs;
-                try {
-                    //TODO RUN RUN RUN
-                    outputs = await node.core.run(inputs);
-                } catch(e) {
-                    let error = e as Error;
-                    node.errorState = error.message;
-                    console.warn("NODE-ERROR: \n", node.errorState);
-                    continue;
-                }
-
-                let outCables = node.getCablesAtOutput();
-                if (node.core.outCount == 1) {
-                    setValue(outCables[0], outputs);
-                } else {
-                    for (let i = 0 ; i < node.core.outCount; i++) {
-                        setValue(outCables[i], outputs[i]);
-                    }
-                }
-                
-            } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget -> push cache to cable
-                for (let cable of node.getCablesAtOutput()) {
-                    setValue(cable, node.widget!.state);
-                }
-            } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget -> pull cache from cable
-                for (let cable of node.getCablesAtInput()) { // TODO multiple inputs!!
-                    node.widget!.run(cache.get(cable)!);
-                }
-            } else {
-                throw new Error("should never happen");
-            }
-        }
-        return [cache, visuals];
-    }
-
-    /**
-     * An implementation of kahn's algorithm: 
-     * https://en.wikipedia.org/wiki/Topological_sorting
-     */
-    kahn() {
-        // fill starting lists
-        let L: string[] = [];
-        let S: string[] = [];
-        let visitedCables: Set<string> = new Set<string>();
-
-        // use the widgets to identify the starting point
-        for (let key of this.widgets) {
-            let widget = this.getNode(key)!.widget!;
-            if (widget.side != WidgetSide.Input) 
-                continue; 
-            S.push(key);
-        }
-
-        while (true) {
-
-            let hash = S.pop();
-            if (hash == undefined) 
-                break;
-            L.push(hash);
-
-            let node = this.getNode(hash)!;
-
-            // for each node m with an edge e from n to m do
-            node.forEachOutputSocket((s: Socket, connections: Socket[]) => {
-                let cableHash = s.toString();
-                
-                // 'remove' edge e from the graph
-                if (visitedCables.has(cableHash))
-                    return;
-                visitedCables.add(cableHash);
-
-                // if m has no other incoming edges then
-                // insert m into S
-                for (let connection of connections) {
-                    let m = connection.hash;
-                    let allVisited = true;
-                    for (let c of this.getNode(m)!.getCablesAtInput()) {
-                        if (!visitedCables.has(c)) {
-                            allVisited = false;
-                            break;
-                        }
-                    }
-                    if (allVisited) {
-                        S.push(m);
-                    }
-                }
-            })
-        }
-
-        return L;
+        return GraphCalculation.calculate(this);
     }
 
     clone() {
