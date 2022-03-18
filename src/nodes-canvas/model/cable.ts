@@ -1,4 +1,5 @@
 import { TypeShim } from "../../modules/shims/type-shim";
+import { Type } from "../../modules/types/type";
 import { Socket } from "./socket";
 import { State } from "./state";
 
@@ -15,20 +16,23 @@ export enum CableStyle {
 }
 
 /**
- * A Cable, or Datum. Cables are directly linked to the data they carry
- * Cables live at the output sockets of nodes. 
+ * A Cable, or Datum. 
+ * 3 responsibilities tied together: connectivity, state management, visuals
  */
 export class Cable {
 
     constructor(
-        public start: Socket | undefined,
+        // 1 | connectivity (TODO)
+        public start: Socket | undefined, // this should never be undefined
         public ends: Socket[],
 
-        public type: TypeShim | undefined,
+        // 2 | state management
+        public type: TypeShim,
         public state: State,
         public level: number,
         public valid: boolean,
 
+        // 3 | visuals
         public style: CableStyle,
         // public polyline?: any,
     ) {}
@@ -48,14 +52,6 @@ export class Cable {
 
         this.state = state;
         this.style = style;
-    }
-
-    elevate() {
-
-    }
-
-    flatten() {
-
     }
 }
 

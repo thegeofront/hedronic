@@ -297,11 +297,11 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
         ctx.lineWidth = 6;
         ctx.stroke();
         ctx.strokeStyle = edgeColor;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3;
         ctx.stroke();
-        ctx.strokeStyle = mainColor;
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        // ctx.strokeStyle = mainColor;
+        // ctx.lineWidth = 2;
+        // ctx.stroke();
         return;
     }
 

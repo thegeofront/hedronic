@@ -296,6 +296,8 @@ export class NodesGraph {
         if (listLikeFit && !fit) {
             // this means the types fit if we enable iteration
             console.log("DO A CONVERTION");
+            let hostnode = this.nodes.get(to.hash)!
+            hostnode.hasDiscrepancies = true;
         }
         return listLikeFit;
     }

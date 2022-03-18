@@ -53,6 +53,10 @@ RNG
 - [X] refactor graph a bit
 - [x] expand full graph recalculation starters to inputless nodes
 - [X] reintroduce cables 
+- [X] implement the cables a bit , remove the workaround code
+- [X] make widgets more 'normal' compared to operations: remove the excessive 'ifs'
+- [X] fix bugs
+- [ ] detect list at connect-time
 
 - implement the 'list comparrison' thing
 - [ ] generate random vectors

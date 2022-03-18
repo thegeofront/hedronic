@@ -1,5 +1,7 @@
+import { Type } from "../../modules/types/type";
 import { Cable, CableStyle } from "../model/cable";
 import { NodesGraph } from "../model/graph";
+import { GeonNode } from "../model/node";
 import { Socket } from "../model/socket";
 import { State } from "../model/state";
 import { WidgetSide } from "../model/widget";
@@ -33,40 +35,33 @@ export namespace GraphCalculation {
         for (let key of orderedNodeKeys) {
     
             let node = graph.getNode(key)!;
-            let inData = graph.getDataAtInput(node);
-            let outData = graph.getDataAtOutput(node);
-            let inStates = [];
-
-            // get input data from cables
-            for (let datum of inData) {
-                if (!datum || datum.state == undefined) {
+            let maybeInds = graph.getDataAtInput(node);
+            let ins: Cable[] = [];
+            for (let [i, inCable] of maybeInds.entries()) {
+                if (!inCable || inCable.state == undefined) {
                     console.error("running a script with undefined data...");
-                    inStates.push(false);
+                    
                 } else {
-                    inStates.push(datum.state);
+                    ins.push(inCable);
                 }
             }
+            let outs = graph.getDataAtOutput(node);
+            
 
-            let outStates;
-            try {
-                //TODO RUN RUN RUN
-                outStates = await node.core.run(...inStates);
-
-            } catch(e) {
-                let error = e as Error;
-                node.errorState = error.message;
-                console.warn("NODE-ERROR: \n", node.errorState);
-                continue;
-            }
-
-            // set the cables
-            if (node.core.outCount == 1) {
-                outData[0].setState(outStates);
+            let err;
+            if (node.hasDiscrepancies) {
+                err = await calculateNodeIteratively(node, ins, outs);
             } else {
-                for (let i = 0 ; i < outData.length; i++) {
-                    outData[i].setState(outStates[i]);
-                }
-            } 
+                err = await calculateNode(node, ins, outs);
+            }
+
+            // handle errors 
+            if (err) {
+                node.errorState = err;
+                console.warn("NODE-ERROR: \n", node.errorState);
+            } else {
+                node.errorState = "";
+            }
         }
 
         return true;
@@ -75,8 +70,90 @@ export namespace GraphCalculation {
     /**
      * 
      */
-    export async function calculateNode() {
+    export async function calculateNode(node: GeonNode, ins: Cable[], outs: Cable[]) {
+        
+        let inStates = ins.map(c => c.state);
 
+        let rawReturnState = [];
+
+        try {
+            //TODO RUN RUN RUN
+            rawReturnState = await node.core.run(...inStates);
+            node.errorState = "";
+        } catch(e) {
+            let error = e as Error;
+            return error.message;
+        }
+    
+        // set the cables
+        if (node.core.outCount == 1 && outs.length == 1) {
+            outs[0].setState(rawReturnState);
+        } else {
+            for (let i = 0 ; i < outs.length; i++) {
+                outs[i].setState(rawReturnState[i]);
+            }
+        } 
+        
+        return undefined;
+    }
+
+    export async function calculateNodeIteratively(node: GeonNode, ins: Cable[], outs: Cable[]) {
+
+        // prepare to store output data
+        let aggregators: State[][] = [];
+        for (let [i, outCable] of outs.entries()) {
+            aggregators.push([]);
+        }
+
+        // figure out how many times we need to iterate
+        let count = 1;
+
+        // construct iterators, which will iterate over all list input cables, or just flat out return the items
+        let iterators: ((count: number) => State)[] = [];
+        for (let [i, inCable] of ins.entries()) {
+
+            // TODO do a better job of detecting 'artifical' lists
+            if (inCable.type.type == Type.List && node.core.ins[i].type !== Type.List) {
+                
+                let arr = inCable.state as Array<any>;
+                if (arr.length > count) {
+                    count = arr.length;
+                }
+                // TODO make a more predictable iterator
+                iterators.push((n: number) => {return arr[n % arr.length]})
+            } else {
+                iterators.push(() => {return inCable.state})
+            }
+        }
+
+        // do the actual iteration!
+        for (let i = 0 ; i < count; i++) {
+
+            let rawInputs = iterators.map(getter => getter(i));
+            let rawOutputs;
+            try {
+                rawOutputs = await node.core.run(...rawInputs);
+                node.errorState = "";
+            } catch(e) {
+                let error = e as Error;
+                return error.message + `\nHappened at iteration: ${i}. `;
+            }
+
+            // set to the aggregators
+            if (node.core.outCount == 1 && outs.length == 1) {
+                aggregators[0].push(rawOutputs);
+            } else {
+                for (let i = 0 ; i < outs.length; i++) {
+                    aggregators[i].push(rawOutputs[i]);
+                }
+            } 
+        }
+
+        // set the cables
+        for (let i = 0 ; i < outs.length; i++) {
+            outs[i].setState(aggregators[i]);
+        }        
+        return undefined;
     }
 
     /**

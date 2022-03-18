@@ -15,6 +15,7 @@ export const NODE_WIDTH = 4;
 export class GeonNode {
 
     errorState = "";
+    hasDiscrepancies = false;
 
     private constructor(
         public hash: string,                   // guid or some other unique identifier to this node 
