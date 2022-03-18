@@ -50,7 +50,7 @@ export class FunctionShim {
         return new FunctionShim(name, [namespace, name], func, ins, outs);
     }
 
-    async run(inputs: State[]) : Promise<any> {
+    async run(...inputs: State[]) : Promise<any> {
         if (this.isMethod) {
             return await this.func.call(inputs[0], ...inputs.slice(1));
         }

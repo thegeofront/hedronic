@@ -10,14 +10,14 @@ export namespace GraphCalculation {
      * If a node becomes outdated: propagate this logic to all nodes dependent on this node
      */
     export async function setOutdated(key: Node) {
-
+        // TODO
     }
 
     /**
      * Only calculate outdated nodes
      */
     export async function partial() {
-
+        // TODO
     }
 
     /**
@@ -36,6 +36,8 @@ export namespace GraphCalculation {
             let inData = graph.getDataAtInput(node);
             let outData = graph.getDataAtOutput(node);
             let inStates = [];
+
+            // get input data from cables
             for (let datum of inData) {
                 if (!datum || datum.state == undefined) {
                     console.error("running a script with undefined data...");
@@ -45,10 +47,10 @@ export namespace GraphCalculation {
                 }
             }
 
-            let outputStates;
+            let outStates;
             try {
                 //TODO RUN RUN RUN
-                outputStates = await node.core.run(inStates);
+                outStates = await node.core.run(...inStates);
 
             } catch(e) {
                 let error = e as Error;
@@ -59,15 +61,19 @@ export namespace GraphCalculation {
 
             // set the cables
             if (node.core.outCount == 1) {
-                outData[0].setState(outputStates);
+                outData[0].setState(outStates);
             } else {
                 for (let i = 0 ; i < outData.length; i++) {
-                    outData[i].setState(outputStates[i]);
+                    outData[i].setState(outStates[i]);
                 }
             } 
         }
 
         return true;
+    }
+
+    export async function calculateNode() {
+
     }
 
     /**
