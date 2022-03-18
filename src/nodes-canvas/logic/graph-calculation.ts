@@ -72,6 +72,9 @@ export namespace GraphCalculation {
         return true;
     }
 
+    /**
+     * 
+     */
     export async function calculateNode() {
 
     }

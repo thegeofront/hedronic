@@ -7,6 +7,7 @@ import { FunctionShim } from "../../modules/shims/function-shim";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 import { Cable, CableStyle } from "./cable";
+import { CableDeleteAction } from "./actions/cable-delete-action";
 
 
 export const NODE_WIDTH = 4;
@@ -82,7 +83,8 @@ export class GeonNode {
 
         let cables = []
         for (let i = 0 ; i < process.outCount; i++) {
-            cables.push(Cable.new());
+            let cable = Cable.new(process.outs[i].deepcopy());
+            cables.push(cable);
         } 
 
         return new GeonNode(hash, gridpos, process, inputs, outputs, cables);

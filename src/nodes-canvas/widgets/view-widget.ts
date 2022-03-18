@@ -22,7 +22,6 @@ export class ViewWidget extends Widget {
 
     async run(...args: State[]) {
         this.state = args[0];
-        console.log(args);
         HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString()});
         return [];
     }

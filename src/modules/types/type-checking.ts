@@ -1,8 +1,41 @@
+import { State } from "../../nodes-canvas/model/state";
 import { TypeShim } from "../shims/type-shim";
 import { Type } from "./type";
 
 export namespace TypeChecking {
     
+    export function convert(visitorState: State, visitor: TypeShim, host: TypeShim) {
+        let isSelfList = visitor.type == Type.List;
+        let isOtherList = host.type == Type.List;
+
+        if (!isSelfList && !isOtherList) {
+            return visitorState;
+        } 
+        if (!isSelfList && isOtherList) {
+
+        }
+    }
+
+    export function doTypesFitDisregardingLists(visitor: TypeShim, host: TypeShim) : boolean {
+        let isVisitorList = visitor.type == Type.List;
+        let isHostList = host.type == Type.List;
+
+        if (!isVisitorList && !isHostList) 
+            return doTypesFit(visitor, host); // both are not list, compare as normal
+        
+        if (!isVisitorList && isHostList) 
+            return doTypesFitDisregardingLists(visitor, host.children![0]); // only host is list, see if it fits 
+        
+        if (isVisitorList && !isHostList) 
+            return doTypesFitDisregardingLists(visitor.children![0], host);
+        
+        if (isVisitorList && isHostList) 
+            return doTypesFitDisregardingLists(visitor.children![0], host.children![0]); // both are lists, check if their items match up
+        
+        return false; // never happens
+    }
+
+
     export function doTypesFit(self: TypeShim, other: TypeShim) {
         // console.log("this", this.typeToString(), "other", other.typeToString())
 
@@ -87,3 +120,43 @@ export namespace TypeChecking {
         return true;
     }
 }
+
+
+// function doSomething(left: any, right: any) {
+//     return [getLengths(left), getLengths(right)];
+// }
+
+// function makeArray(data: any) {
+//     if (something instanceof Array) {
+//         return data;
+//     } else {
+//         return [data]
+//     }
+// }
+
+// function getLengths(something: any) : number {
+//     if (something instanceof Array) {
+//         return length;
+//     }
+//     return 1;
+// }
+
+// function test() {
+
+//     let res = doSomething([1], [1,2,3,4]);
+//     res = doSomething(1, [1,2,3]);
+//     console.log(res);
+//     res = doSomething(undefined, [1,2,3]);
+//     console.log(res);
+//     res = doSomething([], [1,2,3]);
+//     console.log(res);
+//     res = doSomething([1,2,3], 1);
+//     console.log(res);
+//     res = doSomething([1,2,3], [1,2,3]);
+//     console.log(res);
+//     res = doSomething([1,2,3], [[], [1,2,3],[1,2,3], []]);
+//     console.log(res);
+
+// }
+
+// test();

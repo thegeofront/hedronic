@@ -285,7 +285,7 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
         edgeColor = "black"
     }
 
-    if (style == CableStyle.Level1) {
+    if (style == CableStyle.List1) {
         // draw the line twice with different settings
         ctx.beginPath();
         for (let line of lines) movePolyline(ctx, line);

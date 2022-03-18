@@ -9,6 +9,7 @@ import { Widget, WidgetSide } from "./widget";
 import { GraphConversion } from "../logic/graph-conversion";
 import { GraphCalculation } from "../logic/graph-calculation";
 import { Cable, CableStyle } from "./cable";
+import { TypeChecking } from "../../modules/types/type-checking";
 
 /**
  * A Collection of Nodes, Widgets (and Cables)
@@ -285,13 +286,18 @@ export class NodesGraph {
     }
 
     /**
-     * Assume the order
+     * Assumes the order
      */
     isConnectionValid(from: Socket, to: Socket) {
         let fromParam = this.getParameterAt(from)!;
         let toParam = this.getParameterAt(to)!;
-
-        return fromParam?.isAcceptableType(toParam);
+        let listLikeFit = TypeChecking.doTypesFitDisregardingLists(fromParam, toParam);
+        let fit = fromParam?.isAcceptableType(toParam);
+        if (listLikeFit && !fit) {
+            // this means the types fit if we enable iteration
+            console.log("DO A CONVERTION");
+        }
+        return listLikeFit;
     }
 
     /////// 
@@ -365,7 +371,7 @@ export class NodesGraph {
 
         // if the input node is already, filled, remove whatever is there first
         if (toConnections) {
-            console.log("WARNING- REMOVING SOME OTHER CONNECTION TO ALLOW THIS ONE!");
+            // console.log("WARNING- REMOVING SOME OTHER CONNECTION TO ALLOW THIS ONE!");
             this.removeConnection(to, toConnections);
         }
 

@@ -39,6 +39,10 @@ export class TypeShim {
         return new TypeShim(name, type, glyph, child);
     }
 
+    deepcopy() : TypeShim {
+        return new TypeShim(this.name, this.type, this.glyph, this.children?.map(child => child.deepcopy()));
+    }
+
     /**
      * answers the question, can a state of `this` be put into `other` without problems?
      */
