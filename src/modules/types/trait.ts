@@ -68,7 +68,7 @@ export function tryApplyTraits(type: TypeShim, traitShims=TraitShims) {
 
     for (let [trait, shim] of traitShims.entries()) {
         if (type.isAcceptableType(shim)) {
-            console.log(type, "is acceptable to ", Trait[trait]);
+            // console.log(type, "is acceptable to ", Trait[trait]);
             type.traits.push(trait);
         } 
         

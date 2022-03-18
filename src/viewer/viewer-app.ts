@@ -74,9 +74,9 @@ export class ViewerApp extends App {
         for (let output of outputs) {
             let data = canvas.tryGetCache(output);
             if (!data) continue;
-            let unit = tryConvert(data);
-            if (!unit) continue;
-            this.preview.set(unit, output.toString())
+            let units = tryConvert(data);
+            if (!units) continue;
+            this.preview.set(units, output.toString())
         }
     }
 
@@ -103,14 +103,17 @@ export class ViewerApp extends App {
 
 /**
  * Try to convert a general type to a type we can render
+ * Uses REFLECTION and DUMB TRUST to figure out what it is. 
+ * TODO we could do this waaaay easier based on the DATUM SHIM, if we implement such a thing...
  */
 function tryConvert(item: any) : RenderableUnit | undefined {
+
     if (typeof item !== 'object' || item === null) return undefined;
     
     //@ts-ignore
     let typename = item.constructor.name;
     
-    if (typename == "Vector" || typename == "Vector3") 
+    if (typename == "Vector" || typename == "Vector3" || (item.x != undefined && item.y != undefined && item.z != undefined)) 
         return MultiVector3.fromData([item.x, item.y, item.z]);
     if (typename == "Line" || typename == "Line3") 
         return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
@@ -125,7 +128,30 @@ function tryConvert(item: any) : RenderableUnit | undefined {
 
     if (trait == "mesh") 
         return Mesh.new(MultiVector3.fromData(item.vertices), item.triangles); 
-    
+    if (typename == "Array") {
+        return tryConvertArray(item as Array<any>)
+    }
 
+    return undefined;
+}
+
+function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
+    
+    let list = [];
+    for (let i = 0 ; i < item.length; i++) {
+        console.log(item[i]);
+        let valueData = tryConvert(item[i]);
+        if (valueData) {
+            list.push(valueData);
+        } 
+    }
+
+    // aggregate the data, we don't want hundreds of shaders being instanciated...
+    if (list[0] instanceof MultiVector3) {
+        return MultiVector3.fromJoin(list as MultiVector3[]);
+    }
+
+    // TODO allow for other things!!!
+    console.warn("NOT IMPLEMENTED LIST VISUAL")
     return undefined;
 }
