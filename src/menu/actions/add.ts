@@ -22,7 +22,6 @@ function makeSublist(catalogue: Catalogue, module: ModuleShim) {
     }
 
     for (let core of module.blueprints) {
-
         
         if (core.path.length > 2) {
 
