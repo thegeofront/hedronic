@@ -1,11 +1,9 @@
-import { isTypeAliasDeclaration } from "typescript";
-import { IO, Vector2, WebInput, WebIO } from "../../../../engine/src/lib";
+import { Vector2, WebInput, WebIO } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
-import { NodesCanvas } from "../nodes-canvas";
+import { State } from "../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
 export class FileReadWidget extends Widget {
     

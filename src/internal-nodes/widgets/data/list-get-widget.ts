@@ -2,8 +2,8 @@ import { Parameter } from "../../../../../engine/src/lib";
 import { MenuMaker } from "../../../menu/util/menu-maker";
 import { TypeShim } from "../../../modules/shims/type-shim";
 import { Type } from "../../../modules/types/type";
-import { State } from "../../model/state";
-import { Widget, WidgetSide } from "../../model/widget";
+import { State } from "../../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 import { MAX_NUM_PARAMETERS } from "./list-set-widget";
 
 /**

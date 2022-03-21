@@ -1,10 +1,10 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
-import { CTX } from "../rendering/ctx/ctx-helpers";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
 import { renderTextInWidget } from "./input-widget";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
+import { State } from "../../nodes-canvas/model/state";
+import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
 
 export class ConsoleWidget extends Widget {
 

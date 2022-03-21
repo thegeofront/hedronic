@@ -1,12 +1,11 @@
-import { Domain2, Parameter, Vector2 } from "../../../../engine/src/lib";
-import { CTX } from "../rendering/ctx/ctx-helpers";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
-import { NodesCanvas } from "../nodes-canvas";
+import { Parameter, Vector2 } from "../../../../engine/src/lib";
+import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
-import { Element } from "../../html/util";
-import { MenuMaker } from "../../menu/util/menu-maker";
+import { State } from "../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
 
 export class SliderWidget extends Widget {
 

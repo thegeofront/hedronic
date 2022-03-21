@@ -2,9 +2,9 @@ import { Vector2 } from "../../../../engine/src/lib";
 import { HTML } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
+import { State } from "../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { StopVisualizeEvent, VisualizeEvent } from "../../viewer/viewer-app";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
 
 export class ViewWidget extends Widget {
 
@@ -22,7 +22,7 @@ export class ViewWidget extends Widget {
 
     async run(...args: State[]) {
         this.state = args[0];
-        HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString()});
+        HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString() });
         return [];
     }
 
@@ -31,7 +31,7 @@ export class ViewWidget extends Widget {
     }
 
     onDestroy(): void {
-        HTML.dispatch(StopVisualizeEvent, {id: this.count.toString()});
+        HTML.dispatch(StopVisualizeEvent, { id: this.count.toString() });
     }
 
 }

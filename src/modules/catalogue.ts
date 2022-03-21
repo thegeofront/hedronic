@@ -1,17 +1,11 @@
 import { GeonNode } from "../nodes-canvas/model/node";
 import { Vector2 } from "../../../engine/src/lib";
 import { Widget } from "../nodes-canvas/model/widget";
-import { ButtonWidget } from "../nodes-canvas/widgets/button-widget";
-import { ConsoleWidget } from "../nodes-canvas/widgets/console-widget";
-import { LampWidget } from "../nodes-canvas/widgets/lamp-widget";
-import { InputWidget } from "../nodes-canvas/widgets/input-widget";
-import { ModuleShim } from "./shims/module-shim";
-import { ImageWidget } from "../nodes-canvas/widgets/image-widget";
-import { TypeShim } from "./shims/type-shim";
 import { FunctionShim } from "./shims/function-shim";
-import { ViewWidget } from "../nodes-canvas/widgets/view-widget";
 import { CoreType } from "../nodes-canvas/model/core";
-import { getDefaultWidgets } from "../nodes-canvas/widgets/_registry";
+import { ModuleShim } from "./shims/module-shim";
+import { TypeShim } from "./shims/type-shim";
+import { getDefaultWidgets } from "../internal-nodes/widgets/_registry";
 
 /**
  * Catalogue containing shim Modules

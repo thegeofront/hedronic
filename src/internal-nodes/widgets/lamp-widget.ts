@@ -1,8 +1,8 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
+import { State } from "../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
 export class LampWidget extends Widget {
 

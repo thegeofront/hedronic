@@ -1,9 +1,9 @@
-import { IO, Vector2, WebIO } from "../../../../engine/src/lib";
+import { IO, Vector2 } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
-import { State } from "../model/state";
-import { Widget, WidgetSide } from "../model/widget";
+import { State } from "../../nodes-canvas/model/state";
+import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
 export class FileWriteWidget extends Widget {
 
