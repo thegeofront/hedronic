@@ -26,6 +26,7 @@ export class InspectWidget extends Widget {
     set(data: any) {
         this.state = data;
         if (!this.viewer) return;
+        console.log(this.state);
         this.viewer.data = this.state;
     }
 
@@ -34,7 +35,7 @@ export class InspectWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
-        this.viewer = Element.html`<json-viewer id="json">""</json-viewer>`;
+        this.viewer = Element.html`<json-viewer>""</json-viewer>`;
         if (this.state) this.set(this.state);
         return [this.viewer];   
     }

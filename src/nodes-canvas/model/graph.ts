@@ -168,7 +168,7 @@ export class NodesGraph {
         datum.state = state;
     }
 
-        /**
+    /**
      * This looks werid, but for graph processes, we want the ID of the 'cables' at our output
      * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
      * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 

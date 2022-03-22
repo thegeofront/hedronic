@@ -11,7 +11,7 @@ import { Compose, Element, Str, Template } from "../util";
 import { WebComponent } from "../web-component";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 import { MenuMaker } from "../../menu/util/menu-maker";
-
+import '@alenaksu/json-viewer';
 
 export const showRightPanel = new PayloadEventType<void>("showrightpanel");
 

@@ -22,6 +22,7 @@ import { makeMenuFromNode } from "../menu/right-menu/node-menu";
 import { GraphConversion } from "./logic/graph-conversion";
 import { Cable, CableStyle } from "./model/cable";
 import { GraphCalculation } from "./logic/graph-calculation";
+import { makeMenuFromCable } from "../menu/right-menu/param-menu";
 
 /**
  * Represents the entire canvas of nodes.
@@ -672,10 +673,13 @@ export class NodesCanvas {
                 HTML.dispatch(setMenu, {title: "Widget", data: node, callback: makeMenuFromWidget})
             }
         } else if (s.side == SocketSide.Input) {
-            // let outputSocket = this.graph.getInputConnectionAt(s)!;
-            // let state = this.graph.getDatum(outputSocket)!.state;
-            // HTML.dispatch(setRightPanelOld, {state, socket: s});
+            let outputSocket = this.graph.getInputConnectionAt(s);
+            if (!outputSocket) return;
+            let datum = this.graph.getDatum(outputSocket)!;
+            HTML.dispatch(setMenu, {title: "Input", data: datum, callback: makeMenuFromCable});
         } else if (s.side == SocketSide.Output) {
+            let datum = this.graph.getDatum(s);
+            HTML.dispatch(setMenu, {title: "Output", data: datum, callback: makeMenuFromCable});
             // let state = this.graph.getDatum(s)!.state;
             // HTML.dispatch(setRightPanelOld, {state, socket: s});
         }
