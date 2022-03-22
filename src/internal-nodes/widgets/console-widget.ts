@@ -5,6 +5,8 @@ import { Type } from "../../modules/types/type";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { State } from "../../nodes-canvas/model/state";
 import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
+import '@alenaksu/json-viewer';
+import { Element } from "../../html/util";
 
 export class ConsoleWidget extends Widget {
 

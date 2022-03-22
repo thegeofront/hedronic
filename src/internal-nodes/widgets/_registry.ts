@@ -7,6 +7,7 @@ import { FileWriteWidget } from "./file-write-widget";
 import { ImageWidget } from "./image-widget";
 import { InputWidget } from "./input-widget";
 import { LampWidget } from "./lamp-widget";
+import { InspectWidget } from "./log-widget";
 import { SliderWidget } from "./slider-widget";
 import { ViewWidget } from "./view-widget";
 
@@ -21,7 +22,7 @@ export function getDefaultWidgets() {
         ViewWidget.new(false),
         FileWriteWidget.new(false),
         FileReadWidget.new(false),
-
+        InspectWidget.new({}),
         ListGetWidget.new(3),
         ListSetWidget.new(3),
     ]

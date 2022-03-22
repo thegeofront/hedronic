@@ -71,8 +71,6 @@ RNG
    - [ ] how to take items from a list? 
    - [ ] Nodes do not like variation of their input & output sockets. This is also troublesome for graph's multilinkedlist reasons
 
-
-
   TODO
 - [] internal (widget) operations
 - internal gf-types: 
@@ -83,7 +81,7 @@ RNG
   - multi-vector-2
   - multi-polyline-2
   - mutli-polygon-2
-  
+
   - point-3
   - mesh-3
   - multi-point-3
