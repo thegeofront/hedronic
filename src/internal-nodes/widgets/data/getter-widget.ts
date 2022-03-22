@@ -11,13 +11,19 @@ import { MAX_NUM_PARAMETERS } from "./list-widget";
  */
 export class GetterWidget extends Widget {
 
-    private keys?: string[];
+    saveState: string[] = [];
 
-    // private outCountSetting!: Parameter;
+    static makeOuts(keys: string[]) {
+        let outs = [];
+        for (let key of keys) {
+            outs.push(TypeShim.new(key, Type.any));
+        }
+        return outs;
+    }
 
-    static new(state: State) {
+    static new(state: any) {
         let ins = [TypeShim.new("I", Type.any, undefined, [TypeShim.new("items", Type.any)])];
-        let outs: TypeShim[]  = [];
+        let outs = (state && state.length) ? GetterWidget.makeOuts(state) : [];
         let widget = new GetterWidget("getter", WidgetSide.Process, undefined, ins, outs, state);
         return widget;
     }
@@ -25,8 +31,8 @@ export class GetterWidget extends Widget {
     async run(...args: State[]) {
         let obj = args[0] as any;
         if (!obj) return [];
-        this.keys = Object.keys(obj);
-        return this.keys.map(key => obj.hasOwnProperty(key) ? obj[key] : undefined);
+        this.saveState = Object.keys(obj);
+        return this.saveState.map(key => obj.hasOwnProperty(key) ? obj[key] : undefined);
     }
 
     makeMenu(): HTMLElement[] {
@@ -37,12 +43,8 @@ export class GetterWidget extends Widget {
     }
 
     onMakeOutputKeys() {
-        let outs = [];
-        if (!this.keys) return;
-        for (let key of this.keys) {
-            outs.push(TypeShim.new(key, Type.any));
-        }
-        this.outs = outs;
+        if (!this.saveState) return;
+        this.outs = GetterWidget.makeOuts(this.saveState);
         this.onChange();
     }
 
