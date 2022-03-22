@@ -20,8 +20,7 @@ export namespace GraphConversion {
         if (catalogue.trySelect(lib, name, type)) {
             let node = catalogue.spawn(pos)!;
             if (type == CoreType.Widget) {
-                // @ts-ignore
-                node.core.state = state!;
+                node.widget!.saveState = state!;
             }
             let key = graph.addNode(node);
             catalogue.deselect();
