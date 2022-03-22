@@ -118,8 +118,8 @@ export class NodesCanvas {
         let js = `
         function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
         ) {
-            let [aFixed] = various.toNumber(a) /* "x": 3 | "y": -1 */;
-            let [cFixed] = various.toNumber(c) /* "x": 3 | "y": 3 */;
+            let [aFixed] = various.asNumber(a) /* "x": 3 | "y": -1 */;
+            let [cFixed] = various.asNumber(c) /* "x": 3 | "y": 3 */;
             let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
             let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
             let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;

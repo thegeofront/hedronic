@@ -52,7 +52,8 @@ export class GetterWidget extends Widget {
     makeMenu(): HTMLElement[] {
         return [
             // MenuMaker.number(this.outCountSetting, this.onChangeCount.bind(this)), 
-            MenuMaker.button("auto", this.onMakeOutputKeys.bind(this))
+            MenuMaker.button("open", this.onMakeOutputKeys.bind(this)),
+            MenuMaker.button("close", this.onClose.bind(this))
         ];
     }
 
@@ -61,6 +62,10 @@ export class GetterWidget extends Widget {
         let {types, keys } = this.saveState;
         this.outs = GetterWidget.makeOuts(keys, types);
         this.onChange();
+    }
+
+    onClose() {
+
     }
 
     clone() {
