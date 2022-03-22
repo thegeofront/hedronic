@@ -43,7 +43,7 @@ export class Widget {
 
     nameLower: string;
     domain?: Domain2;
-    onChangeCallback?: Function;
+    onChangeCallback?: (w: Widget) => void;
     onChangeInOutCallback?: Function;
 
     protected constructor(
@@ -168,7 +168,7 @@ export class Widget {
     }
 
     onChange() {
-        if (this.onChangeCallback) this.onChangeCallback();
+        if (this.onChangeCallback) this.onChangeCallback(this);
     }
     
     onUpdateInOutCount() {

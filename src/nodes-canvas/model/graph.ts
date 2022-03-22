@@ -45,8 +45,9 @@ export class NodesGraph {
         return GraphConversion.toFunction(this, name);
     }
 
-    onWidgetChange() {
-        // for now, just recalculate
+    onWidgetChange(hash: string, widget: Widget) {
+        let node = this.getNode(hash)!;
+        setNodeToWidgetInOuts(this, node, widget);
         if (this.onWidgetChangeCallback) this.onWidgetChangeCallback();
     }
 
@@ -191,7 +192,7 @@ export class NodesGraph {
         this.nodes.set(node.hash, node);
         if (node.core instanceof Widget) {
             this.widgets.add(node.hash);
-            node.widget!.onChangeCallback = this.onWidgetChange.bind(this);
+            node.widget!.onChangeCallback = (w) => this.onWidgetChange(node.hash, w);
         }
         return node.hash;
     }
@@ -323,21 +324,15 @@ export class NodesGraph {
 
     removeAllConnections(hash: string) {
         let node = this.getNode(hash)!;
+        this.removeInputConnections(node);
+        this.removeOutputConnections(node);
+    }
 
-        for (let i = 0 ; i < node.core.outCount; i++) {
-            let foreigns = node.outputs[i];
-            if (!foreigns) continue;
-            let local = Socket.fromNode(hash, i, SocketSide.Output);
-            
-            // remove foreign connection, then my connection
-            for (let foreign of foreigns) this.setInputConnectionAt(foreign, undefined)
-            this.setOutputConnectionsAt(local, []);
-        }
-        
+    removeInputConnections(node: GeonNode) {
         for (let i = 0 ; i < node.core.inCount; i++) {
             let foreign = node.inputs[i];
             if (!foreign) continue;
-            let local = Socket.fromNode(hash, i, SocketSide.Input);
+            let local = Socket.fromNode(node.hash, i, SocketSide.Input);
             
             // remove foreign connection, then my connection
             this.removeOutputConnectionAt(foreign, local);
@@ -345,6 +340,17 @@ export class NodesGraph {
         }
     }
 
+    removeOutputConnections(node: GeonNode) {
+        for (let i = 0 ; i < node.core.outCount; i++) {
+            let foreigns = node.outputs[i];
+            if (!foreigns) continue;
+            let local = Socket.fromNode(node.hash, i, SocketSide.Output);
+            
+            // remove foreign connection, then my connection
+            for (let foreign of foreigns) this.setInputConnectionAt(foreign, undefined)
+            this.setOutputConnectionsAt(local, []);
+        }
+    }
 
     addCableBetween(aHash: string, outputIndex: number, bHash: string, inputIndex: number) {
         let aIndex: SocketIdx = outputIndex + 1;
@@ -492,4 +498,27 @@ export class NodesGraph {
             })
         }
     }
+}
+
+
+function setNodeToWidgetInOuts(graph: NodesGraph, node: GeonNode, widget: Widget) {
+            // a widget has just been edited internally
+        // make sure the data between widget & parameters still matches 
+        if (widget.outCount != node.outputs.length) {
+            
+            // for now, reset all
+            node.datums.forEach(d => d.disconnect(graph));
+            node.datums = [];
+            graph.removeOutputConnections(node);
+            node.outputs = [];
+            for (let output of widget.outs) {
+                node.outputs.push([]);
+                node.datums.push(Cable.new(output))
+            }
+        } 
+
+        if (widget.inCount != node.inputs.length) {
+            console.log("inputs changed!!!!");
+            graph.removeInputConnections(node)
+        }
 }

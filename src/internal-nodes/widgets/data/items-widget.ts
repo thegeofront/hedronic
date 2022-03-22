@@ -4,7 +4,7 @@ import { TypeShim } from "../../../modules/shims/type-shim";
 import { Type } from "../../../modules/types/type";
 import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
-import { MAX_NUM_PARAMETERS } from "./list-set-widget";
+import { MAX_NUM_PARAMETERS } from "./list-widget";
 
 /**
  * Special component with variable number of outputs

@@ -1,7 +1,7 @@
 import { ButtonWidget } from "./button-widget";
 import { ConsoleWidget } from "./console-widget";
-import { ListGetWidget } from "./data/list-get-widget";
-import { ListSetWidget } from "./data/list-set-widget";
+import { ListGetWidget } from "./data/items-widget";
+import { ListSetWidget } from "./data/list-widget";
 import { FileReadWidget } from "./file-read-widget";
 import { FileWriteWidget } from "./file-write-widget";
 import { ImageWidget } from "./image-widget";
@@ -10,6 +10,8 @@ import { LampWidget } from "./lamp-widget";
 import { InspectWidget } from "./inspect-widget";
 import { SliderWidget } from "./slider-widget";
 import { ViewWidget } from "./view-widget";
+import { GetterWidget } from "./data/getter-widget";
+import { SetterWidget } from "./data/setter-widget";
 
 export function getDefaultWidgets() {
     return [
@@ -25,5 +27,7 @@ export function getDefaultWidgets() {
         InspectWidget.new({}),
         ListGetWidget.new(3),
         ListSetWidget.new(3),
+        GetterWidget.new(3),
+        SetterWidget.new(3),
     ]
 }

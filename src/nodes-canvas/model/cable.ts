@@ -45,7 +45,7 @@ export class Cable {
     /**
      * remove all connections & references to this cable
      */
-    delete(graph: NodesGraph) {
+    disconnect(graph: NodesGraph) {
         // TODO
     }
 
