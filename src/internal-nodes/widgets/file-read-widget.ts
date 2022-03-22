@@ -13,7 +13,7 @@ export class FileReadWidget extends Widget {
     }
 
     clone() {
-        return FileReadWidget.new(this.state);
+        return FileReadWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {
@@ -44,7 +44,7 @@ export class FileReadWidget extends Widget {
             return;
         }
 
-        this.state = data;
+        this.saveState = data;
         this.onChange();
     }   
 }

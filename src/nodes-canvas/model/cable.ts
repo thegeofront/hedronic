@@ -1,5 +1,6 @@
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
+import { NodesGraph } from "./graph";
 import { Socket } from "./socket";
 import { State } from "./state";
 
@@ -41,17 +42,24 @@ export class Cable {
         return new Cable(undefined, [], type, false, 0, true, CableStyle.Off);
     }
 
-    setState(state: State) {
+    /**
+     * remove all connections & references to this cable
+     */
+    delete(graph: NodesGraph) {
+        // TODO
+    }
 
+    setState(state: State) {
+        // determine visual based on state
         let style = CableStyle.Off;
         if (state instanceof Array) {
             style = CableStyle.List1;
         }else if (state) {
             style = CableStyle.On;
         } 
+        this.style = style;
 
         this.state = state;
-        this.style = style;
     }
 }
 

@@ -10,15 +10,15 @@ export class ConsoleWidget extends Widget {
 
     str = "";
 
-    static new(state: State) {
+    static new(state: any) {
         let ins = [TypeShim.new("I", Type.any)];
         return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), ins, [], state);
     }
 
     async run(...args: State[]) {
-        this.state = args[0];
+        this.saveState = args[0];
         try {
-            this.str = this.state!.toString()
+            this.str = this.saveState!.toString()
         } catch(error) {
             this.str = `<Error: Could not parse json. \nReason: ${(error as Error).message}>`
         }
@@ -31,7 +31,7 @@ export class ConsoleWidget extends Widget {
     }
 
     clone() {
-        return ConsoleWidget.new(this.state);
+        return ConsoleWidget.new(this.saveState);
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {

@@ -15,20 +15,20 @@ export class InputWidget extends Widget {
     }
 
     clone() {
-        return InputWidget.new(this.state);
+        return InputWidget.new(this.saveState);
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
-        renderTextInWidget(this, `${this.state}`, ctx, pos, component, cellSize);
+        renderTextInWidget(this, `${this.saveState}`, ctx, pos, component, cellSize);
     }
 
     makeMenu(): HTMLElement[] {
-        return [MenuMaker.textarea("text", this.state ? this.state.toString() : "", this.setState.bind(this))];
+        return [MenuMaker.textarea("text", this.saveState ? this.saveState.toString() : "", this.setState.bind(this))];
     }
 
     setState(state: string) {
         console.log(state);
-        this.state = state;
+        this.saveState = state;
         this.onChange();
     }
 

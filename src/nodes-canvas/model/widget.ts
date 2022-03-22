@@ -52,7 +52,7 @@ export class Widget {
         public readonly size: Vector2 | undefined,
         public ins: TypeShim[],
         public outs: TypeShim[],
-        public state: State,
+        public saveState: any,
     ) {
         this.nameLower = name.toLowerCase();
         this.domain = Widget.determineWidgetSize(this.side, this.size);
@@ -94,7 +94,7 @@ export class Widget {
     toJson() {
         return {
             name: this.name,
-            state: this.state,
+            state: this.saveState,
         }
     }
 
@@ -102,11 +102,14 @@ export class Widget {
         // this will also be specific per widget
     }
 
+    /**
+     * The default behaviour of a widget is a state loader / saver
+     */
     async run(...args: State[]) : Promise<State | State[]> {
         if (this.side == WidgetSide.Input) {
-            return this.state;
+            return this.saveState;
         } else if (this.side == WidgetSide.Output) {
-            this.state = args;
+            this.saveState = args;
             return [];
         }
         // this.state = args; // default behaviour
@@ -119,7 +122,7 @@ export class Widget {
     }
 
     clone() {
-        return new Widget(this.name, this.side, this.size, this.ins, this.outs, this.state);
+        return new Widget(this.name, this.side, this.size, this.ins, this.outs, this.saveState);
     }
 
     trySelect(local: Vector2) : number | undefined {
@@ -142,12 +145,12 @@ export class Widget {
         pos.x += this.domain.x.t0 * cellSize;
         pos.y += this.domain.y.t0 * cellSize;
 
-        ctx.fillStyle = this.state ? "ffffff" : "#292C33";
+        ctx.fillStyle = this.saveState ? "ffffff" : "#292C33";
 
         ctx.fillRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
         ctx.strokeRect(pos.x+A, pos.y+A, size.x-A*2, size.y-A*2);
       
-        ctx.fillStyle = this.state ? MUTED_WHITE : "#000000";
+        ctx.fillStyle = this.saveState ? MUTED_WHITE : "#000000";
         if (component == Infinity) {
             ctx.fillStyle += "88";
         } 

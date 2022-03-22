@@ -21,13 +21,13 @@ export class ViewWidget extends Widget {
     }
 
     async run(...args: State[]) {
-        this.state = args[0];
-        HTML.dispatch(VisualizeEvent, { state: this.state, id: this.count.toString() });
+        this.saveState = args[0];
+        HTML.dispatch(VisualizeEvent, { state: this.saveState, id: this.count.toString() });
         return [];
     }
 
     clone() {
-        return ViewWidget.new(this.state);
+        return ViewWidget.new(this.saveState);
     }
 
     onDestroy(): void {

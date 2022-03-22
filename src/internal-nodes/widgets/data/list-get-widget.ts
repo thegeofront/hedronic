@@ -12,7 +12,7 @@ import { MAX_NUM_PARAMETERS } from "./list-set-widget";
 export class ListGetWidget extends Widget {
 
     private lastListLength?: number;
-    private param!: Parameter;
+    private outCountSetting!: Parameter;
 
     static makeOutsOfCount(n: number) {
         let outs = [];
@@ -25,9 +25,9 @@ export class ListGetWidget extends Widget {
     static new(state: State) {
         let ins = [TypeShim.new("L", Type.List, undefined, [TypeShim.new("items", Type.any)])];
         let outs  = ListGetWidget.makeOutsOfCount(state as number);
-        let param = Parameter.new("output count: ", outs.length, 0, MAX_NUM_PARAMETERS, 1);
+        let outCountSetting = Parameter.new("output count: ", outs.length, 0, MAX_NUM_PARAMETERS, 1);
         let widget = new ListGetWidget("list get", WidgetSide.Process, undefined, ins, outs, state);
-        widget.param = param;
+        widget.outCountSetting = outCountSetting;
         return widget;
     }
 
@@ -39,27 +39,27 @@ export class ListGetWidget extends Widget {
 
     makeMenu(): HTMLElement[] {
         return [
-            MenuMaker.number(this.param, this.onChangeCount.bind(this)), 
+            MenuMaker.number(this.outCountSetting, this.onChangeCount.bind(this)), 
             MenuMaker.button("auto", this.setAutoCount.bind(this))
         ];
     }
 
     setAutoCount() {
-        this.param.set(this.lastListLength || 3, false);
-        this.setCount(this.param.get());
+        this.outCountSetting.set(this.lastListLength || 3, false);
+        this.setCount(this.outCountSetting.get());
     }
 
     onChangeCount() {
-        this.setCount(this.param.get());
+        this.setCount(this.outCountSetting.get());
     }
 
     setCount(n: number) {
         this.outs = ListGetWidget.makeOutsOfCount(n);
-        this.state = this.outs.length;
+        this.saveState = this.outs.length;
         this.onChange();
     }
 
     clone() {
-        return ListGetWidget.new(this.state);
+        return ListGetWidget.new(this.saveState);
     }
 }

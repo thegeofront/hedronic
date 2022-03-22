@@ -10,7 +10,7 @@ export class FileWriteWidget extends Widget {
     filename = "my-result.txt";
     
     get filecontent() : string | undefined {
-        return this.state as string || undefined;
+        return this.saveState as string || undefined;
     } 
 
     static new(state: State) {
@@ -19,12 +19,12 @@ export class FileWriteWidget extends Widget {
     }
 
     async run(...args: State[]) {
-        this.state = args[0];
+        this.saveState = args[0];
         return [];
     }
 
     clone() {
-        return FileWriteWidget.new(this.state);
+        return FileWriteWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {

@@ -14,11 +14,11 @@ export class ButtonWidget extends Widget {
     }
 
     clone() {
-        return ButtonWidget.new(this.state);
+        return ButtonWidget.new(this.saveState);
     }
 
     onClick(canvas: NodesCanvas) {
-        this.state = !this.state;
+        this.saveState = !this.saveState;
         canvas.deselect();
         canvas.onChange();
     }

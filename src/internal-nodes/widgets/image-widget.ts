@@ -14,7 +14,7 @@ export class ImageWidget extends Widget {
     }
 
     clone() {
-        return ImageWidget.new(this.state);
+        return ImageWidget.new(this.saveState);
     }
 
     onClick(canvas: NodesCanvas) {

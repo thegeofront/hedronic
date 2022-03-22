@@ -1,5 +1,3 @@
-import { GeonNode } from "./node";
-
 //si < 0 : inputs | si == 0 : node body | si > 0 : outputs
 export type SocketIdx = number; 
 

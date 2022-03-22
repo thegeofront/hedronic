@@ -37,11 +37,11 @@ export class ListSetWidget extends Widget {
 
     onChangeCount(p: Parameter) {
         this.ins = ListSetWidget.makeInsOfCount(p.get());
-        this.state = this.ins.length;
+        this.saveState = this.ins.length;
         this.onChange();
     }
 
     clone() {
-        return ListSetWidget.new(this.state);
+        return ListSetWidget.new(this.saveState);
     }
 }

@@ -15,12 +15,12 @@ export class SliderWidget extends Widget {
 
         let outs = [TypeShim.new("O", Type.number)];
         let iw = new SliderWidget("slider", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
-        iw.parameter = Parameter.new(iw.name, Number(iw.state), 0, 10, 1);
+        iw.parameter = Parameter.new(iw.name, Number(iw.saveState), 0, 10, 1);
         return iw;
     }
 
     clone() {
-        return SliderWidget.new(this.state);
+        return SliderWidget.new(this.saveState);
     }
 
     render(ctx: CTX, pos: Vector2, component: number, cellSize: number) {
@@ -33,7 +33,7 @@ export class SliderWidget extends Widget {
     }
 
     setState(state: number) {
-        this.state = state;
+        this.saveState = state;
         this.onChange();
     }
 

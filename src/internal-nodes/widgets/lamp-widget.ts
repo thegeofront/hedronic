@@ -12,12 +12,12 @@ export class LampWidget extends Widget {
     }
 
     async run(...args: State[]) {
-        this.state = args[0];
+        this.saveState = args[0];
         return [];
     }
 
     clone() {
-        return LampWidget.new(this.state);
+        return LampWidget.new(this.saveState);
     }
 
 }

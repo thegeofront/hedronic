@@ -18,7 +18,7 @@ export class NodeAddAction implements Action {
     do(graph: NodesGraph) {
         let node = GeonNode.new(this.gridPosition, this.process)!;
         if (node.core instanceof Widget && this.initState) {
-            node.core.state = this.initState;
+            node.core.saveState = this.initState;
         }
         this.key = graph.addNode(node);
     }

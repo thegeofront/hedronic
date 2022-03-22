@@ -49,7 +49,7 @@ export namespace GraphConversion {
                     continue;
                 }
     
-                widget.state = node.process.state;
+                widget.saveState = node.process.state;
     
                 let geonNode = GeonNode.fromJson(node, widget);
                 if (!geonNode) {
@@ -281,7 +281,7 @@ export namespace GraphConversion {
                 processes.push(str);
             } else if (node.widget!.side == WidgetSide.Input) { // B | Input Widget
                 for (let str of toEasyNames(node.getSocketKeysAtOutput())) {
-                    str += ` /* "widget": "${node.widget!.name}" | "state": "${node.widget!.state}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
+                    str += ` /* "widget": "${node.widget!.name}" | "state": "${node.widget!.saveState}" | "x": ${node.position.x} | "y": ${node.position.y} */`;
                     inputs.push(str);
                 }
             } else if (node.widget!.side == WidgetSide.Output) { // C | Output Widget 
