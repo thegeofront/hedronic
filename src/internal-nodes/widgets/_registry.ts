@@ -27,7 +27,7 @@ export function getDefaultWidgets() {
         InspectWidget.new({}),
         ListGetWidget.new(3),
         ListSetWidget.new(3),
-        GetterWidget.new([]),
+        GetterWidget.new(undefined),
         SetterWidget.new(3),
     ]
 }

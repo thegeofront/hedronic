@@ -19,7 +19,7 @@ export namespace TypeChecking {
     export function doTypesFitDisregardingLists(visitor: TypeShim, host: TypeShim) : boolean {
         let isVisitorList = visitor.type == Type.List;
         let isHostList = host.type == Type.List;
-        let backup = TypeShim.new("any", Type.any);
+        let backup = TypeShim.new("any", Type.Object);
 
         if (!isVisitorList && !isHostList) 
             return doTypesFit(visitor, host); // both are not list, compare as normal
@@ -87,9 +87,10 @@ export namespace TypeChecking {
         // They do not have to have the same name 
         // we stick to the JS notion of : 'if it acts like X, it is X'
         if (other.type == Type.Tuple || other.type == Type.List || other.type == Type.Object) {   
-            let selfs = self.children!;
-            let others = other.children!;
-            if (!selfs || !others) return false;
+            let selfs = self.children;
+            let others = other.children;
+            if (!self && !other) return true; // we accept 'anonymous objects'
+            if (!selfs || !others) return false; // we dont accept 1 of the two as anonymous
             // if (others.length == 0) return true;
             if (!hasCorrespondence(selfs, others)) return false;
         }

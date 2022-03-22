@@ -26,8 +26,9 @@ export class GetterWidget extends Widget {
     }
 
     static new(state: any) {
+        console.log(state);
         let ins = [TypeShim.new("I", Type.Object, undefined, [])];
-        let outs = (state && state.length) ? GetterWidget.makeOuts(state.keys, state.types) : [];
+        let outs = state ? GetterWidget.makeOuts(state.keys, state.types) : [];
         let widget = new GetterWidget("getter", WidgetSide.Process, undefined, ins, outs, state);
         return widget;
     }
@@ -63,6 +64,6 @@ export class GetterWidget extends Widget {
     }
 
     clone() {
-        return GetterWidget.new(this.saveState);
+        return GetterWidget.new(JSON.parse(JSON.stringify(this.saveState)));
     }
 }
