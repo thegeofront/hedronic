@@ -19,18 +19,19 @@ export namespace TypeChecking {
     export function doTypesFitDisregardingLists(visitor: TypeShim, host: TypeShim) : boolean {
         let isVisitorList = visitor.type == Type.List;
         let isHostList = host.type == Type.List;
+        let backup = TypeShim.new("any", Type.any);
 
         if (!isVisitorList && !isHostList) 
             return doTypesFit(visitor, host); // both are not list, compare as normal
         
         if (!isVisitorList && isHostList) 
-            return doTypesFitDisregardingLists(visitor, host.children![0]); // only host is list, see if it fits 
+            return doTypesFitDisregardingLists(visitor, host.children?.[0] || backup); // only host is list, see if it fits 
         
         if (isVisitorList && !isHostList) 
-            return doTypesFitDisregardingLists(visitor.children![0], host);
+            return doTypesFitDisregardingLists(visitor.children?.[0] || backup, host);
         
         if (isVisitorList && isHostList) 
-            return doTypesFitDisregardingLists(visitor.children![0], host.children![0]); // both are lists, check if their items match up
+            return doTypesFitDisregardingLists(visitor.children![0], host.children?.[0] || backup); // both are lists, check if their items match up
         
         return false; // never happens
     }

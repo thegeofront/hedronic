@@ -363,7 +363,7 @@ export class NodesGraph {
         
         if (!this.isConnectionValid(from, to)) {
             console.warn("connection is NOT valid!");
-            return false;
+            // return false;
         }
 
         // if the input socket already contains something, make sure its emptied correctly
@@ -502,23 +502,23 @@ export class NodesGraph {
 
 
 function setNodeToWidgetInOuts(graph: NodesGraph, node: GeonNode, widget: Widget) {
-            // a widget has just been edited internally
-        // make sure the data between widget & parameters still matches 
-        if (widget.outCount != node.outputs.length) {
-            
-            // for now, reset all
-            node.datums.forEach(d => d.disconnect(graph));
-            node.datums = [];
-            graph.removeOutputConnections(node);
-            node.outputs = [];
-            for (let output of widget.outs) {
-                node.outputs.push([]);
-                node.datums.push(Cable.new(output))
-            }
-        } 
-
-        if (widget.inCount != node.inputs.length) {
-            console.log("inputs changed!!!!");
-            graph.removeInputConnections(node)
+        // a widget has just been edited internally
+    // make sure the data between widget & parameters still matches 
+    if (widget.outCount != node.outputs.length) {
+        
+        // for now, reset all
+        node.datums.forEach(d => d.disconnect(graph));
+        node.datums = [];
+        graph.removeOutputConnections(node);
+        node.outputs = [];
+        for (let output of widget.outs) {
+            node.outputs.push([]);
+            node.datums.push(Cable.new(output))
         }
+    } 
+
+    if (widget.inCount != node.inputs.length) {
+        console.log("inputs changed!!!!");
+        graph.removeInputConnections(node)
+    }
 }

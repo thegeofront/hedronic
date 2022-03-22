@@ -53,3 +53,41 @@ export function getBufferTypes() {
         TypeShim.new("Float64Array", Type.F64Buffer),
     ]
 }
+
+export function fromReflection(any: any) : TypeShim {
+
+    let wildcard = TypeShim.new("", Type.any);
+
+    
+    if (any instanceof Array) {
+        let item = any.length > 0 ? fromReflection(any[0]) : wildcard;
+        return TypeShim.new("", Type.List, undefined, [item]);
+    }
+
+    if (any instanceof Object) {
+        let item = any.length > 0 ? fromReflection(any[0]) : TypeShim.new("", Type.any);
+        return TypeShim.new("", Type.Object, undefined, [item]);
+    }
+
+    return TypeShim.new("", reflect(any));
+}
+
+/**
+ * Reflect the type of an 'any'
+ */
+export function reflect(any: any) {
+    if (any instanceof Array)
+        return Type.List;
+    if (any instanceof Object)
+        return Type.Object;
+    if (any instanceof Float32Array)
+        return Type.F32Buffer;
+    if (any instanceof Float64Array)
+        return Type.F64Buffer;
+    if (typeof any === 'string') 
+        return Type.string;
+    if (typeof any === 'number')
+        return Type.number;
+
+    return Type.any;
+}

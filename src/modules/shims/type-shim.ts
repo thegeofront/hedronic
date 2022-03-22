@@ -13,7 +13,7 @@ export class TypeShim {
     traits: Trait[] = [];
 
     private constructor(
-        public readonly name:  string,  // what to show up as name 
+        public name:  string,  // what to show up as name 
         public readonly type: Type, // the actual type  
         public readonly glyph?: string,  // how to visualize the type or variable briefly
         public readonly children?: TypeShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
@@ -64,15 +64,15 @@ export class TypeShim {
                 return "str";
             
             case Type.Tuple:
-                return `Tuple<${this.children!.map(c => c.typeToString()).join(", ")}>`;
+                return `Tuple<${this.children?.map(c => c.typeToString()).join(", ")}>`;
             case Type.List:
-            return `List<${this.children![0].typeToString()}>`;
+            return `List<${this.children?.map(c => c.typeToString()).join(", ")}>`;
             case Type.Object:
-                return `Object {${this.children!.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
+                return `Object {${this.children?.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
             case Type.Union:
-                return `${this.children!.map(c => `${c.typeToString()}`).join(" | ")}`;  
+                return `${this.children?.map(c => `${c.typeToString()}`).join(" | ")}`;  
             case Type.Reference:
-                return `Ref->${this.children![0].name}`;  
+                return `Ref->${this.children?.[0].name}`;  
             case Type.Promise:
                 return `Promise->${this.children![0].typeToString()}`; 
 
@@ -122,15 +122,15 @@ export class TypeShim {
             
             case Type.Tuple:
             case Type.List:
-                return `[ ${this.children!.map(c => c.render()).join(" , ")} ]`;
+                return `[ ${this.children?.map(c => c.render()).join(" , ")} ]`;
             case Type.Object:
                 return `{}`;
             case Type.Union:
-                return `[ ${this.children!.map(c => c.render()).join(" | ")} ]`;
+                return `[ ${this.children?.map(c => c.render()).join(" | ")} ]`;
             case Type.Reference:
-                return this.children![0].render();  
+                return this.children?.[0].render() || "any";  
             case Type.Promise:
-                return `P->` + this.children![0].render();  
+                return `P->` + this.children?.[0].render() || "any";  
             case Type.U8Buffer:
             case Type.I8Buffer:
             case Type.U16Buffer:

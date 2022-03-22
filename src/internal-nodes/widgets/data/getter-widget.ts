@@ -1,7 +1,7 @@
 import { Parameter } from "../../../../../engine/src/lib";
 import { MenuMaker } from "../../../menu/util/menu-maker";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { Type, reflect } from "../../../modules/types/type";
 import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 import { MAX_NUM_PARAMETERS } from "./list-widget";
@@ -11,19 +11,23 @@ import { MAX_NUM_PARAMETERS } from "./list-widget";
  */
 export class GetterWidget extends Widget {
 
-    saveState: string[] = [];
 
-    static makeOuts(keys: string[]) {
+    saveState: {
+        keys: Array<string>,
+        types: Array<Type>,
+    } = {keys: [], types: []};
+
+    static makeOuts(keys: string[], types: Type[]) {
         let outs = [];
-        for (let key of keys) {
-            outs.push(TypeShim.new(key, Type.any));
+        for (let [i, key] of keys.entries()) {
+            outs.push(TypeShim.new(key, types[i]));
         }
         return outs;
     }
 
     static new(state: any) {
-        let ins = [TypeShim.new("I", Type.any, undefined, [TypeShim.new("items", Type.any)])];
-        let outs = (state && state.length) ? GetterWidget.makeOuts(state) : [];
+        let ins = [TypeShim.new("I", Type.Object, undefined, [])];
+        let outs = (state && state.length) ? GetterWidget.makeOuts(state.keys, state.types) : [];
         let widget = new GetterWidget("getter", WidgetSide.Process, undefined, ins, outs, state);
         return widget;
     }
@@ -31,8 +35,17 @@ export class GetterWidget extends Widget {
     async run(...args: State[]) {
         let obj = args[0] as any;
         if (!obj) return [];
-        this.saveState = Object.keys(obj);
-        return this.saveState.map(key => obj.hasOwnProperty(key) ? obj[key] : undefined);
+        this.setState(obj);
+        return this.saveState.keys.map(key => obj[key]);
+    }
+
+    setState(obj: any) {
+        let keys = Object.keys(obj);
+        let types = [];
+        for (let key of keys) {
+            types.push(reflect(obj[key]));
+        }
+        this.saveState = {keys, types};
     }
 
     makeMenu(): HTMLElement[] {
@@ -44,7 +57,8 @@ export class GetterWidget extends Widget {
 
     onMakeOutputKeys() {
         if (!this.saveState) return;
-        this.outs = GetterWidget.makeOuts(this.saveState);
+        let {types, keys } = this.saveState;
+        this.outs = GetterWidget.makeOuts(keys, types);
         this.onChange();
     }
 
