@@ -16,7 +16,6 @@ export const NODE_WIDTH = 4;
 export class GeonNode {
 
     errorState = "";
-    looping = false;
     loops = 0;
 
     private constructor(
@@ -26,6 +25,7 @@ export class GeonNode {
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
         public cables: Cable[],
+        public looping = false,
         ) {}
 
     get operation() : FunctionShim | undefined {
@@ -57,7 +57,8 @@ export class GeonNode {
         core: FunctionShim | Widget, 
         inputs?: (Socket | undefined)[], 
         outputs?: Socket[][], 
-        hash = createRandomGUID().substring(0, 13)) {
+        hash = createRandomGUID().substring(0, 13),
+        looping = false) {
 
         if (core instanceof Widget) {
             // TODO This should not be, this is dumb
@@ -85,13 +86,9 @@ export class GeonNode {
         }
 
         // resetCables
-        let cables = []
-        for (let i = 0 ; i < core.outCount; i++) {
-            let cable = Cable.new(core.outs[i].deepcopy());
-            cables.push(cable);
-        } 
+        let cables = GeonNode.makeCables(core.outs, looping);
 
-        return new GeonNode(hash, gridpos, core, inputs, outputs, cables);
+        return new GeonNode(hash, gridpos, core, inputs, outputs, cables, looping);
     }
 
     static fromJson(data: any, process: FunctionShim | Widget) {
@@ -113,6 +110,7 @@ export class GeonNode {
             mappedInputs,
             mappedOutputs,
             data.hash,
+            data.looping,
         );  
     }
 
@@ -130,6 +128,7 @@ export class GeonNode {
             process: node.core.toJson(),
             inputs: node.inputs.map(toJsonOrNull),
             outputs: node.outputs.map(list => list.map(toJsonOrNull)),
+            looping: node.looping
         }
     }
 
@@ -150,22 +149,21 @@ export class GeonNode {
         return this.looping;
     }
 
-    resetCables() {
-        // delete old cables
-        this.cables.forEach(c => c);
-        
-        // create new cables
+    static makeCables(types: TypeShim[], looping: boolean) {
         let cables = []
-        for (let i = 0 ; i < this.core.outCount; i++) {
-            let cable = Cable.new(this.core.outs[i].deepcopy());
-            if (this.looping) {
+        for (let i = 0 ; i < types.length; i++) {
+            let cable = Cable.new(types[i].deepcopy());
+            if (looping) {
                 cable.type = TypeShim.new("", Type.List, undefined, [cable.type]);
             }
             cables.push(cable);
         } 
+        return cables;
+    }
 
-        // replace 
-        this.cables = cables;
+    resetCables() {
+        this.cables.forEach(c => c);
+        this.cables = GeonNode.makeCables(this.core.outs, this.looping);
     }
 
     // ---- Getters

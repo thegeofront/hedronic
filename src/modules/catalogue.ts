@@ -6,6 +6,7 @@ import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
 import { getDefaultWidgets } from "../internal-nodes/widgets/_registry";
+import { getDefaultFunctions } from "../internal-nodes/operations/_registry";
 
 /**
  * Catalogue containing shim Modules
@@ -30,7 +31,7 @@ export class Catalogue {
     static newFromWidgets() {
         
         let cat = Catalogue.new();
-        cat = createStdWidgets(cat);
+        cat = createWithInternalFunctions(cat);
         return cat;
     }
 
@@ -100,19 +101,17 @@ export class Catalogue {
     }
 }
 
-function createStdWidgets(cat: Catalogue) {
+function createWithInternalFunctions(cat: Catalogue) {
     // create widgets
     let widgets = getDefaultWidgets();
-
-    // add them to a map
-    let wmap = new Map<string, Widget>();
-    for (let w of widgets) {
-        wmap.set(w.name, w);
-    }
-
-    // use the map to create a library
     let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
     cat.addLibrary(widMod);
+
+    // repeat for functions 
+    let functions = getDefaultFunctions();
+    let fnMod = ModuleShim.new("functions", "bi-lightning-charge-fill", "",{}, functions, []);
+    cat.addLibrary(fnMod);
+    
     return cat;
 }
 

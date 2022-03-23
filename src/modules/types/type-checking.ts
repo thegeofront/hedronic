@@ -32,7 +32,7 @@ export namespace TypeChecking {
             return doTypesFitDisregardingLists(visitor.children?.[0] || backup, host);
         
         if (isVisitorList && isHostList) 
-            return doTypesFitDisregardingLists(visitor.children![0], host.children?.[0] || backup); // both are lists, check if their items match up
+            return doTypesFitDisregardingLists(visitor.children?.[0] || backup, host.children?.[0] || backup); // both are lists, check if their items match up
         
         return false; // never happens
     }

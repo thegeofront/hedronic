@@ -9,7 +9,7 @@ import { MAX_NUM_PARAMETERS } from "./list-widget";
 /**
  * Special component with variable number of outputs
  */
-export class ListGetWidget extends Widget {
+export class ItemsWidget extends Widget {
 
     private lastListLength?: number;
     private outCountSetting!: Parameter;
@@ -24,9 +24,9 @@ export class ListGetWidget extends Widget {
 
     static new(state: State) {
         let ins = [TypeShim.new("L", Type.List, undefined, [TypeShim.new("items", Type.any)])];
-        let outs  = ListGetWidget.makeOutsOfCount(state as number);
+        let outs  = ItemsWidget.makeOutsOfCount(state as number);
         let outCountSetting = Parameter.new("output count: ", outs.length, 0, MAX_NUM_PARAMETERS, 1);
-        let widget = new ListGetWidget("list get", WidgetSide.Process, undefined, ins, outs, state);
+        let widget = new ItemsWidget("items", WidgetSide.Process, undefined, ins, outs, state);
         widget.outCountSetting = outCountSetting;
         return widget;
     }
@@ -54,12 +54,12 @@ export class ListGetWidget extends Widget {
     }
 
     setCount(n: number) {
-        this.outs = ListGetWidget.makeOutsOfCount(n);
+        this.outs = ItemsWidget.makeOutsOfCount(n);
         this.saveState = this.outs.length;
         this.onChange();
     }
 
     clone() {
-        return ListGetWidget.new(this.saveState);
+        return ItemsWidget.new(this.saveState);
     }
 }

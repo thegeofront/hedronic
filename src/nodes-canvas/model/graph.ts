@@ -292,15 +292,15 @@ export class NodesGraph {
     isConnectionValid(from: Socket, to: Socket) {
         let fromParam = this.getParameterAt(from)!;
         let toParam = this.getParameterAt(to)!;
-        let listLikeFit = TypeChecking.doTypesFitDisregardingLists(fromParam, toParam);
-        // let fit = fromParam?.isAcceptableType(toParam);
+        // let listLikeFit = TypeChecking.doTypesFitDisregardingLists(fromParam, toParam);
+        let fit = fromParam?.isAcceptableType(toParam);
         // if (listLikeFit && !fit) {
         //     // this means the types fit if we enable iteration
         //     // console.log("DO A CONVERTION");
         //     // let hostnode = this.nodes.get(to.hash)!
         //     // hostnode.iterateMode = true;
         // }
-        return listLikeFit;
+        return fit;
     }
 
     /////// 
@@ -507,8 +507,7 @@ function setNodeToWidgetInOuts(graph: NodesGraph, node: GeonNode, widget: Widget
     if (widget.outCount != node.outputs.length) {
         
         // for now, reset all
-        node.cables.forEach(d => d.disconnect(graph));
-        node.cables = [];
+        node.resetCables();
         graph.removeOutputConnections(node);
         node.outputs = [];
         for (let output of widget.outs) {

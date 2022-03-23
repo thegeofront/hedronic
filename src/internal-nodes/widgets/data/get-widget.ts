@@ -9,7 +9,7 @@ import { MAX_NUM_PARAMETERS } from "./list-widget";
 /**
  * Special component with variable number of outputs
  */
-export class GetterWidget extends Widget {
+export class GetWidget extends Widget {
 
 
     saveState: {
@@ -26,10 +26,9 @@ export class GetterWidget extends Widget {
     }
 
     static new(state: any) {
-        console.log(state);
         let ins = [TypeShim.new("I", Type.Object, undefined, [])];
-        let outs = state ? GetterWidget.makeOuts(state.keys, state.types) : [];
-        let widget = new GetterWidget("getter", WidgetSide.Process, undefined, ins, outs, state);
+        let outs = state ? GetWidget.makeOuts(state.keys, state.types) : [];
+        let widget = new GetWidget("get", WidgetSide.Process, undefined, ins, outs, state);
         return widget;
     }
 
@@ -60,7 +59,7 @@ export class GetterWidget extends Widget {
     onMakeOutputKeys() {
         if (!this.saveState) return;
         let {types, keys } = this.saveState;
-        this.outs = GetterWidget.makeOuts(keys, types);
+        this.outs = GetWidget.makeOuts(keys, types);
         this.onChange();
     }
 
@@ -69,6 +68,6 @@ export class GetterWidget extends Widget {
     }
 
     clone() {
-        return GetterWidget.new(JSON.parse(JSON.stringify(this.saveState)));
+        return GetWidget.new(JSON.parse(JSON.stringify(this.saveState)));
     }
 }

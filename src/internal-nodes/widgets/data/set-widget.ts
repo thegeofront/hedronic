@@ -10,7 +10,7 @@ export const MAX_NUM_PARAMETERS = 20;
 /**
  * Special component with variable number of outputs
  */
-export class SetterWidget extends Widget {
+export class SetWidget extends Widget {
 
     static makeInsOfCount(n: number) {
         let ins = [];
@@ -21,9 +21,9 @@ export class SetterWidget extends Widget {
     }
 
     static new(state: State) {
-        let ins  = SetterWidget.makeInsOfCount(state as number);
+        let ins  = SetWidget.makeInsOfCount(state as number);
         let outs = [TypeShim.new("L", Type.List, undefined, [TypeShim.new("items", Type.any)])];
-        return new SetterWidget("list set", WidgetSide.Process, undefined, ins, outs, state);
+        return new SetWidget("set", WidgetSide.Process, undefined, ins, outs, state);
     }
 
     async run(...args: State[]) {
@@ -36,12 +36,12 @@ export class SetterWidget extends Widget {
     }
 
     onChangeCount(p: Parameter) {
-        this.ins = SetterWidget.makeInsOfCount(p.get());
+        this.ins = SetWidget.makeInsOfCount(p.get());
         this.saveState = this.ins.length;
         this.onChange();
     }
 
     clone() {
-        return SetterWidget.new(this.saveState);
+        return SetWidget.new(this.saveState);
     }
 }

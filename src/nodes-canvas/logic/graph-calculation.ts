@@ -114,7 +114,7 @@ export namespace GraphCalculation {
 
             // TODO do a better job of detecting 'artifical' lists
             // NO: we need to do this sometimes for natural lists
-            if (inCable.type.type == Type.List && node.core.ins[i].type !== Type.List) {
+            if (inCable.type.type == Type.List) {
                 
                 let arr = inCable.state as Array<any>;
                 if (arr.length > count) {
