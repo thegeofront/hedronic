@@ -23,11 +23,11 @@ export class ListSetWidget extends Widget {
     static new(state: State) {
         let ins  = ListSetWidget.makeInsOfCount(state as number);
         let outs = [TypeShim.new("L", Type.List, undefined, [TypeShim.new("items", Type.any)])];
-        return new ListSetWidget("list set", WidgetSide.Process, undefined, ins, outs, state);
+        return new ListSetWidget("list", WidgetSide.Process, undefined, ins, outs, state);
     }
 
     async run(...args: State[]) {
-        return [[...args]];
+        return [...args];
     }
 
     makeMenu(): HTMLElement[] {

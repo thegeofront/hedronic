@@ -18,7 +18,7 @@ import { StopVisualizePreviewEvent, VisualizePreviewEvent } from "../viewer/view
 import { Settings } from "./model/settings";
 import { CoreType } from "./model/core";
 import { makeMenuFromWidget } from "../menu/right-menu/widget-menu";
-import { makeMenuFromNode } from "../menu/right-menu/node-menu";
+import { makeMenuFromOperation } from "../menu/right-menu/node-menu";
 import { GraphConversion } from "./logic/graph-conversion";
 import { Cable, CableStyle } from "./model/cable";
 import { GraphCalculation } from "./logic/graph-calculation";
@@ -668,9 +668,9 @@ export class NodesCanvas {
             // new way of opening a menu
             let node = this.graph.getNode(s.hash)!;
             if (node.type == CoreType.Operation) {
-                HTML.dispatch(setMenu, {title: "Operation", data: {node, nodes: this}, callback: makeMenuFromNode})
+                HTML.dispatch(setMenu, {title: "Operation", data: {node, nodes: this}, callback: makeMenuFromOperation})
             } else {
-                HTML.dispatch(setMenu, {title: "Widget", data: node, callback: makeMenuFromWidget})
+                HTML.dispatch(setMenu, {title: "Widget", data: {node, nodes: this}, callback: makeMenuFromWidget})
             }
         } else if (s.side == SocketSide.Input) {
             let outputSocket = this.graph.getInputConnectionAt(s);

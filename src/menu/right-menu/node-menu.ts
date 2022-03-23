@@ -1,11 +1,36 @@
-import { Element, Str } from "../../html/util";
+import { Graph } from "../../../../engine/src/lib";
+import { Compose, Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Trait } from "../../modules/types/trait";
+import { NodesGraph } from "../../nodes-canvas/model/graph";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { MenuMaker } from "../util/menu-maker";
 
-export function makeMenuFromNode(payload: {node: GeonNode, nodes: NodesCanvas}) : Node[] {
+export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {
+
+    let processHTML = Str.html`
+        <p>profiler: <code>${""}</code>ms</p>
+        <p>looping: <code>${node.looping.toString()}</code></p>
+        ${node.looping ? Str.html`<p>loops: <code>${node.loops}</code></p>` : ""}
+        ${node.errorState ? Str.html`<p>error: <code>${node.errorState}</code></p>` : ""}
+    `
+
+    let looptoggle = MenuMaker.toggle("loop", node.looping, (ev) => {
+        // let target = (ev.target as HTMLInputElement).querySelector("label");
+        node.toggleLooping();
+        nodes.onChange();
+    })
+
+    let recalcbutton = MenuMaker.button("recalculate", () => {
+        nodes.onChange();
+    })
+
+    return {processHTML, looptoggle, recalcbutton};
+}
+
+export function makeMenuFromOperation(payload: {node: GeonNode, nodes: NodesCanvas}) : Node[] {
     let {node, nodes} = payload;
     
     let title = node.core.nameLower || "-";
@@ -47,25 +72,24 @@ export function makeMenuFromNode(payload: {node: GeonNode, nodes: NodesCanvas}) 
         outputHTML = "";
     }
 
+    const {processHTML, looptoggle, recalcbutton} = makeMenuFromNode(node, nodes);
+
     return [Element.html`
         <div id="node-menu">
             <p>name: <code>${title}</code></p>
             <p>path: <code>${subtitle}</code></p>
             <p>hash: <code>${node.hash}</code></p>
-            <!-- <div class="row">
-                <p class="col">inputs: <code>${ops?.inCount}</code></p>
-                <p class="col">outputs: <code>${ops?.outCount}</code></p>
-            </div> -->
-            <div class="divider"></div>
-            <h5>Process</h5>
-            <p>took: <code>${"???"}</code>ms</p>
             <div class="divider"></div>
             <h5>Inputs</h5>
             ${inputHTML}
+            <div class="divider"></div>
+            <h5>Process</h5>
+            ${processHTML}
             <div class="divider"></div>
             <h5>Outputs</h5>
             ${outputHTML}
             <div class="divider"></div>
         </div>
-    `];
+    `, looptoggle,
+    recalcbutton];
 }

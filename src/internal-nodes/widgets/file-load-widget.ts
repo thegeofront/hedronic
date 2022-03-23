@@ -5,15 +5,15 @@ import { Type } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
-export class FileReadWidget extends Widget {
+export class FileLoadWidget extends Widget {
     
     static new(state: State) {
         let outs = [TypeShim.new("content", Type.string)];
-        return new FileReadWidget("Read file", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
+        return new FileLoadWidget("file load", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
     }
 
     clone() {
-        return FileReadWidget.new(this.saveState);
+        return FileLoadWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {

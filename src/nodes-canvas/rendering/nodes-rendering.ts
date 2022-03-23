@@ -200,7 +200,7 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         setNodeStyle(ctx, style, component, i + 1, isWidget);
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + node.core.inCount + i);
-        let text = node.core.outs[i].render();
+        let text = node.cables[i].type.render();
         // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         ctx.fillText(text, vec.x, vec.y);
     }

@@ -1,8 +1,13 @@
 import { Compose, Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
+import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { makeMenuFromNode } from "./node-menu";
 
-export function makeMenuFromWidget(node: GeonNode) : Node[] {
+export function makeMenuFromWidget(payload: {node: GeonNode, nodes: NodesCanvas}) : Node[] {
+    
+    const {node, nodes} = payload;
+    
     let title = node.core.nameLower || "-";
     let subtitle = "widget!!!";
     // let content = JSON.stringify(node.operation?.toJson(), null, 2);
@@ -18,6 +23,8 @@ export function makeMenuFromWidget(node: GeonNode) : Node[] {
         </details>
         `;
     }
+
+    const {processHTML, looptoggle, recalcbutton} = makeMenuFromNode(node, nodes);
 
     let widgetHTML = node.widget!.makeMenu();
 
@@ -47,17 +54,19 @@ export function makeMenuFromWidget(node: GeonNode) : Node[] {
             </details>`}
             <div class="divider"></div>
 
-            <details open>
-                <summary>Widget</summary>
-                ${widgetHTML}
-            </details>
-            <div class="divider"></div>
+
 
             ${Element.html`
             <details open>
                 <summary>Inputs: ${node.core.inCount}</summary>
                 ${inputHTML}
             </details>`}
+            <div class="divider"></div>
+
+            <details open>
+                <summary>Widget</summary>
+                ${widgetHTML}
+            </details>
             <div class="divider"></div>
 
             ${Element.html`
@@ -68,5 +77,5 @@ export function makeMenuFromWidget(node: GeonNode) : Node[] {
             <div class="divider"></div>
 
         </div>
-    `];
+    `, looptoggle, recalcbutton, Element.html`<div>${processHTML}</div>`];
 }

@@ -5,7 +5,7 @@ import { Type } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
-export class FileWriteWidget extends Widget {
+export class FileSaveWidget extends Widget {
 
     filename = "my-result.txt";
     
@@ -15,7 +15,7 @@ export class FileWriteWidget extends Widget {
 
     static new(state: State) {
         let ins = [TypeShim.new("content", Type.string)]
-        return new FileWriteWidget("Write file", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
+        return new FileSaveWidget("file save", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
     }
 
     async run(...args: State[]) {
@@ -24,7 +24,7 @@ export class FileWriteWidget extends Widget {
     }
 
     clone() {
-        return FileWriteWidget.new(this.saveState);
+        return FileSaveWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {

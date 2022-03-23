@@ -1,5 +1,5 @@
 import { makeCanvasMenu } from "../../menu/right-menu/canvas-menu";
-import { makeMenuFromNode } from "../../menu/right-menu/node-menu";
+import { makeMenuFromOperation } from "../../menu/right-menu/node-menu";
 import { makeMenuFromWidget } from "../../menu/right-menu/widget-menu";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { GeonNode } from "../../nodes-canvas/model/node";
@@ -148,18 +148,6 @@ class MyRightPanel extends WebComponent {
             return;
         }
 
-        if (payload.socket.side == SocketSide.Input) {
-            this.setWithInput(payload);
-            this.payload = payload;
-            return;
-        }
-
-        if (payload.socket.side == SocketSide.Output) {
-            this.setWithOutput(payload);
-            this.payload = payload;
-            return;
-        }
-
         console.warn("side panel cannot draw settings for this data");
 
         // if (data instanceof Input) {
@@ -181,24 +169,6 @@ class MyRightPanel extends WebComponent {
            ...makeCanvasMenu(canvas)
         );
     }
-
-    setWithWidget(node: GeonNode) {
-        this.get("title").innerText = "Node";
-        this.get("menu-body").replaceChildren(
-            ...makeMenuFromWidget(node)
-         );
-    }
-
-    setWithInput(param: Payload) {
-        this.get("title").innerText = "Input";
-        this.get("menu-body").innerHTML = MenuMaker.json(param);
-    }
-
-    setWithOutput(param: Payload) {
-        this.get("title").innerText = "Output";
-        this.get("menu-body").innerHTML = MenuMaker.json(param);
-    }
-
 
     setWithGroup(nodes: GeonNode[]) {
         let count = nodes.length;

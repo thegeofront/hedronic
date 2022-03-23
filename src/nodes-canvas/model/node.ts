@@ -8,6 +8,7 @@ import { TypeShim } from "../../modules/shims/type-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 import { Cable, CableStyle } from "./cable";
 import { CableDeleteAction } from "./actions/cable-delete-action";
+import { Type } from "../../modules/types/type";
 
 
 export const NODE_WIDTH = 4;
@@ -15,7 +16,8 @@ export const NODE_WIDTH = 4;
 export class GeonNode {
 
     errorState = "";
-    hasDiscrepancies = false;
+    looping = false;
+    loops = 0;
 
     private constructor(
         public hash: string,                   // guid or some other unique identifier to this node 
@@ -23,7 +25,7 @@ export class GeonNode {
         public core: FunctionShim | Widget,    // the process this node represents. Can be an operation or a widget
         public inputs: (Socket | undefined)[], // our inputs : References to the outputs of other nodes we are connected to
         public outputs: Socket[][],            // our outputs: References to the inputs of other nodes we are connected to. One output can feed multiple components  
-        public datums: Cable[],
+        public cables: Cable[],
         ) {}
 
     get operation() : FunctionShim | undefined {
@@ -52,43 +54,44 @@ export class GeonNode {
     
     static new(
         gridpos: Vector2, 
-        process: FunctionShim | Widget, 
+        core: FunctionShim | Widget, 
         inputs?: (Socket | undefined)[], 
         outputs?: Socket[][], 
         hash = createRandomGUID().substring(0, 13)) {
 
-        if (process instanceof Widget) {
+        if (core instanceof Widget) {
             // TODO This should not be, this is dumb
-            process = process.clone(); // Widgets contain unique state, while Operations are prototypes 
+            core = core.clone(); // Widgets contain unique state, while Operations are prototypes 
         }
 
         if (!inputs) {
             inputs = [];
-            for (let i = 0 ; i < process.inCount; i++) inputs.push(undefined);
+            for (let i = 0 ; i < core.inCount; i++) inputs.push(undefined);
         } else {
-            if (inputs.length != process.inCount) {
+            if (inputs.length != core.inCount) {
                 throw new Error("Inadecuate number of inputs!");
             }
         }
 
         if (!outputs) {
             outputs = [];
-            for (let i = 0 ; i < process.outCount; i++) {
+            for (let i = 0 ; i < core.outCount; i++) {
                 outputs.push([]);
             } 
         } else {
-            if (outputs.length != process.outCount) {
+            if (outputs.length != core.outCount) {
                 throw new Error("Inadecuate number of outputs!");
             }
         }
 
+        // resetCables
         let cables = []
-        for (let i = 0 ; i < process.outCount; i++) {
-            let cable = Cable.new(process.outs[i].deepcopy());
+        for (let i = 0 ; i < core.outCount; i++) {
+            let cable = Cable.new(core.outs[i].deepcopy());
             cables.push(cable);
         } 
 
-        return new GeonNode(hash, gridpos, process, inputs, outputs, cables);
+        return new GeonNode(hash, gridpos, core, inputs, outputs, cables);
     }
 
     static fromJson(data: any, process: FunctionShim | Widget) {
@@ -139,6 +142,30 @@ export class GeonNode {
         // this.operation.name
         console.log("operation: ");
         this.core.log();
+    }
+
+    toggleLooping() {
+        this.looping = !this.looping;
+        this.resetCables();
+        return this.looping;
+    }
+
+    resetCables() {
+        // delete old cables
+        this.cables.forEach(c => c);
+        
+        // create new cables
+        let cables = []
+        for (let i = 0 ; i < this.core.outCount; i++) {
+            let cable = Cable.new(this.core.outs[i].deepcopy());
+            if (this.looping) {
+                cable.type = TypeShim.new("", Type.List, undefined, [cable.type]);
+            }
+            cables.push(cable);
+        } 
+
+        // replace 
+        this.cables = cables;
     }
 
     // ---- Getters

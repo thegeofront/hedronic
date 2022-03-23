@@ -49,7 +49,7 @@ export namespace GraphCalculation {
             
 
             let err;
-            if (node.hasDiscrepancies) {
+            if (node.looping) {
                 err = await calculateNodeIteratively(node, ins, outs);
             } else {
                 err = await calculateNode(node, ins, outs);
@@ -108,11 +108,12 @@ export namespace GraphCalculation {
         // figure out how many times we need to iterate
         let count = 1;
 
-        // construct iterators, which will iterate over all list input cables, or just flat out return the items
+        // construct iterators, which will iterate over all list input cables, or just return the item
         let iterators: ((count: number) => State)[] = [];
         for (let [i, inCable] of ins.entries()) {
 
             // TODO do a better job of detecting 'artifical' lists
+            // NO: we need to do this sometimes for natural lists
             if (inCable.type.type == Type.List && node.core.ins[i].type !== Type.List) {
                 
                 let arr = inCable.state as Array<any>;
@@ -152,7 +153,11 @@ export namespace GraphCalculation {
         // set the cables
         for (let i = 0 ; i < outs.length; i++) {
             outs[i].setState(aggregators[i]);
-        }        
+        }     
+        
+        // set some info 
+        node.loops = count;
+        
         return undefined;
     }
 

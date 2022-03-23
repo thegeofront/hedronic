@@ -158,9 +158,9 @@ export class NodesGraph {
         if (!node) {console.warn("could not find node to store datum"); return }
         if (socket.side != SocketSide.Output) {console.warn("not a valid datum socket"); return }
         let index = socket.normalIndex();
-        if (index >= node.datums.length) {console.warn("datum at output", index, "does not exist!"); return }
+        if (index >= node.cables.length) {console.warn("datum at output", index, "does not exist!"); return }
 
-        return node.datums[index];
+        return node.cables[index];
     }
 
     setDatumState(socket: Socket, state: State) {
@@ -175,7 +175,7 @@ export class NodesGraph {
      * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
      */
     getDataAtOutput(node: GeonNode) : Cable[] {
-        return node.datums;
+        return node.cables;
     }
 
     /**
@@ -293,13 +293,13 @@ export class NodesGraph {
         let fromParam = this.getParameterAt(from)!;
         let toParam = this.getParameterAt(to)!;
         let listLikeFit = TypeChecking.doTypesFitDisregardingLists(fromParam, toParam);
-        let fit = fromParam?.isAcceptableType(toParam);
-        if (listLikeFit && !fit) {
-            // this means the types fit if we enable iteration
-            console.log("DO A CONVERTION");
-            let hostnode = this.nodes.get(to.hash)!
-            hostnode.hasDiscrepancies = true;
-        }
+        // let fit = fromParam?.isAcceptableType(toParam);
+        // if (listLikeFit && !fit) {
+        //     // this means the types fit if we enable iteration
+        //     // console.log("DO A CONVERTION");
+        //     // let hostnode = this.nodes.get(to.hash)!
+        //     // hostnode.iterateMode = true;
+        // }
         return listLikeFit;
     }
 
@@ -507,13 +507,13 @@ function setNodeToWidgetInOuts(graph: NodesGraph, node: GeonNode, widget: Widget
     if (widget.outCount != node.outputs.length) {
         
         // for now, reset all
-        node.datums.forEach(d => d.disconnect(graph));
-        node.datums = [];
+        node.cables.forEach(d => d.disconnect(graph));
+        node.cables = [];
         graph.removeOutputConnections(node);
         node.outputs = [];
         for (let output of widget.outs) {
             node.outputs.push([]);
-            node.datums.push(Cable.new(output))
+            node.cables.push(Cable.new(output))
         }
     } 
 
