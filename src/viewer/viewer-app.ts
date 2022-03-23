@@ -1,4 +1,5 @@
-import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh } from "../../../engine/src/lib";
+import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh, MultiVector2, IntMatrix, Model, Material, Color } from "../../../engine/src/lib";
+import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 import { TypeShim } from "../modules/shims/type-shim";
@@ -26,13 +27,13 @@ export class ViewerApp extends App {
     various: DebugRenderer;
     preview: DebugRenderer;
     grid: LineShader;
-    
+    otherShaders: ShaderProgram<any>[] = [];
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
 
         let canvas = gl.canvas as HTMLCanvasElement;
-        let camera = new Camera(canvas, -2, true);
+        let camera = new Camera(canvas, -2, true, true);
         camera.setState([4.0424, 3.7067, -4.3147, -53.16840193074478, 1.1102909321189378,22.843839502199657]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.various = DebugRenderer.new(gl);
@@ -60,7 +61,7 @@ export class ViewerApp extends App {
     tryVisualize(id: string, item: any) {
         let unit = tryConvert(item);
         if (unit) {
-            this.various.set(unit, id);
+            this.various.set(unit);
         }
     }
 
@@ -118,7 +119,19 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     if (typename == "Line" || typename == "Line3") 
         return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
 
-    let trait = item.trait;
+    
+    let trait = item.trait || item.type;
+
+    if (trait == undefined) return;
+    console.log(trait);
+
+    if (trait == "mesh-2") {
+        const {vertices, triangles} = item;
+        let mesh = Mesh.new(MultiVector2.fromData(vertices).to3D(), IntMatrix.fromList(triangles, 3));
+        let mat = Material.fromFlatColor(Color.fromHSL(Math.random()));
+        let model = Model.new(mesh, mat);
+        return model.spawn();
+    }
 
     if (trait == "multi-vector-3") 
         return MultiVector3.fromData(item.buffer); 
@@ -128,6 +141,7 @@ function tryConvert(item: any) : RenderableUnit | undefined {
 
     if (trait == "mesh") 
         return Mesh.new(MultiVector3.fromData(item.vertices), item.triangles); 
+
     if (typename == "Array") {
         return tryConvertArray(item as Array<any>)
     }

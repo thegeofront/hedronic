@@ -6,10 +6,10 @@ import { Type } from "../../modules/types/type";
 const PolygonType = TypeShim.new("polygon", Type.List, undefined, [TypeShim.new("", Type.List, undefined, [TypeShim.new("", Type.number)])]);
 const MeshType = TypeShim.new("mesh", Type.Object);
 
-export function getTriangulateFunctions(namespace="triangulate") {
+export function getTriangulateFunctions(namespace="functions") {
 
     return [
-        new FunctionShim("triangulate polygon", [namespace], multiPolygonToMesh, [PolygonType], [MeshType])
+        new FunctionShim("triangulatePolygon", [namespace], multiPolygonToMesh, [PolygonType], [MeshType])
     ]; 
 }
 
