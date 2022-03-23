@@ -6,6 +6,9 @@ import { TypeShim } from "../shims/type-shim";
 
 // export type GeometryLike = Type.Vector3 | Type.MultiVector3 | Type.Line3 | Type.MultiLine3 | Type.Mesh;
 
+// TODO split up Primitive Types and List, Object, Union types, from the point of view of the canvas
+// Object types will get special treatment
+
 
 /**
  * The basic 'javascript' types supported by geofront

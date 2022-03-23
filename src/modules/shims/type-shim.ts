@@ -50,19 +50,11 @@ export class TypeShim {
         return TypeChecking.doTypesFit(this, other);
     }
 
+    /**
+     * Render a verbose string
+     */
     typeToString() : string {
         switch (this.type) {
-            case Type.void:
-                return "void";
-            case Type.any:
-                return "any";
-            case Type.boolean:
-                return "bool";
-            case Type.number:
-                return "num";
-            case Type.string:
-                return "str";
-            
             case Type.Tuple:
                 return `Tuple<${this.children?.map(c => c.typeToString()).join(", ")}>`;
             case Type.List:
@@ -75,38 +67,14 @@ export class TypeShim {
                 return `Ref->${this.children?.[0].name}`;  
             case Type.Promise:
                 return `Promise->${this.children![0].typeToString()}`; 
-
-            case Type.U8Buffer:
-            case Type.I8Buffer:
-            case Type.U16Buffer:
-            case Type.I16Buffer:
-            case Type.U32Buffer:
-            case Type.I32Buffer:
-            case Type.F32Buffer:
-            case Type.F64Buffer:
-                return `Buffer`;
-            default:
-                return "";
-            // case Type.ByteMatrix:
-            // case Type.UntMatrix:
-            // case Type.IntMatrix:
-            // case Type.FloatMatrix:
-            // case Type.DoubleMatrix:
-            //     return `Matrix<${this.child![0].typeToString()}>`;
-
-            // case Type.Vector3:
-            //     return `Point3`
-            // case Type.MultiVector3:
-            //     return `MultiPoint3`
-            // case Type.Line3:
-            //     return `Line3`
-            // case Type.MultiLine3:
-            //     return `MultiLine3`
-            // case Type.Mesh:
-            //     return `Mesh`
+            default: 
+                return Type[this.type];
         }
     }
 
+    /**
+     * Render the thing visible on the node
+     */
     render() : string {
 
         if (this.glyph) return this.glyph;   
@@ -118,7 +86,7 @@ export class TypeShim {
             case Type.boolean:
             case Type.number:
             case Type.string:
-                return this.name.charAt(0).toUpperCase();
+                return this.name;
             
             case Type.Tuple:
             case Type.List:
