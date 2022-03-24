@@ -1,12 +1,12 @@
 # Must haves
 
-
+- some C++ library converted to nodes
+- 
 
 # Should haves
 
-# Could haves
 
-## 
+# Could haves
 
 - [ ] make a component
 - [ ] transform gizmo's, make a semi-editor
@@ -33,8 +33,8 @@ We should add support for geo
 
 
 We require a clear distinction between: 
-- Primitive types (number, bool, buffer) 
-- Collection types (List, Object)
-- Construct types (Point, Color, Polygon, ) ( Collections filled with labelled Primitives or other Collections ) -> Meaning just an object
+- Primitive type (number, bool, buffer) 
+- Collection type (Item, List, Object)
+- Construct type (Point, Color, Polygon, Mesh, Vector, MultiVector) ( Collections filled with labelled Primitives or other Collections ) -> Meaning just an object
 
 
