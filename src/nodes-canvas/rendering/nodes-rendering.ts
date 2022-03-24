@@ -17,12 +17,21 @@ const SECONDARY_5 = Style.getPropertyValue("--secondary-color-5");
 const NODE_COLOR = Style.getPropertyValue("--node-color");
 const NODE_EDGE = Style.getPropertyValue("--node-edge");
 
+const COLOR_NULL    = Style.getPropertyValue("--null-color");
+const COLOR_BOOLEAN = Style.getPropertyValue("--boolean-color");
+const COLOR_NUMBER  = Style.getPropertyValue("--number-color");
+const COLOR_STRING  = Style.getPropertyValue("--string-color");
+const COLOR_BUFFER  = Style.getPropertyValue("--buffer-color");
+const COLOR_LIST    = Style.getPropertyValue("--list-color");
+const COLOR_OBJECT  = Style.getPropertyValue("--object-color");
 
 /**
  * NOTE: maybe give this a svg-style overhaul...
  */
 
 const NODE_GRID_WIDTH = 3;
+
+
 
 export enum DrawState {
     Op,
@@ -138,7 +147,9 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     let isWidget = node.core instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
-    const BAR_WIDTH = 5;
+    const BAR_HEIGHT = 4;
+    const BAR_WIDTH = 0.8;
+    const BAR_OFFSET = 12;
     ctx.beginPath();
 
     // draw body
@@ -190,7 +201,9 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         setNodeStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + i);
-        // ctx.fillRect(vec.x-2 - (2 * ctx.lineWidth), vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
+        ctx.fillRect(vec.x-BAR_OFFSET - BAR_WIDTH, vec.y-BAR_HEIGHT, BAR_WIDTH*2, BAR_HEIGHT*2);
+        
+        // text label
         let text = node.core.ins[i].render();
         ctx.fillText(text, vec.x, vec.y);
     }
@@ -200,8 +213,10 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         setNodeStyle(ctx, style, component, i + 1, isWidget);
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + node.core.inCount + i);
+        ctx.fillRect(vec.x+BAR_OFFSET - BAR_WIDTH, vec.y - BAR_HEIGHT , BAR_WIDTH * 2, BAR_HEIGHT * 2);
+        
+        // text label
         let text = node.cables[i].type.render();
-        // ctx.fillRect(vec.x+2, vec.y-BAR_WIDTH, 2 * ctx.lineWidth, BAR_WIDTH*2);
         ctx.fillText(text, vec.x, vec.y);
     }
 
