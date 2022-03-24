@@ -88,3 +88,15 @@ export function drawPolygon(ctx: CTX, polygon: MultiVector2) {
     }
     ctx.lineTo(v.x, v.y);
 }
+
+export function drawStutterPolygon(ctx: CTX, polygon: MultiVector2) {
+
+    for (let i = 0 ; i < polygon.count; i++) {
+        let s = polygon.get(i);
+        if (i % 2 == 0) {
+            ctx.moveTo(s.x, s.y);
+        } else {
+            ctx.lineTo(s.x, s.y);
+        }
+    }
+}

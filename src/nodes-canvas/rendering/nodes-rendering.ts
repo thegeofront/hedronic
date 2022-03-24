@@ -1,9 +1,9 @@
 // purpose: bunch of 'pure' functions to render nodes & cables
 
 import { MultiVector2, Vector2 } from "../../../../engine/src/lib";
-import { CTX, drawPolygon, filletPolyline, movePolyline } from "./ctx/ctx-helpers";
+import { CTX, drawPolygon, drawStutterPolygon, filletPolyline, movePolyline } from "./ctx/ctx-helpers";
 import { NODE_WIDTH, GeonNode } from "../model/node";
-import { Widget } from "../model/widget";
+import { Widget, WidgetSide } from "../model/widget";
 import { NodesCanvas } from "../nodes-canvas";
 import { Socket } from "../model/socket";
 import { NodesGraph } from "../model/graph";
@@ -70,10 +70,10 @@ export class StyleSet {
     const height = nodeHeight * part;
     const width = NODE_WIDTH * part;
     
-    const is = 2; // input block start 
+    const is = 1; // input block start 
     const ie = 8.5; // input block end 
     const oe = 11.5; // output block end
-    const os = 18; // output block start
+    const os = 24 - 5; // output block start
 
     const fillet = 0.5;
 
@@ -127,8 +127,8 @@ export class StyleSet {
         // lineTo(0.5, gb);
     }
 
-    drawBlockShape(height, numInputs,  is, is + fillet, is + 2.5, ie - fillet, ie, oe);
-    drawBlockShape(height, numOutputs, os, os - fillet, os - 2.5, oe + fillet, oe, ie);
+    drawBlockShape(height, numInputs,  is, is + fillet, is + 1, ie - fillet, ie, oe);
+    drawBlockShape(height, numOutputs, os, os - fillet, os - 1, oe + fillet, oe, ie);
 
     let polygon = MultiVector2.fromList([
         coord(fillet*2, ie),
@@ -147,9 +147,9 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     let isWidget = node.core instanceof Widget;
 
     let pos = canvas.toWorld(node.position);
-    const BAR_HEIGHT = 4;
+    const BAR_HEIGHT = 7;
     const BAR_WIDTH = 0.8;
-    const BAR_OFFSET = 12;
+    const BAR_OFFSET = 4;
     ctx.beginPath();
 
     // draw body
@@ -164,29 +164,36 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     // draw thing in the middle
     ctx.beginPath();
     drawPolygon(ctx, centerPolygon);
-    ctx.fillStyle = isWidget ? "" : "#292C33";
+    // ctx.fillStyle = isWidget ? "" : "#292C33";
     ctx.fill();
+
+    // ctx.beginPath();
+    // let lineStore = ctx.lineWidth;
+    // ctx.lineWidth = 1;
+    // drawStutterPolygon(ctx, centerPolygon.forEach(p => p.copy(p.lerp(textCenters.get(0), 0.2))));
+    // ctx.lineWidth = lineStore;
+    // ctx.strokeStyle = "#ff0000"
     // ctx.stroke();
+    // ctx.strokeStyle = "#ffffff"
 
     // draw operation text
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     // ctx.font = `small-caps bold 14px sans-serif`;
     
-    if (!isWidget) {
+    if (!isWidget || node.widget?.side == WidgetSide.Process) {
         
-        // TODO: do somemthing smart with the name to make it fit
         let name = node.core.name;
-        // name = "www";
         let maxSize = 3 + (node.getHeight() -1) * 7;
         if (name.length > maxSize) {
             // console.log("too long!");
-            name = `${name.slice(0, maxSize-1)}..`;   
+            name = name.slice(0, maxSize-1);   
         }
         
-        ctx.fillStyle = MUTED_WHITE;
+        ctx.fillStyle = ctx.strokeStyle;
         
         // ctx.rotate
+        ctx.font = '12px consolas';
         let op_center = textCenters.get(0);
         ctx.translate(op_center.x, op_center.y);
         ctx.rotate(Math.PI*-0.5);
@@ -196,15 +203,16 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
     }
 
     // draw input text
-    ctx.font = '11px arial';
+    ctx.font = '10px arial';
     for (let i = 0 ; i < node.core.inCount; i++) {
         setNodeStyle(ctx, style, component, -1 - i, isWidget); // -1 signals input1, -2 signals input2, etc...
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + i);
-        ctx.fillRect(vec.x-BAR_OFFSET - BAR_WIDTH, vec.y-BAR_HEIGHT, BAR_WIDTH*2, BAR_HEIGHT*2);
+        // ctx.fillRect(vec.x - BAR_OFFSET - BAR_WIDTH, vec.y-BAR_HEIGHT, BAR_WIDTH*2, BAR_HEIGHT*2);
         
         // text label
-        let text = node.core.ins[i].render();
+        ctx.textAlign = 'left';
+        let text = node.core.ins[i].render()
         ctx.fillText(text, vec.x, vec.y);
     }
     
@@ -213,10 +221,11 @@ export function drawNode(ctx: CTX, node: GeonNode, canvas: NodesCanvas, componen
         setNodeStyle(ctx, style, component, i + 1, isWidget);
         ctx.fillStyle = ctx.strokeStyle;
         let vec = textCenters.get(1 + node.core.inCount + i);
-        ctx.fillRect(vec.x+BAR_OFFSET - BAR_WIDTH, vec.y - BAR_HEIGHT , BAR_WIDTH * 2, BAR_HEIGHT * 2);
+        // ctx.fillRect(vec.x + BAR_OFFSET - BAR_WIDTH, vec.y - BAR_HEIGHT , BAR_WIDTH * 2, BAR_HEIGHT * 2);
         
         // text label
-        let text = node.cables[i].type.render();
+        ctx.textAlign = 'right';
+        let text = node.cables[i].type.render()
         ctx.fillText(text, vec.x, vec.y);
     }
 
@@ -239,7 +248,7 @@ function setNodeStyle(ctx: CTX, state: DrawState, component: number, componentDr
 
     ctx.font = Style.getPropertyValue("--font-lead");
 
-    if (state == DrawState.OpSelected   && component == componentDrawn) {
+    if (state == DrawState.OpSelected   && (component == componentDrawn || component == 0)) {
         ctx.strokeStyle = Style.getPropertyValue('--accent-color-0');
         ctx.fillStyle = Style.getPropertyValue('--accent-color-3');
         ctx.lineWidth = 4;
@@ -253,8 +262,8 @@ function setNodeStyle(ctx: CTX, state: DrawState, component: number, componentDr
     }
 
     if (isWidget) {
-        ctx.strokeStyle = NODE_COLOR;
-        ctx.fillStyle = NODE_EDGE;
+        // ctx.strokeStyle = NODE_COLOR;
+        // ctx.fillStyle = NODE_EDGE;
     }
 }
 
@@ -288,7 +297,7 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
     if (style == CableStyle.Off) {
         mainColor = NODE_COLOR
         edgeColor = "black";
-    } else if (style == CableStyle.Selected) {
+    } else if (style == CableStyle.Selected || style == CableStyle.SelectedList) {
         mainColor = Style.getPropertyValue("--accent-color-0");
         // mainColor = "white";
         edgeColor = Style.getPropertyValue("--accent-color-3");
@@ -300,7 +309,7 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
         edgeColor = "black"
     }
 
-    if (style == CableStyle.List1) {
+    if (style == CableStyle.List || style == CableStyle.SelectedList) {
         // draw the line twice with different settings
         ctx.beginPath();
         for (let line of lines) movePolyline(ctx, line);

@@ -75,12 +75,13 @@ export class TypeShim {
 
     /**
      * Render the thing visible on the node
+     * Make sure its never too big
      */
     render() : string {
 
         if (this.glyph) return this.glyph;   
         
-        if (this.name !== "") return this.name;
+        if (this.name !== "") return this.name.slice(0, 5);
 
         switch (this.type) {
             case Type.void:

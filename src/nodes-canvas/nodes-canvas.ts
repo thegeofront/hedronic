@@ -23,6 +23,7 @@ import { GraphConversion } from "./logic/graph-conversion";
 import { Cable, CableStyle } from "./model/cable";
 import { GraphCalculation } from "./logic/graph-calculation";
 import { makeMenuFromCable } from "../menu/right-menu/param-menu";
+import { Type } from "../modules/types/type";
 
 /**
  * Represents the entire canvas of nodes.
@@ -454,7 +455,7 @@ export class NodesCanvas {
                 let style = datum?.style || CableStyle.Off;
                 drawMultiCable(ctx, socket, normalCons, style, this, this.graph);
                 if (selectedCons.length > 0) 
-                    drawMultiCable(ctx, socket, selectedCons, CableStyle.Selected, this, this.graph);
+                    drawMultiCable(ctx, socket, selectedCons, datum?.type.type == Type.List ? CableStyle.SelectedList : CableStyle.Selected, this, this.graph);
             })
         }
 

@@ -10,10 +10,8 @@ export enum CableStyle {
     Selected,
     Dragging,
     Invalid,
-    List1,
-    List2,
-    List3,
-    List4,
+    List,
+    SelectedList,
 }
 
 /**
@@ -53,7 +51,7 @@ export class Cable {
         // determine visual based on state
         let style = CableStyle.Off;
         if (state instanceof Array) {
-            style = CableStyle.List1;
+            style = CableStyle.List;
             this.type.type = Type.List;
         }else if (state) {
             style = CableStyle.On;
