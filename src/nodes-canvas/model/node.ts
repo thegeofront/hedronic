@@ -15,6 +15,7 @@ export const NODE_WIDTH = 4;
 
 export class GeonNode {
 
+    runtime = 0;
     errorState = "";
     loops = 0;
 

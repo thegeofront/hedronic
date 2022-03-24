@@ -35,3 +35,7 @@ export const Range3Type = TypeShim.new("range-3", Type.Object, undefined, [
     TypeShim.new("y", Type.Reference, undefined, [Range1Type]),
     TypeShim.new("z", Type.Reference, undefined, [Range1Type]),
 ]);
+
+export function range1TypeReference() {
+    return 
+}

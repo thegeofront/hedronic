@@ -11,7 +11,7 @@ import { MenuMaker } from "../util/menu-maker";
 export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {
 
     let processHTML = Str.html`
-        <p>profiler: <code>${""}</code>ms</p>
+        <p>took: <code>${node.runtime}</code>ms</p>
         <p>looping: <code>${node.looping.toString()}</code></p>
         ${node.looping ? Str.html`<p>loops: <code>${node.loops}</code></p>` : ""}
         ${node.errorState ? Str.html`<p>error: <code>${node.errorState}</code></p>` : ""}

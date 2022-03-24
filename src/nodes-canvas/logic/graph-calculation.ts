@@ -1,3 +1,4 @@
+import { GeonMath } from "../../../../engine/src/lib";
 import { Type } from "../../modules/types/type";
 import { Cable, CableStyle } from "../model/cable";
 import { NodesGraph } from "../model/graph";
@@ -72,6 +73,8 @@ export namespace GraphCalculation {
      */
     export async function calculateNode(node: GeonNode, ins: Cable[], outs: Cable[]) {
         
+        const startTime = performance.now();
+
         let inStates = ins.map(c => c.state);
 
         let rawReturnState = [];
@@ -94,10 +97,17 @@ export namespace GraphCalculation {
             }
         } 
         
+        // set some state
+        const endTime = performance.now();
+        node.runtime = GeonMath.round(endTime - startTime, 3);
+
         return undefined;
     }
 
     export async function calculateNodeIteratively(node: GeonNode, ins: Cable[], outs: Cable[]) {
+
+        // prepare stopwatch
+        const startTime = performance.now();
 
         // prepare to store output data
         let aggregators: State[][] = [];
@@ -156,8 +166,10 @@ export namespace GraphCalculation {
         }     
         
         // set some info 
+        const endTime = performance.now();
         node.loops = count;
-        
+        node.runtime = GeonMath.round(endTime - startTime, 3);
+
         return undefined;
     }
 

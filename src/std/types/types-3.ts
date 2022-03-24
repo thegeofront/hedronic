@@ -24,31 +24,26 @@ export function getTraitShims(suffix="") {
     let traitShims = new Map<Trait, TypeShim>();
 
     let vector3 = TypeShim.new("vector-3", Type.Object, undefined, [
-        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("vector-3", Type.string)]),
         TypeShim.new("x", Type.number),
         TypeShim.new("y", Type.number),
         TypeShim.new("z", Type.number)
     ]);
 
     let multiVector3 = TypeShim.new("multi-vector-3", Type.Object, undefined, [
-        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("multi-vector-3", Type.string)]),
         TypeShim.new("buffer", Type.F32Buffer),
     ]);
     
     let line3 = TypeShim.new("line-3", Type.Object, undefined, [
-        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("line-3", Type.string)]),
         TypeShim.new("a", Type.Reference, undefined, [vector3]),
         TypeShim.new("b", Type.Reference, undefined, [vector3]),
     ]);
     
     let multiLine3 = TypeShim.new("multi-line-3", Type.Object, undefined, [
-        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("multi-line-3", Type.string)]),
         TypeShim.new("vertices", Type.F32Buffer),
         TypeShim.new("edges", Type.U16Buffer),
     ]);
     
     let mesh = TypeShim.new("mesh-3", Type.Object, undefined, [
-        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("mesh", Type.string)]),
         TypeShim.new("vertices", Type.F32Buffer),
         TypeShim.new("triangles", Type.U16Buffer),
     ]);
