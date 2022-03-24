@@ -33,6 +33,10 @@ export class FunctionShim {
         return this.outs.length;
     }
 
+    static new(name: string, namespace: string[], func: Function, ins: TypeShim[], outs: TypeShim[]) {
+        return new FunctionShim(name, namespace, func, ins, outs);
+    }
+
     /**
      * @deprecated
      */

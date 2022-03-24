@@ -1,10 +1,12 @@
 # Thursday 
 - cleanup day: figure out what to do with the types & std, make more widgets, 
 - [X] update visuals of nodes
-- [ ] make the collapse of the getter work
-- [ ] make the getter work once the input changes  
-- [ ] make a color node
+- [X] make the collapse of the getter work
+- [X] make the getter work once the input changes  
+- [X] make a color node
   - make it return a normal GeonColor object   
-- [ ] 
+- what to do with objects? 
+  - This is such a black hole, every time I start thinking about it, I mentally crash...
+- [X]  
 
 # Friday / Weekend 

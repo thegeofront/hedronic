@@ -17,6 +17,7 @@ import { SliderWidget } from "./widgets/slider-widget";
 import { ViewWidget } from "./widgets/view-widget";
 
 
+
 export function getDefaultFunctions() : FunctionShim[] {
     return [
         ...getSequencingFunctions(),
