@@ -123,11 +123,9 @@ function tryConvert(item: any, style?: any) : RenderableUnit | undefined {
     let trait = item.trait || item.type;
 
     if (trait == undefined) return;
-    console.log(trait);
 
     if (trait == "mesh-2") {
         const {vertices, triangles} = item;
-        console.log(style);
         const color = Color.fromHex(style) || Color.fromHSL(Math.random());
         let mesh = Mesh.new(MultiVector2.fromData(vertices).to3D(), IntMatrix.fromList(triangles, 3));
         let mat = Material.fromFlatColor(color);

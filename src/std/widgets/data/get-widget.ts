@@ -11,6 +11,10 @@ import { MAX_NUM_PARAMETERS } from "./list-widget";
  */
 export class GetWidget extends Widget {
 
+    bufferState: {
+        keys: Array<string>,
+        types: Array<Type>,
+    } = {keys: [], types: []};
 
     saveState: {
         keys: Array<string>,
@@ -29,23 +33,24 @@ export class GetWidget extends Widget {
         let ins = [TypeShim.new("I", Type.Object, undefined, [])];
         let outs = state ? GetWidget.makeOuts(state.keys, state.types) : [];
         let widget = new GetWidget("get", WidgetSide.Process, undefined, ins, outs, state);
+        widget.saveState = state;
         return widget;
     }
 
     async run(...args: State[]) {
         let obj = args[0] as any;
         if (!obj) return [];
-        this.setState(obj);
+        this.buffer(obj);
         return this.saveState.keys.map(key => obj[key]);
     }
 
-    setState(obj: any) {
+    buffer(obj: any) {
         let keys = Object.keys(obj);
         let types = [];
         for (let key of keys) {
             types.push(reflect(obj[key]));
         }
-        this.saveState = {keys, types};
+        this.bufferState = {keys, types};
     }
 
     makeMenu(): HTMLElement[] {
@@ -58,13 +63,16 @@ export class GetWidget extends Widget {
 
     onMakeOutputKeys() {
         if (!this.saveState) return;
-        let {types, keys } = this.saveState;
+        let {types, keys } = this.bufferState;
+        this.saveState = this.bufferState;
         this.outs = GetWidget.makeOuts(keys, types);
         this.onChange();
     }
 
     onClose() {
-
+        // fuck... to do this right, we need to know if we are connected or not. thay means, we need to get access to the node
+        this.outs = [];
+        this.onChange();
     }
 
     clone() {

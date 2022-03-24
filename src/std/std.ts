@@ -4,7 +4,6 @@ import { getTriangulateFunctions } from "./operations/triangulation";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
 import { GetWidget } from "./widgets/data/get-widget";
-import { ItemsWidget } from "./widgets/data/items-widget";
 import { ListSetWidget } from "./widgets/data/list-widget";
 import { SetWidget } from "./widgets/data/set-widget";
 import { FileLoadWidget } from "./widgets/file-load-widget";
@@ -36,7 +35,6 @@ export function getDefaultWidgets() {
         FileSaveWidget.new(false),
         FileLoadWidget.new(false),
         InspectWidget.new({}),
-        ItemsWidget.new(3),
         ListSetWidget.new(3),
         GetWidget.new(undefined),
         SetWidget.new(3),

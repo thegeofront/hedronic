@@ -111,10 +111,7 @@ export namespace GraphCalculation {
         // construct iterators, which will iterate over all list input cables, or just return the item
         let iterators: ((count: number) => State)[] = [];
         for (let [i, inCable] of ins.entries()) {
-            if (node.core.name == "view") {
-                console.log(inCable)
-                console.log(inCable.type.type == Type.List);
-            }
+    
             // TODO do a better job of detecting 'artifical' lists
             // NO: we need to do this sometimes for natural lists
             if (inCable.type.type == Type.List) {
