@@ -4,9 +4,9 @@ import * as ts from "typescript";
 import { BillboardShader, Debug, WebIO } from "../../../../engine/src/lib";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { IO } from "../../nodes-canvas/util/io";
+import { tryApplyTraits } from "../../std/types/trait";
 import { FunctionShim } from "../shims/function-shim";
 import { TypeShim } from "../shims/type-shim";
-import { Trait, tryApplyTraits } from "../types/trait";
 import { Type } from "../types/type";
 
 namespace Help {

@@ -1,11 +1,11 @@
 import { Graph } from "../../../../engine/src/lib";
 import { Compose, Element, Str } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Trait } from "../../modules/types/trait";
 import { NodesGraph } from "../../nodes-canvas/model/graph";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
+import { Trait } from "../../std/types/trait";
 import { MenuMaker } from "../util/menu-maker";
 
 export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {

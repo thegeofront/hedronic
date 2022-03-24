@@ -6,8 +6,8 @@
  * 
  */
 
-import { TypeShim } from "../shims/type-shim";
-import { Type } from "./type";
+import { TypeShim } from "../../modules/shims/type-shim";
+import { Type } from "../../modules/types/type";
 
 export enum Trait {
     Vector3, 

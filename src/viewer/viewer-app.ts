@@ -3,7 +3,6 @@ import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 import { TypeShim } from "../modules/shims/type-shim";
-import { Trait } from "../modules/types/trait";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 
 export type VisualizePayload = {

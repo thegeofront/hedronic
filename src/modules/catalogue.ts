@@ -5,8 +5,7 @@ import { FunctionShim } from "./shims/function-shim";
 import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
-import { getDefaultWidgets } from "../internal-nodes/widgets/_registry";
-import { getDefaultFunctions } from "../internal-nodes/operations/_registry";
+import { getDefaultWidgets, getDefaultFunctions } from "../std/std";
 
 /**
  * Catalogue containing shim Modules
@@ -31,7 +30,7 @@ export class Catalogue {
     static newFromWidgets() {
         
         let cat = Catalogue.new();
-        cat = createWithInternalFunctions(cat);
+        cat = createWithStd(cat);
         return cat;
     }
 
@@ -101,7 +100,7 @@ export class Catalogue {
     }
 }
 
-function createWithInternalFunctions(cat: Catalogue) {
+function createWithStd(cat: Catalogue) {
     // create widgets
     let widgets = getDefaultWidgets();
     let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
