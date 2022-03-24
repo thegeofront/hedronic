@@ -26,21 +26,8 @@ then clone and install the actual repo
 git clone https://github.com/josfeenstra/geon-nodes nodes
 cd nodes
 npm install
-npm run build-wasm
-npm run build-std
-npm run build
+npm run build-all
 ```
 finally, serve the `public` folder using something like 
 [live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) or [python's http server](https://docs.python.org/3/library/http.server.html)
 []
-
-# TRUE TODO:
-- [X] display / load plugins hierarchically
-- [ ] laz / xyz loader  
-- [ ] pointcloud visualize (height shader, like [this](https://potree.entwine.io/data/ahn.html))
-- [ ] array getters & setters
-- [ ] object getters & setters
-
-# COOL TODO:
-- [ ] camera location input widget 
-  -> connect to wfs loader
