@@ -10,6 +10,7 @@ export type VisualizePayload = {
     state: any, 
     id: string, 
     preview?: boolean
+    style?: any
 }
 
 export const VisualizeEvent = new PayloadEventType<VisualizePayload>("visualizestate");
@@ -41,8 +42,8 @@ export class ViewerApp extends App {
         this.scene = new Scene(camera);
 
         HTML.listen(VisualizeEvent, (payload) => {
-            let {state, id} = payload;
-            this.tryVisualize(id, state);
+            let {state, id, style} = payload;
+            this.tryVisualize(id, state, style);
         })
 
         HTML.listen(StopVisualizeEvent, (payload) => {
@@ -58,8 +59,8 @@ export class ViewerApp extends App {
         this.startGrid();  
     }
 
-    tryVisualize(id: string, item: any) {
-        let unit = tryConvert(item);
+    tryVisualize(id: string, item: any, style?: any) {
+        let unit = tryConvert(item, style);
         if (unit) {
             this.various.set(unit);
         }
@@ -107,7 +108,7 @@ export class ViewerApp extends App {
  * Uses REFLECTION and DUMB TRUST to figure out what it is. 
  * TODO we could do this waaaay easier based on the DATUM SHIM, if we implement such a thing...
  */
-function tryConvert(item: any) : RenderableUnit | undefined {
+function tryConvert(item: any, style?: any) : RenderableUnit | undefined {
 
     if (typeof item !== 'object' || item === null) return undefined;
     
@@ -126,9 +127,11 @@ function tryConvert(item: any) : RenderableUnit | undefined {
     console.log(trait);
 
     if (trait == "mesh-2") {
-        const {vertices, triangles, color} = item;
+        const {vertices, triangles} = item;
+        console.log(style);
+        const color = Color.fromHex(style) || Color.fromHSL(Math.random());
         let mesh = Mesh.new(MultiVector2.fromData(vertices).to3D(), IntMatrix.fromList(triangles, 3));
-        let mat = Material.fromFlatColor(color || Color.fromHSL(Math.random()));
+        let mat = Material.fromFlatColor(color);
         let model = Model.new(mesh, mat);
         return model.spawn();
     }

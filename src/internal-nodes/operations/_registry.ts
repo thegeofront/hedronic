@@ -1,9 +1,11 @@
 import { FunctionShim } from "../../modules/shims/function-shim";
-import { getTriangulateFunctions } from "./triangulate";
+import { getSequencingFunctions } from "./sequencing";
+import { getTriangulateFunctions } from "./triangulation";
 
 
 export function getDefaultFunctions() : FunctionShim[] {
     return [
+        ...getSequencingFunctions(),
         ...getTriangulateFunctions()
     ]
 }

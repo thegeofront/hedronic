@@ -54,6 +54,7 @@ export class Cable {
         let style = CableStyle.Off;
         if (state instanceof Array) {
             style = CableStyle.List1;
+            this.type.type = Type.List;
         }else if (state) {
             style = CableStyle.On;
         } 

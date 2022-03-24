@@ -32,7 +32,7 @@ import { makeMenuFromCable } from "../menu/right-menu/param-menu";
 export class NodesCanvas {
     
     private redrawAll = true;
-    private _size = 24;
+    private _size = 32;
     get size() { return this._size; }
 
     // selection state 
@@ -415,7 +415,7 @@ export class NodesCanvas {
         let g = this.toGrid(this.camera.mousePos);
 
         // draw grid 
-        // this.drawGrid(ctx);
+        this.drawGrid(ctx);
 
         let isCableSelected = (socket: Socket, con: Socket) => {
             for (let selected of this.selectedSockets) {

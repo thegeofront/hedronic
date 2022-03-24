@@ -14,7 +14,7 @@ export class TypeShim {
 
     private constructor(
         public name:  string,  // what to show up as name 
-        public readonly type: Type, // the actual type  
+        public type: Type, // the actual type  
         public readonly glyph?: string,  // how to visualize the type or variable briefly
         public readonly children?: TypeShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
@@ -78,6 +78,8 @@ export class TypeShim {
     render() : string {
 
         if (this.glyph) return this.glyph;   
+        
+        if (this.name !== "") return this.name;
 
         switch (this.type) {
             case Type.void:
@@ -86,15 +88,15 @@ export class TypeShim {
             case Type.boolean:
             case Type.number:
             case Type.string:
-                return this.name;
+                return Type[this.type][0].toLocaleUpperCase();
             
             case Type.Tuple:
             case Type.List:
-                return `[ ${this.children?.map(c => c.render()).join(" , ")} ]`;
+                return `[ ${this.children?.map(c => c.render()).join(" , ") || "any"} ]`;
             case Type.Object:
                 return `{}`;
             case Type.Union:
-                return `[ ${this.children?.map(c => c.render()).join(" | ")} ]`;
+                return `${this.children?.map(c => c.render()).join(" | ")}`;
             case Type.Reference:
                 return this.children?.[0].render() || "any";  
             case Type.Promise:

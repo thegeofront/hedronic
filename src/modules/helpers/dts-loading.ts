@@ -325,10 +325,10 @@ export namespace DTSLoading {
             if (ts.isTupleTypeNode(node.type!)) {
                 let tuple = node.type as ts.TupleTypeNode;
                 for (let i = 0; i < tuple.elements.length; i++) {
-                    outputs.push(convertTypeToShim(`Result ${i}`, tuple.elements[i], types))
+                    outputs.push(convertTypeToShim("", tuple.elements[i], types))
                 }
             } else {
-                outputs.push(convertTypeToShim("Result", node.type!, types))
+                outputs.push(convertTypeToShim("", node.type!, types))
             }
 
             // extract function using the name and callstack
