@@ -24,6 +24,7 @@ export function getTraitShims(suffix="") {
     let traitShims = new Map<Trait, TypeShim>();
 
     let vector3 = TypeShim.new("vector-3", Type.Object, undefined, [
+        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("vector-3", Type.string)]),
         TypeShim.new("x", Type.number),
         TypeShim.new("y", Type.number),
         TypeShim.new("z", Type.number)
@@ -35,6 +36,7 @@ export function getTraitShims(suffix="") {
     ]);
     
     let line3 = TypeShim.new("line-3", Type.Object, undefined, [
+        TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("line-3", Type.string)]),
         TypeShim.new("a", Type.Reference, undefined, [vector3]),
         TypeShim.new("b", Type.Reference, undefined, [vector3]),
     ]);
@@ -45,7 +47,7 @@ export function getTraitShims(suffix="") {
         TypeShim.new("edges", Type.U16Buffer),
     ]);
     
-    let mesh = TypeShim.new("mesh", Type.Object, undefined, [
+    let mesh = TypeShim.new("mesh-3", Type.Object, undefined, [
         TypeShim.new("trait", Type.Literal, undefined, [TypeShim.new("mesh", Type.string)]),
         TypeShim.new("vertices", Type.F32Buffer),
         TypeShim.new("triangles", Type.U16Buffer),
