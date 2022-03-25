@@ -10,10 +10,10 @@ export interface Polyline2 {
     data: Array<Array<number>>;
 }
 
-export interface Polygon2 {
-    trait: "polygon-2",
-    data: Array<Array<number>>;
-}
+// export interface Polygon2 {
+//     trait: "polygon-2",
+//     data: Array<Array<number>>;
+// }
 
 export interface MultiVector2 {
     trait: "multi-vector-2",
@@ -33,7 +33,6 @@ export interface MultiPolygon2 {
 export type Geometry2 = 
     Vector2 | 
     Polyline2 |
-    Polygon2 | 
     MultiVector2 | 
     MultiPolyline2 | 
     MultiPolygon2;

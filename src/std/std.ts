@@ -1,7 +1,7 @@
 import { FunctionShim } from "../modules/shims/function-shim";
 import { getColorFunctions } from "./operations/color";
+import { getPolygonFunctions } from "./operations/polygon";
 import { getSequencingFunctions } from "./operations/sequencing";
-import { getTriangulateFunctions } from "./operations/triangulation";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
 import { GetWidget } from "./widgets/data/get-widget";
@@ -21,7 +21,7 @@ import { ViewWidget } from "./widgets/view-widget";
 export function getDefaultFunctions() : FunctionShim[] {
     return [
         ...getSequencingFunctions(),
-        ...getTriangulateFunctions(),
+        ...getPolygonFunctions(),
         ...getColorFunctions(),
     ]
 }

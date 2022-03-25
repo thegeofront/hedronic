@@ -1,6 +1,7 @@
 import { GeonMath } from "../../../../engine/src/lib";
 import { Type } from "../../modules/types/type";
 import { Cable, CableStyle } from "../model/cable";
+import { CoreType } from "../model/core";
 import { NodesGraph } from "../model/graph";
 import { GeonNode } from "../model/node";
 import { Socket } from "../model/socket";
@@ -48,6 +49,8 @@ export namespace GraphCalculation {
             }
             let outs = graph.getDataAtOutput(node);
             
+            // fire a 'before run' 
+            if (node.widget) node.widget.onBeforeRun();
 
             let err;
             if (node.looping) {

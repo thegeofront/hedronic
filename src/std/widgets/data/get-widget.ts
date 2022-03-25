@@ -6,6 +6,8 @@ import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 import { MAX_NUM_PARAMETERS } from "./list-widget";
 
+export const MAX_NUMBER_PARAMETERS = 30;
+
 /**
  * Special component with variable number of outputs
  */
@@ -45,7 +47,7 @@ export class GetWidget extends Widget {
     }
 
     buffer(obj: any) {
-        let keys = Object.keys(obj);
+        let keys = Object.keys(obj).slice(0, MAX_NUMBER_PARAMETERS);
         let types = [];
         for (let key of keys) {
             types.push(reflect(obj[key]));

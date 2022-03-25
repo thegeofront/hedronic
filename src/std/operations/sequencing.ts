@@ -7,7 +7,7 @@ import { Range1, Range1Type } from "../types/range";
 export function getSequencingFunctions(namespace="functions") {
 
     return [
-        
+        FunctionShim.newFromFunction(flatten, "flatten", namespace),
         FunctionShim.newFromFunction(weave, "weave", namespace),
         FunctionShim.new("remap", [namespace], remap, 
         [
@@ -22,6 +22,19 @@ export function getSequencingFunctions(namespace="functions") {
 
         ], [TypeShim.new("range", Type.Reference, undefined, [Range1Type])]),
     ]; 
+}
+
+function flatten(data: any[]) : any[] {
+    let flattened = [];
+    for (let item of data) {
+        if (item.hasOwnProperty('trait')) {
+            // console.log(item);
+            flattened.push(item);
+        } else if (item instanceof Array) {
+            flattened.push(...flatten(item))
+        }
+    }
+    return flattened;
 }
 
 function range(start: number, end: number) : Range1 {

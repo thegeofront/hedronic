@@ -34,7 +34,7 @@ export class ViewerApp extends App {
 
         let canvas = gl.canvas as HTMLCanvasElement;
         let camera = new Camera(canvas, -2, true, true);
-        camera.setState([4.0424, 3.7067, -4.3147, -53.16840193074478, 1.1102909321189378,22.843839502199657]);
+        camera.setState([-5.5029, -51.997, -0.17589, -8.1028643740226, 0.9116052420711634,24.621936191871416]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.various = DebugRenderer.new(gl);
         this.preview = DebugRenderer.new(gl);
@@ -66,6 +66,10 @@ export class ViewerApp extends App {
     }
 
     removeVisualize(id: string) {
+        if (id == "") {
+            // clear all
+            this.various.clear(); 
+        }
         this.various.delete(id);
     }
 
@@ -124,10 +128,22 @@ function tryConvert(item: any, style?: any) : RenderableUnit | undefined {
 
     if (trait == undefined) return;
 
+    if (trait == "vector-2") {
+        return MultiVector2.fromData([item.x, item.y]).to3D()
+    }
+
     if (trait == "mesh-2") {
         const {vertices, triangles} = item;
         const color = Color.fromHex(style) || Color.fromHSL(Math.random());
         let mesh = Mesh.new(MultiVector2.fromData(vertices).to3D(), IntMatrix.fromList(triangles, 3));
+        let mat = Material.fromFlatColor(color);
+        let model = Model.new(mesh, mat);
+        return model.spawn();
+    }
+
+    if (trait == "mesh-3") {
+        const color = (style === "" ? Color.fromHSL(Math.random()) : Color.fromHex(style)) || Color.fromHSL(Math.random());
+        let mesh = item;
         let mat = Material.fromFlatColor(color);
         let model = Model.new(mesh, mat);
         return model.spawn();

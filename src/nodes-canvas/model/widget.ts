@@ -177,6 +177,10 @@ export class Widget {
         if (this.onChangeInOutCallback) this.onChangeInOutCallback();
     }
 
+    onBeforeRun() {
+        
+    }
+
     onDestroy() {
         
     }
