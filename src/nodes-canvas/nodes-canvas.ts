@@ -24,6 +24,7 @@ import { Cable, CableStyle } from "./model/cable";
 import { GraphCalculation } from "./logic/graph-calculation";
 import { makeMenuFromCable } from "../menu/right-menu/param-menu";
 import { Type } from "../modules/types/type";
+import { STANDARD_GRAPH } from "./standard-graph";
 
 /**
  * Represents the entire canvas of nodes.
@@ -101,8 +102,12 @@ export class NodesCanvas {
         HTML.dispatch(setRightPanelOld, this);
     }
 
-    
     async testGraph() {
+        let json = STANDARD_GRAPH;
+        this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+    }
+    
+    async testGraphOld() {
         // let js = `
         // function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
         // ) {
@@ -116,19 +121,22 @@ export class NodesCanvas {
         // }
         // `;
 
-        let js = `
-        function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
-        ) {
-            let [aFixed] = various.asNumber(a) /* "x": 3 | "y": -1 */;
-            let [cFixed] = various.asNumber(c) /* "x": 3 | "y": 3 */;
-            let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
-            let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
-            let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;
-            return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
-        }
-        `;
+        // let js = `
+        // function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
+        // ) {
+        //     let [aFixed] = various.asNumber(a) /* "x": 3 | "y": -1 */;
+        //     let [cFixed] = various.asNumber(c) /* "x": 3 | "y": 3 */;
+        //     let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
+        //     let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
+        //     let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;
+        //     return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
+        // }
+        // `;
+        // this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
 
-        this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
+        // let json = JSON.parse(STANDARD_GRAPH);
+        // this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+
         // this.graph.log();
         return;
     }
