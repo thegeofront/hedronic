@@ -11,6 +11,8 @@ import { GraphCalculation } from "../logic/graph-calculation";
 import { Cable, CableStyle } from "./cable";
 import { TypeChecking } from "../../modules/types/type-checking";
 
+export type OnWidgetChangeCallback = (hash: string) => void
+
 /**
  * A Collection of Nodes, Widgets (and Cables)
  * These are doubly linked. (Nodes point to each other)
@@ -18,7 +20,7 @@ import { TypeChecking } from "../../modules/types/type-checking";
  */
 export class NodesGraph {
 
-    onWidgetChangeCallback?: Function;
+    private onWidgetChangeCallback?: OnWidgetChangeCallback;
 
     constructor(
         public nodes: Map<string, GeonNode>, 
@@ -41,6 +43,10 @@ export class NodesGraph {
         }
     }
 
+    setWidgetChangeCallback(f: OnWidgetChangeCallback | undefined) {
+        this.onWidgetChangeCallback = f;
+    }
+
     toJs(name: string) {
         return GraphConversion.toFunction(this, name);
     }
@@ -48,7 +54,7 @@ export class NodesGraph {
     onWidgetChange(hash: string, widget: Widget) {
         let node = this.getNode(hash)!;
         setNodeToWidgetInOuts(this, node, widget);
-        if (this.onWidgetChangeCallback) this.onWidgetChangeCallback();
+        if (this.onWidgetChangeCallback) this.onWidgetChangeCallback(hash);
     }
 
     // ---- True Graph Business 
@@ -192,7 +198,7 @@ export class NodesGraph {
         this.nodes.set(node.hash, node);
         if (node.core instanceof Widget) {
             this.widgets.add(node.hash);
-            node.widget!.onChangeCallback = (w) => this.onWidgetChange(node.hash, w);
+            node.widget!.setOnChangeCallback((w) => this.onWidgetChange(node.hash, w));
         }
         return node.hash;
     }
@@ -210,7 +216,7 @@ export class NodesGraph {
         // remove the widget pointer
         if (node.core instanceof Widget) {
             node.core.onDestroy();
-            node.widget!.onChangeCallback = undefined; // remove callback just to be sure
+            node.widget!.setOnChangeCallback(undefined);
             this.widgets.delete(hash);
 
             // TODO remove the widget itself??

@@ -24,6 +24,8 @@ export enum WidgetSide {
     Process // output: save file , or rendering...
 }
 
+export type OnChangeCallback = (w: Widget) => void;
+
 /**
  * 
  * Some Nodes have Widgets. 
@@ -43,7 +45,7 @@ export class Widget {
 
     nameLower: string;
     domain?: Domain2;
-    onChangeCallback?: (w: Widget) => void;
+    private onChangeCallback?: OnChangeCallback
     onChangeInOutCallback?: Function;
     hash?: string; // the node i'm connected to
 
@@ -174,6 +176,10 @@ export class Widget {
      */
     onClick(canvas: NodesCanvas) {
         canvas.deselect();
+    }
+
+    setOnChangeCallback(f: OnChangeCallback | undefined) {
+        this.onChangeCallback = f;
     }
 
     onChange() {

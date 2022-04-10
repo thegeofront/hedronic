@@ -153,7 +153,7 @@ export class NodesCanvas {
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
-        this.graph.onWidgetChangeCallback = this.onWidgetChange.bind(this);
+        this.graph.setWidgetChangeCallback(this.onWidgetChange.bind(this));
         this.recalcAndRedraw();
     }
 

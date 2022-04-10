@@ -36,18 +36,4 @@ export class SliderWidget extends Widget {
         this.saveState = state;
         this.onChange();
     }
-
-    onClick(canvas: NodesCanvas) {
-        // let text = prompt("Input:", "data");
-        // if (text) {
-        //     try {
-        //         this.state = JSON.parse(text);
-        //     } catch(error) {
-        //         this.state = (error as Error).message;
-        //     }
-        // }
-        canvas.deselect();
-        // canvas.select();
-        canvas.onWidgetChange(this.hash!);
-    }
 }
