@@ -11,9 +11,9 @@ import { WidgetSide } from "../model/widget";
 export namespace GraphCalculation {
 
     /**
-     * If a node becomes outdated: propagate this logic to all nodes dependent on this node
+     * If a node becomes outdated: propagate this logic to all cables & nodes dependent on this node
      */
-    export async function setOutdated(key: Node) {
+    export async function setOutdatedCables(key: Node) {
         // TODO
     }
 
@@ -37,7 +37,7 @@ export namespace GraphCalculation {
             let maybeInds = graph.getDataAtInput(node);
             let ins: Cable[] = [];
             for (let [i, inCable] of maybeInds.entries()) {
-                if (!inCable || inCable.state == undefined) {
+                if (!inCable || inCable._state == undefined) {
                     console.error("running a script with undefined data...");
                     
                 } else {
@@ -75,7 +75,7 @@ export namespace GraphCalculation {
         
         const startTime = performance.now();
 
-        let inStates = ins.map(c => c.state);
+        let inStates = ins.map(c => c.getState());
 
         let rawReturnState = [];
 
@@ -126,14 +126,14 @@ export namespace GraphCalculation {
             // NO: we need to do this sometimes for natural lists
             if (inCable.type.type == Type.List) {
                 
-                let arr = inCable.state as Array<any>;
+                let arr = inCable.getState() as Array<any>;
                 if (arr.length > count) {
                     count = arr.length;
                 }
                 // TODO make a more predictable iterator
                 iterators.push((n: number) => {return arr[n % arr.length]})
             } else {
-                iterators.push(() => {return inCable.state})
+                iterators.push(() => {return inCable.getState()})
             }
         }
 

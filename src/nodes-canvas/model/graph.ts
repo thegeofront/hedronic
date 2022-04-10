@@ -158,7 +158,7 @@ export class NodesGraph {
     //////////////////////////////////// Data /////////////////////////////////////
 
 
-    getDatum(socket: Socket) {
+    getCable(socket: Socket) {
         // do a bunch of saveguards
         let node = this.nodes.get(socket.hash)!
         if (!node) {console.warn("could not find node to store datum"); return }
@@ -170,9 +170,9 @@ export class NodesGraph {
     }
 
     setDatumState(socket: Socket, state: State) {
-        let datum = this.getDatum(socket);
+        let datum = this.getCable(socket);
         if (!datum) return;
-        datum.state = state;
+        datum.setState(state);
     }
 
     /**
@@ -189,7 +189,7 @@ export class NodesGraph {
      * NOTE THE CONFUSING BIT: these DO involve the this.input values 
      */
     getDataAtInput(node: GeonNode) : (Cable | undefined)[] {
-        return node.inputs.map(connections => connections ? this.getDatum(connections) : undefined);
+        return node.inputs.map(connections => connections ? this.getCable(connections) : undefined);
     }
 
     //////////////////////////////////// Nodes /////////////////////////////////////

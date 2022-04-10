@@ -8,9 +8,9 @@ export function makeMenuFromCable(cable: Cable) : HTMLElement[] {
 
     // render state if we have state
     let nodes: HTMLElement[] = [];
-    if (cable.state) {
+    if (cable._state) {
         let viewer: any = Element.html`<json-viewer>{}</json-viewer>`;
-        viewer.data = cable.state;
+        viewer.data = cable.getState();
         nodes.push(viewer);
     }
 

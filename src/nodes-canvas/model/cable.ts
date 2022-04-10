@@ -27,7 +27,7 @@ export class Cable {
 
         // 2 | state management
         public type: TypeShim,
-        public state: State,
+        public _state: State,
         public level: number,
         public valid: boolean,
 
@@ -58,7 +58,11 @@ export class Cable {
         } 
         this.style = style;
 
-        this.state = state;
+        this._state = state;
+    }
+
+    getState() {
+        return this._state;
     }
 }
 

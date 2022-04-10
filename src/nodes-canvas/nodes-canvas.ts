@@ -200,7 +200,7 @@ export class NodesCanvas {
      */
     tryGetCache(s: Socket) {
         if (s.side != SocketSide.Output) return undefined;
-        return this.graph.getDatum(s)!.state; 
+        return this.graph.getCable(s)!.getState(); 
     }
 
     /////////////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ export class NodesCanvas {
                 let normalCons = []
                 let selectedCons = [];
 
-                let datum = this.graph.getDatum(socket);
+                let datum = this.graph.getCable(socket);
 
                 // figure out if selected
                 for (let con of cons) {
@@ -725,10 +725,10 @@ export class NodesCanvas {
         } else if (s.side == SocketSide.Input) {
             let outputSocket = this.graph.getInputConnectionAt(s);
             if (!outputSocket) return;
-            let datum = this.graph.getDatum(outputSocket)!;
+            let datum = this.graph.getCable(outputSocket)!;
             HTML.dispatch(setMenu, {title: "Input", data: datum, callback: makeMenuFromCable});
         } else if (s.side == SocketSide.Output) {
-            let datum = this.graph.getDatum(s);
+            let datum = this.graph.getCable(s);
             HTML.dispatch(setMenu, {title: "Output", data: datum, callback: makeMenuFromCable});
             // let state = this.graph.getDatum(s)!.state;
             // HTML.dispatch(setRightPanelOld, {state, socket: s});
