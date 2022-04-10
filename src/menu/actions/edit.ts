@@ -27,13 +27,11 @@ export function getEditActions(context: NodesCanvas) : MenuItem[] {
 
 function undo(nodes: NodesCanvas) {
     let change = nodes.graphHistory.undo(); 
-    if (change) nodes.onChange();
 }
 
 
 function redo(nodes: NodesCanvas) {
     let change = nodes.graphHistory.redo(); 
-    if (change) nodes.onChange();
 }
 
 

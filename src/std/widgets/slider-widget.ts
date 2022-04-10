@@ -48,6 +48,6 @@ export class SliderWidget extends Widget {
         // }
         canvas.deselect();
         // canvas.select();
-        canvas.onChange();
+        canvas.onWidgetChange(this.hash!);
     }
 }

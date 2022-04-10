@@ -12,7 +12,7 @@ export class NodeAddAction implements Action {
         public process: FunctionShim | Widget,
         public gridPosition: Vector2,
         public initState?: State,
-        private key?: string,
+        public key?: string,
     ) {}
 
     do(graph: NodesGraph) {

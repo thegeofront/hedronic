@@ -18,21 +18,18 @@ export namespace GraphCalculation {
     }
 
     /**
-     * Only calculate outdated nodes
-     */
-    export async function partial() {
-        // TODO
-    }
-
-    /**
      * Calculate the entire graph:
      * - start with the data from input widgets
      * - calculate all operations 
      * - store results in output widgets & datums
      */
-    export async function full(graph: NodesGraph) : Promise<boolean> {
+    export async function calculate(graph: NodesGraph, starterNodes?: string[]) : Promise<boolean> {
 
-        let orderedNodeKeys = GraphCalculation.kahn(graph);
+        if (starterNodes) {
+            console.log("starting somewhere!!");
+        }
+
+        let orderedNodeKeys = GraphCalculation.kahn(graph, starterNodes);
 
         for (let key of orderedNodeKeys) {
     

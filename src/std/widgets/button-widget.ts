@@ -20,6 +20,6 @@ export class ButtonWidget extends Widget {
     onClick(canvas: NodesCanvas) {
         this.saveState = !this.saveState;
         canvas.deselect();
-        canvas.onChange();
+        canvas.onWidgetChange(this.hash);
     }
 }

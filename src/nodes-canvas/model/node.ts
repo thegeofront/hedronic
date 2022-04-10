@@ -62,8 +62,10 @@ export class GeonNode {
         looping = false) {
 
         if (core instanceof Widget) {
+             // Widgets contain unique state, while Operations are prototypes 
             // TODO This should not be, this is dumb
-            core = core.clone(); // Widgets contain unique state, while Operations are prototypes 
+            core = core.clone();
+            core.attach(hash);
         }
 
         if (!inputs) {

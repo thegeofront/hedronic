@@ -14,8 +14,12 @@ import { CableAddAction } from "./actions/cable-add-action";
 import { CableDeleteAction } from "./actions/cable-delete-action";
 import { FunctionShim } from "../../modules/shims/function-shim";
 
+export type ActionCallback = (action: Action, wasUndone: boolean) => void;
+
 /**
  * purpose: messenger system / decoupling strategy / undo support 
+ * - All state-changes of the Graph SHOULD go through this class
+ * - This also makes it an excellent 
  */
 export class History {
     
@@ -24,11 +28,12 @@ export class History {
     constructor(
         private graph: NodesGraph,
         private actions: Action[] = [],
-        private redoActions: Action[] = []) {
+        private redoActions: Action[] = [],
+        private onChangeCallback?: ActionCallback) {
     }
 
     static new(graph: NodesGraph) {
-        return new History(graph, []);
+        return new History(graph);
     }
 
     reset(graph: NodesGraph) {
@@ -37,14 +42,19 @@ export class History {
         this.redoActions = []; 
     }
 
+    setCallback(callback: ActionCallback) {
+        this.onChangeCallback = callback;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Should be called whenether we change the state of the graph
      */
     do(action: Action) {
-        console.log("doing something")
         action.do(this.graph);
+        // TODO : if unsuccesful: do not proceed
+        if (this.onChangeCallback) this.onChangeCallback(action, false);
         return this.record(action);
     }
 
@@ -56,6 +66,7 @@ export class History {
         this.redoActions = []; // upon a new record, we must remove the redo list
         this.actions.push(action);
         this.tryTrim();
+        return action;
     }
 
     /**
@@ -67,9 +78,10 @@ export class History {
             // console.log("nothing left to undo...");
             return false;
         }
-        let a = this.actions.pop()!;
-        a.undo(this.graph);
-        this.redoActions.push(a);
+        let action = this.actions.pop()!;
+        action.undo(this.graph);
+        if (this.onChangeCallback) this.onChangeCallback(action, true);
+        this.redoActions.push(action);
         return true;
     }
 
@@ -108,8 +120,8 @@ export class History {
         return this.do(new CableDeleteAction(from, to));
     }
 
-    addNode(selected: FunctionShim | Widget, gp: Vector2, state?: State) {
-        return this.do(new NodeAddAction(selected, gp, state))
+    addNode(selected: FunctionShim | Widget, gp: Vector2, state?: State) : NodeAddAction {
+        return this.do(new NodeAddAction(selected, gp, state)) as NodeAddAction
     }
 
     recordAddNodes(nodes: GeonNode[]) {

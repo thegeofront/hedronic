@@ -45,6 +45,7 @@ export class Widget {
     domain?: Domain2;
     onChangeCallback?: (w: Widget) => void;
     onChangeInOutCallback?: Function;
+    hash?: string; // the node i'm connected to
 
     protected constructor(
         public readonly name: string,
@@ -91,6 +92,14 @@ export class Widget {
         // this will be specific per widget
     }
 
+    attach(hash: string) {
+        this.hash = hash;
+    }
+
+    detach() {
+        this.hash = "";
+    }
+
     toJson() {
         return {
             name: this.name,
@@ -122,7 +131,7 @@ export class Widget {
     }
 
     clone() {
-        return new Widget(this.name, this.side, this.size, this.ins, this.outs, this.saveState);
+        return new Widget(this.name, this.side, this.size, this.ins, this.outs, this.saveState);;
     }
 
     trySelect(local: Vector2) : number | undefined {

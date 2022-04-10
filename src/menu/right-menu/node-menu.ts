@@ -20,11 +20,11 @@ export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {
     let looptoggle = MenuMaker.toggle("loop", node.looping, (ev) => {
         // let target = (ev.target as HTMLInputElement).querySelector("label");
         node.toggleLooping();
-        nodes.onChange();
+        nodes.onNodeMenuChange(node.hash);
     })
-
+    
     let recalcbutton = MenuMaker.button("recalculate", () => {
-        nodes.onChange();
+        nodes.onNodeMenuChange(node.hash);
     })
 
     return {processHTML, looptoggle, recalcbutton};

@@ -13,7 +13,7 @@ export class NodeDeleteAction implements Action {
     private process!: FunctionShim | Widget
 
     constructor(
-        private key: string,
+        public key: string,
     ) {}
 
     do(graph: NodesGraph) {

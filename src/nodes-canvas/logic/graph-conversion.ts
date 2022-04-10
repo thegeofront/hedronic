@@ -49,6 +49,7 @@ export namespace GraphConversion {
                 }
     
                 widget.saveState = node.process.state;
+                widget.attach(hash);
     
                 let geonNode = GeonNode.fromJson(node, widget);
                 if (!geonNode) {

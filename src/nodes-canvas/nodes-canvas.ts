@@ -25,6 +25,12 @@ import { GraphCalculation } from "./logic/graph-calculation";
 import { makeMenuFromCable } from "../menu/right-menu/param-menu";
 import { Type } from "../modules/types/type";
 import { STANDARD_GRAPH } from "./standard-graph";
+import { FunctionShim } from "../modules/shims/function-shim";
+import { Action } from "./model/action";
+import { NodeAddAction } from "./model/actions/node-add-action";
+import { NodeDeleteAction } from "./model/actions/node-delete-action";
+import { CableAddAction } from "./model/actions/cable-add-action";
+import { CableDeleteAction } from "./model/actions/cable-delete-action";
 
 /**
  * Represents the entire canvas of nodes.
@@ -95,6 +101,8 @@ export class NodesCanvas {
             this.onMouseUp(this.toGrid(worldPos));
         }
 
+        this.graphHistory.setCallback(this.onGraphChange.bind(this));
+
         // this.menu.updateCategories(this);
         this.testGraph();
 
@@ -145,10 +153,29 @@ export class NodesCanvas {
     resetGraph(graph= NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
-        this.graph.onWidgetChangeCallback = this.onChange.bind(this);
-        this.onChange();
+        this.graph.onWidgetChangeCallback = this.onWidgetChange.bind(this);
+        this.recalcAndRedraw();
     }
 
+    /**
+     * Certain widgets ( like a button ) change state based on user input.
+     * The graph should calculate as a result of that change
+     * Channel those types of calls here
+     * 
+     */
+    onWidgetChange(widgetNode?: string) {
+        console.log("widget change!", widgetNode);
+        this.recalcAndRedraw(widgetNode ? [widgetNode] : undefined);
+    }
+
+    /**
+     * Certain settings in the right menu (like 'recalculate') also want to trigger a recalculate event.
+     * Channel those calls here 
+     * 
+     */
+    onNodeMenuChange(widgetNode?: string) {
+        this.recalcAndRedraw(widgetNode ? [widgetNode] : undefined);
+    }
 
     /////////////////////////////////////////////////////////////////
 
@@ -178,11 +205,27 @@ export class NodesCanvas {
 
     /////////////////////////////////////////////////////////////////
 
-    async onChange() {
-        let succes = await GraphCalculation.full(this.graph);
-        this._requestRedraw();
+    onGraphChange(action: Action, undone: boolean) {
+        if (action instanceof NodeAddAction && !undone) {
+            return this.recalcAndRedraw([action.key!]);
+        }
+        if (action instanceof NodeDeleteAction && undone) {
+            return this.recalcAndRedraw([action.key]);
+        }
+        if (action instanceof CableAddAction) {
+            return this.recalcAndRedraw([action.to.hash]);
+        }
+        if (action instanceof CableDeleteAction) {
+            return this.recalcAndRedraw([action.to.hash]);
+        }
+         
+        // TODO add the rest
     }
 
+    private async recalcAndRedraw(changedNodes?: string[]) {
+        let succes = await GraphCalculation.calculate(this.graph, changedNodes);
+        this._requestRedraw();
+    }
 
     /**
      * Ctrl + D
@@ -293,7 +336,7 @@ export class NodesCanvas {
         }
 
         // recalc
-        this.onChange();
+        this.recalcAndRedraw();
     }
 
 
@@ -317,7 +360,6 @@ export class NodesCanvas {
     onUndo() {
         console.log("undoing...");      
         let change = this.graphHistory.undo(); 
-        if (change) this.onChange();
     }
 
 
@@ -325,7 +367,6 @@ export class NodesCanvas {
     onRedo() {
         console.log("redoing..."); 
         let change = this.graphHistory.redo(); 
-        if (change) this.onChange();
     }
 
 
@@ -855,9 +896,8 @@ export class NodesCanvas {
             for (let lib of this.catalogue.modules.keys()) {
                 let blueprint = this.tryGetbpFromLibrary(lib, name);
                 if (blueprint) {
-                    this.graphHistory.addNode(blueprint, gp, initState);
-                    this.onChange();
-                    return "";
+                    let a = this.graphHistory.addNode(blueprint, gp, initState);
+                    return a.key!;
                 }
             } 
 
@@ -866,16 +906,15 @@ export class NodesCanvas {
         }
 
         // else, try to select something with library and name
-        let thing = this.tryGetbpFromLibrary(library, name);
-        if (!thing) {
+        let core = this.tryGetbpFromLibrary(library, name);
+        if (!core) {
             console.warn("no blueprint found");
             return undefined;
         }
-        this.graphHistory.addNode(thing, gp);
-        this.onChange();
-        return "";
-    }
 
+        // add it
+        return this.graphHistory.addNode(core, gp);
+    }
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {
         if (doubleClick) return;
@@ -888,9 +927,7 @@ export class NodesCanvas {
         if (this.catalogue.selected) {
             // we are placing a new node
             this.graphHistory.addNode(this.catalogue.selected!, gp);
-            // this.graph.addNode(this.catalogue.spawn(gp)!);
             this.catalogue.deselect();
-            this.onChange();
             return;
         } 
         
@@ -962,7 +999,6 @@ export class NodesCanvas {
                     this.graphHistory.addConnection(selectedSocket, this.hoverSocket!);
                 }
                 this.deselect();
-                this.onChange();
             }
         } 
 
