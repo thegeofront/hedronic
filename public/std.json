@@ -33,6 +33,9 @@
     ],
     "std_old": [],
     "wasm": [
+    ],
+
+    "wasm-unused": [
         {
             "icon": "bi-puzzle-fill",
             "nickname": "wasm",
