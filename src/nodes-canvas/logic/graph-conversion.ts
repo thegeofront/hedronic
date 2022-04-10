@@ -250,7 +250,7 @@ export namespace GraphConversion {
     
         console.log("rendering javascript...")
         
-        let orderedNodeKeys = GraphCalculation.kahn(graph);
+        let orderedNodeKeys = GraphCalculation.kahn(graph, GraphCalculation.getGlobalGraphStarters(graph));
     
         let inputs: string[] = [];
         let processes: string[] = [];
@@ -291,7 +291,7 @@ export namespace GraphConversion {
                 }
             } else if (node.widget!.side == WidgetSide.Process) {
                 // TODO : make this 
-                console.warn("we must implement this!");
+                console.warn("I must implement this!");
             } else {
                 throw new Error("should never happen");
     

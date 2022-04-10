@@ -180,7 +180,7 @@ export class NodesGraph {
      * Since the refactor, the cables are identified as the hash of the node, joined by the index of the output
      * NOTE THE CONFUSING BIT: this has nothing to do with the `this.output` socket lists. 
      */
-    getDataAtOutput(node: GeonNode) : Cable[] {
+    getCablesAtOutputs(node: GeonNode) : Cable[] {
         return node.cables;
     }
 
@@ -188,7 +188,7 @@ export class NodesGraph {
      * Get a stringified version of all 'cables' the input sockets are pointing to.
      * NOTE THE CONFUSING BIT: these DO involve the this.input values 
      */
-    getDataAtInput(node: GeonNode) : (Cable | undefined)[] {
+    getCablesAtInputs(node: GeonNode) : (Cable | undefined)[] {
         return node.inputs.map(connections => connections ? this.getCable(connections) : undefined);
     }
 

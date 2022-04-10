@@ -3,7 +3,7 @@ import { Type } from "../../modules/types/type";
 import { Cable, CableStyle } from "../model/cable";
 import { CoreType } from "../model/core";
 import { NodesGraph } from "../model/graph";
-import { GeonNode } from "../model/node";
+import { GeonNode, NODE_WIDTH } from "../model/node";
 import { Socket } from "../model/socket";
 import { State } from "../model/state";
 import { WidgetSide } from "../model/widget";
@@ -13,8 +13,37 @@ export namespace GraphCalculation {
     /**
      * If a node becomes outdated: propagate this logic to all cables & nodes dependent on this node
      */
-    export async function setOutdatedCables(key: Node) {
+    export function flagOutdatedCables(graph: NodesGraph, starterKeys: string[]) {
         // TODO
+        let keys: string[] = [];
+        keys.push(...starterKeys);
+        let visited = new Set();
+        let n = 0;
+        
+        while (keys.length > 0) {
+            // basic traversal stuff
+            let key = keys.pop()!;
+            visited.add(key);
+
+            let node = graph.getNode(key)!;
+
+            // set all output cables as outdated
+            let outs = graph.getCablesAtOutputs(node);
+            for (let out of outs) {
+                out.flagAsOutdated();
+                n += 1;
+            }
+
+            // add all output-connected nodes to the stack
+            node?.forEachOutputSocket((_, connections) => {
+                for (let connection of connections) {
+                    if (visited.has(connection.hash)) continue;
+                    keys.push(connection.hash);
+                }
+            })
+        }
+
+        return n;
     }
 
     /**
@@ -25,28 +54,42 @@ export namespace GraphCalculation {
      */
     export async function calculate(graph: NodesGraph, starterNodes?: string[]) : Promise<boolean> {
 
-        if (starterNodes) {
-            console.log("starting somewhere!!");
+        // get starter nodes 
+        let S: string[]; 
+        if (!starterNodes) {
+            S = getGlobalGraphStarters(graph);
+        } else {
+            S = starterNodes;
         }
-
-        let orderedNodeKeys = GraphCalculation.kahn(graph, starterNodes);
+        
+        // flag certain cables as 'potentially outdated' 
+        let flags = flagOutdatedCables(graph, S);
+        
+        // warning: kahn consumes S & starterNodes.
+        let orderedNodeKeys = GraphCalculation.kahn(graph, S);
+        
+        // debug
+        // if (starterNodes) {
+        //     console.log("flagged", flags, "cables.");
+        //     console.log("specific starter node called");
+        //     console.log("nodekeys: ", orderedNodeKeys);
+        // }
 
         for (let key of orderedNodeKeys) {
     
             let node = graph.getNode(key)!;
-            let maybeInds = graph.getDataAtInput(node);
+            let maybeInds = graph.getCablesAtInputs(node);
             let ins: Cable[] = [];
             for (let [i, inCable] of maybeInds.entries()) {
                 if (!inCable || inCable._state == undefined) {
                     console.error("running a script with undefined data...");
-                    
                 } else {
                     ins.push(inCable);
                 }
             }
-            let outs = graph.getDataAtOutput(node);
+            let outs = graph.getCablesAtOutputs(node);
             
-            // fire a 'before run' 
+            // fire a 'before run' event. some widgets require it
             if (node.widget) node.widget.onBeforeRun();
 
             let err;
@@ -200,17 +243,11 @@ export namespace GraphCalculation {
      * An implementation of kahn's algorithm: 
      * https://en.wikipedia.org/wiki/Topological_sorting
      */
-    export function kahn(graph: NodesGraph, starterNodes?: string[]) {
+    export function kahn(graph: NodesGraph, starterNodes: string[], useOutdatedState = true) {
         // fill starting lists
         let L: string[] = [];
-        let S: string[];
+        let S = starterNodes;
         let visitedCables: Set<string> = new Set<string>();
-
-        if (!starterNodes) {
-            S = getGlobalGraphStarters(graph);
-        } else {
-            S = starterNodes;
-        }
 
         while (true) {
 
@@ -235,8 +272,23 @@ export namespace GraphCalculation {
                 for (let connection of connections) {
                     let m = connection.hash;
                     let allVisited = true;
-                    for (let c of graph.getNode(m)!.getSocketKeysAtInput()) {
-                        if (!visitedCables.has(c)) {
+                    let node = graph.getNode(m)!
+                    let cables = graph.getCablesAtInputs(node);
+                    let inputs = node.inputs;
+
+                    for (let i = 0; i < cables.length; i++) {
+
+                        let cable = cables[i];
+                        let inputSocket = inputs[i];
+
+                        let socketKey = inputSocket ? inputSocket?.toString() : "";
+                        if (!visitedCables.has(socketKey)) {
+
+                            // don't count non-outdated cables as having 'no state';
+                            if (useOutdatedState && cable && !cable._outdated) {
+                                continue;
+                            } 
+
                             allVisited = false;
                             break;
                         }

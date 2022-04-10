@@ -16,7 +16,7 @@ export enum CableStyle {
 
 /**
  * A Cable, or Datum. 
- * 3 responsibilities tied together: connectivity, state management, visuals
+ * 3 responsibilities tied together: connectivity, state management & visuals
  */
 export class Cable {
 
@@ -28,16 +28,17 @@ export class Cable {
         // 2 | state management
         public type: TypeShim,
         public _state: State,
-        public level: number,
-        public valid: boolean,
+        public level: number, // [JF] I don't know  
+        public valid: boolean, // valid as in type
+        public _outdated: boolean = false,
 
         // 3 | visuals
-        public style: CableStyle,
+        public style: CableStyle = CableStyle.Off,
         // public polyline?: any,
     ) {}
 
     static new(type: TypeShim) {
-        return new Cable(undefined, [], type, false, 0, true, CableStyle.Off);
+        return new Cable(undefined, [], type, false, 0, true);
     }
 
     /**
@@ -45,6 +46,10 @@ export class Cable {
      */
     disconnect(graph: NodesGraph) {
         // TODO
+    }
+
+    flagAsOutdated() {
+        this._outdated = true;
     }
 
     setState(state: State) {
@@ -59,6 +64,7 @@ export class Cable {
         this.style = style;
 
         this._state = state;
+        this._outdated = false;
     }
 
     getState() {
