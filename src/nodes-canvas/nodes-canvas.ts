@@ -1035,7 +1035,7 @@ export class NodesCanvas {
             // dragging line
             // console.log("drag line");
         } else {
-            // we are dragging something
+            // we are dragging a node
             let delta = gp.subbed(this.mgpEnd!);
             for (let socket of this.selectedSockets) {
                     let node = this.graph.nodes.get(socket.hash);

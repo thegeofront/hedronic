@@ -23,6 +23,8 @@ export class SliderWidget extends Widget {
     }
 
     onClick(canvas: NodesCanvas) {
+        document.body.style.cursor = "col-resize";
+
         let zoom = canvas.getZoom();
         let beginX: number | undefined = undefined;
         let beginState = this.parameter.getNorm();
@@ -43,6 +45,7 @@ export class SliderWidget extends Widget {
 
         let onMouseUp = (ev: MouseEvent) => {
             console.log("up")
+            document.body.style.cursor = "default";
             document.removeEventListener("mousemove", moveBound);
             document.removeEventListener("mouseup", upBound);
         }
