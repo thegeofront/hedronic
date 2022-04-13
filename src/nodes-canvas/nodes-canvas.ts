@@ -57,7 +57,7 @@ export class NodesCanvas {
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
-        private readonly input: InputState,
+        public readonly input: InputState,
         public graph: NodesGraph,
         public graphHistory: History,       
         public catalogue: Catalogue,

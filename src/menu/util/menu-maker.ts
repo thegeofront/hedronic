@@ -85,6 +85,32 @@ export namespace MenuMaker {
         return slider;
     }
 
+    export function anyNumber(name: string, state: number, onChangeCallback?: (n: number) => void, onInputCallback?: (n: number) => void) {
+        let el = Element.html`
+        <div class="form">
+            <label for="${name}" class="form-label">${name}</label>
+            <input type="number" class="form-number" value="${state}" id="${name}">
+        </div>
+       `;
+        if (onInputCallback) {
+            el.oninput = (ev: Event) => {
+                //@ts-ignore
+                let value: string = ev.target.value;
+                onInputCallback(Number(value));
+            };
+        }
+    
+        if (onChangeCallback) {
+            el.onchange = (ev: Event) => {
+                //@ts-ignore
+                let value: string = ev.target.value;
+                onChangeCallback(Number(value));
+            };
+        }
+    
+        return el;
+    }
+
     export function number(param: Parameter, onChangeCallback?: (p: Parameter) => void, onInputCallback?: (p: Parameter) => void) {
         let el = Element.html`
         <div class="form">

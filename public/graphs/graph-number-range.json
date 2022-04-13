@@ -1,4 +1,4 @@
-export const STANDARD_GRAPH =  {
+ {
   "nodes": {
     "0ac2f2ec-9c23": {
       "hash": "0ac2f2ec-9c23",
@@ -244,4 +244,4 @@ export const STANDARD_GRAPH =  {
       "looping": false
     }
   }
-};
+}
