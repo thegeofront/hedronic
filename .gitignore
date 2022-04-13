@@ -1,2 +1,6 @@
 node_modules
-build/index.js
+
+# do not include generated files
+public/index.js  
+public/wasm-modules/**/*
+public/modules/**/*

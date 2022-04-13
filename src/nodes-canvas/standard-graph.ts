@@ -233,7 +233,7 @@ export const STANDARD_GRAPH =  {
         }
       ],
       "outputs": [],
-      "looping": true
+      "looping": false
     },
     "a7855c65-a0ee": {
       "hash": "a7855c65-a0ee",

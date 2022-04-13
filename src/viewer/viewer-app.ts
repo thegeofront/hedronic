@@ -1,4 +1,4 @@
-import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh, MultiVector2, IntMatrix, Model, Material, Color } from "../../../engine/src/lib";
+import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawSpeed, InputState, LineShader, InputHandler, MultiVector3, RenderableUnit, Mesh, MultiVector2, IntMatrix, Model, Material, Color, Entity, Key, Debug } from "../../../engine/src/lib";
 import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
@@ -24,10 +24,11 @@ export class ViewerApp extends App {
 
     // render
     scene: Scene;
-    various: DebugRenderer;
-    preview: DebugRenderer;
+
     grid: LineShader;
     otherShaders: ShaderProgram<any>[] = [];
+    preview: DebugRenderer;
+    viewWidgets = new Map<string, DebugRenderer>();
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
@@ -36,7 +37,6 @@ export class ViewerApp extends App {
         let camera = new Camera(canvas, -2, true, true);
         camera.setState([-5.5029, -51.997, -0.17589, -8.1028643740226, 0.9116052420711634,24.621936191871416]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
-        this.various = DebugRenderer.new(gl);
         this.preview = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
 
@@ -59,18 +59,30 @@ export class ViewerApp extends App {
     }
 
     tryVisualize(id: string, item: any, style?: any) {
+
+        if (!this.viewWidgets.has(id)) {
+            this.viewWidgets.set(id, DebugRenderer.new(this.gl));
+        }
+        let dr = this.viewWidgets.get(id)!;
+        dr.clear();
         let unit = tryConvert(item, style);
-        if (unit) {
-            this.various.set(unit);
+        if (unit instanceof Array) {
+            for (let [i, u] of unit.entries()) {
+                let key = i.toString();
+                dr.set(u, key, style);
+            }
+        } else if (unit) {
+            dr.set(unit, id);
         }
     }
 
     removeVisualize(id: string) {
-        if (id == "") {
-            // clear all
-            this.various.clear(); 
+        if (!this.viewWidgets.has(id)) {
+            Debug.warn("does not exist");
+            return;
         }
-        this.various.delete(id);
+        this.viewWidgets.get(id)!.clear();
+        this.viewWidgets.delete(id);
     }
 
     setPreview(canvas: NodesCanvas) {
@@ -100,8 +112,10 @@ export class ViewerApp extends App {
 
     draw() {
         this.grid.render(this.scene);
-        this.various.render(this.scene);
         this.preview.render(this.scene);
+        for (let viewer of this.viewWidgets.values()) {
+            viewer.render(this.scene);
+        }
     }
 }
 
@@ -111,26 +125,34 @@ export class ViewerApp extends App {
  * Uses REFLECTION and DUMB TRUST to figure out what it is. 
  * TODO we could do this waaaay easier based on the DATUM SHIM, if we implement such a thing...
  */
-function tryConvert(item: any, style?: any) : RenderableUnit | undefined {
+function tryConvert(item: any, style?: any) : RenderableUnit | Array<RenderableUnit> | undefined {
 
     if (typeof item !== 'object' || item === null) return undefined;
     
+    // first, judge based on typename (javascript type)
+
     //@ts-ignore
     let typename = item.constructor.name;
-    
+
+    if (typename == "Array") 
+        return tryConvertArray(item as Array<any>);
+
     if (typename == "Vector" || typename == "Vector3" || (item.x != undefined && item.y != undefined && item.z != undefined)) 
         return MultiVector3.fromData([item.x, item.y, item.z]);
+
     if (typename == "Line" || typename == "Line3") 
         return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
 
     
-    let trait = item.trait || item.type;
+    // second, judge based on trait. (geofront type, just a way to flag a json)
 
+    let trait = item.trait || item.type; // THIS IS UGLY
+   
     if (trait == undefined) return;
 
-    if (trait == "vector-2") {
+    if (trait == "vector-2") 
         return MultiVector2.fromData([item.x, item.y]).to3D()
-    }
+    
 
     if (trait == "mesh-2") {
         const {vertices, triangles} = item;
@@ -158,15 +180,16 @@ function tryConvert(item: any, style?: any) : RenderableUnit | undefined {
     if (trait == "mesh") 
         return Mesh.new(MultiVector3.fromData(item.vertices), item.triangles); 
 
-    if (typename == "Array") {
-        return tryConvertArray(item as Array<any>)
-    }
-
     return undefined;
 }
 
+/**
+ * WE ASSUME THE LIST IS HOMOGENOUS
+ */
 function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
     
+    console.log("trying to convert array...");
+
     let list = [];
     for (let i = 0 ; i < item.length; i++) {
         let valueData = tryConvert(item[i]);
@@ -174,12 +197,18 @@ function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
             list.push(valueData);
         } 
     }
-
+ 
+    // TODO aggregate, make a more efficient shader for rendering multiple colored meshes
+    if (list[0] instanceof Entity) {
+        return list;
+    }
+    
     // aggregate the data, we don't want hundreds of shaders being instanciated...
     if (list[0] instanceof MultiVector3) {
-        return MultiVector3.fromJoin(list as MultiVector3[]);
+        console.log("all entities!!!");
+        console.log(list);
     }
 
     // TODO allow for other things!!!
-    return undefined;
+    return list;
 }

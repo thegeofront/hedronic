@@ -62,7 +62,8 @@ class MyFooter extends WebComponent {
     }
 
     getVersion() {
-        return "verstion: 0.0.3";
+        // TODO do something with a global version property
+        return "version: 0.1.4";
     }
 
     disconnectedCallback() {

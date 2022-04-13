@@ -35,6 +35,7 @@ export class ViewWidget extends Widget {
     }
 
     onDestroy(): void {
+        console.log("just got destroyed!");
         HTML.dispatch(StopVisualizeEvent, { id: this.count.toString() });
     }
 
