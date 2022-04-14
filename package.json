@@ -10,6 +10,7 @@
         "build-wasm": "cd ../std && wasm-pack build --out-dir ../app/public/wasm-modules/hello-wasm/ --target web",
         "build-std": "cd ../std-ts && tsc",
         "build": "webpack --mode production --env=prod",
+        "build-production-and-publish": "webpack --mode production --env=prod && cd ../www && cp -r ../public . && git add . && git commit -m 'auto-update' && git push",
         "build-dev": "webpack --env=dev",
         "test": "echo \"Error: no test specified\" && exit 1",
         "watch": "webpack --watch --mode development"

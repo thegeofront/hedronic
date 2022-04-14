@@ -93,7 +93,14 @@ export class ViewerApp extends App {
             if (!data) continue;
             let units = tryConvert(data);
             if (!units) continue;
-            this.preview.set(units, output.toString())
+            if (units instanceof Array) {
+                for (let [i, u] of units.entries()) {
+                    let key = i.toString();
+                    this.preview.set(u, key);
+                }
+            } else if (units) {
+                this.preview.set(units, "preview");
+            }
         }
     }
 
@@ -125,7 +132,7 @@ export class ViewerApp extends App {
  * Uses REFLECTION and DUMB TRUST to figure out what it is. 
  * TODO we could do this waaaay easier based on the DATUM SHIM, if we implement such a thing...
  */
-function tryConvert(item: any, style?: any) : RenderableUnit | Array<RenderableUnit> | undefined {
+function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] | undefined {
 
     if (typeof item !== 'object' || item === null) return undefined;
     
@@ -186,14 +193,14 @@ function tryConvert(item: any, style?: any) : RenderableUnit | Array<RenderableU
 /**
  * WE ASSUME THE LIST IS HOMOGENOUS
  */
-function tryConvertArray(item: Array<any>) : RenderableUnit | undefined {
+function tryConvertArray(item: Array<any>) : RenderableUnit[] | RenderableUnit |  undefined {
     
     console.log("trying to convert array...");
 
     let list = [];
     for (let i = 0 ; i < item.length; i++) {
         let valueData = tryConvert(item[i]);
-        if (valueData) {
+        if (valueData && !(valueData instanceof Array)) {
             list.push(valueData);
         } 
     }
