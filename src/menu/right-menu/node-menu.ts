@@ -5,7 +5,7 @@ import { NodesGraph } from "../../nodes-canvas/model/graph";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Trait } from "../../std/types/types-3";
+import { Trait } from "../../std/types/various/types-3";
 import { MenuMaker } from "../util/menu-maker";
 
 export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {

@@ -1,7 +1,6 @@
 // import { TypeKind } from "./type-kind";
 
-
-import { Trait } from "../../std/types/types-3";
+import { Trait } from "../../std/types/various/types-3";
 import { Type } from "../types/type";
 import { TypeChecking } from "../types/type-checking";
 import { TypeConvertion } from "../types/type-convertion";
