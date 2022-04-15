@@ -1,5 +1,6 @@
 import { FunctionShim } from "../modules/shims/function-shim";
 import { getColorFunctions } from "./operations/color";
+import { getMathFunctions } from "./operations/math";
 import { getPolygonFunctions } from "./operations/polygon";
 import { getSequencingFunctions } from "./operations/sequencing";
 import { ButtonWidget } from "./widgets/button-widget";
@@ -23,6 +24,7 @@ export function getDefaultFunctions() : FunctionShim[] {
         ...getSequencingFunctions(),
         ...getPolygonFunctions(),
         ...getColorFunctions(),
+        ...getMathFunctions(),
     ]
 }
 

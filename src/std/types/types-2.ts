@@ -5,15 +5,27 @@ export interface Vector2 {
     data: Array<number>,
 }
 
+export interface Point2 {
+    trait: "point-2",
+    data: Array<number>,
+}
+
 export interface Polyline2 {
     trait: "polyline-2",
     data: Array<Array<number>>;
 }
 
-// export interface Polygon2 {
-//     trait: "polygon-2",
-//     data: Array<Array<number>>;
-// }
+export interface Polygon2 {
+    trait: "polygon-2",
+    data: Array<Array<number>>;
+}
+
+
+
+export interface MultiPoint2 {
+    trait: "multi-point-2",
+    data: Array<number>,
+}
 
 export interface MultiVector2 {
     trait: "multi-vector-2",
@@ -32,7 +44,9 @@ export interface MultiPolygon2 {
 
 export type Geometry2 = 
     Vector2 | 
+    Point2 | 
     Polyline2 |
+    Polygon2 | 
     MultiVector2 | 
     MultiPolyline2 | 
     MultiPolygon2;
