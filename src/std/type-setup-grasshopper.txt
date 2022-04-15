@@ -1,0 +1,29 @@
+Grasshopper's setup: 
+
+-----
+
+Params
+L Widgets
+L types
+
+Maths
+
+Sets
+
+Vectors
+
+Curves 
+
+Surfaces
+
+Meshes
+
+Intersections
+
+Transformations
+
+Display 
+
+------
+
+Plugins 

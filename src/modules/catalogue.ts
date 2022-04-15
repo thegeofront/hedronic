@@ -5,7 +5,7 @@ import { FunctionShim } from "./shims/function-shim";
 import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
-import { getDefaultWidgets, getDefaultFunctions } from "../std/std";
+import { getDefaultWidgets, getDefaultFunctions, getFullStdTree } from "../std/std";
 
 /**
  * Catalogue containing shim Modules
@@ -108,9 +108,11 @@ function createWithStd(cat: Catalogue) {
 
     // repeat for functions 
     let functions = getDefaultFunctions();
-    let fnMod = ModuleShim.new("functions", "bi-lightning-charge-fill", "",{}, functions, []);
+    let fnMod = ModuleShim.new("functions", "bi-lightning-charge-fill", "", {}, functions, []);
     cat.addLibrary(fnMod);
     
+    let map = getFullStdTree();
+
     return cat;
 }
 

@@ -15,7 +15,7 @@ export function getSequencingFunctions(namespace="functions") {
             TypeShim.new("Range A", Type.Reference, undefined, [Range1Type]),
             TypeShim.new("Range B", Type.Reference, undefined, [Range1Type]), 
         ], [TypeShim.new("b", Type.number)]),
-        FunctionShim.new("new range", [namespace], range, 
+        FunctionShim.new("new range", [namespace, "THINGIE"], range, 
         [
             TypeShim.new("start", Type.number),
             TypeShim.new("end", Type.number),

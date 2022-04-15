@@ -37,9 +37,6 @@ export class FunctionShim {
         return new FunctionShim(name, namespace, func, ins, outs);
     }
 
-    /**
-     * @deprecated
-     */
     static newFromFunction(func: Function, name="function", namespace="custom") {
 
         let inCount = JSLoading.countInputsFromRawFunction(func);
