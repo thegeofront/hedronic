@@ -16,3 +16,50 @@ NOTE TO SELF: iets als een 'cleanup day' heeft heel weinig richting voor de deve
 - diepgang zonder doel is chaos.
 
 - adding something meaningless to test git credential setup
+
+
+
+
+
+--------------------
+
+# Must haves
+
+- some C++ library converted to nodes
+- 
+
+# Should haves
+
+
+# Could haves
+
+- [ ] make a component
+- [ ] transform gizmo's, make a semi-editor
+
+
+
+# Wont haves 
+
+
+-------------------------------------------------------------------------------
+
+What do we need right now? 
+- types are a mess
+- we are building an STD at three locations: 
+  - WASM STD 
+  - EXTERNAL STD
+  - INTERNAL STD
+
+We require loading a geojson, and using conditional formatting to stylize the geojson
+We require clarity in the std, structure in the std, and then we can add a ton of content to the STD.
+- We should add some of the logic from the geon-engine
+We require better widgets, for traversing all data present
+We should add support for geo
+
+
+We require a clear distinction between: 
+- Primitive type (number, bool, buffer) 
+- Collection type (Item, List, Object)
+- Construct type (Point, Color, Polygon, Mesh, Vector, MultiVector) ( Collections filled with labelled Primitives or other Collections ) -> Meaning just an object
+
+
