@@ -1,3 +1,8 @@
+import { FunctionShim } from "../../../modules/shims/function-shim";
+import { MapTree, Divider, make, func } from "../../std-system";
+import { add } from "../vector-0/xyz";
+import { or, not } from "./logic";
+
 /**
  * Pseudo random number generator. based on simple fast counter (sfc32)
  * https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
@@ -113,3 +118,9 @@ function xmur3(str: string) {
         return (h ^= h >>> 16) >>> 0;
     };
 }
+
+export const RandomFunctions = MapTree.new<FunctionShim | Divider>([
+    func("fromHash", Random.newFromHash),
+    func("number", (r: Random) => { return r.number() }),
+    func("array", (r: Random, length: number) => { return r.array(length) }),
+]);

@@ -1,5 +1,7 @@
-import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { FunctionShim } from "../../../../modules/shims/function-shim";
+import { TypeShim } from "../../../../modules/shims/type-shim";
+import { Type } from "../../../../modules/types/type";
+import { Divider, make, MapTree } from "../../../std-system";
 
 export interface Range1 {
     trait: "range-1",
@@ -19,3 +21,7 @@ export function newRange1Type(name: string) {
 export function newRange1(min: number, max: number) : Range1 {
     return {trait: "range-1", min, max};
 }
+
+// export const Range1Functions = MapTree.new<FunctionShim | Divider>([
+//     make(add),
+// ]);

@@ -5,6 +5,28 @@ export type Divider = "divider";
 export type STDTree = MapTree<FunctionShim | Divider>;
 
 /**
+ * Shorthander for quickly making a functionshim
+ */
+export function make(fn: Function) : [string, FunctionShim ] {
+    return [fn.name, FunctionShim.newFromFunction(fn)];
+}
+
+
+/**
+ * Shorthander for quickly making a functionshim
+ */
+ export function func(name: string, fn: Function) : [string, FunctionShim ] {
+    return [name || fn.name, FunctionShim.newFromFunction(fn)];
+}
+
+/**
+ * Shorthander for making a divider
+ */
+export function divider() : [string, Divider] {
+    return ["divider", "divider"];
+} 
+
+/**
  * Utility class of a nested hashmap
  */
 export class MapTree<T> {
@@ -62,7 +84,9 @@ export class MapTree<T> {
     }
 }
 
-test();
+
+///////////////////////////////////////////////////////////////////////////////
+
 
 function test() {
 

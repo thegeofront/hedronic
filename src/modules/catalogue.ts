@@ -5,7 +5,7 @@ import { FunctionShim } from "./shims/function-shim";
 import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
-import { getDefaultWidgets, getDefaultFunctions } from "../std/std";
+import { getDefaultWidgets, getDefaultFunctions, STD } from "../std/std";
 
 /**
  * Catalogue containing shim Modules
@@ -17,6 +17,7 @@ import { getDefaultWidgets, getDefaultFunctions } from "../std/std";
 export class Catalogue {
 
     public selected?: FunctionShim | Widget;
+    public std!: STD;
 
     constructor(
         public modules: Map<string, ModuleShim>, // all modules (collections of functions)
@@ -30,7 +31,19 @@ export class Catalogue {
     static newFromWidgets() {
         
         let cat = Catalogue.new();
-        cat = createWithStd(cat);
+
+        cat.std = STD.default();
+
+        // create widgets
+        let widgets = getDefaultWidgets();
+        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
+        cat.addLibrary(widMod);
+
+        // repeat for functions 
+        let functions = getDefaultFunctions();
+        let fnMod = ModuleShim.new("functions", "bi-lightning-charge-fill", "",{}, functions, []);
+        cat.addLibrary(fnMod);
+
         return cat;
     }
 
@@ -100,19 +113,6 @@ export class Catalogue {
     }
 }
 
-function createWithStd(cat: Catalogue) {
-    // create widgets
-    let widgets = getDefaultWidgets();
-    let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
-    cat.addLibrary(widMod);
-
-    // repeat for functions 
-    let functions = getDefaultFunctions();
-    let fnMod = ModuleShim.new("functions", "bi-lightning-charge-fill", "",{}, functions, []);
-    cat.addLibrary(fnMod);
-    
-    return cat;
-}
 
 /**
  * To make sure nested operations work, we need to publish the catalogue globally. 

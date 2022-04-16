@@ -5,7 +5,10 @@ import { MenuItem } from "../menu/logic/menu-item";
 import { MenuList } from "../menu/logic/menu-list";
 import { Catalogue } from "../modules/catalogue";
 import { FunctionShim } from "../modules/shims/function-shim";
-import { basic } from "./functions/math/basic";
+import { BasicFunctions } from "./functions/math/basic";
+import { LogicFunctions } from "./functions/math/logic";
+import { RandomFunctions } from "./functions/math/random";
+import { StatFunctions } from "./functions/math/statistics";
 import { getColorFunctions } from "./operations/color";
 import { getMathFunctions } from "./operations/math";
 import { getPolygonFunctions } from "./operations/polygon";
@@ -60,10 +63,10 @@ export class STD {
                 ["Map", TODO_SPECIAL],
             ])],
             ["Math", MapTree.new([
-                ["Basic", basic()],
-                ["Logic", MapTree.newLeaf("todo", TODO_LIBRARY)],
-                ["Stats", MapTree.newLeaf("todo", TODO_LIBRARY)],
-                ["Random", MapTree.newLeaf("todo", TODO_LIBRARY)],
+                ["Basic", BasicFunctions],
+                ["Logic", LogicFunctions],
+                ["Stats", StatFunctions],
+                ["Random", RandomFunctions],
                 ["Range", MapTree.new([
                     ["Range 1", TODO_CLASS],
                     ["Range 2", TODO_CLASS],
@@ -123,7 +126,7 @@ export class STD {
     }
 
 
-    
+
     toMenu(cat: Catalogue) : MenuItem[] {
 
         // create 'make' functions at leaves

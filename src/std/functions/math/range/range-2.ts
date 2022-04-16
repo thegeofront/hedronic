@@ -1,5 +1,6 @@
-import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+
+import { TypeShim } from "../../../../modules/shims/type-shim";
+import { Type } from "../../../../modules/types/type";
 import { newRange1Type, Range1 } from "./range-1";
 
 export interface Range2 {

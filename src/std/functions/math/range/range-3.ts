@@ -1,6 +1,6 @@
-import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
-import { newRange1Type, Range1 } from "./range-1";
+import { TypeShim } from "../../../../modules/shims/type-shim";
+import { Type } from "../../../../modules/types/type";
+import { Range1, newRange1Type } from "./range-1";
 
 export interface Range3 {
     trait: "range-3",

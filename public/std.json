@@ -7,18 +7,6 @@
             "path": "./modules/"
         },
         {
-            "nickname": "bool",
-            "icon": "bi-toggle-on",
-            "filename": "bool",
-            "path": "./modules/"
-        },
-        {
-            "nickname": "math",
-            "icon": "bi-calculator",
-            "filename": "math",
-            "path": "./modules/"
-        },
-        {
             "nickname": "types",
             "icon": "bi-arrow",
             "filename": "types",

@@ -11,8 +11,7 @@ export function getAddActions(catalogue: Catalogue) : MenuItem[] {
     let list: MenuItem[] = [];
 
     // standard library
-    let std = STD.default(); // TODO move this to catalogue
-    let additions = std.toMenu(catalogue);
+    let additions = catalogue.std.toMenu(catalogue);
     list.push(...additions);
     list.push(MenuDivider.new());
 

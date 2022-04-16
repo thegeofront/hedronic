@@ -2,7 +2,7 @@ import { Domain, Triangulator } from "../../../../engine/src/lib";
 import { FunctionShim } from "../../modules/shims/function-shim";
 import { TypeShim } from "../../modules/shims/type-shim";
 import { Type } from "../../modules/types/type";
-import { newRange1Type, Range1 } from "../types/math/range-1";
+import { newRange1Type, Range1 } from "../functions/math/range/range-1";
 
 export function getSequencingFunctions(namespace="functions") {
 
