@@ -45,6 +45,21 @@ export class MapTree<T> {
         if (maybeLeaf instanceof MapTree) return undefined;
         return maybeLeaf;
     }
+
+    forEachLeaf(callback: (keys: string[], value: T) => void) {
+
+        let recurse = (map: MapTree<T>, keyStack: string[]) => {
+            for (let [key, value] of map.tree.entries()) {
+                let stack = [...keyStack, key];
+                if (value instanceof MapTree) {
+                    recurse(value, stack);
+                } else {
+                    callback(stack, value);
+                }
+            }
+        }
+        return recurse(this, []);
+    }
 }
 
 test();

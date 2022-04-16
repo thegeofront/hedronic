@@ -16,7 +16,7 @@ export class FunctionShim {
 
     constructor(
         public readonly name: string,
-        public readonly path: string[], // this explains where the function can be found in the geofront function tree. 
+        public path: string[] | undefined, // this explains where the function can be found in the geofront function tree. 
         public readonly func: Function,
         public readonly ins: TypeShim[],
         public readonly outs: TypeShim[],
@@ -40,7 +40,7 @@ export class FunctionShim {
     /**
      * NOTE: this does not result in good typeguards, use with caution
      */
-    static newFromFunction(func: Function, path: string[]) {
+    static newFromFunction(func: Function, path?: string[]) {
 
         let inCount = JSLoading.countInputsFromRawFunction(func);
         let outCount = JSLoading.countOutputsFromRawFunction(func);
@@ -51,7 +51,7 @@ export class FunctionShim {
         let outs: TypeShim[] = [];
         for (let i = 0 ; i < outCount; i++) outs.push(TypeShim.new(`out${i}`, Type.any))
 
-        return new FunctionShim(path[path.length-1], path, func, ins, outs);
+        return new FunctionShim(path ? path[path.length-1] : func.name, path, func, ins, outs);
     }
 
     async run(...inputs: State[]) : Promise<any> {

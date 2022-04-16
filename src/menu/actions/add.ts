@@ -1,7 +1,7 @@
 import { Catalogue } from "../../modules/catalogue";
 import { ModuleShim } from "../../modules/shims/module-shim";
 import { Core } from "../../nodes-canvas/model/core";
-import { getStandardLibraryMenu, STD } from "../../std/std";
+import { STD } from "../../std/std";
 import { MenuAction } from "../logic/menu-action";
 import { MenuDivider } from "../logic/menu-divider";
 import { MenuItem } from "../logic/menu-item";
@@ -32,10 +32,10 @@ function makeSublist(catalogue: Catalogue, module: ModuleShim) {
 
     for (let core of module.blueprints) {
         
-        if (core.path.length > 2) {
+        if (core.path!.length > 2) {
 
             // group class methods & constructors together
-            let subname = core.path[1];
+            let subname = core.path![1];
             if (!sublists.has(subname)) {
                 let classlist = MenuList.new(subname, []);
                 sublists.set(subname, classlist);

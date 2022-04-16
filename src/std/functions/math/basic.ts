@@ -1,11 +1,11 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { Divider, MapTree, STDTree } from "../../std-system";
 
-export function basic(namespace: string[]) : STDTree {
+export function basic() : STDTree {
 
     let make = (fn: Function) : [string, FunctionShim ]=> {
-        let name = fn.name;
-        return [fn.name, FunctionShim.newFromFunction(fn, [...namespace, name])];
+        // let name = fn.name;
+        return [fn.name, FunctionShim.newFromFunction(fn)];
     }
 
     let divider = () : [string, Divider] => ["divider", "divider"];

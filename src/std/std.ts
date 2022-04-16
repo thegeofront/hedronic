@@ -39,6 +39,12 @@ export class STD {
         let TODO_LIBRARY = TODO("TODO: Create this library!");
         let TODO_SPECIAL = TODO("TODO: Create this special feature!");
 
+        // explain: 
+        // I want do specifically define the order, dividers, have nice names, etc. 
+        // BUT, we also want the same structure to be 'machine accessible', using a series of key strings: 
+        // `math.basic.sin()`
+        // This is the best compromise I could come up with. 
+
         let std = MapTree.new([
             ["Types", MapTree.new([
                 ["Converters", TODO_SPECIAL]
@@ -54,14 +60,14 @@ export class STD {
                 ["Map", TODO_SPECIAL],
             ])],
             ["Math", MapTree.new([
-                ["Basic", basic(["Math","Basic"])],
+                ["Basic", basic()],
                 ["Logic", MapTree.newLeaf("todo", TODO_LIBRARY)],
                 ["Stats", MapTree.newLeaf("todo", TODO_LIBRARY)],
                 ["Random", MapTree.newLeaf("todo", TODO_LIBRARY)],
                 ["Range", MapTree.new([
-                    ["Range-1", TODO_CLASS],
-                    ["Range-2", TODO_CLASS],
-                    ["Range-3", TODO_CLASS],
+                    ["Range 1", TODO_CLASS],
+                    ["Range 2", TODO_CLASS],
+                    ["Range 3", TODO_CLASS],
                 ])],
             ])],
             ["Raster", MapTree.new([
@@ -102,10 +108,22 @@ export class STD {
 
             ])],
         ])
+        let tree = std as STDTree
+
+        // create easier function paths 
+        tree.forEachLeaf((keys, func) => {
+            if (func == "divider") return;
+            let lowered = keys.map(k => k.toLowerCase().replace(' ', ''));
+            console.log(lowered);
+            func.path = lowered;
+        });
+
         // thrust me, typescript, this will work!
-        return new STD(std as STDTree);
+        return new STD(tree as STDTree);
     }
 
+
+    
     toMenu(cat: Catalogue) : MenuItem[] {
 
         // create 'make' functions at leaves
@@ -131,14 +149,6 @@ export class STD {
         return convert(this.std);
     }
 
-}
-
-/**
- * 
- * @returns 
- */
-export function getStandardLibraryMenu() {
-    // return std;
 }
 
 export function getDefaultFunctions() : FunctionShim[] {

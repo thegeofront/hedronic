@@ -34,7 +34,7 @@ export function makeMenuFromOperation(payload: {node: GeonNode, nodes: NodesCanv
     let {node, nodes} = payload;
     
     let title = node.core.nameLower || "-";
-    let subtitle = node.operation?.path.join(".") || "widget";
+    let subtitle = node.operation?.path!.join(".") || "widget";
     // let content = JSON.stringify(node.operation?.toJson(), null, 2);
     let ops = node.operation!;
 
