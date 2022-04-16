@@ -1,19 +1,38 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { Divider } from "../../std-system";
+import { Divider, MapTree, STDTree } from "../../std-system";
 
-export function basic(namespace: string[]) : (FunctionShim | Divider)[] {
+export function basic(namespace: string[]) : STDTree {
 
-    return [
-        FunctionShim.newFromFunction(add, [...namespace, "add"]),
-        FunctionShim.newFromFunction(sub, [...namespace, "sub"]),
-        FunctionShim.newFromFunction(mul, [...namespace, "mul"]),
-        FunctionShim.newFromFunction(div, [...namespace, "div"]),
-        FunctionShim.newFromFunction(pow, [...namespace, "pow"]),
-        "divider",
-        FunctionShim.newFromFunction(sin, [...namespace, "sin"]),
-        FunctionShim.newFromFunction(cos, [...namespace, "cos"]),
-        FunctionShim.newFromFunction(tan, [...namespace, "tan"]),
-    ];
+    let make = (fn: Function) : [string, FunctionShim ]=> {
+        let name = fn.name;
+        return [fn.name, FunctionShim.newFromFunction(fn, [...namespace, name])];
+    }
+
+    let divider = () : [string, Divider] => ["divider", "divider"];
+
+    return MapTree.new<FunctionShim | Divider>([
+        make(add),
+        make(sub),
+        make(mul),
+        make(div),
+        make(pow),
+        divider(),
+        make(sin),
+        make(cos),
+        make(tan),
+    ])
+    
+    // return [
+    //     FunctionShim.newFromFunction(add, [...namespace, "add"]),
+    //     FunctionShim.newFromFunction(sub, [...namespace, "sub"]),
+    //     FunctionShim.newFromFunction(mul, [...namespace, "mul"]),
+    //     FunctionShim.newFromFunction(div, [...namespace, "div"]),
+    //     FunctionShim.newFromFunction(pow, [...namespace, "pow"]),
+    //     "divider",
+    //     FunctionShim.newFromFunction(sin, [...namespace, "sin"]),
+    //     FunctionShim.newFromFunction(cos, [...namespace, "cos"]),
+    //     FunctionShim.newFromFunction(tan, [...namespace, "tan"]),
+    // ];
 }
 
 

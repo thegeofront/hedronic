@@ -1,7 +1,7 @@
 import { Catalogue } from "../../modules/catalogue";
 import { ModuleShim } from "../../modules/shims/module-shim";
 import { Core } from "../../nodes-canvas/model/core";
-import { getStandardLibraryMenu } from "../../std/std";
+import { getStandardLibraryMenu, STD } from "../../std/std";
 import { MenuAction } from "../logic/menu-action";
 import { MenuDivider } from "../logic/menu-divider";
 import { MenuItem } from "../logic/menu-item";
@@ -11,7 +11,9 @@ export function getAddActions(catalogue: Catalogue) : MenuItem[] {
     let list: MenuItem[] = [];
 
     // standard library
-    list.push(...getStandardLibraryMenu())
+    let std = STD.default(); // TODO move this to catalogue
+    let additions = std.toMenu(catalogue);
+    list.push(...additions);
     list.push(MenuDivider.new());
 
     for (let [name, module] of catalogue.modules) {
@@ -25,7 +27,7 @@ function makeSublist(catalogue: Catalogue, module: ModuleShim) {
     
     let sublists = new Map<string, MenuList>();
     for (let core of module.widgets) {
-        list.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+        list.push(makeMenuAction(catalogue, core))
     }
 
     for (let core of module.blueprints) {
@@ -41,19 +43,24 @@ function makeSublist(catalogue: Catalogue, module: ModuleShim) {
             } 
 
             let classlist = sublists.get(subname);
-            classlist?.items.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+            classlist?.items.push(makeMenuAction(catalogue, core))
             
         } else {
-            list.push(MenuAction.new({catalogue, core}, core.nameLower, make))
+            list.push(makeMenuAction(catalogue, core))
         }
     }
 
-    
     return list;
 }
 
-export function make(context: {catalogue: Catalogue, core: Core}) {
-    console.log("make");
-    let {catalogue, core} = context;
-    catalogue.selectCore(core);
+/**
+ * Create a menu action which selects a core
+ */
+export function makeMenuAction(catalogue: Catalogue, core: Core, name?: string) {
+    let maker = (context: {cat: Catalogue, c: Core}) => {
+        let {cat, c} = context;
+        cat.selectCore(c);
+    }
+    return MenuAction.new({cat: catalogue, c: core}, name || core.nameLower, maker);
 }
+

@@ -1,11 +1,16 @@
+import { makeMenuAction } from "../menu/actions/add";
 import { MenuAction } from "../menu/logic/menu-action";
+import { MenuDivider } from "../menu/logic/menu-divider";
+import { MenuItem } from "../menu/logic/menu-item";
 import { MenuList } from "../menu/logic/menu-list";
 import { Catalogue } from "../modules/catalogue";
 import { FunctionShim } from "../modules/shims/function-shim";
+import { basic } from "./functions/math/basic";
 import { getColorFunctions } from "./operations/color";
 import { getMathFunctions } from "./operations/math";
 import { getPolygonFunctions } from "./operations/polygon";
 import { getSequencingFunctions } from "./operations/sequencing";
+import { Divider, MapTree, STDTree } from "./std-system";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
 import { GetWidget } from "./widgets/data/get-widget";
@@ -20,87 +25,120 @@ import { LampWidget } from "./widgets/lamp-widget";
 import { SliderWidget } from "./widgets/slider-widget";
 import { ViewWidget } from "./widgets/view-widget";
 
-import {STD} from "./std-system";
+export class STD {
+
+    constructor(
+        public std: STDTree
+    ) {}
+
+    static default() : STD {
+
+        // I'm making TODO art here
+        let TODO = (todo: string) => FunctionShim.newFromFunction((a: number)=> {alert(todo)}, ["todo"])
+        let TODO_CLASS = TODO("TODO: Create this class!");
+        let TODO_LIBRARY = TODO("TODO: Create this library!");
+        let TODO_SPECIAL = TODO("TODO: Create this special feature!");
+
+        let std = MapTree.new([
+            ["Types", MapTree.new([
+                ["Converters", TODO_SPECIAL]
+            ])],
+            ["Iterate", MapTree.new([
+                ["Sequence", TODO_LIBRARY],
+                ["Tree", TODO_LIBRARY],
+            ])],
+            ["Data", MapTree.new([
+                ["List", TODO_SPECIAL],
+                ["Json", TODO_SPECIAL],
+                ["Table", TODO_SPECIAL],
+                ["Map", TODO_SPECIAL],
+            ])],
+            ["Math", MapTree.new([
+                ["Basic", basic(["Math","Basic"])],
+                ["Logic", MapTree.newLeaf("todo", TODO_LIBRARY)],
+                ["Stats", MapTree.newLeaf("todo", TODO_LIBRARY)],
+                ["Random", MapTree.newLeaf("todo", TODO_LIBRARY)],
+                ["Range", MapTree.new([
+                    ["Range-1", TODO_CLASS],
+                    ["Range-2", TODO_CLASS],
+                    ["Range-3", TODO_CLASS],
+                ])],
+            ])],
+            ["Raster", MapTree.new([
+                ["Color", TODO_CLASS],
+                ["Bitmap", TODO_CLASS],
+            ])],
+            ["Transform", MapTree.new([
+                ["Affine", TODO_LIBRARY],   // simple moving, scaling, rotating
+                ["Matrix", TODO_CLASS],     // a Transform class, for joining transformation together
+                ["Quaternion", TODO_CLASS], // 
+            ])],
+            ["Vector 0", MapTree.new([
+                ["Point", TODO_CLASS],
+                ["Vector", TODO_CLASS],
+            ])],
+            ["Vector 1", MapTree.new([
+                ["Line"    , TODO_CLASS],
+                ["Polyline", TODO_CLASS],
+                ["Spline"  , TODO_CLASS],
+            ])],
+            ["Vector 2", MapTree.new([
+                ["Triangle", TODO_CLASS],
+                ["Polygon", TODO_CLASS],
+                ["Spline Surface", TODO_CLASS],
+            ])],
+            ["Vector 3", MapTree.new([
+                ["Mesh", TODO_CLASS],
+                ["Solid", TODO_CLASS],
+            ])],
+            ["Vector Multi", MapTree.new([
+                ["Multi Point",    TODO_CLASS],
+                ["Multi Vector",   TODO_CLASS],
+                ["Multi Polyline", TODO_CLASS],
+                ["Multi Polygon",  TODO_CLASS],
+                ["Multi Mesh",     TODO_CLASS],
+            ])],
+            ["Misc", MapTree.new([
+
+            ])],
+        ])
+        // thrust me, typescript, this will work!
+        return new STD(std as STDTree);
+    }
+
+    toMenu(cat: Catalogue) : MenuItem[] {
+
+        // create 'make' functions at leaves
+        let callback = (key: string, value: FunctionShim) => {
+            return makeMenuAction(cat, value, key);
+        }
+
+        // recurse
+        let convert = (map: MapTree<FunctionShim | Divider>) : MenuItem[] => {
+            let items = [];
+            for (let [key, value] of map.tree.entries()) {
+                if (value instanceof MapTree) {
+                    items.push(MenuList.new(key, convert(value)));
+                } else if (value == "divider") {
+                    items.push(MenuDivider.new());
+                } else {
+                    items.push(callback(key, value));
+                }
+            }
+            return items;
+        }
+
+        return convert(this.std);
+    }
+
+}
 
 /**
  * 
  * @returns 
  */
 export function getStandardLibraryMenu() {
-    
-    let mystd = STD.default();
-
-    // I'm making TODO art here
-    let TODO = (todo: string) => {MenuAction.new(undefined, "TODO: " + todo, () => {alert("TODO: " + todo)});}
-    let TODO_CLASS = MenuAction.new(undefined, "TODO", () => {alert("TODO!")});
-    let TODO_LIBRARY = MenuAction.new(undefined, "TODO", () => {alert("TODO!")});
-    let TODO_SPECIAL = MenuAction.new(undefined, "TODO", () => {alert("TODO!")});
-    
-    let std = [
-        MenuList.new("Types", [
-            MenuList.new("Converters", [TODO_SPECIAL]), // we need a way of going from a vector to a point, or any {x,y,z} json to a point
-        ]),
-        MenuList.new("Iterate", [
-            MenuList.new("Sequence", [TODO_LIBRARY]), // iterate, toIterable
-            MenuList.new("Tree", [TODO_LIBRARY]), // graph, flatten
-        ]), 
-        MenuList.new("Data", [
-            MenuList.new("List", [TODO_SPECIAL]),  
-            MenuList.new("Json", [TODO_SPECIAL]),  // Get, Set
-            MenuList.new("Table", [TODO_SPECIAL]), 
-            MenuList.new("Map", [TODO_SPECIAL]),
-        ]),
-        MenuList.new("Math", [
-            MenuList.new("Stats", [TODO_LIBRARY]),
-            MenuList.new("Random", [TODO_CLASS]),
-            MenuList.new("Logic", [TODO_LIBRARY]),
-            MenuList.new("Basic", [TODO_LIBRARY]),
-            MenuList.new("Range", [
-                MenuList.new("Range-1", [TODO_CLASS]),
-                MenuList.new("Range-2", [TODO_CLASS]),
-                MenuList.new("Range-3", [TODO_CLASS])
-            ]),
-        ]),
-        MenuList.new("Raster", [
-            MenuList.new("Color", [TODO_CLASS]),
-            MenuList.new("Bitmap", [TODO_CLASS]),
-        ]),
-        MenuList.new("Transform", [
-            MenuList.new("Affine", [TODO_LIBRARY]),
-            MenuList.new("Matrix", [TODO_CLASS]),
-            MenuList.new("Quaternion", [TODO_CLASS])
-        ]),
-        MenuList.new("Vector 0D", [
-            MenuList.new("Point", [TODO_CLASS]),
-            MenuList.new("Vector", [TODO_CLASS]),
-        ]),
-        MenuList.new("Vector 1D", [
-            MenuList.new("Line", [TODO_CLASS]),
-            MenuList.new("Polyline", [TODO_CLASS]),
-            MenuList.new("Nurbs Curve", [TODO_CLASS]),
-        ]),
-        MenuList.new("Vector 2D", [
-            MenuList.new("Triangle", [TODO_CLASS]),
-            MenuList.new("Polygon", [TODO_CLASS]),
-            MenuList.new("Nurbs Surface", [TODO_CLASS]),
-        ]),
-        MenuList.new("Vector 3D", [
-            MenuList.new("Mesh", [TODO_CLASS]),
-            MenuList.new("Solid", [TODO_CLASS]),
-        ]),
-        MenuList.new("Vector Multi", [
-            MenuList.new("MultiPoint", [TODO_CLASS]),
-            MenuList.new("MultiVector", [TODO_CLASS]),
-            MenuList.new("MultiPolyline", [TODO_CLASS]),
-            MenuList.new("MultiPolygon", [TODO_CLASS]),
-            MenuList.new("MultiMesh", [TODO_CLASS]),
-        ]),
-        MenuList.new("Misc", [
-            
-        ]),
-    ]
-
-    return std;
+    // return std;
 }
 
 export function getDefaultFunctions() : FunctionShim[] {
