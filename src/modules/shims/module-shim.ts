@@ -47,7 +47,7 @@ export class ModuleShim {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = FunctionShim.newFromFunction(f, f.name);
+                let op = FunctionShim.newFromFunction(f, [fullPath, f.name]);
                 ops.push(op);
             }
         }

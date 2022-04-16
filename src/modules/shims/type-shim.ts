@@ -8,6 +8,7 @@ import { TypeConvertion } from "../types/type-convertion";
 
 /**
  * This is what Geofront would like to know about a certain variable's type
+ * NOTE: This is starting to become very messy...
  */
 export class TypeShim {
 

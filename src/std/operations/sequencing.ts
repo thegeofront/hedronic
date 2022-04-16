@@ -7,8 +7,8 @@ import { newRange1Type, Range1 } from "../types/math/range-1";
 export function getSequencingFunctions(namespace="functions") {
 
     return [
-        FunctionShim.newFromFunction(flatten, "flatten", namespace),
-        FunctionShim.newFromFunction(weave, "weave", namespace),
+        FunctionShim.newFromFunction(flatten, [namespace, "flatten"]),
+        FunctionShim.newFromFunction(weave, [namespace, "weave"]),
         FunctionShim.new("remap", [namespace], remap, 
         [
             TypeShim.new("a", Type.number),

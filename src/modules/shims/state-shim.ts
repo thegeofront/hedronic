@@ -3,6 +3,7 @@ import { TypeShim } from "./type-shim";
 
 /**
  * NOTE: dont know if this will be used, but its an idea!
+ * NOTE2: this looks like a cable!
  */
 export class Parameter {
 

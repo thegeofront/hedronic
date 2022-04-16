@@ -13,15 +13,15 @@ import { getDefaultWidgets, getDefaultFunctions } from "../std/std";
  * The canvas can use these to spawn nodes, and draw a graph
  * 
  * In the future, this would make creating a menu easier
- * TODO: Categories
  */
 export class Catalogue {
 
     public selected?: FunctionShim | Widget;
 
     constructor(
-        public modules: Map<string, ModuleShim>,
-        public types: Map<string, TypeShim>) {}
+        public modules: Map<string, ModuleShim>, // all modules (collections of functions)
+        public types: Map<string, TypeShim> // all type definitions ()
+        ) {}
 
     static new() : Catalogue {
         return new Catalogue(new Map(), new Map());
@@ -84,7 +84,7 @@ export class Catalogue {
 
     addLibrary(lib: ModuleShim) {
         this.modules.set(lib.name, lib);
-        lib.publishGlobally();
+        // lib.publishGlobally();
     } 
 
     /**

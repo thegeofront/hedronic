@@ -1,5 +1,6 @@
 import { MenuAction } from "../menu/logic/menu-action";
 import { MenuList } from "../menu/logic/menu-list";
+import { Catalogue } from "../modules/catalogue";
 import { FunctionShim } from "../modules/shims/function-shim";
 import { getColorFunctions } from "./operations/color";
 import { getMathFunctions } from "./operations/math";
@@ -19,12 +20,16 @@ import { LampWidget } from "./widgets/lamp-widget";
 import { SliderWidget } from "./widgets/slider-widget";
 import { ViewWidget } from "./widgets/view-widget";
 
+import {STD} from "./std-system";
+
 /**
  * 
  * @returns 
  */
 export function getStandardLibraryMenu() {
     
+    let mystd = STD.default();
+
     // I'm making TODO art here
     let TODO = (todo: string) => {MenuAction.new(undefined, "TODO: " + todo, () => {alert("TODO: " + todo)});}
     let TODO_CLASS = MenuAction.new(undefined, "TODO", () => {alert("TODO!")});
@@ -46,6 +51,7 @@ export function getStandardLibraryMenu() {
             MenuList.new("Map", [TODO_SPECIAL]),
         ]),
         MenuList.new("Math", [
+            MenuList.new("Stats", [TODO_LIBRARY]),
             MenuList.new("Random", [TODO_CLASS]),
             MenuList.new("Logic", [TODO_LIBRARY]),
             MenuList.new("Basic", [TODO_LIBRARY]),
