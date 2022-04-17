@@ -11,6 +11,10 @@ export class U16Matrix {
         if (setter) data.set(setter);
         return new U16Matrix(width, height, data);
     }
+
+    static __type__() {
+
+    }
 }
 
 export class F32Matrix {
@@ -26,13 +30,4 @@ export class F32Matrix {
         if (setter) data.set(setter);
         return new F32Matrix(width, height, data);
     }
-}
-
-export class Mesh {
-
-    constructor(
-        public points: F32Matrix,
-        public links: U16Matrix,
-    ) {}
-
 }

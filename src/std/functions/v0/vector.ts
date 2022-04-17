@@ -10,3 +10,10 @@ export class Vector {
         return new Vector(x,y,z);
     }
 }
+
+// let vector3 = TypeShim.new("vector-3", Type.Object, undefined, [
+//     TypeShim.new("x", Type.number),
+//     TypeShim.new("y", Type.number),
+//     TypeShim.new("z", Type.number)
+// ]);
+

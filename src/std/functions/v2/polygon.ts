@@ -1,7 +1,12 @@
-import { COLOR, Color, Polygon2, rgbToHsl } from "../../../../engine/src/lib";
-import { FunctionShim } from "../../modules/shims/function-shim";
-import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { Polygon2 } from "../../../../../engine/src/lib";
+import { FunctionShim } from "../../../modules/shims/function-shim";
+import { TypeShim } from "../../../modules/shims/type-shim";
+import { Type } from "../../../modules/types/type";
+
+// export interface Polygon2 {
+//     trait: "polygon-2",
+//     data: Array<Array<number>>;
+// }
 
 const GeoJsonGeometryType = TypeShim.new("geojson-geometry", Type.Object, undefined, [
 

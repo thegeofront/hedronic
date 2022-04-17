@@ -10,10 +10,6 @@ import { LogicFunctions } from "./functions/math/logic";
 import { RandomFunctions } from "./functions/math/random";
 import { StatFunctions } from "./functions/math/statistics";
 import { MapTree } from "./maptree";
-import { getColorFunctions } from "./functions/render/color";
-import { getMathFunctions } from "./operations/math";
-import { getPolygonFunctions } from "./operations/polygon";
-import { getSequencingFunctions } from "./operations/sequencing";
 import { Divider, STDTree } from "./std-system";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
@@ -28,7 +24,15 @@ import { InspectWidget } from "./widgets/inspect-widget";
 import { LampWidget } from "./widgets/lamp-widget";
 import { SliderWidget } from "./widgets/slider-widget";
 import { ViewWidget } from "./widgets/view-widget";
+import { Range1 } from "./functions/math/range/range-1";
 
+/**
+ * NOTE: this WHOLE folder exist just in order to create this
+ */
+
+/**
+ * The internal, standard library of geofront  
+ */
 export class STD {
 
     constructor(
@@ -69,7 +73,7 @@ export class STD {
                 ["Stats", StatFunctions],
                 ["Random", RandomFunctions],
                 ["Range", MapTree.new([
-                    ["Range 1", TODO_CLASS],
+                    ["Range 1", Range1.Functions],
                     ["Range 2", TODO_CLASS],
                     ["Range 3", TODO_CLASS],
                 ])],
@@ -152,16 +156,6 @@ export class STD {
         return convert(this.std);
     }
 
-}
-
-// TODO remove all of this 
-export function getDefaultFunctions() : FunctionShim[] {
-    return [
-        ...getSequencingFunctions(),
-        ...getPolygonFunctions(),
-        ...getColorFunctions(),
-        ...getMathFunctions(),
-    ]
 }
 
 export function getDefaultWidgets() {
