@@ -5,7 +5,7 @@ import { NodesGraph } from "../../nodes-canvas/model/graph";
 import { GeonNode } from "../../nodes-canvas/model/node";
 import { Socket, SocketSide } from "../../nodes-canvas/model/socket";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { Trait } from "../../std/types/types-3";
+import { GFTypes } from "../../std/geofront-types";
 import { MenuMaker } from "../util/menu-maker";
 
 export function makeMenuFromNode(node: GeonNode, nodes: NodesCanvas) {
@@ -45,7 +45,7 @@ export function makeMenuFromOperation(payload: {node: GeonNode, nodes: NodesCanv
             <summary slot="title"><b>${type.name}: </b><code>${t}</code></summary>
             <p>value: <code>${socket ? nodes.tryGetCache(socket) : ""}</code></p>
             <p>con: <code>${connection}</code></p>
-            <p>traits: <code>${type.traits.map(t => Trait[t]).join()}</code></p>
+            <p>traits: <code>${type.traits.map(t => GFTypes[t]).join()}</code></p>
         </details>
         `;
     }

@@ -25,6 +25,8 @@ import { LampWidget } from "./widgets/lamp-widget";
 import { SliderWidget } from "./widgets/slider-widget";
 import { ViewWidget } from "./widgets/view-widget";
 import { Range1 } from "./functions/math/range/range-1";
+import { GFTypes } from "./geofront-types";
+import { TypeShim } from "../modules/shims/type-shim";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -36,7 +38,8 @@ import { Range1 } from "./functions/math/range/range-1";
 export class STD {
 
     constructor(
-        public std: STDTree
+        public std: STDTree,
+        public types: Map<GFTypes, TypeShim>
     ) {}
 
     static default() : STD {
@@ -53,6 +56,10 @@ export class STD {
         // `math.basic.sin()`
         // This is the best compromise I could come up with. 
 
+        let types = new Map<GFTypes, TypeShim>(
+            [[GFTypes.Range1, Range1.TypeShim]]
+        );
+        
         let std = MapTree.new([
             ["Types", MapTree.new([
                 ["Converters", TODO_SPECIAL]
@@ -126,7 +133,7 @@ export class STD {
         });
 
         // thrust me, typescript, this will work!
-        return new STD(tree as STDTree);
+        return new STD(tree as STDTree, types);
     }
 
 

@@ -1,7 +1,7 @@
 // import { TypeKind } from "./type-kind";
 
 
-import { Trait } from "../../std/std-system";
+import { GFTypes } from "../../std/geofront-types";
 import { Type } from "../types/type";
 import { TypeChecking } from "../types/type-checking";
 import { TypeConvertion } from "../types/type-convertion";
@@ -12,7 +12,7 @@ import { TypeConvertion } from "../types/type-convertion";
  */
 export class TypeShim {
 
-    traits: Trait[] = [];
+    traits: GFTypes[] = [];
 
     private constructor(
         public name:  string,  // what to show up as name 

@@ -1,4 +1,6 @@
 import { FunctionShim } from "../modules/shims/function-shim";
+import { TypeShim } from "../modules/shims/type-shim";
+import { GFTypes } from "./geofront-types";
 import { MapTree } from "./maptree";
 
 export type Divider = "divider";
@@ -33,21 +35,19 @@ export function divider() : [string, Divider] {
 /**
  * if this typeshim deserves traits, give them
  */
-// export function tryApplyTraits(type: TypeShim, traitShims=TraitShims) {
+export function tryApplyGeofrontType(type: TypeShim, availableTypes: Map<GFTypes, TypeShim>) {
 
-//     for (let [trait, shim] of traitShims.entries()) {
-//         if (type.isAcceptableType(shim)) {
-//             // console.log(type, "is acceptable to ", Trait[trait]);
-//             type.traits.push(trait);
-//         } 
-        
-//         // else if (shim.isAcceptableType(type)) {
-//         //     console.log(type, "is reverse acceptable to ", Trait[trait]);
-//         //     type.traits.push(trait);
-//         // }
-//     }
+    for (let [trait, shim] of availableTypes.entries()) {
+        if (type.isAcceptableType(shim)) {
+            // console.log(type, "is acceptable to ", Trait[trait]);
+            type.traits.push(trait);
+        } 
+        // else if (shim.isAcceptableType(type)) {
+        //     console.log(type, "is reverse acceptable to ", Trait[trait]);
+        //     type.traits.push(trait);
+        // }
+    }
 
-//     return type;
-// }
+    return type;
+}
 
-export type Trait = "TODO";

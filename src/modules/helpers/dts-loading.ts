@@ -1,10 +1,8 @@
 
 
 import * as ts from "typescript";
-import { BillboardShader, Debug, WebIO } from "../../../../engine/src/lib";
-import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { IO } from "../../nodes-canvas/util/io";
-import { tryApplyTraits } from "../../std/types/types-3";
+import { WebIO } from "../../../../engine/src/lib";
+import { tryApplyGeofrontType } from "../../std/std-system";
 import { FunctionShim } from "../shims/function-shim";
 import { TypeShim } from "../shims/type-shim";
 import { Type } from "../types/type";
@@ -447,7 +445,7 @@ export namespace DTSLoading {
      */
     function createTraitedTypeShim(name: string, type: Type, glyph?: string | undefined, child?: TypeShim[] | undefined) {
         let shim = TypeShim.new(name, type, glyph, child);
-        tryApplyTraits(shim);
+        tryApplyGeofrontType(shim, new Map()); // TODO TODO TODO
         return shim;
     }
 }
