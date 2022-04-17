@@ -27,8 +27,8 @@ export function make(fn: Function) : [string, FunctionShim ] {
 /**
  * Shorthander for making a divider
  */
-export function divider() : [string, Divider] {
-    return ["divider", "divider"];
+export function divider(k="div") : [string, Divider] {
+    return [k, "divider"];
 } 
 
 

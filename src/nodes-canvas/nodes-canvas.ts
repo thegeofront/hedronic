@@ -812,37 +812,12 @@ export class NodesCanvas {
         return this._size;
     }
 
-    
     // ------ Events
 
-    
-    tryGetbpFromLibrary(library: string, name: string) {
-                
-        let lib = this.catalogue.modules.get(library);        
-
-        if (!lib) {
-            console.warn(`lib ${lib} not found!`);
-            return undefined
-        }
-
-        for (let bp of lib.blueprints) {
-            if (name == bp.nameLower) {
-                return bp;
-            }
-        }
-
-        for (let wid of lib.widgets) {
-            if (name == wid.nameLower) {
-                return wid;
-            }
-        }
-
-        // console.warn(`lib found, but function ${name} not found`);
-        return undefined;
-    }
-
-
     promptForNode(gp: Vector2) {
+
+        // TODO we can improve this
+
         let text = prompt("", "");
         
         if (!text) {
@@ -851,9 +826,9 @@ export class NodesCanvas {
         }
         
         // try to extract name & library from the input text
-        let name = undefined;
+        let names: string[] = [];
+        let parts: string[] = [];
         let library = undefined;
-        let parts = undefined;
         let initState = undefined;
 
         // TODO : build regex expressions to extract certain patterns 
@@ -865,7 +840,7 @@ export class NodesCanvas {
 
         if (text.includes('//')) {
             // something special for quick inputs
-            name = "input";
+            names = [];
 
             // try to get the initstate.
             initState = text.split('// ')[1];
@@ -878,42 +853,24 @@ export class NodesCanvas {
                 console.log("its int", int);
                 initState = int;
             } 
+        } 
+        
+        // split up the text
+        parts = text.split('.');
+        if (parts.length == 0) {
+            console.warn("no input!");
+            return undefined;
+        } 
+ 
+        // else, brute force!
+        let bp = this.catalogue.find(parts);
+        if (bp) {
+            let a = this.graphHistory.addNode(bp, gp, initState);
+            return a.key!;
         } else {
-            parts = text.split('.');
-            if (parts.length == 0) {
-                console.warn("no input!");
-                return undefined;
-            } else if (parts.length == 1) {
-                name = parts[0].toLowerCase();
-            } else {
-                library = parts[0].toLowerCase();
-                name = parts[1].toLowerCase();
-            }  
-        }
-
-        // if no library was detected, brute force!
-        if (!library) {
-            for (let lib of this.catalogue.modules.keys()) {
-                let blueprint = this.tryGetbpFromLibrary(lib, name);
-                if (blueprint) {
-                    let a = this.graphHistory.addNode(blueprint, gp, initState);
-                    return a.key!;
-                }
-            } 
-
             console.warn("none of the libraries know this method!");
             return undefined;
         }
-
-        // else, try to select something with library and name
-        let core = this.tryGetbpFromLibrary(library, name);
-        if (!core) {
-            console.warn("no blueprint found");
-            return undefined;
-        }
-
-        // add it
-        return this.graphHistory.addNode(core, gp);
     }
 
     onMouseDown(gp: Vector2, doubleClick: boolean) {

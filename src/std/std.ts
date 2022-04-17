@@ -94,25 +94,25 @@ export class STD {
                 ["Matrix", TODO_CLASS],     // a Transform class, for joining transformation together
                 ["Quaternion", TODO_CLASS], // 
             ])],
-            ["Vector 0", MapTree.new([
+            ["0D", MapTree.new([
                 ["Point", TODO_CLASS],
                 ["Vector", TODO_CLASS],
             ])],
-            ["Vector 1", MapTree.new([
+            ["1D", MapTree.new([
                 ["Line"    , TODO_CLASS],
                 ["Polyline", TODO_CLASS],
                 ["Spline"  , TODO_CLASS],
             ])],
-            ["Vector 2", MapTree.new([
+            ["2D", MapTree.new([
                 ["Triangle", TODO_CLASS],
                 ["Polygon", TODO_CLASS],
                 ["Spline Surface", TODO_CLASS],
             ])],
-            ["Vector 3", MapTree.new([
+            ["3D", MapTree.new([
                 ["Mesh", TODO_CLASS],
                 ["Solid", TODO_CLASS],
             ])],
-            ["Vector Multi", MapTree.new([
+            ["Multi", MapTree.new([
                 ["Multi Point",    TODO_CLASS],
                 ["Multi Vector",   TODO_CLASS],
                 ["Multi Polyline", TODO_CLASS],
@@ -123,19 +123,29 @@ export class STD {
 
             ])],
         ])
+
+        // typescript does not trust me...
         let tree = std as STDTree
 
         // create easier function paths 
         tree.forEachLeaf((keys, func) => {
             if (func == "divider") return;
-            let lowered = keys.map(k => k.toLowerCase().replace(' ', ''));
-            func.path = lowered;
+            // let lowered = keys.map(k => k.toLowerCase().replace(' ', ''));
+            func.path = ["std", ...keys];
         });
 
-        // thrust me, typescript, this will work!
         return new STD(tree as STDTree, types);
     }
 
+
+    /**
+     * Path to the function, lowercase, not starting with std
+     */
+    get(relativePath: string[]) : FunctionShim | undefined {
+        let leaf = this.std.getLeaf(relativePath);
+        if (leaf == "divider") return undefined;
+        return leaf;
+    }
 
 
     toMenu(cat: Catalogue) : MenuItem[] {

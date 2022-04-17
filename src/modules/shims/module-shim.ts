@@ -6,7 +6,6 @@ import { FN } from "../helpers/js-loading";
 import { FunctionShim } from "./function-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 
-
 /**
  * A Module, in the programming language sense. 
  * Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
@@ -17,22 +16,11 @@ export class ModuleShim {
         public icon: string,
         public fullPath: string,
 
-        public readModule: any,
+        public realModule: any,
 
         public blueprints: FunctionShim[],
         public widgets: Widget[]
         ) {}
-
-    select(key: string, type: CoreType, catalogue: Catalogue) {
-        // console.log(`select name: ${key} type: ${type}`);
-        let core;
-        if (type == CoreType.Operation) {
-            core = tryFilter(this.blueprints, (item) => {return item.name == key});
-        } else {
-            core = tryFilter(this.widgets, (item) => {return item.name == key});
-        }
-        catalogue.selectCore(core);
-    }
 
     static new(name: string, icon: string, fullPath: string, realModule: any, operations: FunctionShim[], widgets: Widget[]) {
         return new ModuleShim(name, icon, fullPath, realModule, operations, widgets);
@@ -53,6 +41,21 @@ export class ModuleShim {
         }
         return new ModuleShim(name, icon, fullPath, obj, ops, []);
     }
+
+    /**
+     * This method is sus 
+     */
+    select(path: string[]) {
+        // console.log(`select name: ${key} type: ${type}`);
+        let core;
+        core = tryFilter(this.blueprints, (item) => {return item.name == path[0]});
+        if (core == undefined) {
+            // then try to find the widget
+            core = tryFilter(this.widgets, (item) => {return item.name == path[0]});
+        }
+        return core;
+    }
+
 
     /**
      * publish this module globally

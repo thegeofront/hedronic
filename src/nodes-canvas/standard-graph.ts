@@ -1,17 +1,18 @@
 export const STANDARD_GRAPH =  {
   "nodes": {
-    "7b71aee5-a6eb": {
-      "hash": "7b71aee5-a6eb",
+    "16b52962-e0e5": {
+      "hash": "16b52962-e0e5",
       "position": {
-        "x": 10,
-        "y": 8
+        "x": 13,
+        "y": 6
       },
       "type": 0,
       "process": {
         "name": "and",
         "path": [
-          "math",
-          "logic",
+          "std",
+          "Math",
+          "Logic",
           "and"
         ],
         "inCount": 2,
@@ -26,190 +27,82 @@ export const STANDARD_GRAPH =  {
       },
       "inputs": [
         {
-          "node": "307eae14-d07c",
+          "node": "1492470d-22e8",
           "index": 1
         },
         {
-          "node": "0080524e-b38a",
+          "node": "579ff8d5-46d5",
           "index": 1
         }
       ],
       "outputs": [
         [
           {
-            "node": "971b78e9-2d58",
+            "node": "4fff0162-0b9f",
             "index": -1
           }
         ]
       ],
       "looping": false
     },
-    "307eae14-d07c": {
-      "hash": "307eae14-d07c",
+    "1492470d-22e8": {
+      "hash": "1492470d-22e8",
       "position": {
-        "x": 5,
+        "x": 8,
+        "y": 5
+      },
+      "type": 1,
+      "process": {
+        "name": "button",
+        "state": true
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "16b52962-e0e5",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "579ff8d5-46d5": {
+      "hash": "579ff8d5-46d5",
+      "position": {
+        "x": 8,
         "y": 8
       },
       "type": 1,
       "process": {
         "name": "button",
-        "state": false
+        "state": true
       },
       "inputs": [],
       "outputs": [
         [
           {
-            "node": "7b71aee5-a6eb",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "0080524e-b38a": {
-      "hash": "0080524e-b38a",
-      "position": {
-        "x": 5,
-        "y": 9
-      },
-      "type": 1,
-      "process": {
-        "name": "button",
-        "state": false
-      },
-      "inputs": [],
-      "outputs": [
-        [
-          {
-            "node": "7b71aee5-a6eb",
+            "node": "16b52962-e0e5",
             "index": -2
           }
         ]
       ],
       "looping": false
     },
-    "971b78e9-2d58": {
-      "hash": "971b78e9-2d58",
+    "4fff0162-0b9f": {
+      "hash": "4fff0162-0b9f",
       "position": {
-        "x": 15,
-        "y": 8
+        "x": 18,
+        "y": 5
       },
       "type": 1,
       "process": {
         "name": "lamp",
-        "state": false
+        "state": true
       },
       "inputs": [
         {
-          "node": "7b71aee5-a6eb",
-          "index": 1
-        }
-      ],
-      "outputs": [],
-      "looping": false
-    },
-    "d01ed6c7-287e": {
-      "hash": "d01ed6c7-287e",
-      "position": {
-        "x": 5,
-        "y": 12
-      },
-      "type": 1,
-      "process": {
-        "name": "slider",
-        "state": 7
-      },
-      "inputs": [],
-      "outputs": [
-        [
-          {
-            "node": "5a776b0d-f2b1",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "da1c14da-07ef": {
-      "hash": "da1c14da-07ef",
-      "position": {
-        "x": 5,
-        "y": 13
-      },
-      "type": 1,
-      "process": {
-        "name": "slider",
-        "state": 3
-      },
-      "inputs": [],
-      "outputs": [
-        [
-          {
-            "node": "5a776b0d-f2b1",
-            "index": -2
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "5a776b0d-f2b1": {
-      "hash": "5a776b0d-f2b1",
-      "position": {
-        "x": 10,
-        "y": 12
-      },
-      "type": 0,
-      "process": {
-        "name": "mul",
-        "path": [
-          "math",
-          "basic",
-          "mul"
-        ],
-        "inCount": 2,
-        "outCount": 1,
-        "ins": [
-          "any",
-          "any"
-        ],
-        "outs": [
-          "any"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "d01ed6c7-287e",
-          "index": 1
-        },
-        {
-          "node": "da1c14da-07ef",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "2ab94cf1-2152",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "2ab94cf1-2152": {
-      "hash": "2ab94cf1-2152",
-      "position": {
-        "x": 15,
-        "y": 12
-      },
-      "type": 1,
-      "process": {
-        "name": "console",
-        "state": 21
-      },
-      "inputs": [
-        {
-          "node": "5a776b0d-f2b1",
+          "node": "16b52962-e0e5",
           "index": 1
         }
       ],

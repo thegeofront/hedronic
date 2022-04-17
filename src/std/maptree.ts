@@ -20,7 +20,6 @@
     }
 
     get(key: string[]) : MapTree<T> | T | undefined {
-        console.log(key);
         if (key.length == 0) return undefined;
         if (key.length == 1) return this.tree.get(key[0]);
         let branch = this.tree.get(key[0]);

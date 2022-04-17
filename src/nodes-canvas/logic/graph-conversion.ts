@@ -15,9 +15,9 @@ import { GraphCalculation } from "./graph-calculation";
 
 export namespace GraphConversion {
 
-    export function trySpawnNode(graph: NodesGraph, catalogue: Catalogue, name: string, type: CoreType, pos: Vector2, lib = "GEON", state?: State) {
+    export function trySpawnNode(graph: NodesGraph, catalogue: Catalogue, path: string[], type: CoreType, pos: Vector2, state?: State) {
         // TODO: catalogue.name == lib;
-        if (catalogue.trySelect(lib, name, type)) {
+        if (catalogue.selectnew(path[0], path.slice(1))) {
             let node = catalogue.spawn(pos)!;
             if (type == CoreType.Widget) {
                 node.widget!.saveState = state!;
@@ -26,7 +26,7 @@ export namespace GraphConversion {
             catalogue.deselect();
             return key;
         }
-        console.warn({name, type, lib}, "is undefined!!");
+        console.warn({path, type}, "is undefined!!");
         return undefined;
     }
     
@@ -42,7 +42,7 @@ export namespace GraphConversion {
                 let lib = "widgets";
                 let name = node.process.name;
                 
-                let widget = catalogue.trySelect(lib, name, type) as Widget;
+                let widget = catalogue.selectnew(lib, [name]) as Widget;
                 if (!widget) {
                     console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
                     continue;
@@ -61,12 +61,13 @@ export namespace GraphConversion {
             }
     
             if (type == CoreType.Operation) {
+                let path = node.process.path;
                 let lib = node.process.path[0];
                 let name = node.process.name;
                 
-                let process = catalogue.trySelect(lib, name, type);
+                let process = catalogue.selectnew(path[0], path.slice(1));
                 if (!process) {
-                    console.error(`operation process: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
+                    console.error(`operation process: ${path}, of type ${type}, cannot be created. The library is probably missing from this project`);
                     continue;
                 } 
                 let geonNode = GeonNode.fromJson(node, process);
@@ -154,7 +155,7 @@ export namespace GraphConversion {
             let json = commentToJson(l.comment);
             let state = stringToState(json.state);
             // console.log("state", state);
-            let nodeKey = trySpawnNode(graph, catalogue, json.widget, CoreType.Widget, Vector2.new(json.x, json.y), "widgets", state)!;
+            let nodeKey = trySpawnNode(graph, catalogue, ["widgets", json.widget], CoreType.Widget, Vector2.new(json.x, json.y), state)!;
             createCable(name, nodeKey, 0);
         }
     
@@ -167,7 +168,9 @@ export namespace GraphConversion {
             // console.log({rest, json});
             let call = extractCallFunctionElements(rest)!;
             // console.log(call.lib)
-            let nodeKey = trySpawnNode(graph, catalogue, call.name, CoreType.Operation, Vector2.new(json.x, json.y), call.lib)!;
+
+            let caller = [call.lib, call.name]; // NOTE: We can expand this to all dot.notated.function.calls();
+            let nodeKey = trySpawnNode(graph, catalogue, caller, CoreType.Operation, Vector2.new(json.x, json.y))!;
     
             for (let j = 0 ; j < call.outputs.length; j++) {
                 createCable(call.outputs[j], nodeKey, j);

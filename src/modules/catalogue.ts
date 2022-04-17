@@ -21,7 +21,7 @@ export class Catalogue {
 
     constructor(
         public modules: Map<string, ModuleShim>, // all modules (collections of functions)
-        public types: Map<string, TypeShim> // all type definitions ()
+        public types: Map<string, TypeShim> // all type definitions [JF]: I dont know why we need this...
         ) {}
 
     static new() : Catalogue {
@@ -44,37 +44,54 @@ export class Catalogue {
         return cat;
     }
 
-    find(lib: string, key: string) {  
+    get(lib: string, path: string[]) {  
+        if (lib == "std") {
+            return this.std.get(path);
+        }
+
         let mod = this.modules.get(lib);
         if (!mod) {
             console.error(`no module is called: ${lib}`);
             return undefined;
-        }      
-        for (let type of [CoreType.Operation, CoreType.Widget]) {
-            let res = this.trySelect(lib, key, type);
-            if (res) {
-                return res;
-            }
-        }
-        return undefined;
+        }  
+        return mod.select(path);
     }
 
-    trySelect(lib: string, key: string, type: CoreType) {
-        let mod = this.modules.get(lib);
-        if (!mod) {
-            console.error(`no module is called: ${lib}`);
-            return undefined;
-        }
-        mod.select(key, type, this);
+    selectnew(lib: string, path: string[]) {
+        let core = this.get(lib, path);
+        this.selectCore(core);
         return this.selected;
+    }
+
+    find(fragments: string[]) : FunctionShim | Widget | undefined {
+        // TODO 'get()' is precise, 'find()' is not. logic.and -> Logic.And, should not matter, as long as it is unambiguous
+        // TODO make this less precise. A search for 'and' should yield something in the std tree with and
+        if (fragments.length == 1) {
+            console.log({fragments})
+            // no lib approach
+            let names = [fragments[0].toLowerCase()];
+            for (let lib of ["std", ...this.modules.keys()]) {
+                let core = this.get(lib, names); 
+                if (core) {
+                    return core;
+                }
+            } 
+            return undefined;
+        } else {
+            // with lib approach
+            // let names = fragments.slice(1).map(s => s.toLowerCase());
+            let library = fragments[0].toLowerCase();
+            let core = this.get(library, fragments.slice(1));
+            if (!core) {
+                console.warn("no blueprint found");
+                return undefined;
+            }
+            return core;
+        }
     }
 
     selectCore(core: FunctionShim | Widget | undefined) {
         this.selected = core;
-    }
-
-    select(lib: string, key: string, type: CoreType) {
-        this.modules.get(lib)!.select(key, type, this);
     }
 
     deselect() {
