@@ -12,7 +12,7 @@ export function getSequencingFunctions(namespace="functions") {
         FunctionShim.new("remap", [namespace], remap, 
         [
             TypeShim.new("a", Type.number),
-            newRange1Type("range-a"),
+            newRange1Type("range-a"),   
             newRange1Type("range-b"), 
         ], [TypeShim.new("b", Type.number)]),
         FunctionShim.new("new range", [namespace], range, 
@@ -41,6 +41,10 @@ function range(min: number, max: number) : Range1 {
     return {trait: "range-1", min, max };
 }
 
+function remap(n: number, a: Range1, b: Range1) {
+    return Domain.remap(n, a.min, a.max, b.min, b.max);
+}
+
 function weave(sequence: boolean[], a: any, b: any) {
     let c: any[] = [], d: any[] = [];
     for (let i = 0; i < sequence.length; i++) {
@@ -55,6 +59,3 @@ function weave(sequence: boolean[], a: any, b: any) {
     return [c, d];
 }
 
-function remap(n: number, a: Range1, b: Range1) {
-    return Domain.remap(n, a.min, a.max, b.min, b.max);
-}

@@ -32,3 +32,32 @@ function noise(x: number, y: number, z: number) : number {
     return perlin.noise(x, y, z);
 }
 
+
+export async function fetchJson(path: string) {
+    let data = await fetch(path);
+    return await data.json();
+}
+
+export async function fetchText(path: string) {
+    let data = await fetch(path);
+    return await data.text();
+}
+
+export function asNumber(n: any) : number {
+    return Number(n);
+}
+
+export function asBoolean(n: any) : boolean {
+    return Boolean(n);
+}
+
+export function asString(n: any): string {
+    return String(n);
+}
+
+
+
+export function asList(any: any): any[] {
+    return any as Array<any>;
+}
+

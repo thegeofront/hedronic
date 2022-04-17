@@ -9,11 +9,12 @@ import { BasicFunctions } from "./functions/math/basic";
 import { LogicFunctions } from "./functions/math/logic";
 import { RandomFunctions } from "./functions/math/random";
 import { StatFunctions } from "./functions/math/statistics";
-import { getColorFunctions } from "./operations/color";
+import { MapTree } from "./maptree";
+import { getColorFunctions } from "./functions/render/color";
 import { getMathFunctions } from "./operations/math";
 import { getPolygonFunctions } from "./operations/polygon";
 import { getSequencingFunctions } from "./operations/sequencing";
-import { Divider, MapTree, STDTree } from "./std-system";
+import { Divider, STDTree } from "./std-system";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
 import { GetWidget } from "./widgets/data/get-widget";
@@ -117,7 +118,6 @@ export class STD {
         tree.forEachLeaf((keys, func) => {
             if (func == "divider") return;
             let lowered = keys.map(k => k.toLowerCase().replace(' ', ''));
-            console.log(lowered);
             func.path = lowered;
         });
 
@@ -154,6 +154,7 @@ export class STD {
 
 }
 
+// TODO remove all of this 
 export function getDefaultFunctions() : FunctionShim[] {
     return [
         ...getSequencingFunctions(),

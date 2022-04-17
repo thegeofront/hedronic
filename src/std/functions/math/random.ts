@@ -1,5 +1,6 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree, Divider, make, func } from "../../std-system";
+import { MapTree } from "../../maptree";
+import { Divider, make, func } from "../../std-system";
 import { add } from "../vector-0/xyz";
 import { or, not } from "./logic";
 

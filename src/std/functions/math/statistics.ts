@@ -1,5 +1,6 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree, Divider, make } from "../../std-system";
+import { MapTree } from "../../maptree";
+import { Divider, make } from "../../std-system";
 
 export const StatFunctions = MapTree.new<FunctionShim | Divider>([
     make(average)

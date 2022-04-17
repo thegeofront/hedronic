@@ -1,5 +1,6 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { divider, Divider, make, MapTree, STDTree } from "../../std-system";
+import { MapTree } from "../../maptree";
+import { divider, Divider, make, STDTree } from "../../std-system";
 
 export const BasicFunctions = MapTree.new<FunctionShim | Divider>([
     make(add),

@@ -1,7 +1,9 @@
+import { Domain } from "../../../../../../engine/src/lib";
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
 import { Type } from "../../../../modules/types/type";
-import { Divider, make, MapTree } from "../../../std-system";
+import { MapTree } from "../../../maptree";
+import { Divider, func, make } from "../../../std-system";
 
 export interface Range1 {
     trait: "range-1",
@@ -22,6 +24,6 @@ export function newRange1(min: number, max: number) : Range1 {
     return {trait: "range-1", min, max};
 }
 
-// export const Range1Functions = MapTree.new<FunctionShim | Divider>([
-//     make(add),
-// ]);
+export const Range1Functions = MapTree.new<FunctionShim | Divider>([
+    func("Range 1", (min: number, max: number) => {return new Domain(min, max)})
+]);
