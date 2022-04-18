@@ -9,6 +9,7 @@ import { or, not } from "./logic";
  * https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
  */
  export class Random {
+
     private constructor(
         private a: number,
         private b: number,
@@ -29,7 +30,7 @@ import { or, not } from "./logic";
         // Pad seed with Phi, Pi and E.
         // https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number
         var rand = new Random(0x9e3779b9, 0x243f6a88, 0xb7e15162, seed);
-        for (var i = 0; i < 15; i++) rand.number();
+        for (var i = 0; i < 15; i++) Random.number(rand);
         return rand;
     }
 
@@ -41,29 +42,37 @@ import { or, not } from "./logic";
     /**
      * number in between 0 and 1
      */
-    number(): number {
+    static number(rng: Random): number {
         // sfc32
-        this.a >>>= 0;
-        this.b >>>= 0;
-        this.c >>>= 0;
-        this.d >>>= 0;
-        let t = (this.a + this.b) | 0;
-        this.a = this.b ^ (this.b >>> 9);
-        this.b = (this.c + (this.c << 3)) | 0;
-        this.c = (this.c << 21) | (this.c >>> 11);
-        this.d = (this.d + 1) | 0;
-        t = (t + this.d) | 0;
-        this.c = (this.c + t) | 0;
+        rng.a >>>= 0;
+        rng.b >>>= 0;
+        rng.c >>>= 0;
+        rng.d >>>= 0;
+        let t = (rng.a + rng.b) | 0;
+        rng.a = rng.b ^ (rng.b >>> 9);
+        rng.b = (rng.c + (rng.c << 3)) | 0;
+        rng.c = (rng.c << 21) | (rng.c >>> 11);
+        rng.d = (rng.d + 1) | 0;
+        t = (t + rng.d) | 0;
+        rng.c = (rng.c + t) | 0;
         return (t >>> 0) / 4294967296;
     }
 
-    array(length: number) {
+    static array(rng: Random, length: number) {
         let array = new Float64Array(length);
         for (let i = 0 ; i < array.length; i++) {
-            array[i] = this.number();
+            array[i] = Random.number(rng);
         }
         return array;
     }
+
+    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+        func("Random", Random.newFromHash),
+        func("Random from seed", Random.newFromSeed),
+        func("Number", Random.number),
+        func("List", Random.array),
+    ]);
+    
 
     // /**
     //  * get random integer
@@ -119,9 +128,3 @@ function xmur3(str: string) {
         return (h ^= h >>> 16) >>> 0;
     };
 }
-
-export const RandomFunctions = MapTree.new<FunctionShim | Divider>([
-    func("fromHash", Random.newFromHash),
-    func("number", (r: Random) => { return r.number() }),
-    func("array", (r: Random, length: number) => { return r.array(length) }),
-]);

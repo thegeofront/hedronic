@@ -8,10 +8,25 @@ import { divider, Divider, func, make } from "../../../std-system";
 
 export class Range1 {
 
-    constructor(
+    private constructor(
         public min: number,
         public max: number,
     ) {}
+
+    
+    static new(min: number, max: number) {
+        return new Range1(min, max);
+    }
+    
+    static fromRadius(radius: number) {
+        return new Range1(-radius, radius);
+    }
+
+    static remap(n: number, a: Range1, b: Range1) {
+        return Domain.remap(n, a.min, a.max, b.min, b.max);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     static readonly TypeShim = TypeShim.new("range-1", Type.Object, undefined, [
         TypeShim.new("min", Type.number),
@@ -23,8 +38,8 @@ export class Range1 {
     }
 
     static readonly Functions = MapTree.new<FunctionShim | Divider>([
-        func("new Range", Range1.new),
-        func("new Range from radius", Range1.fromRadius),
+        func("Range1", Range1.new),
+        func("Range1 from radius", Range1.fromRadius),
         divider(),
         func("remap", Range1.remap),
 
@@ -43,18 +58,4 @@ export class Range1 {
         //     ], [newRange1Type("range-1")]),
         // ]; 
     ]); 
-
-    ///////////////////////////////////////////////////////////////////////////
-
-    static new(min: number, max: number) {
-        return new Range1(min, max);
-    }
-    
-    static fromRadius(radius: number) {
-        return new Range1(-radius, radius);
-    }
-
-    static remap(n: number, a: Range1, b: Range1) {
-        return Domain.remap(n, a.min, a.max, b.min, b.max);
-    }
 }

@@ -63,25 +63,28 @@ export class Catalogue {
         return this.selected;
     }
 
-    find(fragments: string[]) : FunctionShim | Widget | undefined {
+    find(fragment: string[]) : FunctionShim | Widget | undefined {
         // TODO 'get()' is precise, 'find()' is not. logic.and -> Logic.And, should not matter, as long as it is unambiguous
         // TODO make this less precise. A search for 'and' should yield something in the std tree with and
-        if (fragments.length == 1) {
-            console.log({fragments})
+
+        let core = this.std.find(fragment);
+        if (core) return core;
+
+        if (fragment.length == 1) {
             // no lib approach
-            let names = [fragments[0].toLowerCase()];
-            for (let lib of ["std", ...this.modules.keys()]) {
+            let names = [fragment[0].toLowerCase()];
+
+            for (let lib of this.modules.keys()) {
                 let core = this.get(lib, names); 
-                if (core) {
-                    return core;
-                }
+                if (core) return core;
+                
             } 
             return undefined;
         } else {
             // with lib approach
             // let names = fragments.slice(1).map(s => s.toLowerCase());
-            let library = fragments[0].toLowerCase();
-            let core = this.get(library, fragments.slice(1));
+            let library = fragment[0].toLowerCase();
+            let core = this.get(library, fragment.slice(1));
             if (!core) {
                 console.warn("no blueprint found");
                 return undefined;

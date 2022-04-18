@@ -7,7 +7,6 @@ import { Catalogue } from "../modules/catalogue";
 import { FunctionShim } from "../modules/shims/function-shim";
 import { BasicFunctions } from "./functions/math/basic";
 import { LogicFunctions } from "./functions/math/logic";
-import { RandomFunctions } from "./functions/math/random";
 import { StatFunctions } from "./functions/math/statistics";
 import { MapTree } from "./maptree";
 import { Divider, STDTree } from "./std-system";
@@ -27,6 +26,9 @@ import { ViewWidget } from "./widgets/view-widget";
 import { Range1 } from "./functions/math/range/range-1";
 import { GFTypes } from "./geofront-types";
 import { TypeShim } from "../modules/shims/type-shim";
+import { Random } from "./functions/math/random";
+import { Range2 } from "./functions/math/range/range-2";
+import { Range3 } from "./functions/math/range/range-3";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -38,7 +40,7 @@ import { TypeShim } from "../modules/shims/type-shim";
 export class STD {
 
     constructor(
-        public std: STDTree,
+        public map: STDTree,
         public types: Map<GFTypes, TypeShim>
     ) {}
 
@@ -78,11 +80,11 @@ export class STD {
                 ["Basic", BasicFunctions],
                 ["Logic", LogicFunctions],
                 ["Stats", StatFunctions],
-                ["Random", RandomFunctions],
+                ["Random", Random.Functions],
                 ["Range", MapTree.new([
                     ["Range 1", Range1.Functions],
-                    ["Range 2", TODO_CLASS],
-                    ["Range 3", TODO_CLASS],
+                    ["Range 2", Range2.Functions],
+                    ["Range 3", Range3.Functions],
                 ])],
             ])],
             ["Raster", MapTree.new([
@@ -142,11 +144,17 @@ export class STD {
      * Path to the function, lowercase, not starting with std
      */
     get(relativePath: string[]) : FunctionShim | undefined {
-        let leaf = this.std.getLeaf(relativePath);
+        let leaf = this.map.getLeaf(relativePath);
         if (leaf == "divider") return undefined;
         return leaf;
     }
 
+    find(fragments: string[]) {
+        let leaf = this.map.find(fragments);
+        if (leaf == "divider") return undefined;
+        console.log(leaf);
+        return leaf;
+    }
 
     toMenu(cat: Catalogue) : MenuItem[] {
 
@@ -170,7 +178,7 @@ export class STD {
             return items;
         }
 
-        return convert(this.std);
+        return convert(this.map);
     }
 
 }

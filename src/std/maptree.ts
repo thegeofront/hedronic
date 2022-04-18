@@ -1,3 +1,7 @@
+import { visitNode } from "typescript";
+import { javascript } from "webpack";
+import { Debug, DebugRenderer } from "../../../engine/src/lib";
+
 /**
  * Utility class of a nested hashmap
  */
@@ -33,26 +37,73 @@
         return this.get(key) !== undefined;
     }
 
+    /**
+     * if we have `Math->Boolean->And()`, and fragments is `["bool", "and"]`, return `And()` 
+     * @param fragment 
+     */
+    find(fragment: string[]) : T | undefined {
+        
+        if (fragment.length == 0) return undefined;
+
+        let testFragment = (fragA: string[], fragB: string[], test: (a: string, b: string) => boolean) => {
+            for (let [ia, a] of fragA.entries()) {
+                let ib = fragB.length - fragA.length + ia;
+
+                if (ib < 0 || ib >= fragB.length) return false;
+                let b = fragB[ib];
+           
+                // THE test
+                if (!test(a, b)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        let test = (a: string, b: string) => b.toLowerCase().replace(' ','').includes(a);
+     
+        let lowFrag = fragment.map(s => s.toLowerCase());
+        console.log("looking for fragment", fragment);
+        
+        let val = this.forEachLeaf((keys: string[], value) => {
+            if (testFragment(lowFrag, keys, test)) {
+                Debug.log("chosen: ", keys);
+                return value;
+                
+            }
+        })
+    
+
+        return val;
+    }
+
     getLeaf(key: string[]) : T | undefined {
         let maybeLeaf = this.get(key);
         if (maybeLeaf instanceof MapTree) return undefined;
         return maybeLeaf;
     }
 
-    forEachLeaf(callback: (keys: string[], value: T) => void) {
+    forEachLeaf<R>(callback: (keys: string[], value: T) => R | undefined) {
 
-        let recurse = (map: MapTree<T>, keyStack: string[]) => {
+        let recurse = (map: MapTree<T>, keyStack: string[]) : R | undefined => {
             for (let [key, value] of map.tree.entries()) {
                 let stack = [...keyStack, key];
                 if (value instanceof MapTree) {
-                    recurse(value, stack);
+                    let res = recurse(value, stack);
+                    if (res) return res;
                 } else {
-                    callback(stack, value);
+                    let res = callback(stack, value);
+                    if (res) return res;
                 }
             }
+            return undefined;
         }
         return recurse(this, []);
     }
+
+
+
+    
 }
 
 
