@@ -32,6 +32,7 @@ import { MapTree } from "../util/maptree";
 import { Vector } from "./functions/v0/vector";
 import { Mesh } from "./functions/v3/mesh";
 import { MultiPoint } from "./functions/v0/multi-point";
+import { Noise } from "./functions/math/noise";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -97,6 +98,7 @@ export class STD {
                 ["Logic", map(LogicFunctions)],
                 ["Stats", map(StatFunctions)],
                 ["Random", map(Random.Functions)],
+                ["Noise", map(Noise.Functions)],
                 ["Range", MapTree.new([
                     ["Range 1", map(Range1.Functions)],
                     ["Range 2", map(Range2.Functions)],

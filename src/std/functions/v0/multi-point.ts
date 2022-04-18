@@ -59,11 +59,10 @@ function linearize(points: Point[]) {
 
 function raise(data: number[]) : Point[] {
     let DIM = 3;
-    let count = data.length / DIM;
-    if (count % DIM != 0) {
+    if (data.length % DIM != 0) {
         throw new Error("length of data needs to be divisible by " + DIM);
     }
-
+    let count = data.length / DIM;
     let points: Point[] = [];
     for (let i = 0 ; i < count; i++) {
         points[i] = Point.fromArray(data.slice(i * DIM, (i+1) * DIM));

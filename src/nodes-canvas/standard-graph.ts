@@ -49,7 +49,7 @@ export const STANDARD_GRAPH =  {
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 5
+        "state": 9
       },
       "inputs": [],
       "outputs": [
@@ -144,7 +144,7 @@ export const STANDARD_GRAPH =  {
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 1000
+        "state": 12575
       },
       "inputs": [],
       "outputs": [
@@ -323,9 +323,557 @@ export const STANDARD_GRAPH =  {
         }
       ],
       "outputs": [
+        [
+          {
+            "node": "ea1b0552-d74e",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "ea1b0552-d74e": {
+      "hash": "ea1b0552-d74e",
+      "position": {
+        "x": 26,
+        "y": 21
+      },
+      "type": 1,
+      "process": {
+        "name": "get",
+        "state": {
+          "keys": [
+            "verts",
+            "faces"
+          ],
+          "types": [
+            7,
+            5
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "node": "2a280810-f1a6",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "20824799-e446",
+            "index": -1
+          }
+        ],
+        [
+          {
+            "node": "598b049f-c6d2",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "b7c2ce9f-37fe": {
+      "hash": "b7c2ce9f-37fe",
+      "position": {
+        "x": 26,
+        "y": 27
+      },
+      "type": 1,
+      "process": {
+        "name": "get",
+        "state": {
+          "keys": [
+            "x",
+            "y",
+            "z"
+          ],
+          "types": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "node": "20824799-e446",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "657a09b4-b59d",
+            "index": -1
+          }
+        ],
+        [
+          {
+            "node": "657a09b4-b59d",
+            "index": -2
+          }
+        ],
+        []
+      ],
+      "looping": true
+    },
+    "20824799-e446": {
+      "hash": "20824799-e446",
+      "position": {
+        "x": 26,
+        "y": 24
+      },
+      "type": 0,
+      "process": {
+        "name": "iterate",
+        "path": [
+          "std",
+          "Multi",
+          "Multi Point",
+          "iterate"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "Object {}"
+        ],
+        "outs": [
+          "List<>"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "ea1b0552-d74e",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "b7c2ce9f-37fe",
+            "index": -1
+          },
+          {
+            "node": "6b51d652-a511",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "2587d4d7-a555": {
+      "hash": "2587d4d7-a555",
+      "position": {
+        "x": 25,
+        "y": 32
+      },
+      "type": 0,
+      "process": {
+        "name": "noise",
+        "path": [
+          "std",
+          "Math",
+          "Noise",
+          "noise"
+        ],
+        "inCount": 5,
+        "outCount": 1,
+        "ins": [
+          "number",
+          "number",
+          "number",
+          "number",
+          "number"
+        ],
+        "outs": [
+          "number"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "575d6ba1-1ffd",
+          "index": 1
+        },
+        {
+          "node": "1dfcbeeb-0f8f",
+          "index": 1
+        },
+        {
+          "node": "ca2df10e-ec6c",
+          "index": 1
+        },
+        {
+          "node": "ef6409fc-5a1a",
+          "index": 1
+        },
+        {
+          "node": "ca4657a4-cc34",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "6b51d652-a511",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "6b51d652-a511": {
+      "hash": "6b51d652-a511",
+      "position": {
+        "x": 31,
+        "y": 31
+      },
+      "type": 0,
+      "process": {
+        "name": "octave",
+        "path": [
+          "std",
+          "Math",
+          "Noise",
+          "octave"
+        ],
+        "inCount": 2,
+        "outCount": 1,
+        "ins": [
+          "Object {undefined}",
+          "Object {undefined}"
+        ],
+        "outs": [
+          "number"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "2587d4d7-a555",
+          "index": 1
+        },
+        {
+          "node": "20824799-e446",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "8c111aa8-a244",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": true
+    },
+    "657a09b4-b59d": {
+      "hash": "657a09b4-b59d",
+      "position": {
+        "x": 36,
+        "y": 27
+      },
+      "type": 0,
+      "process": {
+        "name": "Point",
+        "path": [
+          "std",
+          "0D",
+          "Point",
+          "Point"
+        ],
+        "inCount": 3,
+        "outCount": 1,
+        "ins": [
+          "number",
+          "number",
+          "number"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "b7c2ce9f-37fe",
+          "index": 1
+        },
+        {
+          "node": "b7c2ce9f-37fe",
+          "index": 2
+        },
+        {
+          "node": "8c111aa8-a244",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "3d0eef34-60ae",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": true
+    },
+    "598b049f-c6d2": {
+      "hash": "598b049f-c6d2",
+      "position": {
+        "x": 36,
+        "y": 21
+      },
+      "type": 0,
+      "process": {
+        "name": "Mesh",
+        "path": [
+          "std",
+          "3D",
+          "Mesh",
+          "Mesh"
+        ],
+        "inCount": 2,
+        "outCount": 1,
+        "ins": [
+          "Object {}",
+          "List<>"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "3d0eef34-60ae",
+          "index": 1
+        },
+        {
+          "node": "ea1b0552-d74e",
+          "index": 2
+        }
+      ],
+      "outputs": [
         []
       ],
       "looping": false
+    },
+    "3d0eef34-60ae": {
+      "hash": "3d0eef34-60ae",
+      "position": {
+        "x": 36,
+        "y": 24
+      },
+      "type": 0,
+      "process": {
+        "name": "MultiPoint",
+        "path": [
+          "std",
+          "Multi",
+          "Multi Point",
+          "MultiPoint"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "List<>"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "657a09b4-b59d",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "598b049f-c6d2",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "575d6ba1-1ffd": {
+      "hash": "575d6ba1-1ffd",
+      "position": {
+        "x": 20,
+        "y": 32
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 10
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2587d4d7-a555",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "1dfcbeeb-0f8f": {
+      "hash": "1dfcbeeb-0f8f",
+      "position": {
+        "x": 20,
+        "y": 33
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 0.46
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2587d4d7-a555",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "ca2df10e-ec6c": {
+      "hash": "ca2df10e-ec6c",
+      "position": {
+        "x": 20,
+        "y": 34
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 201250
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2587d4d7-a555",
+            "index": -3
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "ef6409fc-5a1a": {
+      "hash": "ef6409fc-5a1a",
+      "position": {
+        "x": 20,
+        "y": 35
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 1
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2587d4d7-a555",
+            "index": -4
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "ca4657a4-cc34": {
+      "hash": "ca4657a4-cc34",
+      "position": {
+        "x": 20,
+        "y": 36
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 0.5
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2587d4d7-a555",
+            "index": -5
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "3d41cb3f-8f60": {
+      "hash": "3d41cb3f-8f60",
+      "position": {
+        "x": 20,
+        "y": 38
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 3
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "8c111aa8-a244",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "8c111aa8-a244": {
+      "hash": "8c111aa8-a244",
+      "position": {
+        "x": 35,
+        "y": 36
+      },
+      "type": 0,
+      "process": {
+        "name": "mul",
+        "path": [
+          "std",
+          "Math",
+          "Basic",
+          "mul"
+        ],
+        "inCount": 2,
+        "outCount": 1,
+        "ins": [
+          "any",
+          "any"
+        ],
+        "outs": [
+          "any"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "6b51d652-a511",
+          "index": 1
+        },
+        {
+          "node": "3d41cb3f-8f60",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "657a09b4-b59d",
+            "index": -3
+          }
+        ]
+      ],
+      "looping": true
     }
   }
 };
