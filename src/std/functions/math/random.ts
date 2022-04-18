@@ -82,10 +82,10 @@ import { Point } from "../v0/point";
         func("Random", Random.newFromHash),
         func("Random from seed", Random.newFromSeed),
         func("Random from random", Random.new),
+        divider(),
         func("Number", Random.number),
         func("List", Random.list),
         func("Points", Random.points),
-        divider(),
     ];
     
 

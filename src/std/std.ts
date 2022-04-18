@@ -57,7 +57,7 @@ export class STD {
         let map = function(list: (FunctionShim | Divider)[]) : MapTree<FunctionShim | "divider"> {
             let mapped = list.map((item, index) : [string, FunctionShim | "divider"] => {
                 if (item == "divider") {
-                    return [index + "divider", "divider"];
+                    return ["divider" + index, "divider"];
                 } else {
                     return [item.name, item];
                 }
