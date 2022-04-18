@@ -1,6 +1,6 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { Type } from "../../../modules/types/type";
-import { MapTree } from "../../maptree";
+import { MapTree } from "../../../util/maptree";
 import { Divider, shim, divider } from "../../std-system";
 
 export class Point {
@@ -19,7 +19,7 @@ export class Point {
         return new Point(array[0], array[1], array[2]);
     }
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         shim(Point.new, "Point", "A 3D point in space", 
             [Type.number, Type.number, Type.number], 
             [Type.Object]),
@@ -27,6 +27,6 @@ export class Point {
             [Type.List], 
             [Type.Object]),
         divider(),
-    ]); 
+    ]; 
 
 }

@@ -1,8 +1,8 @@
 import { FunctionShim } from "../modules/shims/function-shim";
 import { TypeShim } from "../modules/shims/type-shim";
 import { Type } from "../modules/types/type";
+import { MapTree } from "../util/maptree";
 import { GFTypes } from "./geofront-types";
-import { MapTree } from "./maptree";
 
 export type Divider = "divider";
 
@@ -10,19 +10,21 @@ export type STDTree = MapTree<FunctionShim | Divider>;
 
 export type ArrayTree<T> = Array<ArrayTree<T>> | T;
 
+
+
 /**
  * Shorthander for quickly making a functionshim
  */
-export function make(fn: Function) : [string, FunctionShim ] {
-    return [fn.name, FunctionShim.newFromFunction(fn)];
+export function make(fn: Function) : FunctionShim {
+    return FunctionShim.newFromFunction(fn);
 }
 
 
 /**
  * Shorthander for quickly making a functionshim
  */
-export function func(name: string, fn: Function) : [string, FunctionShim ] {
-    return [name, FunctionShim.newFromFunction(fn)];
+export function func(name: string, fn: Function) {
+    return FunctionShim.newFromFunction(fn, [name]);
 }
 
 
@@ -32,19 +34,19 @@ export function shim(
     name: string, 
     description: string, 
     ins: Type[] = [], 
-    outs: Type[] = []) : [string, FunctionShim ] 
+    outs: Type[] = []) : FunctionShim 
     {
     let inTypes = ins.map((i) => TypeShim.new(Type[i], i, undefined, []))
     let outTypes = outs.map((o) => TypeShim.new(Type[o], o, undefined, []))
     
-    return [name, FunctionShim.new(name, [], fn, inTypes, outTypes)];
+    return FunctionShim.new(name, [], fn, inTypes, outTypes);
 }
 
 /**
  * Shorthander for making a divider
  */
-export function divider(k="div") : [string, Divider] {
-    return [k, "divider"];
+export function divider() : Divider {
+    return "divider";
 } 
 
 

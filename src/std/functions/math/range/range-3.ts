@@ -2,7 +2,7 @@ import { Domain } from "../../../../../../engine/src/lib";
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
 import { Type } from "../../../../modules/types/type";
-import { MapTree } from "../../../maptree";
+import { MapTree } from "../../../../util/maptree";
 import { Divider, divider, func, shim } from "../../../std-system";
 import { Point } from "../../v0/point";
 import { Random } from "../random";
@@ -86,7 +86,7 @@ export class Range3 {
     }
 
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         shim(Range3.new, "Range3", "A 3D numerical range", 
             [Type.number, Type.number, Type.number, Type.number, Type.number, Type.number], 
             [Type.Object]),
@@ -110,7 +110,7 @@ export class Range3 {
         shim(Range3.spawn, "Spawn", "Spawn N number of Points within this Range", 
             [Type.Object, Type.Object, Type.number], 
             [Type.Object]),
-    ]); 
+    ]; 
 }
 
 // export const Range3Type = TypeShim.new("range-3", Type.Object, undefined, [

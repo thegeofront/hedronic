@@ -1,7 +1,7 @@
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
 import { Type } from "../../../../modules/types/type";
-import { MapTree } from "../../../maptree";
+import { MapTree } from "../../../../util/maptree";
 import { Divider, func, divider } from "../../../std-system";
 import { Range1 } from "./range-1";
 
@@ -58,13 +58,13 @@ export class Range2 {
     }
 
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         func("Range2", Range2.new),
         func("Range2 from ranges", Range2.fromRanges),
         func("Range2 from radius", Range2.fromRadius),
         func("Range2 from radii", Range2.fromRadii),
         divider(),
-    ]); 
+    ]; 
 }
 
 // export function newRange2Type(name: string) {

@@ -1,6 +1,6 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree } from "../../maptree";
-import { Divider, func } from "../../std-system";
+import { MapTree } from "../../../util/maptree";
+import { divider, Divider, func } from "../../std-system";
 import { Point } from "../v0/point";
 
 /**
@@ -78,14 +78,15 @@ import { Point } from "../v0/point";
         return points;
     }
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         func("Random", Random.newFromHash),
         func("Random from seed", Random.newFromSeed),
         func("Random from random", Random.new),
         func("Number", Random.number),
         func("List", Random.list),
         func("Points", Random.points),
-    ]);
+        divider(),
+    ];
     
 
     // /**

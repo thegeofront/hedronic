@@ -7,7 +7,7 @@ export class Line {
         public b: Vector,
     ) {}
 
-    static line(a=Vector.vector(), b=Vector.vector()) {
+    static line(a=Vector.new(), b=Vector.new()) {
         return new Line(a, b);
     }
 }

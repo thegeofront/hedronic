@@ -1,10 +1,10 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree } from "../../maptree";
+import { MapTree } from "../../../util/maptree";
 import { Divider, make } from "../../std-system";
 
-export const StatFunctions = MapTree.new<FunctionShim | Divider>([
+export const StatFunctions = [
     make(average)
-]);
+];
 
 function average(list: number[]) {
     let sum = 0

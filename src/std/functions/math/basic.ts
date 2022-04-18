@@ -1,20 +1,20 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree } from "../../maptree";
+import { MapTree } from "../../../util/maptree";
 import { divider, Divider, make, STDTree } from "../../std-system";
 
-export const BasicFunctions = MapTree.new<FunctionShim | Divider>([
+export const BasicFunctions = [
     make(add),
     make(sub),
     make(mul),
     make(div),
     make(pow),
-    divider("1"),
+    divider(),
     make(sin),
-    divider("2"),
+    divider(),
     make(cos),
     make(tan),
     make(sqrt),
-]);
+];
 
 
 function add(a: number, b: number) {

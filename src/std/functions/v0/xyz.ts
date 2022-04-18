@@ -98,38 +98,4 @@ export function writeXYZ(xyz: XYZ) : string {
     return lines.join("\n");
 }
 
-export function iterate(multiVector: MultiVector3) {
-    const { buffer } = multiVector;
-    let list: Vector[] = [];
-    let height = buffer.length / 3;
-    for (let i = 0 ; i < height ; i++) {
-        list.push({
-            x: buffer[i*3 + 0],
-            y: buffer[i*3 + 1],
-            z: buffer[i*3 + 2]
-        });
-    }
-    return list;
-}
 
-/**
- * Add two Vectors
- */
-export function add(a: Vector, b: Vector) {
-    console.log(a, b);
-    return {
-        x: a.x + b.x, 
-        y: a.y + b.y, 
-        z: a.z + b.z
-    };
-}
-
-export function aggregate(vectorList: Vector[]) : MultiVector3 {
-    let buffer = new Float32Array(vectorList.length * 3);
-    for (let [i, vector] of vectorList.entries()) {
-        buffer[i*3 + 0] = vector.x;
-        buffer[i*3 + 1] = vector.y;
-        buffer[i*3 + 2] = vector.z;
-    }
-    return {trait: "multi-vector-3", buffer}
-}

@@ -1,5 +1,4 @@
 import { makeMenuAction } from "../menu/actions/add";
-import { MenuAction } from "../menu/logic/menu-action";
 import { MenuDivider } from "../menu/logic/menu-divider";
 import { MenuItem } from "../menu/logic/menu-item";
 import { MenuList } from "../menu/logic/menu-list";
@@ -8,7 +7,6 @@ import { FunctionShim } from "../modules/shims/function-shim";
 import { BasicFunctions } from "./functions/math/basic";
 import { LogicFunctions } from "./functions/math/logic";
 import { StatFunctions } from "./functions/math/statistics";
-import { MapTree } from "./maptree";
 import { Divider, STDTree } from "./std-system";
 import { ButtonWidget } from "./widgets/button-widget";
 import { ConsoleWidget } from "./widgets/console-widget";
@@ -29,6 +27,9 @@ import { TypeShim } from "../modules/shims/type-shim";
 import { Random } from "./functions/math/random";
 import { Range2 } from "./functions/math/range/range-2";
 import { Range3 } from "./functions/math/range/range-3";
+import { Point } from "./functions/v0/point";
+import { MapTree } from "../util/maptree";
+import { Vector } from "./functions/v0/vector";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -48,9 +49,22 @@ export class STD {
 
         // I'm making TODO art here
         let TODO = (todo: string) => FunctionShim.newFromFunction((a: number)=> {alert(todo)}, ["todo"])
-        let TODO_CLASS = TODO("TODO: Create this class!");
-        let TODO_LIBRARY = TODO("TODO: Create this library!");
-        let TODO_SPECIAL = TODO("TODO: Create this special feature!");
+        let TODO_CLASS = [TODO("TODO: Create this class!")];
+        let TODO_LIBRARY = [TODO("TODO: Create this library!")];
+        let TODO_SPECIAL = [TODO("TODO: Create this special feature!")];
+
+
+        let map = function(list: (FunctionShim | Divider)[]) : MapTree<FunctionShim | "divider"> {
+            let mapped = list.map((item, index) : [string, FunctionShim | "divider"] => {
+                if (item == "divider") {
+                    return [index + "divider", "divider"];
+                } else {
+                    return [item.name, item];
+                }
+            });
+            let tree = MapTree.new(mapped);
+            return tree;
+        }
 
         // explain: 
         // I want do specifically define the order, dividers, have nice names, etc. 
@@ -64,7 +78,7 @@ export class STD {
         
         let std = MapTree.new([
             ["Types", MapTree.new([
-                ["Converters", TODO_SPECIAL]
+                ["Converters", map(["divider", "divider", "divider"])]
             ])],
             ["Iterate", MapTree.new([
                 ["Sequence", TODO_LIBRARY],
@@ -77,54 +91,56 @@ export class STD {
                 ["Map", TODO_SPECIAL],
             ])],
             ["Math", MapTree.new([
-                ["Basic", BasicFunctions],
-                ["Logic", LogicFunctions],
-                ["Stats", StatFunctions],
-                ["Random", Random.Functions],
+                ["Basic", map(BasicFunctions)],
+                ["Logic", map(LogicFunctions)],
+                ["Stats", map(StatFunctions)],
+                ["Random", map(Random.Functions)],
                 ["Range", MapTree.new([
-                    ["Range 1", Range1.Functions],
-                    ["Range 2", Range2.Functions],
-                    ["Range 3", Range3.Functions],
+                    ["Range 1", map(Range1.Functions)],
+                    ["Range 2", map(Range2.Functions)],
+                    ["Range 3", map(Range3.Functions)],
                 ])],
             ])],
             ["Raster", MapTree.new([
-                ["Color", TODO_CLASS],
-                ["Bitmap", TODO_CLASS],
+                ["Color",  map(TODO_CLASS)],
+                ["Bitmap", map(TODO_CLASS)],
             ])],
             ["Transform", MapTree.new([
-                ["Affine", TODO_LIBRARY],   // simple moving, scaling, rotating
-                ["Matrix", TODO_CLASS],     // a Transform class, for joining transformation together
-                ["Quaternion", TODO_CLASS], // 
+                ["Affine", map(TODO_LIBRARY)],   // simple moving, scaling, rotating
+                ["Matrix", map(TODO_CLASS)],     // a Transform class, for joining transformation together
+                ["Quaternion", map(TODO_CLASS)], // 
             ])],
             ["0D", MapTree.new([
-                ["Point", TODO_CLASS],
-                ["Vector", TODO_CLASS],
+                ["Point", map(Point.Functions)],
+                ["Vector", map(Vector.Functions)],
             ])],
             ["1D", MapTree.new([
-                ["Line"    , TODO_CLASS],
-                ["Polyline", TODO_CLASS],
-                ["Spline"  , TODO_CLASS],
+                ["Line"    , map(TODO_CLASS)],
+                ["Polyline", map(TODO_CLASS)],
+                ["Spline"  , map(TODO_CLASS)],
             ])],
             ["2D", MapTree.new([
-                ["Triangle", TODO_CLASS],
-                ["Polygon", TODO_CLASS],
-                ["Spline Surface", TODO_CLASS],
+                ["Triangle", map(TODO_CLASS)],
+                ["Polygon", map(TODO_CLASS)],
+                ["Spline Surface", map(TODO_CLASS)],
             ])],
             ["3D", MapTree.new([
-                ["Mesh", TODO_CLASS],
-                ["Solid", TODO_CLASS],
+                ["Mesh", map(TODO_CLASS)],
+                ["Solid", map(TODO_CLASS)],
             ])],
             ["Multi", MapTree.new([
-                ["Multi Point",    TODO_CLASS],
-                ["Multi Vector",   TODO_CLASS],
-                ["Multi Polyline", TODO_CLASS],
-                ["Multi Polygon",  TODO_CLASS],
-                ["Multi Mesh",     TODO_CLASS],
+                ["Multi Point",    map(TODO_CLASS)],
+                ["Multi Vector",   map(TODO_CLASS)],
+                ["Multi Polyline", map(TODO_CLASS)],
+                ["Multi Polygon",  map(TODO_CLASS)],
+                ["Multi Mesh",     map(TODO_CLASS)],
             ])],
             ["Misc", MapTree.new([
 
             ])],
         ])
+
+        console.log(std);
 
         // typescript does not trust me...
         let tree = std as STDTree

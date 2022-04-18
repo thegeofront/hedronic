@@ -1,8 +1,7 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { Type } from "../../../modules/types/type";
-import { MapTree } from "../../maptree";
+import { MapTree } from "../../../util/maptree";
 import { Divider, shim, divider } from "../../std-system";
-import { Point } from "./point";
 
 export class Vector {
     
@@ -28,7 +27,7 @@ export class Vector {
         };
     }
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         shim(Vector.new, "Vector", "a 3D translation", 
             [Type.number, Type.number, Type.number], 
             [Type.Object]),
@@ -36,7 +35,7 @@ export class Vector {
             [Type.List], 
             [Type.Object]),
         divider(),
-    ]);
+    ];
 }
 
 // let vector3 = TypeShim.new("vector-3", Type.Object, undefined, [

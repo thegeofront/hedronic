@@ -1,6 +1,4 @@
-import { visitNode } from "typescript";
-import { javascript } from "webpack";
-import { Debug, DebugRenderer } from "../../../engine/src/lib";
+import { Debug } from "../../../engine/src/lib";
 
 /**
  * Utility class of a nested hashmap
@@ -99,11 +97,7 @@ import { Debug, DebugRenderer } from "../../../engine/src/lib";
             return undefined;
         }
         return recurse(this, []);
-    }
-
-
-
-    
+    }  
 }
 
 

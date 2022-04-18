@@ -3,7 +3,7 @@ import { Domain } from "../../../../../../engine/src/lib";
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
 import { Type } from "../../../../modules/types/type";
-import { MapTree } from "../../../maptree";
+import { MapTree } from "../../../../util/maptree";
 import { divider, Divider, func, make } from "../../../std-system";
 
 export class Range1 {
@@ -47,7 +47,7 @@ export class Range1 {
         return TypeShim.new(nickname, Type.Reference, undefined, [Range1.TypeShim]);
     }
 
-    static readonly Functions = MapTree.new<FunctionShim | Divider>([
+    static readonly Functions = [
         func("Range1", Range1.new),
         func("Range1 from radius", Range1.fromRadius),
         divider(),
@@ -67,5 +67,5 @@ export class Range1 {
 
         //     ], [newRange1Type("range-1")]),
         // ]; 
-    ]); 
+    ]; 
 }

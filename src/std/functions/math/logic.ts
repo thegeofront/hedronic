@@ -1,12 +1,12 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { MapTree } from "../../maptree";
+import { MapTree } from "../../../util/maptree";
 import { Divider, make } from "../../std-system";
 
-export const LogicFunctions = MapTree.new<FunctionShim | Divider>([
+export const LogicFunctions = [
     make(and),
     make(or),
     make(not),
-]);
+];
 
 export function and(a: boolean, b: boolean) {
     return a && b;
