@@ -36,7 +36,7 @@ export class ViewerApp extends App {
 
         let canvas = gl.canvas as HTMLCanvasElement;
         let camera = new Camera(canvas, -2, true, true);
-        camera.setState([-5.5029, -51.997, -0.17589, -8.1028643740226, 0.9116052420711634,24.621936191871416]);
+        camera.setState([8.9038, -26.638, 17.679, -64.81615930105617, 1.0556052420711626,24.786936191871423]);
         this.grid = new LineShader(gl, [0.3, 0.3, 0.3, 1]);
         this.preview = DebugRenderer.new(gl);
         this.scene = new Scene(camera);
@@ -142,6 +142,10 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
     //@ts-ignore
     let typename = item.constructor.name;
 
+    console.log(typename);
+
+
+
     if (typename == "Array") 
         return tryConvertArray(item as Array<any>);
 
@@ -150,6 +154,15 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
 
     if (typename == "Line" || typename == "Line3") 
         return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
+
+
+    // STD
+    if (typename == "Mesh") {
+        return Mesh.new(
+            MultiVector3.fromData(item.verts.data), 
+            IntMatrix.fromList(item.faces, 3)
+        );
+    }
 
     
     // second, judge based on trait. (geofront type, just a way to flag a json)

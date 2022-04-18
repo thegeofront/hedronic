@@ -30,6 +30,8 @@ import { Range3 } from "./functions/math/range/range-3";
 import { Point } from "./functions/v0/point";
 import { MapTree } from "../util/maptree";
 import { Vector } from "./functions/v0/vector";
+import { Mesh } from "./functions/v3/mesh";
+import { MultiPoint } from "./functions/v0/multi-point";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -125,11 +127,11 @@ export class STD {
                 ["Spline Surface", map(TODO_CLASS)],
             ])],
             ["3D", MapTree.new([
-                ["Mesh", map(TODO_CLASS)],
+                ["Mesh", map(Mesh.Functions)],
                 ["Solid", map(TODO_CLASS)],
             ])],
             ["Multi", MapTree.new([
-                ["Multi Point",    map(TODO_CLASS)],
+                ["Multi Point",    map(MultiPoint.Functions)],
                 ["Multi Vector",   map(TODO_CLASS)],
                 ["Multi Polyline", map(TODO_CLASS)],
                 ["Multi Polygon",  map(TODO_CLASS)],

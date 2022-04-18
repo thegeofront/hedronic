@@ -1,46 +1,5 @@
 export const STANDARD_GRAPH =  {
   "nodes": {
-    "03f21a3e-b3be": {
-      "hash": "03f21a3e-b3be",
-      "position": {
-        "x": 12,
-        "y": 13
-      },
-      "type": 0,
-      "process": {
-        "name": "Range3 from radius",
-        "path": [
-          "std",
-          "Math",
-          "Range",
-          "Range 3",
-          "Range3 from radius"
-        ],
-        "inCount": 1,
-        "outCount": 1,
-        "ins": [
-          "number"
-        ],
-        "outs": [
-          "Object {}"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "3f05d5da-33b2",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "11c65996-071e",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
     "76ddb65a-c329": {
       "hash": "76ddb65a-c329",
       "position": {
@@ -49,7 +8,7 @@ export const STANDARD_GRAPH =  {
       },
       "type": 0,
       "process": {
-        "name": "newFromSeed",
+        "name": "Random from seed",
         "path": [
           "std",
           "Math",
@@ -107,19 +66,19 @@ export const STANDARD_GRAPH =  {
       "hash": "3f05d5da-33b2",
       "position": {
         "x": 7,
-        "y": 13
+        "y": 14
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 5
+        "state": 0
       },
       "inputs": [],
       "outputs": [
         [
           {
-            "node": "03f21a3e-b3be",
-            "index": -1
+            "node": "c9a238b6-5914",
+            "index": -3
           }
         ]
       ],
@@ -154,7 +113,7 @@ export const STANDARD_GRAPH =  {
       },
       "inputs": [
         {
-          "node": "03f21a3e-b3be",
+          "node": "c9a238b6-5914",
           "index": 1
         },
         {
@@ -169,7 +128,7 @@ export const STANDARD_GRAPH =  {
       "outputs": [
         [
           {
-            "node": "4183d1f2-e8a1",
+            "node": "1dfc7764-22e7",
             "index": -1
           }
         ]
@@ -185,7 +144,7 @@ export const STANDARD_GRAPH =  {
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 8
+        "state": 1000
       },
       "inputs": [],
       "outputs": [
@@ -198,24 +157,123 @@ export const STANDARD_GRAPH =  {
       ],
       "looping": false
     },
-    "4183d1f2-e8a1": {
-      "hash": "4183d1f2-e8a1",
+    "c9a238b6-5914": {
+      "hash": "c9a238b6-5914",
       "position": {
-        "x": 24,
+        "x": 12,
+        "y": 12
+      },
+      "type": 0,
+      "process": {
+        "name": "Range3 from radii",
+        "path": [
+          "std",
+          "Math",
+          "Range",
+          "Range 3",
+          "Range3 from radii"
+        ],
+        "inCount": 3,
+        "outCount": 1,
+        "ins": [
+          "number",
+          "number",
+          "number"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "d1d284e2-24bc",
+          "index": 1
+        },
+        {
+          "node": "800c3410-5424",
+          "index": 1
+        },
+        {
+          "node": "3f05d5da-33b2",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "11c65996-071e",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "800c3410-5424": {
+      "hash": "800c3410-5424",
+      "position": {
+        "x": 7,
         "y": 13
       },
       "type": 1,
       "process": {
-        "name": "console",
-        "state": [
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}
+        "name": "slider",
+        "state": 8
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "c9a238b6-5914",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "d1d284e2-24bc": {
+      "hash": "d1d284e2-24bc",
+      "position": {
+        "x": 7,
+        "y": 12
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 5
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "c9a238b6-5914",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "1dfc7764-22e7": {
+      "hash": "1dfc7764-22e7",
+      "position": {
+        "x": 19,
+        "y": 18
+      },
+      "type": 0,
+      "process": {
+        "name": "MultiPoint",
+        "path": [
+          "std",
+          "Multi",
+          "Multi Point",
+          "MultiPoint"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "List<>"
+        ],
+        "outs": [
+          "Object {}"
         ]
       },
       "inputs": [
@@ -224,7 +282,49 @@ export const STANDARD_GRAPH =  {
           "index": 1
         }
       ],
-      "outputs": [],
+      "outputs": [
+        [
+          {
+            "node": "2a280810-f1a6",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "2a280810-f1a6": {
+      "hash": "2a280810-f1a6",
+      "position": {
+        "x": 19,
+        "y": 21
+      },
+      "type": 0,
+      "process": {
+        "name": "Delaunay",
+        "path": [
+          "std",
+          "3D",
+          "Mesh",
+          "Delaunay"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "List<>"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "1dfc7764-22e7",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        []
+      ],
       "looping": false
     }
   }
