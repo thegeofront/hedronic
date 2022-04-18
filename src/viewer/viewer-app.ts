@@ -4,6 +4,7 @@ import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 import { TypeShim } from "../modules/shims/type-shim";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
+import { Point } from "../std/functions/v0/point";
 
 export type VisualizePayload = {
     state: any, 
@@ -193,13 +194,19 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
 /**
  * WE ASSUME THE LIST IS HOMOGENOUS
  */
-function tryConvertArray(item: Array<any>) : RenderableUnit[] | RenderableUnit |  undefined {
+function tryConvertArray(items: Array<any>) : RenderableUnit[] | RenderableUnit |  undefined {
     
     console.log("trying to convert array...");
 
+    // TODO aggregate, make a more efficient shader for rendering multiple colored meshes
+    if (items[0] instanceof Point) {
+        console.log("agreggating...");
+        return MultiVector3.fromList(items);
+    }
+
     let list = [];
-    for (let i = 0 ; i < item.length; i++) {
-        let valueData = tryConvert(item[i]);
+    for (let i = 0 ; i < items.length; i++) {
+        let valueData = tryConvert(items[i]);
         if (valueData && !(valueData instanceof Array)) {
             list.push(valueData);
         } 

@@ -14,16 +14,26 @@ export class Range1 {
     ) {}
 
     
-    static new(min: number, max: number) {
+    static new(min: number = 0.0, max: number = 1.0) {
         return new Range1(min, max);
     }
     
-    static fromRadius(radius: number) {
+    static fromRadius(radius: number = 5) {
         return new Range1(-radius, radius);
     }
 
-    static remap(n: number, a: Range1, b: Range1) {
-        return Domain.remap(n, a.min, a.max, b.min, b.max);
+    ///////////////////////////////////////////////////////////////////////////
+
+    static normalize(value: number, range: Range1) {
+        return Domain.normalize(value, range.min, range.max);
+    }
+
+    static elevate(value: number, range: Range1) {
+        return Domain.elevate(value, range.min, range.max);
+    }
+
+    static remap(value: number, from: Range1 = Range1.new(), to: Range1 = Range1.new()) {
+        return Domain.remap(value, from.min, from.max, to.min, to.max);
     }
 
     ///////////////////////////////////////////////////////////////////////////

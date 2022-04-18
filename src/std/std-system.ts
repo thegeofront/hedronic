@@ -1,5 +1,6 @@
 import { FunctionShim } from "../modules/shims/function-shim";
 import { TypeShim } from "../modules/shims/type-shim";
+import { Type } from "../modules/types/type";
 import { GFTypes } from "./geofront-types";
 import { MapTree } from "./maptree";
 
@@ -20,8 +21,23 @@ export function make(fn: Function) : [string, FunctionShim ] {
 /**
  * Shorthander for quickly making a functionshim
  */
- export function func(name: string, fn: Function) : [string, FunctionShim ] {
-    return [name || fn.name, FunctionShim.newFromFunction(fn)];
+export function func(name: string, fn: Function) : [string, FunctionShim ] {
+    return [name, FunctionShim.newFromFunction(fn)];
+}
+
+
+
+export function shim(
+    fn: Function, 
+    name: string, 
+    description: string, 
+    ins: Type[] = [], 
+    outs: Type[] = []) : [string, FunctionShim ] 
+    {
+    let inTypes = ins.map((i) => TypeShim.new(Type[i], i, undefined, []))
+    let outTypes = outs.map((o) => TypeShim.new(Type[o], o, undefined, []))
+    
+    return [name, FunctionShim.new(name, [], fn, inTypes, outTypes)];
 }
 
 /**

@@ -62,7 +62,7 @@ import { Debug, DebugRenderer } from "../../../engine/src/lib";
 
         let test = (a: string, b: string) => b.toLowerCase().replace(' ','').includes(a);
      
-        let lowFrag = fragment.map(s => s.toLowerCase());
+        let lowFrag = fragment.map(s => s.toLowerCase().replace(' ',''));
         console.log("looking for fragment", fragment);
         
         let val = this.forEachLeaf((keys: string[], value) => {

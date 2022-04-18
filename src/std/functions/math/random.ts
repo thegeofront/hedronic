@@ -1,8 +1,7 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { MapTree } from "../../maptree";
-import { Divider, make, func } from "../../std-system";
-import { add } from "../v0/xyz";
-import { or, not } from "./logic";
+import { Divider, func } from "../../std-system";
+import { Point } from "../v0/point";
 
 /**
  * Pseudo random number generator. based on simple fast counter (sfc32)
@@ -39,6 +38,8 @@ import { or, not } from "./logic";
         return new Random(seeder(), seeder(), seeder(), seeder());
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     /**
      * number in between 0 and 1
      */
@@ -58,19 +59,32 @@ import { or, not } from "./logic";
         return (t >>> 0) / 4294967296;
     }
 
-    static array(rng: Random, length: number) {
-        let array = new Float64Array(length);
-        for (let i = 0 ; i < array.length; i++) {
+    static list(rng: Random, length = 10) {
+        let array = Array<number>(length);
+        for (let i = 0 ; i < length; i++) {
             array[i] = Random.number(rng);
         }
         return array;
     }
 
+    static points(rng: Random, count = 10) : Point[] {
+        let DIM = 3;
+        let array = Random.list(rng, count * DIM);
+        let points = [];
+        for (let i = 0 ; i < count; i++) {
+            let p = Point.fromArray(array.slice(i * DIM, (i * DIM) + DIM))
+            points.push(p)
+        }
+        return points;
+    }
+
     static readonly Functions = MapTree.new<FunctionShim | Divider>([
         func("Random", Random.newFromHash),
         func("Random from seed", Random.newFromSeed),
+        func("Random from random", Random.new),
         func("Number", Random.number),
-        func("List", Random.array),
+        func("List", Random.list),
+        func("Points", Random.points),
     ]);
     
 

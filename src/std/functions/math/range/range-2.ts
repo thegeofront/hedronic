@@ -32,6 +32,20 @@ export class Range2 {
 
     //////////////
 
+    // static normalize(value: number, range: Range2) {
+    //     return Range1.normalize(value, );
+    // }
+
+    // static elevate(value: number, range: Range2) {
+    //     return Domain.elevate(value, range.min, range.max);
+    // }
+
+    // static remap(value: number, from: Range1 = Range1.new(), to: Range1 = Range1.new()) {
+    //     return Domain.remap(value, from.min, from.max, to.min, to.max);
+    // }
+
+    //////////////
+
     static readonly TypeShim = TypeShim.new("range-2", Type.Object, undefined, [
         TypeShim.new("xMin", Type.number),
         TypeShim.new("xMax", Type.number),
