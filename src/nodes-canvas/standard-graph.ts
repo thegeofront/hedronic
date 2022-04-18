@@ -3,8 +3,8 @@ export const STANDARD_GRAPH =  {
     "76ddb65a-c329": {
       "hash": "76ddb65a-c329",
       "position": {
-        "x": 12,
-        "y": 16
+        "x": 6,
+        "y": 12
       },
       "type": 0,
       "process": {
@@ -43,8 +43,8 @@ export const STANDARD_GRAPH =  {
     "a3861169-ab7e": {
       "hash": "a3861169-ab7e",
       "position": {
-        "x": 7,
-        "y": 16
+        "x": 1,
+        "y": 12
       },
       "type": 1,
       "process": {
@@ -65,8 +65,8 @@ export const STANDARD_GRAPH =  {
     "3f05d5da-33b2": {
       "hash": "3f05d5da-33b2",
       "position": {
-        "x": 7,
-        "y": 14
+        "x": 1,
+        "y": 10
       },
       "type": 1,
       "process": {
@@ -87,8 +87,8 @@ export const STANDARD_GRAPH =  {
     "11c65996-071e": {
       "hash": "11c65996-071e",
       "position": {
-        "x": 19,
-        "y": 14
+        "x": 14,
+        "y": 8
       },
       "type": 0,
       "process": {
@@ -138,13 +138,13 @@ export const STANDARD_GRAPH =  {
     "0b1667d0-fc1e": {
       "hash": "0b1667d0-fc1e",
       "position": {
-        "x": 12,
-        "y": 20
+        "x": 7,
+        "y": 16
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 12575
+        "state": 10000
       },
       "inputs": [],
       "outputs": [
@@ -160,8 +160,8 @@ export const STANDARD_GRAPH =  {
     "c9a238b6-5914": {
       "hash": "c9a238b6-5914",
       "position": {
-        "x": 12,
-        "y": 12
+        "x": 6,
+        "y": 8
       },
       "type": 0,
       "process": {
@@ -211,13 +211,13 @@ export const STANDARD_GRAPH =  {
     "800c3410-5424": {
       "hash": "800c3410-5424",
       "position": {
-        "x": 7,
-        "y": 13
+        "x": 1,
+        "y": 9
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 8
+        "state": 5
       },
       "inputs": [],
       "outputs": [
@@ -233,8 +233,8 @@ export const STANDARD_GRAPH =  {
     "d1d284e2-24bc": {
       "hash": "d1d284e2-24bc",
       "position": {
-        "x": 7,
-        "y": 12
+        "x": 1,
+        "y": 8
       },
       "type": 1,
       "process": {
@@ -255,8 +255,8 @@ export const STANDARD_GRAPH =  {
     "1dfc7764-22e7": {
       "hash": "1dfc7764-22e7",
       "position": {
-        "x": 19,
-        "y": 18
+        "x": 14,
+        "y": 12
       },
       "type": 0,
       "process": {
@@ -295,8 +295,8 @@ export const STANDARD_GRAPH =  {
     "2a280810-f1a6": {
       "hash": "2a280810-f1a6",
       "position": {
-        "x": 19,
-        "y": 21
+        "x": 14,
+        "y": 15
       },
       "type": 0,
       "process": {
@@ -335,8 +335,8 @@ export const STANDARD_GRAPH =  {
     "ea1b0552-d74e": {
       "hash": "ea1b0552-d74e",
       "position": {
-        "x": 26,
-        "y": 21
+        "x": 21,
+        "y": 8
       },
       "type": 1,
       "process": {
@@ -377,8 +377,8 @@ export const STANDARD_GRAPH =  {
     "b7c2ce9f-37fe": {
       "hash": "b7c2ce9f-37fe",
       "position": {
-        "x": 26,
-        "y": 27
+        "x": 21,
+        "y": 14
       },
       "type": 1,
       "process": {
@@ -422,8 +422,8 @@ export const STANDARD_GRAPH =  {
     "20824799-e446": {
       "hash": "20824799-e446",
       "position": {
-        "x": 26,
-        "y": 24
+        "x": 21,
+        "y": 11
       },
       "type": 0,
       "process": {
@@ -466,8 +466,8 @@ export const STANDARD_GRAPH =  {
     "2587d4d7-a555": {
       "hash": "2587d4d7-a555",
       "position": {
-        "x": 25,
-        "y": 32
+        "x": 21,
+        "y": 19
       },
       "type": 0,
       "process": {
@@ -526,8 +526,8 @@ export const STANDARD_GRAPH =  {
     "6b51d652-a511": {
       "hash": "6b51d652-a511",
       "position": {
-        "x": 31,
-        "y": 31
+        "x": 26,
+        "y": 18
       },
       "type": 0,
       "process": {
@@ -571,8 +571,8 @@ export const STANDARD_GRAPH =  {
     "657a09b4-b59d": {
       "hash": "657a09b4-b59d",
       "position": {
-        "x": 36,
-        "y": 27
+        "x": 31,
+        "y": 14
       },
       "type": 0,
       "process": {
@@ -621,8 +621,8 @@ export const STANDARD_GRAPH =  {
     "598b049f-c6d2": {
       "hash": "598b049f-c6d2",
       "position": {
-        "x": 36,
-        "y": 21
+        "x": 31,
+        "y": 8
       },
       "type": 0,
       "process": {
@@ -654,15 +654,20 @@ export const STANDARD_GRAPH =  {
         }
       ],
       "outputs": [
-        []
+        [
+          {
+            "node": "567d4443-7ba7",
+            "index": -1
+          }
+        ]
       ],
       "looping": false
     },
     "3d0eef34-60ae": {
       "hash": "3d0eef34-60ae",
       "position": {
-        "x": 36,
-        "y": 24
+        "x": 31,
+        "y": 11
       },
       "type": 0,
       "process": {
@@ -701,13 +706,13 @@ export const STANDARD_GRAPH =  {
     "575d6ba1-1ffd": {
       "hash": "575d6ba1-1ffd",
       "position": {
-        "x": 20,
-        "y": 32
+        "x": 17,
+        "y": 19
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 10
+        "state": 0.84
       },
       "inputs": [],
       "outputs": [
@@ -723,8 +728,8 @@ export const STANDARD_GRAPH =  {
     "1dfcbeeb-0f8f": {
       "hash": "1dfcbeeb-0f8f",
       "position": {
-        "x": 20,
-        "y": 33
+        "x": 17,
+        "y": 20
       },
       "type": 1,
       "process": {
@@ -745,8 +750,8 @@ export const STANDARD_GRAPH =  {
     "ca2df10e-ec6c": {
       "hash": "ca2df10e-ec6c",
       "position": {
-        "x": 20,
-        "y": 34
+        "x": 17,
+        "y": 21
       },
       "type": 1,
       "process": {
@@ -767,8 +772,8 @@ export const STANDARD_GRAPH =  {
     "ef6409fc-5a1a": {
       "hash": "ef6409fc-5a1a",
       "position": {
-        "x": 20,
-        "y": 35
+        "x": 17,
+        "y": 22
       },
       "type": 1,
       "process": {
@@ -789,13 +794,13 @@ export const STANDARD_GRAPH =  {
     "ca4657a4-cc34": {
       "hash": "ca4657a4-cc34",
       "position": {
-        "x": 20,
-        "y": 36
+        "x": 17,
+        "y": 23
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 0.5
+        "state": 1
       },
       "inputs": [],
       "outputs": [
@@ -811,8 +816,8 @@ export const STANDARD_GRAPH =  {
     "3d41cb3f-8f60": {
       "hash": "3d41cb3f-8f60",
       "position": {
-        "x": 20,
-        "y": 38
+        "x": 30,
+        "y": 21
       },
       "type": 1,
       "process": {
@@ -833,8 +838,8 @@ export const STANDARD_GRAPH =  {
     "8c111aa8-a244": {
       "hash": "8c111aa8-a244",
       "position": {
-        "x": 35,
-        "y": 36
+        "x": 31,
+        "y": 18
       },
       "type": 0,
       "process": {
@@ -874,6 +879,51 @@ export const STANDARD_GRAPH =  {
         ]
       ],
       "looping": true
+    },
+    "567d4443-7ba7": {
+      "hash": "567d4443-7ba7",
+      "position": {
+        "x": 39,
+        "y": 8
+      },
+      "type": 1,
+      "process": {
+        "name": "view"
+      },
+      "inputs": [
+        {
+          "node": "598b049f-c6d2",
+          "index": 1
+        },
+        {
+          "node": "3da838e0-3a0e",
+          "index": 1
+        }
+      ],
+      "outputs": [],
+      "looping": false
+    },
+    "3da838e0-3a0e": {
+      "hash": "3da838e0-3a0e",
+      "position": {
+        "x": 39,
+        "y": 11
+      },
+      "type": 1,
+      "process": {
+        "name": "input",
+        "state": ""
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "567d4443-7ba7",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
     }
   }
 };
