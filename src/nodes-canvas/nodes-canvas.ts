@@ -1,12 +1,12 @@
-import { Vector2, InputState, Domain2, MultiVector2, Key, GeonMath, createRandomGUID } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, GeonMath, createRandomGUID } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
-import { CTX, resizeCanvas } from "./rendering/ctx/ctx-helpers";
+import { CTX } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
 import { Socket, SocketSide } from "./model/socket";
 import { Widget } from "./model/widget";
 import { Catalogue } from "../modules/catalogue";
 import { ModuleShim } from "../modules/shims/module-shim";
-import { drawMultiCable, generateCableLine, drawNode, DrawState, renderCable } from "./rendering/nodes-rendering";
+import { drawMultiCable, drawNode, DrawState, renderCable } from "./rendering/nodes-rendering";
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { HTML } from "../html/util";

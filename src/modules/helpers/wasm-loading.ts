@@ -11,6 +11,8 @@ export namespace WasmLoading {
         let wasmModule = fetch(wasmPath);
         let url = URL.createObjectURL(new Blob([code], {type: 'text/javascript'}));
         
+        console.log("loading things from:", jsPath, dtsPath, wasmPath);
+
         //@ts-ignore
         let module = await import(/* webpackIgnore: true */url);
         

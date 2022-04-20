@@ -55,10 +55,11 @@ export namespace ModuleLoading {
         const icon = config.icon;
         const nickname = config.nickname;
 
-        const jsPath = config.localPath + config.filename + ".js";
-        const dtsPath = config.localPath + config.filename + ".d.ts";
-        const wasmPath = config.localPath + config.filename + "_bg.wasm";
+        const jsPath = config.path + config.filename + ".js";
+        const dtsPath = config.path + config.filename + ".d.ts";
+        const wasmPath = config.path + config.filename + "_bg.wasm";
         
+        // TODO expand on this
         const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
         const funcBlacklist = Misc.setFromList(["init", "free"]);
 

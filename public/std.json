@@ -25,15 +25,15 @@
             "icon": "bi-puzzle-fill",
             "nickname": "wasm",
             "filename": "wasm_nodes",
-            "localPath": "wasm-modules/hello-wasm/",
-            "url": "josfeenstra.nl/project/nodes/wasm-modules/"
+            "path": "wasm-modules/hello-wasm/",
+            "_localPath": "wasm-modules/hello-wasm/"
         },
         {
             "icon": "bi-puzzle-fill",
             "nickname": "startin",
             "filename": "gfp_startin",
-            "localPath": "wasm-modules/startin/",
-            "url": "josfeenstra.nl/project/nodes/wasm-modules/"
+            "path": "https://cdn.jsdelivr.net/npm/gfp-startin@0.2.0/",
+            "_localPath": "wasm-modules/startin/"
         }
     ]
 }
