@@ -19,6 +19,11 @@ class MyLeftPanel extends WebComponent {
         height: 100%;
     }
 
+    my-small-button {
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
+    }
+
     </style>
     <div id="panel">
         <my-small-button id="show-graph-btn">🔌</my-small-button>
