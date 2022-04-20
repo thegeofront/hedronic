@@ -21,20 +21,29 @@ class MyLeftPanel extends WebComponent {
 
     </style>
     <div id="panel">
-        <my-small-button id="show-demo-btn">D</my-small-button>
-        <my-small-button id="show-graph-btn">G</my-small-button>
-        <my-small-button id="show-viewer-btn"> V</my-small-button>
+        <my-small-button id="show-graph-btn">🔌</my-small-button>
+        <my-small-button id="show-viewer-btn">🔎</my-small-button>
+        <my-small-button id="show-plugins-btn">📦</my-small-button>
+        <!-- <my-small-button id="show-settings-btn">⚙️</my-small-button> -->
     </div>
     `;
         
     connectedCallback() {
         this.addFrom(MyLeftPanel.template);
-        this.get("show-demo-btn").addEventListener("click", () => this.onToggleMainButtonPressed(MainTab.Demo));
-        this.get("show-graph-btn").addEventListener("click", () => this.onToggleMainButtonPressed(MainTab.Graph));
-        this.get("show-viewer-btn").addEventListener("click", () => this.onToggleMainButtonPressed(MainTab.Viewer));
+        this.get("show-graph-btn").addEventListener("click", (e) => this.onToggleMainButtonPressed(MainTab.Graph, e.target));
+        this.get("show-viewer-btn").addEventListener("click", (e) => this.onToggleMainButtonPressed(MainTab.Viewer, e.target));
+        this.get("show-plugins-btn").addEventListener("click", (e) => this.onToggleMainButtonPressed(MainTab.Plugins, e.target));
+        // this.get("show-settings-btn").addEventListener("click", (e) => this.onToggleMainButtonPressed(MainTab.Settings, e.target));
     }  
 
-    onToggleMainButtonPressed(tab: MainTab) {
+    onToggleMainButtonPressed(tab: MainTab, btn: any | null) {
         this.dispatch(TabMainEvent, tab);
+
+        // highlight button (sorry for this ugly code)
+        if (!btn) return;
+        for (let b of this.shadowRoot?.querySelectorAll("my-small-button")!) {
+            (b as HTMLElement).style.backgroundColor = "";
+        }
+        (btn as HTMLElement).style.backgroundColor = "hsl(240, 9%, 38%)";
     }
 });

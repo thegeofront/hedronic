@@ -24,44 +24,19 @@ export class MyMain extends WebComponent {
 
     </style>
     <main id="root">
-        <div id="Demo">
-            <h1>MAIN</h1>
-            <p>This is just some html sample</p>
-            <my-dropdown-button>
-                <span slot="title">File</span>
-              	<ul slot="list">
-                    <li>
-                        <a>
-                            <span class="icon"></span>
-                            <span class="fill">Kaas</span>
-                            <span class="right"></span>
-                            <span class="icon right"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a>
-                            <span class="icon">✓</span>
-                            <span class="fill">Hallo</span>
-                            <span class="right">Ctrl + D</span>
-                            <span class="icon right">➤</span>
-                        </a>
-                        <ul>
-                            <li><a>Opossums</a></li>
-                            <div></div>
-                            <li><a>Numbats, etc.</a></li>
-                            <li><a>Bandicoots, etc.</a></li>
-                            <li><a>Kangaroos, koalas, wombats, etc.</a></li>
-                        </ul>
-                    </li>
-                </ul>  
-            </my-dropdown-button>
-        </div>
+        
         <div id="Graph" style="position: relative">
             <my-nodes-canvas></my-nodes-canvas>
             <!-- <my-canvas-overlay></my-canvas-overlay> -->
         </div>
         <div id="Viewer">
             <my-viewer></my-viewer>
+        </div>
+        <div id="Plugins">
+            <my-plugins-page></my-plugins-page>
+        </div>
+        <div id="Settings">
+            <h3>Settings</h3>
         </div>
     </main>
         
@@ -108,7 +83,8 @@ export const TabMainEvent = new PayloadEventType<MainTab>("tabmain");
 export const CanvasResizeEvent = new PayloadEventType<any>("canvasresize");
 
 export enum MainTab {
-    Demo="Demo",
+    Plugins="Plugins",
+    Settings="Settings",
     Graph="Graph",
     Viewer="Viewer",
 }

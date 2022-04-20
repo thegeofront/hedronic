@@ -11,6 +11,7 @@ import { MenuToggle } from "./logic/menu-toggle";
 import { Key } from "../../../engine/src/lib";
 import { getNodesActions } from "./actions/nodes";
 import { getAddActions } from "./actions/add";
+import { getSettingsActions } from "./actions/settings";
 
 
 export class Menu {
@@ -29,7 +30,8 @@ export class Menu {
             MenuList.new("Edit", getEditActions(nodesCanvas)),
             MenuList.new("Add", getAddActions(nodesCanvas.catalogue)),
             MenuList.new("Nodes", getNodesActions(nodesCanvas)),
-            MenuList.new("View", getViewActions(nodesCanvas))
+            MenuList.new("View", getViewActions(nodesCanvas)),
+            MenuList.new("Settings", getSettingsActions(nodesCanvas))
         ]);
         return new Menu(nodesCanvas, actions);
     }

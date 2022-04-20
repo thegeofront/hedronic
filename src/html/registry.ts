@@ -15,6 +15,7 @@ export * from "./medium/my-left-panel";
 export * from "./medium/my-right-panel";
 export * from "./medium/my-viewer";
 export * from "./medium/my-canvas-overlay";
+export * from "./medium/my-plugins-page";
 
 export * from "./small/my-counter";
 export * from "./small/my-logo";
