@@ -48,7 +48,6 @@ export class ModuleShim {
     select(path: string[]) {
         // console.log(`select name: ${key} type: ${type}`);
         let core;
-        console.log(path);
         let functionname = path[path.length - 1];
         core = tryFilter(this.blueprints, (item) => {return item.name == functionname});
         if (core == undefined) {
