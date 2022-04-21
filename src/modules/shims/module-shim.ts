@@ -43,15 +43,17 @@ export class ModuleShim {
     }
 
     /**
-     * This method is sus 
+     * NOTE: path is not used, it just takes the last item of the path, and expects that this is a unique function name. This will not always work
      */
     select(path: string[]) {
         // console.log(`select name: ${key} type: ${type}`);
         let core;
-        core = tryFilter(this.blueprints, (item) => {return item.name == path[0]});
+        console.log(path);
+        let functionname = path[path.length - 1];
+        core = tryFilter(this.blueprints, (item) => {return item.name == functionname});
         if (core == undefined) {
             // then try to find the widget
-            core = tryFilter(this.widgets, (item) => {return item.name == path[0]});
+            core = tryFilter(this.widgets, (item) => {return item.name == functionname});
         }
         return core;
     }
