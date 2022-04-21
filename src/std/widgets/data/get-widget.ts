@@ -64,6 +64,8 @@ export class GetWidget extends Widget {
     }
 
     onMakeOutputKeys() {
+        // TODO : remove buffer state, and only now try to access the cache of the input cable
+        // saves us from storing the buffer EVERYTIME this widget runs
         if (!this.saveState) return;
         let {types, keys } = this.bufferState;
         this.saveState = this.bufferState;
@@ -72,7 +74,9 @@ export class GetWidget extends Widget {
     }
 
     onClose() {
-        // fuck... to do this right, we need to know if we are connected or not. thay means, we need to get access to the node
+        // TODO
+        // hmmmm to do this right, we need to disconnect. thay means, we need to get access to the node
+        // we need to get the canvas as context
         this.outs = [];
         this.onChange();
     }
