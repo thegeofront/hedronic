@@ -24,7 +24,7 @@ export namespace URL {
         return `${base}?${parts.join('&')}`;
     }
 
-    export function readParams(keys: string[]) : (string | null)[] {
+    export function getParams(keys: string[]) : (string | null)[] {
         const string = window.location.search;
         let url = new URLSearchParams(string); 
         return keys.map(key => url.get(key));

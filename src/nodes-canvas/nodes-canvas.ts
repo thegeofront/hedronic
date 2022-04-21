@@ -117,7 +117,7 @@ export class NodesCanvas {
 
     async testGraph() {
 
-        let params = URL.readParams(["graph"]);
+        let params = URL.getParams(["graph"]);
         if (params[0]) {
             WebIO.getJson(params[0]).then(json => {
                 this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
