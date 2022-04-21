@@ -157,7 +157,7 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
 
 
     // STD
-    if (typename == "Mesh") {
+    if (typename.includes("Mesh")) {
         return Mesh.new(
             MultiVector3.fromData(item.verts.data), 
             IntMatrix.fromList(item.faces, 3)
