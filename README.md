@@ -4,7 +4,7 @@
 My master thesis involves a flowchart-application or VPL (Visual Programming Language). I couldn't find any web-based flowchart api which satisfied the requirements, so I set out to create a new one.
 
 # Demo
-[Here](http://geofront.nl)
+[Here](https://thegeofront.github.io/)
 
 # Roadmap MVP
 > status 
