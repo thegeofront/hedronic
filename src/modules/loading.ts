@@ -8,6 +8,7 @@ import ts from "typescript";
 import { TypeShim } from "./shims/type-shim";
 import { Misc } from "../nodes-canvas/util/misc";
 import { getStandardTypesAsDict } from "./types/registry";
+import { URL } from "../util/url";
 
 export namespace ModuleLoading {
     
@@ -24,6 +25,8 @@ export namespace ModuleLoading {
 
         let json = await IO.fetchJson(stdPath);
   
+        const base = URL.getBase();
+
         // load new modules 
         for (let config of json.std) {
             const icon = config.icon;
@@ -54,10 +57,11 @@ export namespace ModuleLoading {
 
         const icon = config.icon;
         const nickname = config.nickname;
+        const base = URL.getBase();
 
-        const jsPath = config.path + config.filename + ".js";
-        const dtsPath = config.path + config.filename + ".d.ts";
-        const wasmPath = config.path + config.filename + "_bg.wasm";
+        const jsPath = base + config.path + config.filename + ".js";
+        const dtsPath = base + config.path + config.filename + ".d.ts";
+        const wasmPath = base + config.path + config.filename + "_bg.wasm";
         
         // TODO expand on this
         const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);

@@ -1,4 +1,4 @@
-import { Vector2, InputState, Domain2, MultiVector2, GeonMath, createRandomGUID } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, GeonMath, createRandomGUID, WebIO } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
@@ -31,6 +31,11 @@ import { NodeAddAction } from "./model/actions/node-add-action";
 import { NodeDeleteAction } from "./model/actions/node-delete-action";
 import { CableAddAction } from "./model/actions/cable-add-action";
 import { CableDeleteAction } from "./model/actions/cable-delete-action";
+import { URL } from "../util/url";
+
+// HELPS FOR DEBUGGING
+//@ts-ignore
+window.URLFUNCS = URL;
 
 /**
  * Represents the entire canvas of nodes.
@@ -111,6 +116,16 @@ export class NodesCanvas {
     }
 
     async testGraph() {
+
+        let params = URL.readParams(["graph"]);
+        if (params[0]) {
+            WebIO.getJson(params[0]).then(json => {
+                this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+            })
+            return;
+        }
+
+        // fallback
         let json = STANDARD_GRAPH;
         this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
     }
@@ -1022,3 +1037,6 @@ export class NodesCanvas {
         this._requestRedraw();
     }
 }
+
+
+

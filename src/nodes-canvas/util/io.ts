@@ -1,3 +1,5 @@
+import { URL } from "../../util/url";
+
 export class IO {
 
     static async importLibrary(path: string) {
@@ -21,12 +23,12 @@ export class IO {
     }
 
     static async fetchText(path: string) {
-        const response = await fetch(location + path);
+        const response = await fetch(URL.getBase() + path);
         return await response.text();  
     }
 
     static async fetchJson(path: string) {
-        const response = await fetch(location + path);
+        const response = await fetch(URL.getBase() + path);
         return await response.json();  
     }
 
