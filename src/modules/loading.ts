@@ -9,6 +9,7 @@ import { TypeShim } from "./shims/type-shim";
 import { Misc } from "../nodes-canvas/util/misc";
 import { getStandardTypesAsDict } from "./types/registry";
 import { URL } from "../util/url";
+import { Debug } from "../../../engine/src/lib";
 
 export namespace ModuleLoading {
     
@@ -45,7 +46,9 @@ export namespace ModuleLoading {
             let {module, types} = await loadWasmModule(config, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);
-                catalogue.types = types;
+                catalogue.types = types!;
+            } else {
+                Debug.warn("could not load module: " + config.nickname + " ...");
             }
         }
 
@@ -57,7 +60,12 @@ export namespace ModuleLoading {
 
         const icon = config.icon;
         const nickname = config.nickname;
-        const base = URL.getBase();
+        let base = "";
+
+        // this is a dumb, error-prone hack
+        if (!config.path.includes("http")) {
+            base = URL.getBase();
+        }
 
         const jsPath = base + config.path + config.filename + ".js";
         const dtsPath = base + config.path + config.filename + ".d.ts";
@@ -67,8 +75,17 @@ export namespace ModuleLoading {
         const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
         const funcBlacklist = Misc.setFromList(["init", "free"]);
 
-        const {js, syntaxTree} = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath);
-      
+        const res = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath).catch((e) => {
+            Debug.warn(e);
+            return undefined;
+        });
+
+        if (!res) {
+            return {module: undefined, types: undefined};
+        }
+
+        const {js, syntaxTree} = res;
+
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types, typeBlacklist);
         // console.log(types);
         

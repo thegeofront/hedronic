@@ -32,9 +32,10 @@
             "icon": "bi-puzzle-fill",
             "nickname": "startin",
             "filename": "gfp_startin",
-            "path": "wasm-modules/startin/",
-            "_path": "https://cdn.jsdelivr.net/npm/gfp-startin@0.2.0/",
-            "_localPath": "wasm-modules/startin/"
+            "path": "https://cdn.jsdelivr.net/npm/gfp-startin@0.2.0/",
+
+            "__path": "https://cdn.jsdelivr.net/npm/gfp-startin@0.2.0/",
+            "__localPath": "wasm-modules/startin/"
         }
     ]
 }
