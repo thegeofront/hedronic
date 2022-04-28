@@ -41,6 +41,12 @@ export class Mesh {
         return "TODODOODDO";
     }
 
+    static isoCurves(points: MultiPoint, levels: number[], level: number) {
+        // TODO make a full delaunay class, or topomesh, or whatever the ***
+        let d = Delaunay.fromPoints(MultiVector3.fromData(points.data).to2D());
+        return d.getIsoCurves(levels, level);
+    }
+
     static readonly Functions = [
         shim(this.new, "Mesh", "", 
             [Type.Object, Type.List], 
@@ -50,6 +56,9 @@ export class Mesh {
             [Type.Object]),
         shim(this.fromDelaunay, "Delaunay", "", 
             [Type.List], 
+            [Type.Object]),
+        shim(this.isoCurves, "Isocurves", "", 
+            [Type.List, Type.List, Type.number], 
             [Type.Object]),
         divider(),
 

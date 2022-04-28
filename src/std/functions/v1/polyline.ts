@@ -1,6 +1,7 @@
+import { Vector2 } from "../../../../../engine/src/lib";
+
 export interface Polyline2 {
-    trait: "polyline-2",
-    data: Array<Array<number>>;
+    data: Vector2[]
 }
 
 // let multiLine3 = TypeShim.new("multi-line-3", Type.Object, undefined, [
