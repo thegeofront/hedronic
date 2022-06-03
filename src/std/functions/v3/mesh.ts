@@ -44,7 +44,7 @@ export class Mesh {
     static isoCurves(points: MultiPoint, levels: number[], level: number) {
         // TODO make a full delaunay class, or topomesh, or whatever the ***
         let d = Delaunay.fromPoints(MultiVector3.fromData(points.data).to2D());
-        return d.getIsoCurves(levels, level);
+        return d.getIsoCurves(levels, level, false);
     }
 
     static readonly Functions = [

@@ -11,7 +11,7 @@ import { WidgetSide } from "../model/widget";
 export namespace GraphCalculation {
 
     /**
-     * If a node becomes outdated: propagate this logic to all cables & nodes dependent on this node
+     * If a node becomes outdated: propagate this flag to all cables & nodes dependent on this node
      */
     export function flagOutdatedCables(graph: NodesGraph, starterKeys: string[]) {
         // TODO

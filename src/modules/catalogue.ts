@@ -75,6 +75,7 @@ export class Catalogue {
             let names = [fragment[0].toLowerCase()];
 
             for (let lib of this.modules.keys()) {
+                console.log(lib);
                 let core = this.get(lib, names); 
                 if (core) return core;
                 

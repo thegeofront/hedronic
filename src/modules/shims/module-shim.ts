@@ -5,6 +5,7 @@ import { tryFilter } from "../../nodes-canvas/util/misc";
 import { FN } from "../helpers/js-loading";
 import { FunctionShim } from "./function-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
+import { Debug } from "../../../../engine/src/lib";
 
 /**
  * A Module, in the programming language sense. 
@@ -49,6 +50,7 @@ export class ModuleShim {
         // console.log(`select name: ${key} type: ${type}`);
         let core;
         let functionname = path[path.length - 1];
+        Debug.log({functionname});
         core = tryFilter(this.blueprints, (item) => {return item.name == functionname});
         if (core == undefined) {
             // then try to find the widget
