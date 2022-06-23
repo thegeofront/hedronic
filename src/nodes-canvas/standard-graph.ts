@@ -4,11 +4,14 @@ export const STANDARD_GRAPH =  {
     "date": "-",
   },
   "dependencies": {
-    "geofront": {
-      "fullname": "Geofront Library",
-      "version": "0.2.0",
-      "address": "https://cdn.jsdelivr.net/npm/geofront"
-    },
+    // "geofront": {
+    //   "fullname": "Geofront Library",
+    //   "version": "",
+    //   "address": "https://cdn.jsdelivr.net/npm/geofront"
+    // },
+    // "gfp-startin": {
+    //   "address": "./wasm-modules/startin"
+    // },
   },
   "graph": {
     "76ddb65a-c329": {

@@ -90,7 +90,7 @@ class MyNodesCanvas extends WebComponent {
         console.log({"nodes": this.nodes})
 
         // menu 
-        const menu = Menu.newDefault(this.nodes);
+        const menu = Menu.new(this.nodes);
         HTML.dispatch(UpdateMenuEvent, menu);
         menu.bindEventListeners(html_canvas);
 

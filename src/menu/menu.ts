@@ -5,13 +5,15 @@ import { MenuList } from "./logic/menu-list";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { MenuDivider } from "./logic/menu-divider";
 import { MenuItem } from "./logic/menu-item";
-import { Compose, Element } from "../html/util";
+import { Compose, Element, HTML } from "../html/util";
 import { MenuAction } from "./logic/menu-action";
 import { MenuToggle } from "./logic/menu-toggle";
 import { Key } from "../../../engine/src/lib";
 import { getNodesActions } from "./actions/nodes";
 import { getAddActions } from "./actions/add";
 import { getSettingsActions } from "./actions/settings";
+import { Catalogue } from "../modules/catalogue";
+import { UpdateMenuEvent } from "../html/registry";
 
 
 export class Menu {
@@ -24,7 +26,7 @@ export class Menu {
     ) {
     }
 
-    static newDefault(nodesCanvas: NodesCanvas) {
+    static new(nodesCanvas: NodesCanvas) {
         let actions = MenuList.new("Actions", [
             MenuList.new("File", getFileActions(nodesCanvas)),
             MenuList.new("Edit", getEditActions(nodesCanvas)),
@@ -33,7 +35,11 @@ export class Menu {
             MenuList.new("View", getViewActions(nodesCanvas)),
             MenuList.new("Settings", getSettingsActions(nodesCanvas))
         ]);
-        return new Menu(nodesCanvas, actions);
+
+        
+        let menu = new Menu(nodesCanvas, actions);
+        nodesCanvas.onCatalogueChangeCallback = menu.whenCatalogueChanges.bind(menu);
+        return menu;
     }
 
     bindEventListeners(context: HTMLCanvasElement) {
@@ -128,6 +134,20 @@ export class Menu {
                 </ul>
             </my-dropdown-button>`
         });
+    }
+
+    whenCatalogueChanges(catalogue: Catalogue) {
+        let index = this.actions.items.findIndex((a) => {
+            if (a instanceof MenuList && a.name == "Add") return true;
+            return false
+        });
+        if (index == -1) return;
+        
+        //
+        (this.actions.items[index] as MenuList).items = getAddActions(catalogue);
+        console.log(this.actions);
+
+        HTML.dispatch(UpdateMenuEvent, this);
     }
 }
 

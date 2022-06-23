@@ -7,6 +7,7 @@ import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
 import { getDefaultWidgets, STD } from "../std/std";
 import { ModuleMetaData, ModuleSource } from "./shims/module-meta-data";
+import { getStandardTypesAsDict } from "./types/registry";
 
 /**
  * Catalogue containing shim Modules
@@ -29,7 +30,7 @@ export class Catalogue {
         return new Catalogue(new Map(), new Map());
     }
 
-    static newFromWidgets() {
+    static default() {
         
         let cat = Catalogue.new();
 
@@ -41,7 +42,7 @@ export class Catalogue {
         let meta = ModuleMetaData.newCustom("widgets", "Widgets", "bi-lightning-charge-fill")
         let widMod = ModuleShim.new(meta, {}, [], widgets);
         cat.addLibrary(widMod);
-
+        cat.types = getStandardTypesAsDict();
         // repeat for functions 
         return cat;
     }

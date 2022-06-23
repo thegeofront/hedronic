@@ -58,6 +58,8 @@ export class NodesCanvas {
     private boxStart: Vector2 | undefined;
     public clipboardStorage?: string;
 
+    public onCatalogueChangeCallback?: Function;
+
     private constructor(
         private readonly ctx: CTX,
         private readonly camera: CtxCamera,
@@ -88,7 +90,7 @@ export class NodesCanvas {
         // fill the html of menu now that menu is created
 
         const canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue, settings);
-        canvas.resetGraph(graph);
+        canvas.resetGraphAndCatalogue(graph);
         canvas.start();
         return canvas;
     }
@@ -124,7 +126,7 @@ export class NodesCanvas {
             catalogue = await ModuleLoading.loadModulesFromDependencyJson(json.dependencies);
         } else {
             Debug.error("This file is too old to read!");
-            throw new Error("This cannot be.");
+            throw new Error("This file is too old to be read. it relies on the old way of loading the catalogue");
         }
 
         // fallback
@@ -161,7 +163,7 @@ export class NodesCanvas {
     }
 
 
-    resetGraph(graph= NodesGraph.new()) {
+    resetGraphAndCatalogue(graph = NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
         this.graph.setWidgetChangeCallback(this.onWidgetChange.bind(this));
@@ -266,7 +268,7 @@ export class NodesCanvas {
     }
 
 
-    // Ctrl + L
+    // Ctrl + O
     onLoad() {
         console.log("loading...");
         IO.promptLoadTextFile((textFile) => {
@@ -276,7 +278,12 @@ export class NodesCanvas {
             }
             let str = textFile.toString();
             let json = JSON.parse(str);
-            this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+            
+            // this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+            ModuleLoading.loadModulesFromDependencyJson(json.dependencies, this.catalogue).then((_) => {
+                this.resetGraphAndCatalogue(GraphConversion.fromJSON(json, this.catalogue)!);
+                if (this.onCatalogueChangeCallback) this.onCatalogueChangeCallback(this.catalogue);
+            });
         })
     }
 
@@ -289,7 +296,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.resetGraph(NodesGraph.fromJs(str.toString(), this.catalogue)!);
+            this.resetGraphAndCatalogue(NodesGraph.fromJs(str.toString(), this.catalogue)!);
         })
     }
 
@@ -394,6 +401,7 @@ export class NodesCanvas {
     // TODO make this nicer...
     collapseCounter = 1;
     collapseGraphToOperation() {
+        Debug.log("internal...");
         let GRAPH = this.graph.toJs("GRAPH" + this.collapseCounter);
         this.collapseCounter += 1;
         
@@ -406,7 +414,7 @@ export class NodesCanvas {
             this.catalogue.addLibrary(ModuleShim.new(meta, {}, [graph], []));
         }
         // update the UI...
-        console.warn("TODO UPDATE THE NEW UI");
+        if (this.onCatalogueChangeCallback) this.onCatalogueChangeCallback(this.catalogue);
     }
 
 

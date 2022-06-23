@@ -26,9 +26,7 @@ export namespace ModuleLoading {
     export async function loadModulesToCatalogue(stdPath: string) {
 
         // get the catalogue, fill it with standard widgets & types
-        let catalogue = Catalogue.newFromWidgets();   
-        catalogue.types = getStandardTypesAsDict();
-
+        let catalogue = Catalogue.default();   
         let json = await IO.fetchJson(stdPath);
 
         // load new modules 
@@ -99,21 +97,23 @@ export namespace ModuleLoading {
         return catalogue
     }
 
-    export async function loadModulesFromDependencyJson(depJson: any) {
-
-        // get the catalogue, fill it with standard widgets & types
-        let catalogue = Catalogue.newFromWidgets();   
-        catalogue.types = getStandardTypesAsDict();
+    export async function loadModulesFromDependencyJson(depJson: any, catalogue = Catalogue.default()) {
 
         // load wasm modules 
         for (let nickname in depJson) {
+
+            if (catalogue.modules.has(nickname)) {
+                Debug.warn("duplicate library!");
+                continue;
+            }
+
             let meta = ModuleMetaData.fromIncompleteJson(nickname, depJson[nickname]);   
             let {module, types} = await loadWasmModule(meta, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);
                 catalogue.types = types!;
             } else {
-                Debug.warn("something went wrong while loading: " + nickname + " ... ");
+                Debug.error("something went wrong while loading: " + nickname + " ... ");
             }
         }
         return catalogue;
