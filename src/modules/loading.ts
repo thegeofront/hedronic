@@ -8,8 +8,11 @@ import ts from "typescript";
 import { TypeShim } from "./shims/type-shim";
 import { Misc } from "../nodes-canvas/util/misc";
 import { getStandardTypesAsDict } from "./types/registry";
-import { URL } from "../util/url";
 import { Debug } from "../../../engine/src/lib";
+import { URL } from "../util/url";
+import { ModuleMetaData } from "./shims/module-meta-data";
+
+const CDN = "https://cdn.jsdelivr.net/npm";
 
 export namespace ModuleLoading {
     
@@ -17,6 +20,8 @@ export namespace ModuleLoading {
      * - read the json
      * - create libraries
      * - put them in a Catalogue
+     * 
+     * NOTE: this is now the old way of doing things
      * */ 
     export async function loadModulesToCatalogue(stdPath: string) {
 
@@ -25,8 +30,6 @@ export namespace ModuleLoading {
         catalogue.types = getStandardTypesAsDict();
 
         let json = await IO.fetchJson(stdPath);
-  
-        const base = URL.getBase();
 
         // load new modules 
         for (let config of json.std) {
@@ -43,7 +46,21 @@ export namespace ModuleLoading {
 
         // load wasm modules 
         for (let config of json.wasm) {
-            let {module, types} = await loadWasmModule(config, catalogue.types);
+            const icon = config.icon;
+            const nickname = config.nickname;
+            let base = "";
+    
+            // this is a dumb, error-prone hack
+            // I think i'm doing this to load a locally saved module.
+            if (!config.path.includes("http")) {
+                base = URL.getBase();
+            }
+    
+            const jsPath = base + config.path + config.filename + ".js";
+            const dtsPath = base + config.path + config.filename + ".d.ts";
+            const wasmPath = base + config.path + config.filename + "_bg.wasm";
+
+            let {module, types} = await loadWasmModule(nickname, icon, jsPath, dtsPath, wasmPath, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);
                 catalogue.types = types!;
@@ -55,22 +72,35 @@ export namespace ModuleLoading {
         return catalogue
     }
 
+    export async function loadModulesFromDependencyJson(depJson: any) {
 
-    export async function loadWasmModule(config: any, types = new Map<string, TypeShim>()) {
+        // get the catalogue, fill it with standard widgets & types
+        let catalogue = Catalogue.newFromWidgets();   
+        catalogue.types = getStandardTypesAsDict();
 
-        const icon = config.icon;
-        const nickname = config.nickname;
-        let base = "";
-
-        // this is a dumb, error-prone hack
-        if (!config.path.includes("http")) {
-            base = URL.getBase();
+        // load wasm modules 
+        for (let nickname in depJson) {
+            let {icon, jsPath, dtsPath, wasmPath} = ModuleMetaData.fromDepJsonItem(nickname, depJson[nickname]);   
+            let {module, types} = await loadWasmModule(nickname, icon, jsPath, dtsPath, wasmPath, catalogue.types);
+            if (module) {
+                catalogue.addLibrary(module);
+                catalogue.types = types!;
+            } else {
+                Debug.warn("something went wrong while loading: " + nickname + " ... ");
+            }
         }
+        return catalogue;
+    }
 
-        const jsPath = base + config.path + config.filename + ".js";
-        const dtsPath = base + config.path + config.filename + ".d.ts";
-        const wasmPath = base + config.path + config.filename + "_bg.wasm";
-        
+
+    export async function loadWasmModule(
+        nickname: string,
+        icon: string,
+        jsPath: string,
+        dtsPath: string,
+        wasmPath: string,
+        types = new Map<string, TypeShim>()) {
+
         // TODO expand on this
         const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
         const funcBlacklist = Misc.setFromList(["init", "free"]);
@@ -118,17 +148,9 @@ export namespace ModuleLoading {
         
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
         let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, types);
-
-        // use the source map to find types
-        
-        // use the source map to find functions 
-
-        // 
-
-        // console.log(libObj, sourceMap);
-
         const module = ModuleShim.new(nickname, icon, jsPath, jsModule, shims, []);
 
         return {module, types};
     }
 }
+

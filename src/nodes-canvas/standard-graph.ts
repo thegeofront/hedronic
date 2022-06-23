@@ -4,8 +4,14 @@ export const STANDARD_GRAPH =  {
     "date": "-",
   },
   "dependencies": {
-        "geofront": "0.1.1",
-        "gfp-startin": "^2.0.0",
+    "geofront": {
+      "fullname": "Geofront Library",
+      "version": "",
+      "address": "https://cdn.jsdelivr.net/npm/geofront"
+    },
+    "gfp-startin": {
+      "address": "./wasm-modules/startin"
+    },
   },
   "graph": {
     "76ddb65a-c329": {

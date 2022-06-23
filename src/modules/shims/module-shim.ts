@@ -6,6 +6,7 @@ import { FN } from "../helpers/js-loading";
 import { FunctionShim } from "./function-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 import { Debug } from "../../../../engine/src/lib";
+import { ModuleMetaData } from "./module-meta-data";
 
 /**
  * A Module, in the programming language sense. 
@@ -14,6 +15,7 @@ import { Debug } from "../../../../engine/src/lib";
 export class ModuleShim {
     constructor(
         public name: string,
+        public meta: ModuleMetaData | undefined,
         public icon: string,
         public fullPath: string,
 
@@ -24,7 +26,7 @@ export class ModuleShim {
         ) {}
 
     static new(name: string, icon: string, fullPath: string, realModule: any, operations: FunctionShim[], widgets: Widget[]) {
-        return new ModuleShim(name, icon, fullPath, realModule, operations, widgets);
+        return new ModuleShim(name, undefined, icon, fullPath, realModule, operations, widgets);
     }
 
     /**
@@ -40,7 +42,7 @@ export class ModuleShim {
                 ops.push(op);
             }
         }
-        return new ModuleShim(name, icon, fullPath, obj, ops, []);
+        return new ModuleShim(name, undefined, icon, fullPath, obj, ops, []);
     }
 
     /**
@@ -50,7 +52,6 @@ export class ModuleShim {
         // console.log(`select name: ${key} type: ${type}`);
         let core;
         let functionname = path[path.length - 1];
-        Debug.log({functionname});
         core = tryFilter(this.blueprints, (item) => {return item.name == functionname});
         if (core == undefined) {
             // then try to find the widget
@@ -59,14 +60,11 @@ export class ModuleShim {
         return core;
     }
 
-
     /**
      * publish this module globally
      */
     publishGlobally() {
-        
         let space = {};
-
         for (let op of this.blueprints) {
             Object.defineProperty(space, op.name, { value: "hallo", configurable: true});
         }

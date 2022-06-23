@@ -102,7 +102,7 @@ export class NodesCanvas {
 
         // NOTE: for now, load a standard graph, just to show something. 
         // This could eventually just be nothing
-        let json = STANDARD_GRAPH;
+        let json: any | undefined;
 
         // try to load a different json from the url.
         if (params[0]) {
@@ -112,21 +112,24 @@ export class NodesCanvas {
             } 
         } 
 
+        // fallback 
+        if (!json) { 
+            json = STANDARD_GRAPH; 
+        }
+
         // extract catalogue from the json
         let catalogue: Catalogue | undefined;
-        // if (!json.dependencies) {
-        //     Debug.error("no dependencies!");
-        // } 
+        if (json.dependencies) {
+            catalogue = await ModuleLoading.loadModulesFromDependencyJson(json.dependencies);
+        } 
 
+        // fallback
         if (!catalogue) {
             const stdPath = "./std.json";
             catalogue = await ModuleLoading.loadModulesToCatalogue(stdPath);
         }
-
-        console.log({json, catalogue})
-
+        
         const graph = GraphConversion.fromJSON(json, catalogue)!
-
         return [graph, catalogue];
     }
         
