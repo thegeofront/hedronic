@@ -62,4 +62,3 @@ We require a clear distinction between:
 - Collection type (Item, List, Object)
 - Construct type (Point, Color, Polygon, Mesh, Vector, MultiVector) ( Collections filled with labelled Primitives or other Collections ) -> Meaning just an object
 
-

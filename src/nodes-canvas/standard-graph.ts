@@ -1,5 +1,13 @@
 export const STANDARD_GRAPH =  {
-  "nodes": {
+  "meta": {
+    "name": "default script",
+    "date": "-",
+  },
+  "dependencies": {
+        "geofront": "0.1.1",
+        "gfp-startin": "^2.0.0",
+  },
+  "graph": {
     "76ddb65a-c329": {
       "hash": "76ddb65a-c329",
       "position": {

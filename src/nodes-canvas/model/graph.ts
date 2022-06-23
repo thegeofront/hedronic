@@ -51,6 +51,10 @@ export class NodesGraph {
         return GraphConversion.toFunction(this, name);
     }
 
+    toJson() {
+        return GraphConversion.toJson(this);
+    }
+
     onWidgetChange(hash: string, widget: Widget) {
         let node = this.getNode(hash)!;
         setNodeToWidgetInOuts(this, node, widget);

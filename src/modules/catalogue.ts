@@ -44,6 +44,10 @@ export class Catalogue {
         return cat;
     }
 
+    toJson() {
+        return {};
+    }
+
     get(lib: string, path: string[]) {  
         if (lib == "std") {
             return this.std.get(path);

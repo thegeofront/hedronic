@@ -1,4 +1,4 @@
-import { Vector2, InputState, Domain2, MultiVector2, GeonMath, createRandomGUID, WebIO } from "../../../engine/src/lib";
+import { Vector2, InputState, Domain2, MultiVector2, GeonMath, createRandomGUID, WebIO, Debug } from "../../../engine/src/lib";
 import { CtxCamera } from "./rendering/ctx/ctx-camera";
 import { CTX } from "./rendering/ctx/ctx-helpers";
 import { NodesGraph } from "./model/graph";
@@ -11,8 +11,6 @@ import { IO } from "./util/io";
 import { History } from "./model/history";
 import { HTML } from "../html/util";
 import { offsetOverlayEvent, setMenu, setRightPanelOld } from "../html/registry";
-import { Menu } from "../menu/menu";
-import { State } from "./model/state";
 import { mapmap } from "./util/misc";
 import { StopVisualizePreviewEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 import { Settings } from "./model/settings";
@@ -25,13 +23,13 @@ import { GraphCalculation } from "./logic/graph-calculation";
 import { makeMenuFromCable } from "../menu/right-menu/param-menu";
 import { Type } from "../modules/types/type";
 import { STANDARD_GRAPH } from "./standard-graph";
-import { FunctionShim } from "../modules/shims/function-shim";
 import { Action } from "./model/action";
 import { NodeAddAction } from "./model/actions/node-add-action";
 import { NodeDeleteAction } from "./model/actions/node-delete-action";
 import { CableAddAction } from "./model/actions/cable-add-action";
 import { CableDeleteAction } from "./model/actions/cable-delete-action";
 import { URL } from "../util/url";
+import { ModuleLoading } from "../modules/loading";
 
 // HELPS FOR DEBUGGING
 //@ts-ignore
@@ -70,7 +68,7 @@ export class NodesCanvas {
         ) {}
 
 
-    static new(htmlCanvas: HTMLCanvasElement, catalogue: Catalogue) {
+    static async new(htmlCanvas: HTMLCanvasElement) {
 
         const ctx = htmlCanvas.getContext('2d');
         if (!ctx || ctx == null) {
@@ -78,17 +76,60 @@ export class NodesCanvas {
             return undefined;
         } 
 
+        // create all subcomponents of canvas
+        const [graph, catalogue] = await NodesCanvas.initGraphAndCatalogue();
+
         const camera = CtxCamera.new(ctx.canvas, Vector2.new(-100,-100), 1);
         const state = InputState.new(ctx.canvas);
-        const graph = NodesGraph.new();
+
         const graphDecoupler = History.new(graph);
         const settings = new Settings();
         // fill the html of menu now that menu is created
-        
-        let canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue, settings);
+
+        const canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue, settings);
+        canvas.resetGraph(graph);
+        canvas.start();
         return canvas;
     }
 
+    /**
+     * Both the graph and catalogue are extracted from a json. 
+     */
+    static async initGraphAndCatalogue() : Promise<[NodesGraph, Catalogue]> {
+
+        // find the json
+        let params = URL.getParams(["graph"]);
+
+        // NOTE: for now, load a standard graph, just to show something. 
+        // This could eventually just be nothing
+        let json = STANDARD_GRAPH;
+
+        // try to load a different json from the url.
+        if (params[0]) {
+            let maybeJson = await WebIO.getJson(params[0]);
+            if (maybeJson.graph) { // must have
+                json = maybeJson;
+            } 
+        } 
+
+        // extract catalogue from the json
+        let catalogue: Catalogue | undefined;
+        // if (!json.dependencies) {
+        //     Debug.error("no dependencies!");
+        // } 
+
+        if (!catalogue) {
+            const stdPath = "./std.json";
+            catalogue = await ModuleLoading.loadModulesToCatalogue(stdPath);
+        }
+
+        console.log({json, catalogue})
+
+        const graph = GraphConversion.fromJSON(json, catalogue)!
+
+        return [graph, catalogue];
+    }
+        
 
     async start() {
 
@@ -108,60 +149,8 @@ export class NodesCanvas {
 
         this.graphHistory.setCallback(this.onGraphChange.bind(this));
 
-        // this.menu.updateCategories(this);
-        this.testGraph();
-
         // show the settings page of the canvas
         HTML.dispatch(setRightPanelOld, this);
-    }
-
-    async testGraph() {
-
-        let params = URL.getParams(["graph"]);
-        if (params[0]) {
-            WebIO.getJson(params[0]).then(json => {
-                this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
-            })
-            return;
-        }
-
-        // fallback
-        let json = STANDARD_GRAPH;
-        this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
-    }
-    
-    async testGraphOld() {
-        // let js = `
-        // function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
-        // ) {
-        //     let [aFixed] = various.toBoolean(a) /* "x": 3 | "y": -1 */;
-        //     let [cFixed] = various.toBoolean(c) /* "x": 3 | "y": 2 */;
-
-        //     let [b] = bool.not(aFixed) /* "x": 8 | "y": -1 */;
-        //     let [d] = bool.or(aFixed, cFixed) /* "x": 8 | "y": 2 */;
-        //     let [e] = bool.and(b, d) /* "x": 13 | "y": 0 */;
-        //     return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
-        // }
-        // `;
-
-        // let js = `
-        // function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
-        // ) {
-        //     let [aFixed] = various.asNumber(a) /* "x": 3 | "y": -1 */;
-        //     let [cFixed] = various.asNumber(c) /* "x": 3 | "y": 3 */;
-        //     let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
-        //     let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
-        //     let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;
-        //     return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
-        // }
-        // `;
-        // this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
-
-        // let json = JSON.parse(STANDARD_GRAPH);
-        // this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
-
-        // this.graph.log();
-        return;
     }
 
 
@@ -254,9 +243,19 @@ export class NodesCanvas {
     // Ctrl + S
     onSave() {
         console.log("saving...");
-        let json = GraphConversion.toJSON(this.graph);
-        let str = JSON.stringify(json, null, 2)
-        IO.promptSaveFile("graph.json", str);
+        let name = prompt("file name: ", "graph");
+
+        let file = {
+            "meta": {
+                "name": name,
+                "date": Date.now(),
+            },
+            "dependencies": this.catalogue.toJson(),
+            "graph": this.graph.toJson(),
+        }
+
+        let fileString = JSON.stringify(file, null, 2)
+        IO.promptSaveFile(`${name}.json`, fileString);
     }
 
 
@@ -300,7 +299,7 @@ export class NodesCanvas {
         let hashes = this.selectedSockets.map((s => s.hash));
         this.graphHistory.deleteNodes(hashes); 
         let subgraph = this.graph.subgraph(hashes);
-        let json = GraphConversion.toJSON(subgraph);
+        let json = GraphConversion.toJson(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 
@@ -311,7 +310,7 @@ export class NodesCanvas {
     onCopy() : string {
         let hashes = this.selectedSockets.map((s => s.hash));
         let subgraph = this.graph.subgraph(hashes);
-        let json = GraphConversion.toJSON(subgraph);
+        let json = GraphConversion.toJson(subgraph);
         let str = JSON.stringify(json, null, 2)
         console.log(json);
         return str; 

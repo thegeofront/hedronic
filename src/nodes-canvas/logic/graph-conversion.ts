@@ -31,40 +31,40 @@ export namespace GraphConversion {
     }
     
     export function fromJSON(json: any, catalogue: Catalogue) : NodesGraph | undefined {
-    
+        
         try {
-        let graph = NodesGraph.new();
-        for (let hash in json.nodes) {
-            let node = json.nodes[hash];
-            let type: CoreType = node.type;
-            
-            if (type == CoreType.Widget) {
-                let lib = "widgets";
-                let name = node.process.name;
+            let graph = NodesGraph.new();
+            for (let hash in json.graph) {
+                let node = json.graph[hash];
+                let type: CoreType = node.type;
                 
-                let widget = catalogue.selectnew(lib, [name]) as Widget;
-                if (!widget) {
-                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
-                    continue;
+                if (type == CoreType.Widget) {
+                    let lib = "widgets";
+                    let name = node.process.name;
+                    
+                    let widget = catalogue.selectnew(lib, [name]) as Widget;
+                    if (!widget) {
+                        console.error(`widget: ${lib}.${name}, ${type} cannot be created. The library is probably missing from this project`);
+                        continue;
+                    }
+        
+                    widget.saveState = node.process.state;
+                    widget.attach(hash);
+        
+                    let geonNode = GeonNode.fromJson(node, widget);
+                    if (!geonNode) {
+                        console.error(`widget: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
+                        continue;
+                    }
+                    graph.addNode(geonNode);
+                    continue; 
                 }
-    
-                widget.saveState = node.process.state;
-                widget.attach(hash);
-    
-                let geonNode = GeonNode.fromJson(node, widget);
-                if (!geonNode) {
-                    console.error(`widget: ${lib}.${name}, ${type} cannot be created. json data provided is errorous`)
-                    continue;
-                }
-                graph.addNode(geonNode);
-                continue; 
-            }
-    
-            if (type == CoreType.Operation) {
-                let path = node.process.path;
-                let lib = node.process.path[0];
-                let name = node.process.name;
-                
+        
+                if (type == CoreType.Operation) {
+                    let path = node.process.path;
+                    let lib = node.process.path[0];
+                    let name = node.process.name;
+                    
                 let process = catalogue.selectnew(path[0], path.slice(1));
                 if (!process) {
                     console.error(`operation process: ${path}, of type ${type}, cannot be created. The library is probably missing from this project`);
@@ -88,15 +88,44 @@ export namespace GraphConversion {
         }
     }
     
-    export function toJSON(graph: NodesGraph) {
-        
+    export function toJson(graph: NodesGraph) {
         let nodes = graph.nodes;
-        return {
-                nodes: mapToJson(nodes, GeonNode.toJson),
-        }
+        return mapToJson(nodes, GeonNode.toJson);
     }
     
-    
+    function testGraphOld() {
+        // let js = `
+        // function anonymous(a /* "widget": "button" | "state": "true" | "x": -2 | "y": -1  */,c /* "widget": "button" | "state": "false" | "x": -2 | "y": 2 */
+        // ) {
+        //     let [aFixed] = various.toBoolean(a) /* "x": 3 | "y": -1 */;
+        //     let [cFixed] = various.toBoolean(c) /* "x": 3 | "y": 2 */;
+
+        //     let [b] = bool.not(aFixed) /* "x": 8 | "y": -1 */;
+        //     let [d] = bool.or(aFixed, cFixed) /* "x": 8 | "y": 2 */;
+        //     let [e] = bool.and(b, d) /* "x": 13 | "y": 0 */;
+        //     return [e /* "widget": "lamp" | "x": 18 | "y": -1 */, e /* "widget": "image" | "x": 8 | "y": 5 */];
+        // }
+        // `;
+
+        // let js = `
+        // function anonymous(a /* "widget": "input" | "state": "7" | "x": -2 | "y": -1  */,c /* "widget": "input" | "state": "4" | "x": -2 | "y": 3 */
+        // ) {
+        //     let [aFixed] = various.asNumber(a) /* "x": 3 | "y": -1 */;
+        //     let [cFixed] = various.asNumber(c) /* "x": 3 | "y": 3 */;
+        //     let [d] = types.vector(aFixed, cFixed, cFixed) /* "x": 8 | "y": -1 */;
+        //     let [e] = types.vector(cFixed, aFixed, aFixed) /* "x": 8 | "y": 3 */;
+        //     let [f] = types.line(d, e) /* "x": 13 | "y": 5 */;
+        //     return [d /* "widget": "view" | "x": 18 | "y": -1 */, e /* "widget": "view" | "x": 18 | "y": 2 */, f /* "widget": "view" | "x": 18 | "y": 5 */];
+        // }
+        // `;
+        // this.resetGraph(NodesGraph.fromJs(js, this.catalogue)!);
+
+        // let json = JSON.parse(STANDARD_GRAPH);
+        // this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+
+        // this.graph.log();
+        return;
+    }
     
     /**
      * Create a new Graph from a js function. This function must be a pure function, and can only call other pure functions.

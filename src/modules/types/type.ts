@@ -34,6 +34,7 @@ export enum Type {
     Literal,
 
     // buffers 
+    Blob,      // Vec<?>   // Unknown
     U8Buffer,  // Vec<u8>  // Byte
     I8Buffer,  // Vec<u8>  // (leave out)
     U16Buffer, // Vec<u8>  // (leave out)

@@ -1,6 +1,4 @@
 import { Menu } from "../../menu/menu";
-import { Catalogue } from "../../modules/catalogue";
-import { ModuleLoading } from "../../modules/loading";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
 import { UpdateMenuEvent } from "../registry";
 import { HTML, Template } from "../util";
@@ -69,7 +67,6 @@ class MyNodesCanvas extends WebComponent {
     }  
 
     async init() {
-        let catalogue = await this.setupCatalogue();
         // this.listen(CanvasResizeEvent, this.resizeCanvas);
         window.addEventListener("resize", this.resizeCanvas.bind(this));
         let canvas = this.get("nodes-canvas");
@@ -79,23 +76,18 @@ class MyNodesCanvas extends WebComponent {
         // document.addEventListener("paste", this.onDomPaste.bind(this));
 
         this.resizeCanvas();
-        this.setupGraphEditor(catalogue);
+        this.setupGraphEditor();
     }
 
-    async setupCatalogue() {
-        const stdPath = "./std.json";
-        const catalogue = ModuleLoading.loadModulesToCatalogue(stdPath);
-        return catalogue;
-    }
-
-    async setupGraphEditor(catalogue: Catalogue) {
+    async setupGraphEditor() {
 
         // get references of all items on the canvas
         const html_canvas = this.get("nodes-canvas") as HTMLCanvasElement;
         // const ui = this.get("nodes-panel") as HTMLDivElement;
         // nodes
-        this.nodes = NodesCanvas.new(html_canvas, catalogue)!;
-        this.nodes.start();
+        this.nodes = (await NodesCanvas.new(html_canvas))!;
+
+        console.log({"nodes": this.nodes})
 
         // menu 
         const menu = Menu.newDefault(this.nodes);
