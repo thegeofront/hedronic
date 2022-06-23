@@ -25,7 +25,7 @@ export function getFileActions(context: NodesCanvas) : MenuItem[] {
 
 function fileNew(n: NodesCanvas) {
     console.log("new");
-    n.resetGraphAndCatalogue();
+    n.resetGraph();
 }
 
 function fileLoadJson(n: NodesCanvas) {

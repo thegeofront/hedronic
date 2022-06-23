@@ -17,7 +17,7 @@ export class ModuleMetaData {
         public filename: string, // the name of the js, ts, and wasm files 
         public fullname: string, // A user-readable name, with capitals, etc. 
         public version: string, 
-        public address: string, 
+        public url: string, 
         public icon: string, 
         public jsPath: string, 
         public dtsPath: string, 
@@ -45,17 +45,17 @@ export class ModuleMetaData {
         let filename = "";
         let fullname = "";
         let version = "";
-        let address = "";
+        let url = "";
         let icon = "";
         
         // try to fill the above things with
         if (data instanceof Object) {
             if (data.fullname) { fullname = data.fullname; }
             if (data.version) { version = data.version; }
-            if (data.address) { 
-                address = data.address 
-                if (!address.endsWith('/')) {
-                    address = address + "/"; 
+            if (data.url) { 
+                url = data.url 
+                if (!url.endsWith('/')) {
+                    url = url + "/"; 
                 } 
             }
             if (data.icon) {
@@ -68,11 +68,11 @@ export class ModuleMetaData {
         } 
 
         // defaults
-        if (address == "") {
+        if (url == "") {
             if (version == "") {
-                address = `${CDN}/${nickname}/`;
+                url = `${CDN}/${nickname}/`;
             } else {
-                address = `${CDN}/${nickname}@${version}/`;
+                url = `${CDN}/${nickname}@${version}/`;
             }
         }
         
@@ -91,15 +91,15 @@ export class ModuleMetaData {
 
         // // this is a dumb, error-prone hack
         // // I think i'm doing this to load a locally saved module.
-        if (!address.includes("http")) {
+        if (!url.includes("http")) {
             base = URL.getBase();
         }
 
-        const jsPath = base + address + filename + ".js";
-        const dtsPath = base + address + filename + ".d.ts";
-        const wasmPath = base + address + filename + "_bg.wasm";
+        const jsPath = base + url + filename + ".js";
+        const dtsPath = base + url + filename + ".d.ts";
+        const wasmPath = base + url + filename + "_bg.wasm";
         
-        return new ModuleMetaData(ModuleSource.Unknown, nickname, filename, fullname, version, address, icon, jsPath, dtsPath, wasmPath);
+        return new ModuleMetaData(ModuleSource.Unknown, nickname, filename, fullname, version, url, icon, jsPath, dtsPath, wasmPath);
     }
 
     toJson() : any {

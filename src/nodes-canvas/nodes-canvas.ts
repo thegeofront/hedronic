@@ -10,7 +10,7 @@ import { drawMultiCable, drawNode, DrawState, renderCable } from "./rendering/no
 import { IO } from "./util/io";
 import { History } from "./model/history";
 import { HTML } from "../html/util";
-import { offsetOverlayEvent, setMenu, setRightPanelOld } from "../html/registry";
+import { offsetOverlayEvent, setMenu, setRightPanelOld, UpdatePluginsEvent } from "../html/registry";
 import { mapmap } from "./util/misc";
 import { StopVisualizePreviewEvent, VisualizePreviewEvent } from "../viewer/viewer-app";
 import { Settings } from "./model/settings";
@@ -90,7 +90,7 @@ export class NodesCanvas {
         // fill the html of menu now that menu is created
 
         const canvas = new NodesCanvas(ctx, camera, state, graph, graphDecoupler, catalogue, settings);
-        canvas.resetGraphAndCatalogue(graph);
+        canvas.resetGraph(graph);
         canvas.start();
         return canvas;
     }
@@ -162,8 +162,10 @@ export class NodesCanvas {
         HTML.dispatch(setRightPanelOld, this);
     }
 
-
-    resetGraphAndCatalogue(graph = NodesGraph.new()) {
+    /**
+     * NOTE that resetting the graph also means resetting the catalogue to an extend
+     */
+    resetGraph(graph = NodesGraph.new()) {
         this.graph = graph;
         this.graphHistory.reset(graph);
         this.graph.setWidgetChangeCallback(this.onWidgetChange.bind(this));
@@ -235,6 +237,11 @@ export class NodesCanvas {
         // TODO add the rest
     }
 
+    onCatalogueChange() {
+        if (this.onCatalogueChangeCallback) this.onCatalogueChangeCallback(this.catalogue);
+        HTML.dispatch(UpdatePluginsEvent, this.catalogue);
+    }
+
     private async recalcAndRedraw(changedNodes?: string[]) {
         let succes = await GraphCalculation.calculate(this.graph, changedNodes);
         this._requestRedraw();
@@ -281,8 +288,8 @@ export class NodesCanvas {
             
             // this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
             ModuleLoading.loadModulesFromDependencyJson(json.dependencies, this.catalogue).then((_) => {
-                this.resetGraphAndCatalogue(GraphConversion.fromJSON(json, this.catalogue)!);
-                if (this.onCatalogueChangeCallback) this.onCatalogueChangeCallback(this.catalogue);
+                this.resetGraph(GraphConversion.fromJSON(json, this.catalogue)!);
+                this.onCatalogueChange();
             });
         })
     }
@@ -296,7 +303,7 @@ export class NodesCanvas {
             if (!str) {
                 return;
             }
-            this.resetGraphAndCatalogue(NodesGraph.fromJs(str.toString(), this.catalogue)!);
+            this.resetGraph(NodesGraph.fromJs(str.toString(), this.catalogue)!);
         })
     }
 
@@ -414,7 +421,7 @@ export class NodesCanvas {
             this.catalogue.addLibrary(ModuleShim.new(meta, {}, [graph], []));
         }
         // update the UI...
-        if (this.onCatalogueChangeCallback) this.onCatalogueChangeCallback(this.catalogue);
+        this.onCatalogueChange();
     }
 
 
@@ -829,6 +836,60 @@ export class NodesCanvas {
         // this.mgpHover = undefined;
     }
 
+
+    /**
+     * if we remove a module, we should remove all links to those modules
+     */
+    deleteModule(key: string) {
+
+        if (!this.catalogue.modules.has(key)) {
+            Debug.warn("key to delete nodes from does not exist")
+            return;
+        }
+
+        // delete all graph nodes using this module
+        this.graph.nodes.forEach((node) => {
+            if (!node.operation) return;
+            if (!node.operation.path) return;
+            if (node.operation.path.length == 0) return;
+            let path = node.operation.path[0]; 
+            if (key !== path) return;
+            console.log(path);
+            this.graph.deleteNode(node.hash);
+        })
+
+        // then remove the module itself
+        this.catalogue.modules.delete(key);
+        this.onCatalogueChange();
+    }
+
+
+    async addModule(url: string, nickname: string, name: string, version: string) {
+        
+        // get nickname from the url
+        if (nickname == "") {
+            let parts = url.split("/"); 
+            nickname = parts[parts.length-1];
+            if (nickname === "") nickname = parts[parts.length-2];
+        }
+        
+        console.log({url, nickname, name, version});
+        
+        // make a dependency json to re-use infrastructure  
+        let json: any = {};
+        json[nickname] = {
+            version, 
+            fullname: name,
+            url,
+        }
+
+        console.log(json);
+
+        await ModuleLoading.loadModulesFromDependencyJson(json, this.catalogue);
+        this.onCatalogueChange();
+        console.log(this.catalogue.modules);
+        return false;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
 

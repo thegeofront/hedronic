@@ -33,7 +33,7 @@ export class MenuAction<T> extends MenuItem {
         let keys = this.shortcut ? this.shortcut.map((k) => Key[k]).join(" + ") : ""; 
         let element = Element.html`
         <li>
-            <a onclick="">
+            <a>
                 <span class="icon">${""}</span>
                 <span class="fill">${this.name}</span>
                 <span>${keys}</span>

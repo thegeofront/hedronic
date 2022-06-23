@@ -142,11 +142,7 @@ export class Menu {
             return false
         });
         if (index == -1) return;
-        
-        //
         (this.actions.items[index] as MenuList).items = getAddActions(catalogue);
-        console.log(this.actions);
-
         HTML.dispatch(UpdateMenuEvent, this);
     }
 }

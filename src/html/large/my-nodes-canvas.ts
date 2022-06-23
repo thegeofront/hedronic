@@ -1,6 +1,6 @@
 import { Menu } from "../../menu/menu";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
-import { UpdateMenuEvent } from "../registry";
+import { UpdateMenuEvent, UpdatePluginsEvent } from "../registry";
 import { HTML, Template } from "../util";
 import { WebComponent } from "../web-component";
 
@@ -86,21 +86,21 @@ class MyNodesCanvas extends WebComponent {
         // const ui = this.get("nodes-panel") as HTMLDivElement;
         // nodes
         this.nodes = (await NodesCanvas.new(html_canvas))!;
+                
+        // we are already building spagetti code, so lets go one step further
+        window.nodes = this.nodes;
 
         console.log({"nodes": this.nodes})
 
         // menu 
         const menu = Menu.new(this.nodes);
         HTML.dispatch(UpdateMenuEvent, menu);
+        HTML.dispatch(UpdatePluginsEvent);
         menu.bindEventListeners(html_canvas);
 
         // timing
         let acc_time = 0;
         // let counter = FpsCounter.new();
-
-        // publish globally 
-        // @ts-ignore
-        window.nodes = this.nodes;
 
         // loop
         let loop = (elapsed_time: number) => {
@@ -159,3 +159,9 @@ class MyNodesCanvas extends WebComponent {
         // });
     }
 });
+
+declare global {
+    interface Window {
+        nodes: NodesCanvas
+    }
+}
