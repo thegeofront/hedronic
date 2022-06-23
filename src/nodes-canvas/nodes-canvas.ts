@@ -30,6 +30,7 @@ import { CableAddAction } from "./model/actions/cable-add-action";
 import { CableDeleteAction } from "./model/actions/cable-delete-action";
 import { URL } from "../util/url";
 import { ModuleLoading } from "../modules/loading";
+import { ModuleMetaData } from "../modules/shims/module-meta-data";
 
 // HELPS FOR DEBUGGING
 //@ts-ignore
@@ -398,7 +399,8 @@ export class NodesCanvas {
         if (this.catalogue.modules.has("graphs")) {
             this.catalogue.modules.get("graphs")!.blueprints.push(graph);
         } else {
-            this.catalogue.addLibrary(ModuleShim.new("graphs", "braces", "", {},[graph], []));
+            let meta = ModuleMetaData.newCustom("graph", "Graph", "bi-braces")
+            this.catalogue.addLibrary(ModuleShim.new(meta, {}, [graph], []));
         }
         // update the UI...
         console.warn("TODO UPDATE THE NEW UI");

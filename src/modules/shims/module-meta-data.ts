@@ -6,14 +6,16 @@ export enum ModuleSource {
     Unknown,
     JavaScript,
     Wasm,
+    Custom,
 }
 
 export class ModuleMetaData {
 
     constructor(
         public source: ModuleSource,
-        public filename: string, 
-        public fullname: string, 
+        public nickname: string, // the alias used in the 'dependencies' json
+        public filename: string, // the name of the js, ts, and wasm files 
+        public fullname: string, // A user-readable name, with capitals, etc. 
         public version: string, 
         public address: string, 
         public icon: string, 
@@ -21,6 +23,21 @@ export class ModuleMetaData {
         public dtsPath: string, 
         public wasmPath: string, 
     ) {}
+
+    static newCustom(nickname: string, fullname: string, icon: string) {
+        return new ModuleMetaData(
+            ModuleSource.Custom,
+            nickname,
+            "",
+            fullname,
+            "",
+            "",
+            icon,
+            "",
+            "",
+            "",
+        )
+    }
 
     // a couple of config options are possible. dissect all of them
     static fromDepJsonItem(nickname: string, data: any) {
@@ -78,6 +95,6 @@ export class ModuleMetaData {
         const dtsPath = base + address + filename + ".d.ts";
         const wasmPath = base + address + filename + "_bg.wasm";
         
-        return new ModuleMetaData(ModuleSource.Unknown, filename, fullname, version, address, icon, jsPath, dtsPath, wasmPath);
+        return new ModuleMetaData(ModuleSource.Unknown, nickname, filename, fullname, version, address, icon, jsPath, dtsPath, wasmPath);
     }
 }

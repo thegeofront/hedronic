@@ -10,7 +10,7 @@ import { Misc } from "../nodes-canvas/util/misc";
 import { getStandardTypesAsDict } from "./types/registry";
 import { Debug } from "../../../engine/src/lib";
 import { URL } from "../util/url";
-import { ModuleMetaData } from "./shims/module-meta-data";
+import { ModuleMetaData, ModuleSource } from "./shims/module-meta-data";
 
 const CDN = "https://cdn.jsdelivr.net/npm";
 
@@ -38,8 +38,22 @@ export namespace ModuleLoading {
             const jsPath = config.path + config.filename + ".js";
             const dtsPath = config.path + config.filename + ".d.ts";
             
+            let meta = new ModuleMetaData(
+                ModuleSource.JavaScript,
+                nickname,
+                config.filename,
+                nickname,
+                "",
+                config.path,
+                icon,
+                jsPath,
+                dtsPath,
+                "",
+            )
+
             const {js, syntaxTree} = await loadModule(jsPath, dtsPath, config.filename);
-            const {module, types} = await loadShimModule(js, jsPath, syntaxTree, nickname, icon, catalogue.types);
+            const {module, types} = await loadShimModule(meta, catalogue.types, js, syntaxTree);
+            
             catalogue.addLibrary(module);
             catalogue.types = types;
         }
@@ -60,7 +74,20 @@ export namespace ModuleLoading {
             const dtsPath = base + config.path + config.filename + ".d.ts";
             const wasmPath = base + config.path + config.filename + "_bg.wasm";
 
-            let {module, types} = await loadWasmModule(nickname, icon, jsPath, dtsPath, wasmPath, catalogue.types);
+            let meta = new ModuleMetaData(
+                ModuleSource.JavaScript,
+                nickname,
+                config.filename,
+                nickname,
+                "",
+                config.path,
+                icon,
+                jsPath,
+                dtsPath,
+                wasmPath,
+            )
+
+            let {module, types} = await loadWasmModule(meta, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);
                 catalogue.types = types!;
@@ -80,8 +107,8 @@ export namespace ModuleLoading {
 
         // load wasm modules 
         for (let nickname in depJson) {
-            let {icon, jsPath, dtsPath, wasmPath} = ModuleMetaData.fromDepJsonItem(nickname, depJson[nickname]);   
-            let {module, types} = await loadWasmModule(nickname, icon, jsPath, dtsPath, wasmPath, catalogue.types);
+            let meta = ModuleMetaData.fromDepJsonItem(nickname, depJson[nickname]);   
+            let {module, types} = await loadWasmModule(meta, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);
                 catalogue.types = types!;
@@ -94,18 +121,14 @@ export namespace ModuleLoading {
 
 
     export async function loadWasmModule(
-        nickname: string,
-        icon: string,
-        jsPath: string,
-        dtsPath: string,
-        wasmPath: string,
+        meta: ModuleMetaData,
         types = new Map<string, TypeShim>()) {
 
         // TODO expand on this
         const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
         const funcBlacklist = Misc.setFromList(["init", "free"]);
 
-        const res = await WasmLoading.moduleFromWasmPack(jsPath, dtsPath, wasmPath).catch((e) => {
+        const res = await WasmLoading.moduleFromWasmPack(meta.jsPath, meta.dtsPath, meta.wasmPath).catch((e) => {
             Debug.warn(e);
             return undefined;
         });
@@ -119,8 +142,8 @@ export namespace ModuleLoading {
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types, typeBlacklist);
         // console.log(types);
         
-        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, js, types, funcBlacklist);
-        const module = ModuleShim.new(nickname, icon, jsPath, js, shims, []);
+        let shims = DTSLoading.extractFunctionShims(syntaxTree, meta.nickname, js, types, funcBlacklist);
+        const module = ModuleShim.new(meta, js, shims, []);
 
         return {module, types};
     }
@@ -138,17 +161,15 @@ export namespace ModuleLoading {
      * The loading procedure of one module
      */
     export async function loadShimModule(
-        jsModule: any, 
-        jsPath: string, 
-        syntaxTree: ts.SourceFile, 
-        nickname: string, 
-        icon: string, 
+        meta: ModuleMetaData, 
         types= new Map<string, TypeShim>(), 
+        jsModule: any, 
+        syntaxTree: ts.SourceFile, 
         ) {
         
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
-        let shims = DTSLoading.extractFunctionShims(syntaxTree, nickname, jsModule, types);
-        const module = ModuleShim.new(nickname, icon, jsPath, jsModule, shims, []);
+        let shims = DTSLoading.extractFunctionShims(syntaxTree, meta.nickname, jsModule, types);
+        const module = ModuleShim.new(meta, jsModule, shims, []);
 
         return {module, types};
     }

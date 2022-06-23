@@ -13,20 +13,23 @@ import { ModuleMetaData } from "./module-meta-data";
  * Contains Blueprints for functions, variables, and widgets (variables with HTML attached)
  */
 export class ModuleShim {
-    constructor(
-        public name: string,
-        public meta: ModuleMetaData | undefined,
-        public icon: string,
-        public fullPath: string,
-
+    private constructor(
+        public meta: ModuleMetaData,
         public realModule: any,
-
         public blueprints: FunctionShim[],
         public widgets: Widget[]
         ) {}
 
-    static new(name: string, icon: string, fullPath: string, realModule: any, operations: FunctionShim[], widgets: Widget[]) {
-        return new ModuleShim(name, undefined, icon, fullPath, realModule, operations, widgets);
+    get name() {
+        return this.meta?.nickname;
+    }
+
+    get fullPath() {
+        return this.meta?.jsPath;
+    }
+
+    static new(meta: ModuleMetaData, realModule: any, operations: FunctionShim[], widgets: Widget[]) {
+        return new ModuleShim(meta, realModule, operations, widgets);
     }
 
     /**
@@ -38,11 +41,16 @@ export class ModuleShim {
             let value = obj[key];
             if (value instanceof Function) {
                 let f = value as FN;
-                let op = FunctionShim.newFromFunction(f, [fullPath, f.name]);
+                let op = FunctionShim.newFromFunction(f, [fullPath, f.name]); 
                 ops.push(op);
             }
         }
-        return new ModuleShim(name, undefined, icon, fullPath, obj, ops, []);
+
+        // NOTE: fullpath is strange in this context...
+        // I think it is misused here... no time to figure out
+        let meta = ModuleMetaData.newCustom(name, name, icon);
+        meta.jsPath = fullPath;
+        return new ModuleShim(meta, obj, ops, []);
     }
 
     /**

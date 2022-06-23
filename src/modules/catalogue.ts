@@ -6,6 +6,7 @@ import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
 import { getDefaultWidgets, STD } from "../std/std";
+import { ModuleMetaData } from "./shims/module-meta-data";
 
 /**
  * Catalogue containing shim Modules
@@ -37,7 +38,8 @@ export class Catalogue {
 
         // create widgets
         let widgets = getDefaultWidgets();
-        let widMod = ModuleShim.new("widgets", "bi-lightning-charge-fill", "",{}, [], widgets);
+        let meta = ModuleMetaData.newCustom("widgets", "Widgets", "bi-lightning-charge-fill")
+        let widMod = ModuleShim.new(meta, {}, [], widgets);
         cat.addLibrary(widMod);
 
         // repeat for functions 
