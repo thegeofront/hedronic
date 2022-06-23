@@ -1,12 +1,12 @@
 import { GeonNode } from "../nodes-canvas/model/node";
-import { Vector2 } from "../../../engine/src/lib";
+import { Model, Vector2 } from "../../../engine/src/lib";
 import { Widget } from "../nodes-canvas/model/widget";
 import { FunctionShim } from "./shims/function-shim";
 import { CoreType } from "../nodes-canvas/model/core";
 import { ModuleShim } from "./shims/module-shim";
 import { TypeShim } from "./shims/type-shim";
 import { getDefaultWidgets, STD } from "../std/std";
-import { ModuleMetaData } from "./shims/module-meta-data";
+import { ModuleMetaData, ModuleSource } from "./shims/module-meta-data";
 
 /**
  * Catalogue containing shim Modules
@@ -47,7 +47,13 @@ export class Catalogue {
     }
 
     toJson() {
-        return {};
+        let dict: any = {};
+        for (let [name, mod] of this.modules.entries()) {
+            if (mod.meta.source == ModuleSource.Custom) continue; // exclude custom modules, such as the widgets module 
+            dict[name] = mod.meta.toJson();
+        }
+
+        return dict;
     }
 
     get(lib: string, path: string[]) {  

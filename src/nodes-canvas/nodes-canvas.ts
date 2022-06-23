@@ -122,13 +122,16 @@ export class NodesCanvas {
         let catalogue: Catalogue | undefined;
         if (json.dependencies) {
             catalogue = await ModuleLoading.loadModulesFromDependencyJson(json.dependencies);
-        } 
+        } else {
+            Debug.error("This file is too old to read!");
+            throw new Error("This cannot be.");
+        }
 
         // fallback
-        if (!catalogue) {
-            const stdPath = "./std.json";
-            catalogue = await ModuleLoading.loadModulesToCatalogue(stdPath);
-        }
+        // if (!catalogue) {
+        //     const stdPath = "./std.json";
+        //     catalogue = await ModuleLoading.loadModulesToCatalogue(stdPath);
+        // }
         
         const graph = GraphConversion.fromJSON(json, catalogue)!
         return [graph, catalogue];

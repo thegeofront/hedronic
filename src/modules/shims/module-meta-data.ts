@@ -40,7 +40,7 @@ export class ModuleMetaData {
     }
 
     // a couple of config options are possible. dissect all of them
-    static fromDepJsonItem(nickname: string, data: any) {
+    static fromIncompleteJson(nickname: string, data: any) {
         
         let filename = "";
         let fullname = "";
@@ -50,13 +50,17 @@ export class ModuleMetaData {
         
         // try to fill the above things with
         if (data instanceof Object) {
+            if (data.fullname) { fullname = data.fullname; }
+            if (data.version) { version = data.version; }
             if (data.address) { 
                 address = data.address 
                 if (!address.endsWith('/')) {
                     address = address + "/"; 
                 } 
             }
-            if (data.fullname) { fullname = data.fullname; }
+            if (data.icon) {
+
+            }
         }
 
         if (typeof data === "string") {
@@ -96,5 +100,13 @@ export class ModuleMetaData {
         const wasmPath = base + address + filename + "_bg.wasm";
         
         return new ModuleMetaData(ModuleSource.Unknown, nickname, filename, fullname, version, address, icon, jsPath, dtsPath, wasmPath);
+    }
+
+    toJson() : any {
+        // for now: only save version.
+        // custom names & icons can get confusing real quick
+        let dict: any = {};
+        if (this.version !== "latest" && this.version !== "") dict["version"] = this.version; 
+        return dict;
     }
 }

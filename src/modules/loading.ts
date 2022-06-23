@@ -53,7 +53,7 @@ export namespace ModuleLoading {
 
             const {js, syntaxTree} = await loadModule(jsPath, dtsPath, config.filename);
             const {module, types} = await loadShimModule(meta, catalogue.types, js, syntaxTree);
-            
+
             catalogue.addLibrary(module);
             catalogue.types = types;
         }
@@ -107,7 +107,7 @@ export namespace ModuleLoading {
 
         // load wasm modules 
         for (let nickname in depJson) {
-            let meta = ModuleMetaData.fromDepJsonItem(nickname, depJson[nickname]);   
+            let meta = ModuleMetaData.fromIncompleteJson(nickname, depJson[nickname]);   
             let {module, types} = await loadWasmModule(meta, catalogue.types);
             if (module) {
                 catalogue.addLibrary(module);

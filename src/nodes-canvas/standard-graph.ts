@@ -6,11 +6,8 @@ export const STANDARD_GRAPH =  {
   "dependencies": {
     "geofront": {
       "fullname": "Geofront Library",
-      "version": "",
+      "version": "0.2.0",
       "address": "https://cdn.jsdelivr.net/npm/geofront"
-    },
-    "gfp-startin": {
-      "address": "./wasm-modules/startin"
     },
   },
   "graph": {
