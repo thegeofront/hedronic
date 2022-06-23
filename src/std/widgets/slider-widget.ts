@@ -14,9 +14,31 @@ export class SliderWidget extends Widget {
     static new(state: State) {
         let outs = [TypeShim.new("N", Type.number)];
         let widget = new SliderWidget("slider", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
-        widget.parameter = Parameter.new(widget.name, Number(widget.saveState), 0, 10, 1);
+        
+        // this ugly setup will do fine for now
+        let max = 1;
+        let step = 0.01;
+        if (widget.saveState > 1) {
+            max = 10;
+            step = 1;
+        }; 
+        if (widget.saveState > 10) {
+            max = widget.saveState
+            step = 10;
+        }; 
+        // let items = widget.saveState.toString().split(".")
+        // let precision = items[items.length-1].length;
+        // console.log(precision);
+        widget.parameter = Parameter.new(widget.name, Number(widget.saveState), 0, max, step);
         return widget;
     }
+
+    /**
+     * overwrite
+     */
+    //  async run(...args: State[]) : Promise<State | State[]> {
+    //     return this.saveState;
+    // }
 
     clone() {
         return SliderWidget.new(this.saveState);
