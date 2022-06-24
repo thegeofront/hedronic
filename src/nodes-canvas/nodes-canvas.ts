@@ -179,7 +179,7 @@ export class NodesCanvas {
      * 
      */
     onWidgetChange(widgetNode?: string) {
-        console.log("widget change!", widgetNode);
+        // console.log("widget change!", widgetNode);
         this.recalcAndRedraw(widgetNode ? [widgetNode] : undefined);
     }
 

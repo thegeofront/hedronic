@@ -28,6 +28,7 @@ export class Cable {
         // 2 | state management
         public _state: State,
         public type: TypeShim,
+        // public type: GeoType,
         public valid: boolean, // valid as in type
         public _outdated: boolean = false,
 

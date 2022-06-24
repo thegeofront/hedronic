@@ -11,21 +11,26 @@ import { TypeShim } from "../shims/type-shim";
 
 // TODO in desperate need of an overhaul
 
+export enum GeoShaderType {
+    PointShader,
+    MultiPointShader,
+}
 
 /**
  * NOTE: Not Implemented: this is a sketch
  * Represents the internal geofront type we want to communicate to the end user.
  */
-export enum GeoFrontType {
+export enum GeoType {
     Void,
-    Boolean,
-    String,
-    Integer,
+    Int,
     Float,
+    Point,
+    Vector,
+    Plane,
+    MultiPoint,
+    Json,
 
     // Transform,
-    Plane,
-    Point,
     // Vector,
     // Line,
     // Ray,
@@ -36,7 +41,7 @@ export enum GeoFrontType {
     // MultiString,
     // MultiInteger,
     // MultiFloat,
-    MultiPoint,
+
     // MultiVector,
 }
 

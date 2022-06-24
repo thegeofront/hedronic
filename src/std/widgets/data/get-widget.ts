@@ -1,7 +1,8 @@
 import { Parameter } from "../../../../../engine/src/lib";
 import { MenuMaker } from "../../../menu/util/menu-maker";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { JsType, reflect } from "../../../modules/types/type";
+import { PluginConversion } from "../../../modules/types/rust-conversion";
+import { GeoType, JsType, reflect } from "../../../modules/types/type";
 import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 import { MAX_NUM_PARAMETERS } from "./list-widget";
@@ -42,6 +43,13 @@ export class GetWidget extends Widget {
     async run(...args: State[]) {
         let obj = args[0] as any;
         if (!obj) return [];
+
+        // if per chance, this is a plugin datatype, convert it
+        // TODO: we should make cable converters which automatically deal with all the types & conversions...
+        if (PluginConversion.isConvertableTo(obj, GeoType.Json)) {
+            obj = PluginConversion.tryConvertTo(obj, GeoType.Json);  
+        } 
+
         this.buffer(obj);
         return this.saveState.keys.map(key => obj[key]);
     }

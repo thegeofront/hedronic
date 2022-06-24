@@ -159,7 +159,7 @@ export const STANDARD_GRAPH =  {
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 10000
+        "state": 1000
       },
       "inputs": [],
       "outputs": [

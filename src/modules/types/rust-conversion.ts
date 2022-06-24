@@ -1,31 +1,52 @@
+import { GeoType } from "./type";
+
 /**
  * Go from magic methods to internal logic.
  * Try to exclude the usage of magic methods to only this namespace.
  */
 export namespace PluginConversion {
 
-    export function isDataLike(data: any) {
+    export function isTyped(data: any) {
         try {
-            return data.constructor.gf_has_trait_datalike();
+            return data.constructor.gf_has_trait_typed();
         } catch {
             return false;
         }
     }
 
+    export function isConvertableTo(data: any, type: GeoType) {
+        if (!isTyped(data)) return undefined;
+        return data.constructor.gf_is_convertable_to(type);
+    }
+
+    export function tryConvertTo(data: any, type: GeoType) {
+        if (!isTyped(data)) return undefined;
+        if (!isConvertableTo(data, type)) return undefined;
+        switch(type) {
+            case GeoType.Json:
+                return toJson(data);
+        }
+        return undefined;
+    }
+
     export function toJson(data: any) {
-        if (!isDataLike(data)) return undefined;
+        if (!isTyped(data)) return undefined;
         return data.gf_to_json()
     }
 
     export function fromJson(data: any, val: any) {
-        if (!isDataLike(data)) return undefined;
+        if (!isTyped(data)) return undefined;
         return data.constructor.gf_from_json(val);
     }
 
     export function getDefault(data: any) {
-        if (!isDataLike(data)) return undefined;
+        if (!isTyped(data)) return undefined;
         return data.constructor.gf_default()
     }
+
+    //////////////////////////////////////////////////////////////// all converters
+
+
 
     ////////////////////////////////////////////////////////////////
 

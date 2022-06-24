@@ -1,5 +1,6 @@
 import { GeonMath } from "../../../../engine/src/lib";
 import { JsType } from "../../modules/types/type";
+import { TypeConvertion as TypeConversion } from "../../modules/types/type-convertion";
 import { Cable, CableStyle } from "../model/cable";
 import { CoreType } from "../model/core";
 import { NodesGraph } from "../model/graph";
@@ -219,7 +220,11 @@ export namespace GraphCalculation {
     async function doRun(node: GeonNode, rawInputs: any[]) {
 
         // do the type checking, auto-convert if needed
-
+        // or dont, this makes everything very slow...
+        for (let i = 0 ; i < rawInputs.length; i++) {
+            // let inType = node.core.ins[i];
+            // rawInputs[i] = TypeConversion.tryConvertTo(rawInputs[i], inType.type);
+        }
 
         let rawOutputs = await node.core.run(...rawInputs);
         return rawOutputs;
