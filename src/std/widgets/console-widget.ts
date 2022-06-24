@@ -1,7 +1,7 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
 import { renderTextInWidget } from "./input-widget";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { State } from "../../nodes-canvas/model/state";
 import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
@@ -13,7 +13,7 @@ export class ConsoleWidget extends Widget {
     str = "";
 
     static new(state: any) {
-        let ins = [TypeShim.new("I", Type.any)];
+        let ins = [TypeShim.new("I", JsType.any)];
         return new ConsoleWidget("console", WidgetSide.Output, Vector2.new(5,1), ins, [], state);
     }
 

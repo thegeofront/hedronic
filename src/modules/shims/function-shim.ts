@@ -1,7 +1,7 @@
 
 import { State } from "../../nodes-canvas/model/state";
 import { JSLoading } from "../helpers/js-loading";
-import { Type } from "../types/type";
+import { JsType } from "../types/type";
 import { TypeShim } from "./type-shim";
 
 /**
@@ -47,9 +47,9 @@ export class FunctionShim {
 
         // with raw js, there is no way of ensuring type savety
         let ins: TypeShim[] = [];
-        for (let i = 0 ; i < inCount; i++) ins.push(TypeShim.new(`in${i}`, Type.any))
+        for (let i = 0 ; i < inCount; i++) ins.push(TypeShim.new(`in${i}`, JsType.any))
         let outs: TypeShim[] = [];
-        for (let i = 0 ; i < outCount; i++) outs.push(TypeShim.new(`out${i}`, Type.any))
+        for (let i = 0 ; i < outCount; i++) outs.push(TypeShim.new(`out${i}`, JsType.any))
 
         return new FunctionShim(path ? path[path.length-1] : func.name, path, func, ins, outs);
     }

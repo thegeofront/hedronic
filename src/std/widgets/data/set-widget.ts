@@ -1,7 +1,7 @@
 import { Parameter } from "../../../../../engine/src/lib";
 import { MenuMaker } from "../../../menu/util/menu-maker";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 
@@ -15,14 +15,14 @@ export class SetWidget extends Widget {
     static makeInsOfCount(n: number) {
         let ins = [];
         for (let i = 0; i < n; i++) {
-            ins.push(TypeShim.new(i.toString(), Type.any));
+            ins.push(TypeShim.new(i.toString(), JsType.any));
         }
         return ins;
     }
 
     static new(state: State) {
         let ins  = SetWidget.makeInsOfCount(state as number);
-        let outs = [TypeShim.new("L", Type.List, undefined, [TypeShim.new("items", Type.any)])];
+        let outs = [TypeShim.new("L", JsType.List, undefined, [TypeShim.new("items", JsType.any)])];
         return new SetWidget("set", WidgetSide.Process, undefined, ins, outs, state);
     }
 

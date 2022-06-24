@@ -1,7 +1,7 @@
 import { Domain2, Vector2 } from "../../../../engine/src/lib";
 import { renderTextInWidget } from "./input-widget";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { State } from "../../nodes-canvas/model/state";
 import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
@@ -13,8 +13,8 @@ export class InspectWidget extends Widget {
     state?: any;
 
     static new(state: any) {
-        let ins = [TypeShim.new("I", Type.any)];
-        let outs = [TypeShim.new("O", Type.any)];
+        let ins = [TypeShim.new("I", JsType.any)];
+        let outs = [TypeShim.new("O", JsType.any)];
         return new InspectWidget("inspect", WidgetSide.Process, undefined, ins, outs, state);
     }
 

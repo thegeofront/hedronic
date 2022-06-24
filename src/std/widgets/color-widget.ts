@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
@@ -10,7 +10,7 @@ import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
 export class ColorWidget extends Widget {
 
     static new(state: State) {
-        let outs = [TypeShim.new("color", Type.Reference, undefined, )];
+        let outs = [TypeShim.new("color", JsType.Reference, undefined, )];
         return new ColorWidget("colorPicker", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
     }
 

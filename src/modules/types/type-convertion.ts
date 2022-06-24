@@ -1,9 +1,9 @@
 import { TypeShim } from "../shims/type-shim";
-import { Type } from "./type";
+import { JsType } from "./type";
 
 export namespace TypeConvertion {
 
-    export function tryConvert(given: any, givenType: Type, neededType: Type) : any {
+    export function tryConvert(given: any, givenType: JsType, neededType: JsType) : any {
         if (givenType == neededType) return given;
         // switch (given)
 

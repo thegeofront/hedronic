@@ -3,7 +3,7 @@ import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 import { TypeShim } from "../modules/shims/type-shim";
-import { RustConversion } from "../modules/types/rust-conversion";
+import { PluginConversion } from "../modules/types/rust-conversion";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Point } from "../std/functions/v0/point";
 
@@ -144,13 +144,12 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
     let typename = item.constructor.name;
 
     // judge based on rust gf traits
-    if (RustConversion.isRenderable(item)) {
-        let type = item.constructor.gf_get_shader_type();
+    if (PluginConversion.isRenderable(item)) {
+        let {type, buffers} = PluginConversion.getShaderAndBuffers(item)!;
         if (type == 0) {
-            let buffer = item.gf_get_buffers();
-            return MultiVector3.fromData([buffer.x, buffer.y, buffer.z]); // TODO buffer & aggregate
+            return MultiVector3.fromData([buffers.x, buffers.y, buffers.z]); // TODO buffer & aggregate
         } else {
-            Debug.warn("type", 0, "is unknown!");
+            Debug.warn("type", type, "is unknown!");
         }
     }
 
@@ -217,11 +216,11 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
  */
 function tryConvertArray(items: Array<any>) : RenderableUnit[] | RenderableUnit |  undefined {
     
-    console.log("trying to convert array...");
+    // console.log("trying to convert array...");
 
     // TODO aggregate, make a more efficient shader for rendering multiple colored meshes
     if (items[0] instanceof Point) {
-        console.log("agreggating...");
+        // console.log("agreggating...");
         return MultiVector3.fromList(items);
     }
 

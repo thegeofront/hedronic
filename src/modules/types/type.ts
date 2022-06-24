@@ -9,11 +9,41 @@ import { TypeShim } from "../shims/type-shim";
 // TODO split up Primitive Types and List, Object, Union types, from the point of view of the canvas
 // Object types will get special treatment
 
+// TODO in desperate need of an overhaul
+
+
+/**
+ * NOTE: Not Implemented: this is a sketch
+ * Represents the internal geofront type we want to communicate to the end user.
+ */
+export enum GeoFrontType {
+    Void,
+    Boolean,
+    String,
+    Integer,
+    Float,
+
+    // Transform,
+    Plane,
+    Point,
+    // Vector,
+    // Line,
+    // Ray,
+    // PolyLine,
+    // Mesh,
+
+    // MultiBoolean,
+    // MultiString,
+    // MultiInteger,
+    // MultiFloat,
+    MultiPoint,
+    // MultiVector,
+}
 
 /**
  * The basic 'javascript' types supported by geofront
  */
-export enum Type {
+export enum JsType { 
     
     // basics
     void,
@@ -47,30 +77,30 @@ export enum Type {
 
 export function getBufferTypes() {
     return [
-        TypeShim.new("Uint8Array", Type.U8Buffer),
-        TypeShim.new("Int8Array", Type.I8Buffer),
-        TypeShim.new("Uint16Array", Type.U16Buffer),
-        TypeShim.new("Int16Array", Type.I16Buffer),
-        TypeShim.new("Uint32Array", Type.U32Buffer),
-        TypeShim.new("Int32Array", Type.I32Buffer),
-        TypeShim.new("Float32Array", Type.F32Buffer),
-        TypeShim.new("Float64Array", Type.F64Buffer),
+        TypeShim.new("Uint8Array", JsType.U8Buffer),
+        TypeShim.new("Int8Array", JsType.I8Buffer),
+        TypeShim.new("Uint16Array", JsType.U16Buffer),
+        TypeShim.new("Int16Array", JsType.I16Buffer),
+        TypeShim.new("Uint32Array", JsType.U32Buffer),
+        TypeShim.new("Int32Array", JsType.I32Buffer),
+        TypeShim.new("Float32Array", JsType.F32Buffer),
+        TypeShim.new("Float64Array", JsType.F64Buffer),
     ]
 }
 
 export function fromReflection(any: any) : TypeShim {
 
-    let wildcard = TypeShim.new("", Type.any);
+    let wildcard = TypeShim.new("", JsType.any);
 
     
     if (any instanceof Array) {
         let item = any.length > 0 ? fromReflection(any[0]) : wildcard;
-        return TypeShim.new("", Type.List, undefined, [item]);
+        return TypeShim.new("", JsType.List, undefined, [item]);
     }
 
     if (any instanceof Object) {
-        let item = any.length > 0 ? fromReflection(any[0]) : TypeShim.new("", Type.any);
-        return TypeShim.new("", Type.Object, undefined, [item]);
+        let item = any.length > 0 ? fromReflection(any[0]) : TypeShim.new("", JsType.any);
+        return TypeShim.new("", JsType.Object, undefined, [item]);
     }
 
     return TypeShim.new("", reflect(any));
@@ -81,17 +111,17 @@ export function fromReflection(any: any) : TypeShim {
  */
 export function reflect(any: any) {
     if (any instanceof Array)
-        return Type.List;
+        return JsType.List;
     if (any instanceof Object)
-        return Type.Object;
+        return JsType.Object;
     if (any instanceof Float32Array)
-        return Type.F32Buffer;
+        return JsType.F32Buffer;
     if (any instanceof Float64Array)
-        return Type.F64Buffer;
+        return JsType.F64Buffer;
     if (typeof any === 'string') 
-        return Type.string;
+        return JsType.string;
     if (typeof any === 'number')
-        return Type.number;
+        return JsType.number;
 
-    return Type.any;
+    return JsType.any;
 }

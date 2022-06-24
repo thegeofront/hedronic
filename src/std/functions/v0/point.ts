@@ -1,5 +1,5 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { MapTree } from "../../../util/maptree";
 import { Divider, shim, divider } from "../../std-system";
 
@@ -21,11 +21,11 @@ export class Point {
 
     static readonly Functions = [
         shim(Point.new, "Point", "A 3D point in space", 
-            [Type.number, Type.number, Type.number], 
-            [Type.Object]),
+            [JsType.number, JsType.number, JsType.number], 
+            [JsType.Object]),
         shim(Point.fromArray, "Point from array", "Create a point from the first 3 items of this list",
-            [Type.List], 
-            [Type.Object]),
+            [JsType.List], 
+            [JsType.Object]),
         divider(),
     ]; 
 

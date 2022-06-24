@@ -1,5 +1,5 @@
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { NodesGraph } from "./graph";
 import { Socket } from "./socket";
 import { State } from "./state";
@@ -26,9 +26,8 @@ export class Cable {
         public ends: Socket[],
 
         // 2 | state management
-        public type: TypeShim,
         public _state: State,
-        public level: number, // [JF] I don't know  
+        public type: TypeShim,
         public valid: boolean, // valid as in type
         public _outdated: boolean = false,
 
@@ -38,7 +37,7 @@ export class Cable {
     ) {}
 
     static new(type: TypeShim) {
-        return new Cable(undefined, [], type, false, 0, true);
+        return new Cable(undefined, [], false, type, true);
     }
 
     /**
@@ -57,7 +56,7 @@ export class Cable {
         let style = CableStyle.Off;
         if (state instanceof Array) {
             style = CableStyle.List;
-            this.type.type = Type.List;
+            this.type.type = JsType.List;
         }else if (state) {
             style = CableStyle.On;
         } 

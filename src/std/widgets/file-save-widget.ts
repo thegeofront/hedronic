@@ -1,7 +1,7 @@
 import { IO, Vector2 } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
@@ -14,7 +14,7 @@ export class FileSaveWidget extends Widget {
     } 
 
     static new(state: State) {
-        let ins = [TypeShim.new("content", Type.string)]
+        let ins = [TypeShim.new("content", JsType.string)]
         return new FileSaveWidget("file save", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
     }
 

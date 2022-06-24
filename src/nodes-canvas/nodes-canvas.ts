@@ -21,7 +21,7 @@ import { GraphConversion } from "./logic/graph-conversion";
 import { Cable, CableStyle } from "./model/cable";
 import { GraphCalculation } from "./logic/graph-calculation";
 import { makeMenuFromCable } from "../menu/right-menu/param-menu";
-import { Type } from "../modules/types/type";
+import { JsType } from "../modules/types/type";
 import { STANDARD_GRAPH } from "./standard-graph";
 import { Action } from "./model/action";
 import { NodeAddAction } from "./model/actions/node-add-action";
@@ -541,7 +541,7 @@ export class NodesCanvas {
                 let style = datum?.style || CableStyle.Off;
                 drawMultiCable(ctx, socket, normalCons, style, this, this.graph);
                 if (selectedCons.length > 0) 
-                    drawMultiCable(ctx, socket, selectedCons, datum?.type.type == Type.List ? CableStyle.SelectedList : CableStyle.Selected, this, this.graph);
+                    drawMultiCable(ctx, socket, selectedCons, datum?.type.type == JsType.List ? CableStyle.SelectedList : CableStyle.Selected, this, this.graph);
             })
         }
 

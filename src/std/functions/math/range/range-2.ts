@@ -1,6 +1,6 @@
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
-import { Type } from "../../../../modules/types/type";
+import { JsType } from "../../../../modules/types/type";
 import { MapTree } from "../../../../util/maptree";
 import { Divider, func, divider } from "../../../std-system";
 import { Range1 } from "./range-1";
@@ -46,15 +46,15 @@ export class Range2 {
 
     //////////////
 
-    static readonly TypeShim = TypeShim.new("range-2", Type.Object, undefined, [
-        TypeShim.new("xMin", Type.number),
-        TypeShim.new("xMax", Type.number),
-        TypeShim.new("yMin", Type.number),
-        TypeShim.new("yMax", Type.number),
+    static readonly TypeShim = TypeShim.new("range-2", JsType.Object, undefined, [
+        TypeShim.new("xMin", JsType.number),
+        TypeShim.new("xMax", JsType.number),
+        TypeShim.new("yMin", JsType.number),
+        TypeShim.new("yMax", JsType.number),
     ]);
 
     static _reference(nickname: string) {
-        return TypeShim.new(nickname, Type.Reference, undefined, [Range2.TypeShim]);
+        return TypeShim.new(nickname, JsType.Reference, undefined, [Range2.TypeShim]);
     }
 
 

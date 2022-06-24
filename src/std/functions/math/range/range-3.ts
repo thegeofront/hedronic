@@ -1,7 +1,7 @@
 import { Domain } from "../../../../../../engine/src/lib";
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
-import { Type } from "../../../../modules/types/type";
+import { JsType } from "../../../../modules/types/type";
 import { MapTree } from "../../../../util/maptree";
 import { Divider, divider, func, shim } from "../../../std-system";
 import { Point } from "../../v0/point";
@@ -72,44 +72,44 @@ export class Range3 {
 
     //////////////
 
-    static readonly TypeShim = TypeShim.new("range-3", Type.Object, undefined, [
-        TypeShim.new("xmin", Type.number),
-        TypeShim.new("xmax", Type.number),
-        TypeShim.new("ymin", Type.number),
-        TypeShim.new("ymax", Type.number),
-        TypeShim.new("zmin", Type.number),
-        TypeShim.new("zmax", Type.number),
+    static readonly TypeShim = TypeShim.new("range-3", JsType.Object, undefined, [
+        TypeShim.new("xmin", JsType.number),
+        TypeShim.new("xmax", JsType.number),
+        TypeShim.new("ymin", JsType.number),
+        TypeShim.new("ymax", JsType.number),
+        TypeShim.new("zmin", JsType.number),
+        TypeShim.new("zmax", JsType.number),
     ]);
 
     static _reference(nickname: string) {
-        return TypeShim.new(nickname, Type.Reference, undefined, [Range3.TypeShim]);
+        return TypeShim.new(nickname, JsType.Reference, undefined, [Range3.TypeShim]);
     }
 
 
     static readonly Functions = [
         shim(Range3.new, "Range3", "A 3D numerical range", 
-            [Type.number, Type.number, Type.number, Type.number, Type.number, Type.number], 
-            [Type.Object]),
+            [JsType.number, JsType.number, JsType.number, JsType.number, JsType.number, JsType.number], 
+            [JsType.Object]),
         shim(Range3.fromRanges, "Range3 from ranges", "Range3 from ranges",
-            [Type.Object, Type.Object, Type.Object], 
-            [Type.Object]),
+            [JsType.Object, JsType.Object, JsType.Object], 
+            [JsType.Object]),
 
         shim(Range3.fromRadius, "Range3 from radius", "",
-            [Type.number], 
-            [Type.Object]),
+            [JsType.number], 
+            [JsType.Object]),
         shim(Range3.fromRadii, "Range3 from radii", "",
-            [Type.number, Type.number, Type.number], 
-            [Type.Object]),
+            [JsType.number, JsType.number, JsType.number], 
+            [JsType.Object]),
         divider(),
         shim(Range3.normalize, "Normalize", "",
-            [Type.Object, Type.number], 
-            [Type.Object]),
+            [JsType.Object, JsType.number], 
+            [JsType.Object]),
         shim(Range3.elevate, "Elevate", ""
-            [Type.Object, Type.number], 
-            [Type.Object]),
+            [JsType.Object, JsType.number], 
+            [JsType.Object]),
         shim(Range3.spawn, "Spawn", "Spawn N number of Points within this Range", 
-            [Type.Object, Type.Object, Type.number], 
-            [Type.Object]),
+            [JsType.Object, JsType.Object, JsType.number], 
+            [JsType.Object]),
     ]; 
 }
 

@@ -1,7 +1,7 @@
 import { Parameter, Vector2 } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
@@ -12,7 +12,7 @@ export class SliderWidget extends Widget {
     parameter!: Parameter;
 
     static new(state: State) {
-        let outs = [TypeShim.new("N", Type.number)];
+        let outs = [TypeShim.new("N", JsType.number)];
         let widget = new SliderWidget("slider", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
         
         // this ugly setup will do fine for now

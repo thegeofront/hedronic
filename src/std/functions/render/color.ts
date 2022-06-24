@@ -1,28 +1,28 @@
 import { COLOR, Color, rgbToHsl } from "../../../../../engine/src/lib";
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 
-let colorType = TypeShim.new("", Type.any);
+let colorType = TypeShim.new("", JsType.any);
 
 export const ColorFunctions = [
     new FunctionShim(
         "colorFromString", 
         [], 
         fromString, 
-        [TypeShim.new("str", Type.string)] , 
+        [TypeShim.new("str", JsType.string)] , 
         [colorType]),
     new FunctionShim("HSL", [], hsl, [
-            TypeShim.new("h", Type.number), 
-            TypeShim.new("s", Type.number), 
-            TypeShim.new("l", Type.number), 
-            TypeShim.new("a", Type.number)
+            TypeShim.new("h", JsType.number), 
+            TypeShim.new("s", JsType.number), 
+            TypeShim.new("l", JsType.number), 
+            TypeShim.new("a", JsType.number)
         ], [colorType]),
     new FunctionShim("RGB", [], rgb, [
-            TypeShim.new("r", Type.number), 
-            TypeShim.new("g", Type.number), 
-            TypeShim.new("b", Type.number), 
-            TypeShim.new("a", Type.number)
+            TypeShim.new("r", JsType.number), 
+            TypeShim.new("g", JsType.number), 
+            TypeShim.new("b", JsType.number), 
+            TypeShim.new("a", JsType.number)
         ], 
         [colorType])
 ]; 

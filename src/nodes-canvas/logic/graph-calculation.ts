@@ -1,5 +1,5 @@
 import { GeonMath } from "../../../../engine/src/lib";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { Cable, CableStyle } from "../model/cable";
 import { CoreType } from "../model/core";
 import { NodesGraph } from "../model/graph";
@@ -120,11 +120,11 @@ export namespace GraphCalculation {
 
         let inStates = ins.map(c => c.getState());
 
-        let rawReturnState = [];
+        let rawOutputs = [];
 
         try {
             //TODO RUN RUN RUN
-            rawReturnState = await node.core.run(...inStates);
+            rawOutputs = await doRun(node, inStates);
             node.errorState = "";
         } catch(e) {
             let error = e as Error;
@@ -133,10 +133,10 @@ export namespace GraphCalculation {
     
         // set the cables
         if (node.core.outCount == 1 && outs.length == 1) {
-            outs[0].setState(rawReturnState);
+            outs[0].setState(rawOutputs);
         } else {
             for (let i = 0 ; i < outs.length; i++) {
-                outs[i].setState(rawReturnState[i]);
+                outs[i].setState(rawOutputs[i]);
             }
         } 
         
@@ -167,7 +167,7 @@ export namespace GraphCalculation {
     
             // TODO do a better job of detecting 'artifical' lists
             // NO: we need to do this sometimes for natural lists
-            if (inCable.type.type == Type.List) {
+            if (inCable.type.type == JsType.List) {
                 
                 let arr = inCable.getState() as Array<any>;
                 if (arr.length > count) {
@@ -186,7 +186,7 @@ export namespace GraphCalculation {
             let rawInputs = iterators.map(getter => getter(i));
             let rawOutputs;
             try {
-                rawOutputs = await node.core.run(...rawInputs);
+                rawOutputs = await doRun(node, rawInputs);
                 node.errorState = "";
             } catch(e) {
                 let error = e as Error;
@@ -214,6 +214,15 @@ export namespace GraphCalculation {
         node.runtime = GeonMath.round(endTime - startTime, 3);
 
         return undefined;
+    }
+
+    async function doRun(node: GeonNode, rawInputs: any[]) {
+
+        // do the type checking, auto-convert if needed
+
+
+        let rawOutputs = await node.core.run(...rawInputs);
+        return rawOutputs;
     }
 
     /**

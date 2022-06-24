@@ -1,6 +1,6 @@
 import { Delaunay as DT, Mesh as GeonMesh, MultiVector2, MultiVector3, ObjProcessing } from "../../../../../engine/src/lib";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { divider, shim } from "../../std-system";
 import { MultiPoint } from "../v0/multi-point";
 

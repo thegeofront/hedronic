@@ -1,19 +1,19 @@
 import { Polygon2 } from "../../../../../engine/src/lib";
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 
 // export interface Polygon2 {
 //     trait: "polygon-2",
 //     data: Array<Array<number>>;
 // }
 
-const GeoJsonGeometryType = TypeShim.new("geojson-geometry", Type.Object, undefined, [
+const GeoJsonGeometryType = TypeShim.new("geojson-geometry", JsType.Object, undefined, [
 
 ]);
-const PolygonType = TypeShim.new("polygon-2", Type.Object, undefined, []);
-const MeshType = TypeShim.new("mesh-2", Type.Object);
-const PointType = TypeShim.new("vector-2", Type.Object);
+const PolygonType = TypeShim.new("polygon-2", JsType.Object, undefined, []);
+const MeshType = TypeShim.new("mesh-2", JsType.Object);
+const PointType = TypeShim.new("vector-2", JsType.Object);
 
 export function getPolygonFunctions(namespace="functions") {
     
@@ -22,7 +22,7 @@ export function getPolygonFunctions(namespace="functions") {
     return [
         FunctionShim.new("fromGeoJson", [namespace], polygonsFromGeojson, [GeoJsonGeometryType], [PolygonType]),
         FunctionShim.new("toMesh", [namespace], polygonToMesh, [PolygonType], [MeshType]),
-        FunctionShim.new("scale", [namespace], scale, [PolygonType, TypeShim.new("factor", Type.number)], [PolygonType]),
+        FunctionShim.new("scale", [namespace], scale, [PolygonType, TypeShim.new("factor", JsType.number)], [PolygonType]),
         FunctionShim.new("getCenter", [namespace], getCenter, [PolygonType], [PointType])
     ]
 }

@@ -1,12 +1,12 @@
 import { State } from "../../nodes-canvas/model/state";
 import { TypeShim } from "../shims/type-shim";
-import { Type } from "./type";
+import { JsType } from "./type";
 
 export namespace TypeChecking {
     
     export function convert(visitorState: State, visitor: TypeShim, host: TypeShim) {
-        let isSelfList = visitor.type == Type.List;
-        let isOtherList = host.type == Type.List;
+        let isSelfList = visitor.type == JsType.List;
+        let isOtherList = host.type == JsType.List;
 
         if (!isSelfList && !isOtherList) {
             return visitorState;
@@ -17,9 +17,9 @@ export namespace TypeChecking {
     }
 
     export function doTypesFitDisregardingLists(visitor: TypeShim, host: TypeShim) : boolean {
-        let isVisitorList = visitor.type == Type.List;
-        let isHostList = host.type == Type.List;
-        let backup = TypeShim.new("", Type.Object);
+        let isVisitorList = visitor.type == JsType.List;
+        let isHostList = host.type == JsType.List;
+        let backup = TypeShim.new("", JsType.Object);
 
         if (!isVisitorList && !isHostList) 
             return doTypesFit(visitor, host); // both are not list, compare as normal
@@ -43,22 +43,22 @@ export namespace TypeChecking {
 
         // Any is difficult, it could potentially lead to unsafe circumstances. 
         // however, if the 'other' is any, we can accept everything 
-        if (other.type == Type.any) return true;
+        if (other.type == JsType.any) return true;
 
-        if (other.type == Type.Reference) {
+        if (other.type == JsType.Reference) {
             return self.isAcceptableType(other.children![0]);
         }
-        if (self.type == Type.Reference) {
+        if (self.type == JsType.Reference) {
             return self.children![0].isAcceptableType(other);
         }
 
         // the literal can be used as a type flag
-        if (self.type == Type.Literal) {
+        if (self.type == JsType.Literal) {
             return self.children![0].name == other.children![0].name;
         }
 
         // deal with union types
-        if (other.type == Type.Union) {
+        if (other.type == JsType.Union) {
             if (!other.children) throw new Error("should have children!");
             let others = other.children!;
             for (let oChild of others) {
@@ -69,7 +69,7 @@ export namespace TypeChecking {
             return false;
         }
 
-        if (self.type == Type.Union) {
+        if (self.type == JsType.Union) {
             if (!self.children) throw new Error("should have children!");
             let children = self.children!;
             for (let child of children) {
@@ -87,7 +87,7 @@ export namespace TypeChecking {
         // we only care if the actual types match. 
         // They do not have to have the same name 
         // we stick to the JS notion of : 'if it acts like X, it is X'
-        if (other.type == Type.Tuple || other.type == Type.List || other.type == Type.Object) {   
+        if (other.type == JsType.Tuple || other.type == JsType.List || other.type == JsType.Object) {   
             let selfs = self.children;
             let others = other.children;
             let selfNoChildren = (!selfs || selfs.length == 0) 

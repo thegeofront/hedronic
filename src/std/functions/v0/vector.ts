@@ -1,5 +1,5 @@
 import { FunctionShim } from "../../../modules/shims/function-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { MapTree } from "../../../util/maptree";
 import { Divider, shim, divider } from "../../std-system";
 
@@ -29,11 +29,11 @@ export class Vector {
 
     static readonly Functions = [
         shim(Vector.new, "Vector", "a 3D translation", 
-            [Type.number, Type.number, Type.number], 
-            [Type.Object]),
+            [JsType.number, JsType.number, JsType.number], 
+            [JsType.Object]),
         shim(Vector.fromArray, "Vector from array", "Create a vector from the first 3 items of this list",
-            [Type.List], 
-            [Type.Object]),
+            [JsType.List], 
+            [JsType.Object]),
         divider(),
     ];
 }

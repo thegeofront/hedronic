@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { HTML } from "../../html/util";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { StopVisualizeEvent, VisualizeEvent } from "../../viewer/viewer-app";
@@ -12,7 +12,7 @@ export class ViewWidget extends Widget {
     count = 0;
 
     static new(state: State) {
-        let ins = [TypeShim.new("Renderable", Type.any), TypeShim.new("color", Type.string)] 
+        let ins = [TypeShim.new("Renderable", JsType.any), TypeShim.new("color", JsType.string)] 
         let outs: TypeShim[] = [];
         let widget = new ViewWidget("view", WidgetSide.Output, Vector2.new(1,2), ins, outs, state);
         widget.count = ViewWidget.count;

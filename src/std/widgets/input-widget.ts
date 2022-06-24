@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../../engine/src/lib";
 import { MenuMaker } from "../../menu/util/menu-maker";
 import { TypeShim } from "../../modules/shims/type-shim";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 import { NodesCanvas } from "../../nodes-canvas/nodes-canvas";
@@ -10,7 +10,7 @@ import { CTX } from "../../nodes-canvas/rendering/ctx/ctx-helpers";
 export class InputWidget extends Widget {
 
     static new(state: State) {
-        let outs = [TypeShim.new("text", Type.string)];
+        let outs = [TypeShim.new("text", JsType.string)];
         return new InputWidget("input", WidgetSide.Input, Vector2.new(4,1), [], outs, state);
     }
 

@@ -1,6 +1,6 @@
 import { Delaunay, Mesh as GeonMesh, MultiVector2, MultiVector3, ObjProcessing } from "../../../../../engine/src/lib";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { divider, shim } from "../../std-system";
 import { MultiPoint } from "../v0/multi-point";
 
@@ -14,9 +14,9 @@ export class Mesh {
         public faces: number[],
     ) {}
 
-    static readonly TypeShim = TypeShim.new("mesh-3", Type.Object, undefined, [
-        TypeShim.new("vertices", Type.F32Buffer),
-        TypeShim.new("triangles", Type.U16Buffer),
+    static readonly TypeShim = TypeShim.new("mesh-3", JsType.Object, undefined, [
+        TypeShim.new("vertices", JsType.F32Buffer),
+        TypeShim.new("triangles", JsType.U16Buffer),
     ]);
 
     static new(points: MultiPoint, faces: number[]) {
@@ -49,17 +49,17 @@ export class Mesh {
 
     static readonly Functions = [
         shim(this.new, "Mesh", "", 
-            [Type.Object, Type.List], 
-            [Type.Object]),
+            [JsType.Object, JsType.List], 
+            [JsType.Object]),
         shim(this.newFromFlatArrays, "Mesh from arrays", "", 
-            [Type.List, Type.List], 
-            [Type.Object]),
+            [JsType.List, JsType.List], 
+            [JsType.Object]),
         shim(this.fromDelaunay, "Delaunay", "", 
-            [Type.List], 
-            [Type.Object]),
+            [JsType.List], 
+            [JsType.Object]),
         shim(this.isoCurves, "Isocurves", "", 
-            [Type.List, Type.List, Type.number], 
-            [Type.Object]),
+            [JsType.List, JsType.List, JsType.number], 
+            [JsType.Object]),
         divider(),
 
     ]

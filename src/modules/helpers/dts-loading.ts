@@ -5,7 +5,7 @@ import { WebIO } from "../../../../engine/src/lib";
 import { tryApplyGeofrontType } from "../../std/std-system";
 import { FunctionShim } from "../shims/function-shim";
 import { TypeShim } from "../shims/type-shim";
-import { Type } from "../types/type";
+import { JsType } from "../types/type";
 
 namespace Help {
 
@@ -228,7 +228,7 @@ export namespace DTSLoading {
 
                 subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
-            return createTraitedTypeShim(name, Type.Object, undefined, subTypes);
+            return createTraitedTypeShim(name, JsType.Object, undefined, subTypes);
         }
 
         // Interface
@@ -243,14 +243,14 @@ export namespace DTSLoading {
 
                 subTypes.push(convertTypeToShim(memberName, memberType, types))
             }
-            return createTraitedTypeShim(name, Type.Object, undefined, subTypes);
+            return createTraitedTypeShim(name, JsType.Object, undefined, subTypes);
         }
 
         // Alias
         if (ts.isTypeAliasDeclaration(node)) {
             let typeName = Help.getTypeName(node.type);
             let subType = convertTypeToShim(typeName, node.type, types);
-            return createTraitedTypeShim(name, Type.Reference, undefined, [subType]);
+            return createTraitedTypeShim(name, JsType.Reference, undefined, [subType]);
         }
 
         // none
@@ -298,7 +298,7 @@ export namespace DTSLoading {
                     console.error("this would be weird");
                     return false;
                 }
-                methodInput = TypeShim.new(thisObjectType, Type.Reference, undefined, [myType]); 
+                methodInput = TypeShim.new(thisObjectType, JsType.Reference, undefined, [myType]); 
             } 
             
             // extract inputs
@@ -367,30 +367,30 @@ export namespace DTSLoading {
         if (!node) {
             console.warn("node does not appear to exist...");
             console.warn(node, name)
-            return TypeShim.new(name, Type.any);
+            return TypeShim.new(name, JsType.any);
         }
 
         // 'base' types 
         switch (node.kind) {
-            case ts.SyntaxKind.VoidKeyword: return TypeShim.new(name, Type.void);
-            case ts.SyntaxKind.AnyKeyword: return TypeShim.new(name, Type.any);
-            case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, Type.boolean);
-            case ts.SyntaxKind.NumberKeyword: return TypeShim.new(name, Type.number);
-            case ts.SyntaxKind.StringKeyword: return TypeShim.new(name, Type.string);
-            case ts.SyntaxKind.UndefinedKeyword: return TypeShim.new(name, Type.void);
+            case ts.SyntaxKind.VoidKeyword: return TypeShim.new(name, JsType.void);
+            case ts.SyntaxKind.AnyKeyword: return TypeShim.new(name, JsType.any);
+            case ts.SyntaxKind.BooleanKeyword: return TypeShim.new(name, JsType.boolean);
+            case ts.SyntaxKind.NumberKeyword: return TypeShim.new(name, JsType.number);
+            case ts.SyntaxKind.StringKeyword: return TypeShim.new(name, JsType.string);
+            case ts.SyntaxKind.UndefinedKeyword: return TypeShim.new(name, JsType.void);
         } 
 
         // list type 
         if (ts.isArrayTypeNode(node)) {
             // WARN: geofront does not want mix-typed lists. this does not check if that is indeed the case
             let subs = [convertTypeToShim("item", node.elementType, typeReferences)]
-            return createTraitedTypeShim(name, Type.List, undefined, subs);
+            return createTraitedTypeShim(name, JsType.List, undefined, subs);
         } 
         
         // union type
         if (ts.isUnionTypeNode(node)) {
             let subs = node.types.map((child, i) => convertTypeToShim(`option ${i}`, child, typeReferences));
-            return createTraitedTypeShim(name, Type.Union, undefined, subs);
+            return createTraitedTypeShim(name, JsType.Union, undefined, subs);
         }
         
         // literal object type 
@@ -405,7 +405,7 @@ export namespace DTSLoading {
 
                 return convertTypeToShim(elementName, elementType, typeReferences);
             });
-            return createTraitedTypeShim(name, Type.Object, undefined, subs);
+            return createTraitedTypeShim(name, JsType.Object, undefined, subs);
         }
 
         // referenced object type
@@ -418,14 +418,14 @@ export namespace DTSLoading {
             if (typeName == "Promise") {
                 // this is a promise, get the subtype
                 let subs = node.typeArguments!.map(t => convertTypeToShim("promised", t, typeReferences));
-                return TypeShim.new(name, Type.Promise, undefined, subs);
+                return TypeShim.new(name, JsType.Promise, undefined, subs);
             }
 
             if (typeReferences.has(typeName)) {
-                return createTraitedTypeShim(name, Type.Reference, undefined, [typeReferences.get(typeName)!]);
+                return createTraitedTypeShim(name, JsType.Reference, undefined, [typeReferences.get(typeName)!]);
             } else {
                 console.warn("could not find the reference type titled: ", typeName);
-                return TypeShim.new(name, Type.any);
+                return TypeShim.new(name, JsType.any);
             }
         }
 
@@ -434,17 +434,17 @@ export namespace DTSLoading {
             //@ts-ignore
             let text = node.literal.text || "";
 
-            return TypeShim.new(name, Type.Literal, undefined, [TypeShim.new(text, Type.string)]);    
+            return TypeShim.new(name, JsType.Literal, undefined, [TypeShim.new(text, JsType.string)]);    
         }
 
         console.warn("type not implemented: ", Help.getKind(node));
-        return TypeShim.new(name, Type.any);
+        return TypeShim.new(name, JsType.any);
     }
 
     /**
      * Create typeshim, and try to apply traits
      */
-    function createTraitedTypeShim(name: string, type: Type, glyph?: string | undefined, child?: TypeShim[] | undefined) {
+    function createTraitedTypeShim(name: string, type: JsType, glyph?: string | undefined, child?: TypeShim[] | undefined) {
         let shim = TypeShim.new(name, type, glyph, child);
         tryApplyGeofrontType(shim, new Map()); // TODO TODO TODO
         return shim;

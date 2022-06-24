@@ -2,7 +2,7 @@
 
 
 import { GFTypes } from "../../std/geofront-types";
-import { Type } from "../types/type";
+import { JsType } from "../types/type";
 import { TypeChecking } from "../types/type-checking";
 import { TypeConvertion } from "../types/type-convertion";
 
@@ -16,12 +16,12 @@ export class TypeShim {
 
     private constructor(
         public name:  string,  // what to show up as name 
-        public type: Type, // the actual type  
+        public type: JsType, // the actual type  
         public readonly glyph?: string,  // how to visualize the type or variable briefly
         public readonly children?: TypeShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 
-    static new(name: string, type: Type, glyph?: string, child?: TypeShim[]) {
+    static new(name: string, type: JsType, glyph?: string, child?: TypeShim[]) {
 
         // make sure children are sorted
         // this is dumb, but relevant for type checking
@@ -57,20 +57,20 @@ export class TypeShim {
      */
     typeToString() : string {
         switch (this.type) {
-            case Type.Tuple:
+            case JsType.Tuple:
                 return `Tuple<${this.children?.map(c => c.typeToString()).join(", ")}>`;
-            case Type.List:
+            case JsType.List:
             return `List<${this.children?.map(c => c.typeToString()).join(", ")}>`;
-            case Type.Object:
+            case JsType.Object:
                 return `Object {${this.children?.map(c => `${c.name}: ${c.typeToString()}`).join(", ")}}`;  
-            case Type.Union:
+            case JsType.Union:
                 return `${this.children?.map(c => `${c.typeToString()}`).join(" | ")}`;  
-            case Type.Reference:
+            case JsType.Reference:
                 return `Ref->${this.children?.[0].name}`;  
-            case Type.Promise:
+            case JsType.Promise:
                 return `Promise->${this.children![0].typeToString()}`; 
             default: 
-                return Type[this.type];
+                return JsType[this.type];
         }
     }
 
@@ -85,34 +85,34 @@ export class TypeShim {
         if (this.name !== "") return this.name.slice(0, 5);
 
         switch (this.type) {
-            case Type.void:
+            case JsType.void:
                 return "-"
-            case Type.any:
-            case Type.boolean:
-            case Type.number:
-            case Type.string:
-                return Type[this.type][0].toLocaleUpperCase();
+            case JsType.any:
+            case JsType.boolean:
+            case JsType.number:
+            case JsType.string:
+                return JsType[this.type][0].toLocaleUpperCase();
             
-            case Type.Tuple:
-            case Type.List:
+            case JsType.Tuple:
+            case JsType.List:
                 return `[ ${this.children?.map(c => c.render()).join(" , ") || "any"} ]`;
-            case Type.Object:
+            case JsType.Object:
                 return `{}`;
-            case Type.Union:
+            case JsType.Union:
                 return `${this.children?.map(c => c.render()).join(" | ")}`;
-            case Type.Reference:
+            case JsType.Reference:
                 return this.children?.[0].render() || "any";  
-            case Type.Promise:
+            case JsType.Promise:
                 return `P->` + this.children?.[0].render() || "any";  
-            case Type.U8Buffer:
-            case Type.I8Buffer:
-            case Type.U16Buffer:
-            case Type.I16Buffer:
-            case Type.U32Buffer:
-            case Type.I32Buffer:
-            case Type.F32Buffer:
-            case Type.F64Buffer:
-                return Type[this.type].slice(0, 3);
+            case JsType.U8Buffer:
+            case JsType.I8Buffer:
+            case JsType.U16Buffer:
+            case JsType.I16Buffer:
+            case JsType.U32Buffer:
+            case JsType.I32Buffer:
+            case JsType.F32Buffer:
+            case JsType.F64Buffer:
+                return JsType[this.type].slice(0, 3);
             default:
                 return "";
             // case Type.ByteMatrix:

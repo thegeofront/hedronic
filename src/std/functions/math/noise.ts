@@ -1,7 +1,7 @@
 import { Perlin } from "../../../../../engine/src/lib";
 import { FunctionShim } from "../../../modules/shims/function-shim";
 import { TypeShim } from "../../../modules/shims/type-shim";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { Point } from "../v0/point";
 
 const perlin = Perlin.new();
@@ -31,14 +31,14 @@ export class Noise {
 
     static readonly Functions = [
         new FunctionShim("noise", [], Noise.new, 
-        [TypeShim.new("offset", Type.number), TypeShim.new("freq", Type.number), TypeShim.new("amp", Type.number), TypeShim.new("octave", Type.number), TypeShim.new("blend", Type.number)] , 
-        [TypeShim.new("n", Type.number)]),
+        [TypeShim.new("offset", JsType.number), TypeShim.new("freq", JsType.number), TypeShim.new("amp", JsType.number), TypeShim.new("octave", JsType.number), TypeShim.new("blend", JsType.number)] , 
+        [TypeShim.new("n", JsType.number)]),
         new FunctionShim("perlin", [], Noise.simple, 
-        [TypeShim.new("point", Type.Object)] , 
-        [TypeShim.new("n", Type.number)]),
+        [TypeShim.new("point", JsType.Object)] , 
+        [TypeShim.new("n", JsType.number)]),
         new FunctionShim("octave", [], Noise.octave, 
-        [TypeShim.new("noise", Type.Object), TypeShim.new("point", Type.Object)], 
-        [TypeShim.new("n", Type.number)]),
+        [TypeShim.new("noise", JsType.Object), TypeShim.new("point", JsType.Object)], 
+        [TypeShim.new("n", JsType.number)]),
     ]; 
 }
 

@@ -1,6 +1,6 @@
 import { FunctionShim } from "../modules/shims/function-shim";
 import { TypeShim } from "../modules/shims/type-shim";
-import { Type } from "../modules/types/type";
+import { JsType } from "../modules/types/type";
 import { MapTree } from "../util/maptree";
 import { GFTypes } from "./geofront-types";
 
@@ -33,11 +33,11 @@ export function shim(
     fn: Function, 
     name: string, 
     description: string, 
-    ins: Type[] = [], 
-    outs: Type[] = []) : FunctionShim 
+    ins: JsType[] = [], 
+    outs: JsType[] = []) : FunctionShim 
     {
-    let inTypes = ins.map((i) => TypeShim.new(Type[i], i, undefined, []))
-    let outTypes = outs.map((o) => TypeShim.new(Type[o], o, undefined, []))
+    let inTypes = ins.map((i) => TypeShim.new(JsType[i], i, undefined, []))
+    let outTypes = outs.map((o) => TypeShim.new(JsType[o], o, undefined, []))
     
     return FunctionShim.new(name, [], fn, inTypes, outTypes);
 }

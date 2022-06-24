@@ -8,7 +8,7 @@ import { TypeShim } from "../../modules/shims/type-shim";
 import { Core, CoreType } from "../../nodes-canvas/model/core";
 import { Cable, CableStyle } from "./cable";
 import { CableDeleteAction } from "./actions/cable-delete-action";
-import { Type } from "../../modules/types/type";
+import { JsType } from "../../modules/types/type";
 
 
 export const NODE_WIDTH = 4;
@@ -157,7 +157,7 @@ export class GeonNode {
         for (let i = 0 ; i < types.length; i++) {
             let cable = Cable.new(types[i].deepcopy());
             if (looping) {
-                cable.type = TypeShim.new("", Type.List, undefined, [cable.type]);
+                cable.type = TypeShim.new("", JsType.List, undefined, [cable.type]);
             }
             cables.push(cable);
         } 

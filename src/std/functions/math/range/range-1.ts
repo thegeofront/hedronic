@@ -2,7 +2,7 @@ import { minify } from "terser-webpack-plugin/types/minify";
 import { Domain } from "../../../../../../engine/src/lib";
 import { FunctionShim } from "../../../../modules/shims/function-shim";
 import { TypeShim } from "../../../../modules/shims/type-shim";
-import { Type } from "../../../../modules/types/type";
+import { JsType } from "../../../../modules/types/type";
 import { MapTree } from "../../../../util/maptree";
 import { divider, Divider, func, make } from "../../../std-system";
 
@@ -38,13 +38,13 @@ export class Range1 {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    static readonly TypeShim = TypeShim.new("range-1", Type.Object, undefined, [
-        TypeShim.new("min", Type.number),
-        TypeShim.new("max", Type.number),
+    static readonly TypeShim = TypeShim.new("range-1", JsType.Object, undefined, [
+        TypeShim.new("min", JsType.number),
+        TypeShim.new("max", JsType.number),
     ]);
 
     static _reference(nickname: string) {
-        return TypeShim.new(nickname, Type.Reference, undefined, [Range1.TypeShim]);
+        return TypeShim.new(nickname, JsType.Reference, undefined, [Range1.TypeShim]);
     }
 
     static readonly Functions = [

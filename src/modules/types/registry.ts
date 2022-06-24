@@ -7,7 +7,7 @@
  */
 
 import { TypeShim } from "../shims/type-shim";
-import { getBufferTypes, Type } from "./type";
+import { getBufferTypes, JsType } from "./type";
 
 export function getStandardTypesAsDict(suffix="") : Map<string, TypeShim> {
     let types = new Map<string, TypeShim>();

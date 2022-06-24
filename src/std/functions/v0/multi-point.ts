@@ -4,7 +4,7 @@
 // }
 
 import { Debug } from "../../../../../engine/src/lib";
-import { Type } from "../../../modules/types/type";
+import { JsType } from "../../../modules/types/type";
 import { shim } from "../../std-system";
 import { ListSetWidget } from "../../widgets/data/list-widget";
 import { Point } from "./point";
@@ -37,10 +37,10 @@ export class MultiPoint {
     }
 
     static readonly Functions = [
-        shim(MultiPoint.fromPoints, "MultiPoint", "", [Type.List], [Type.Object]),
-        shim(MultiPoint.fromArray, "MultiPoint from array", "", [Type.List], [Type.Object]),
-        shim(MultiPoint.toPoints, "iterate", "", [Type.Object], [Type.List]),
-        shim(MultiPoint.toArray, "to array", "", [Type.Object], [Type.List])
+        shim(MultiPoint.fromPoints, "MultiPoint", "", [JsType.List], [JsType.Object]),
+        shim(MultiPoint.fromArray, "MultiPoint from array", "", [JsType.List], [JsType.Object]),
+        shim(MultiPoint.toPoints, "iterate", "", [JsType.Object], [JsType.List]),
+        shim(MultiPoint.toArray, "to array", "", [JsType.Object], [JsType.List])
     ]
 }
 
