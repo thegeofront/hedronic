@@ -3,6 +3,7 @@ import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
 import { TypeShim } from "../modules/shims/type-shim";
+import { RustConversion } from "../modules/types/rust-conversion";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Point } from "../std/functions/v0/point";
 
@@ -138,13 +139,20 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
     if (typeof item !== 'object' || item === null) return undefined;
     
     // first, judge based on typename (javascript type)
-
+    
     //@ts-ignore
     let typename = item.constructor.name;
 
-    console.log(typename);
-
-
+    // judge based on rust gf traits
+    if (RustConversion.isRenderable(item)) {
+        let type = item.constructor.gf_get_shader_type();
+        if (type == 0) {
+            let buffer = item.gf_get_buffers();
+            return MultiVector3.fromData([buffer.x, buffer.y, buffer.z]); // TODO buffer & aggregate
+        } else {
+            Debug.warn("type", 0, "is unknown!");
+        }
+    }
 
     if (typename == "Array") 
         return tryConvertArray(item as Array<any>);

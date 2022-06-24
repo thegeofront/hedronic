@@ -275,6 +275,7 @@ export namespace DTSLoading {
             let name = Help.getName(node);
             if (name == "") return true;
             if (blackList && blackList.has(name)) return false;
+            if (name.startsWith("gf_")) return false;
             
             // TODO implement constructors once typeReferences are done 
             if (node.kind == ts.SyntaxKind.Constructor) return false;

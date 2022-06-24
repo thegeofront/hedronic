@@ -5,9 +5,10 @@ export const STANDARD_GRAPH =  {
   },
   "dependencies": {
     "geofront": {
-      "fullname": "Geofront Library",
+      "fullname": "Geofront Standard Library",
       "version": "",
-      "url": "https://cdn.jsdelivr.net/npm/geofront"
+      "url": "./wasm-modules/geofront",
+      "__backup__url_online": "https://cdn.jsdelivr.net/npm/geofront"
     },
     "gfp-startin": {
       "url": "./wasm-modules/startin"
