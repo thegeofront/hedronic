@@ -54,8 +54,6 @@ export function makeMenuFromWidget(payload: {node: GeonNode, nodes: NodesCanvas}
             </details>`}
             <div class="divider"></div>
 
-
-
             ${Element.html`
             <details open>
                 <summary>Inputs: ${node.core.inCount}</summary>

@@ -5,15 +5,15 @@ import { JsType } from "../../modules/types/type";
 import { State } from "../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../nodes-canvas/model/widget";
 
-export class FileLoadWidget extends Widget {
+export class FileLoadStringWidget extends Widget {
     
     static new(state: State) {
         let outs = [TypeShim.new("content", JsType.string)];
-        return new FileLoadWidget("file load", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
+        return new FileLoadStringWidget("file load as string", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
     }
 
     clone() {
-        return FileLoadWidget.new(this.saveState);
+        return FileLoadStringWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {
@@ -32,17 +32,12 @@ export class FileLoadWidget extends Widget {
         if (files.length == 0) return;
 
         // for now, just take the first file
-        let data = await WebIO.readFileAsText(files[0]);
+        let data = await WebIO.readFileAsString(files[0]);
 
         if (data == null) {
             alert("could not process file as text");
             return;  
         } 
-
-        if (data instanceof ArrayBuffer) {
-            alert("array buffer processing not implemented (yet)")
-            return;
-        }
 
         this.saveState = data;
         this.onChange();

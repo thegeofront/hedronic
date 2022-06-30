@@ -25,8 +25,15 @@ export class InspectWidget extends Widget {
 
     set(data: any) {
         this.state = data;
-        if (!this.viewer) return;
         console.log(this.state);
+        if (!this.viewer) return;
+
+        // NOTE: careful: this is not watertight
+        if (data.length && data.length > 1000) {
+            this.state = "[too long to visualize...]"
+        } else if (typeof(data) === 'object' && Object.keys(data).length > 1000) {
+            this.state = "[too many properties to visualize...]"
+        }
         this.viewer.data = this.state;
     }
 
@@ -35,8 +42,11 @@ export class InspectWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
+        if (!this.state) return [];
+        
+        // else, add a viewer
         this.viewer = Element.html`<json-viewer>""</json-viewer>`;
-        if (this.state) this.set(this.state);
+        this.set(this.state);
         return [this.viewer];   
     }
 }
