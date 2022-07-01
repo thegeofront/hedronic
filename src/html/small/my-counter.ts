@@ -47,7 +47,6 @@ class MyCounter extends WebComponent {
     }
 
     disconnecedCallback() {
-        console.log("poef!");
     }
 
     inc() {

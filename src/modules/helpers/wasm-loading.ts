@@ -4,6 +4,9 @@ import { DTSLoading } from "./dts-loading";
 
 export namespace WasmLoading {
 
+    /**
+     * NOTE: I know, this is insane...
+     */
     export async function moduleFromWasmPack(jsPath: string, dtsPath: string, wasmPath: string) {
         // console.log("creating a wasm shim")
         let code = await WebIO.getText(jsPath);
@@ -21,6 +24,9 @@ export namespace WasmLoading {
         // init the module
         let syntaxTree = await DTSLoading.load(dtsPath, dtsPath, {});
         let js = await module.default(wasmModule);
+        if (js.start) {
+            js.start();
+        }
         return {js: module, syntaxTree};
 
         //@ts-ignore
