@@ -13,8 +13,8 @@ import { ConsoleWidget } from "./widgets/console-widget";
 import { GetWidget } from "./widgets/data/get-widget";
 import { ListSetWidget } from "./widgets/data/list-widget";
 import { SetWidget } from "./widgets/data/set-widget";
-import { FileLoadStringWidget } from "./widgets/file-load-string-widget";
-import { FileSaveWidget } from "./widgets/file-save-widget";
+import { FileLoadStringWidget } from "./widgets/file/file-load-string-widget";
+import { FileSaveWidget } from "./widgets/file/file-save-widget";
 import { ImageWidget } from "./widgets/image-widget";
 import { InputWidget } from "./widgets/input-widget";
 import { InspectWidget } from "./widgets/inspect-widget";
@@ -33,7 +33,8 @@ import { Vector } from "./functions/v0/vector";
 import { Mesh } from "./functions/v3/mesh";
 import { MultiPoint } from "./functions/v0/multi-point";
 import { Noise } from "./functions/math/noise";
-import { FileLoadBufferWidget } from "./widgets/file-load-buffer-widget";
+import { FileLoadBufferWidget } from "./widgets/file/file-load-buffer-widget";
+import { FileFetchBufferWidget } from "./widgets/file/file-fetch-buffer-widget";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -216,6 +217,7 @@ export function getDefaultWidgets() {
         FileSaveWidget.new(false),
         FileLoadStringWidget.new(false),
         FileLoadBufferWidget.new(false),
+        FileFetchBufferWidget.new(false),
         InspectWidget.new({}),
         ListSetWidget.new(3),
         GetWidget.new({keys: [], types: []}),
