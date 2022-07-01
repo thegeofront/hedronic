@@ -1,4 +1,4 @@
-import { GeoType } from "./type";
+import { GeoShaderType, GeoType } from "./type";
 
 /**
  * Go from magic methods to internal logic.
@@ -58,7 +58,7 @@ export namespace PluginConversion {
         }
     }
 
-    export function getShaderAndBuffers(data: any) {
+    export function getShaderAndBuffers(data: any): {type: GeoShaderType, buffers: any} | undefined {
         if (!isRenderable(data)) return undefined;
         let type = data.constructor.gf_get_shader_type();
         let buffers = data.gf_get_buffers();

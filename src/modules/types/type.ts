@@ -12,8 +12,12 @@ import { TypeShim } from "../shims/type-shim";
 // TODO in desperate need of an overhaul
 
 export enum GeoShaderType {
-    PointShader,
-    MultiPointShader,
+    Point=0,
+    MultiPoint=1,
+    PointCloud=2,
+    BoundingBox=3,
+    Plane=4,
+    Mesh=5,
 }
 
 /**

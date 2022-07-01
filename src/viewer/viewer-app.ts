@@ -2,8 +2,8 @@ import { App, Scene, DebugRenderer, Camera, UI, MultiLine, Plane, Vector3, DrawS
 import { ShaderProgram } from "../../../engine/src/render/webgl/ShaderProgram";
 import { PayloadEventType } from "../html/payload-event";
 import { HTML } from "../html/util";
-import { TypeShim } from "../modules/shims/type-shim";
 import { PluginConversion } from "../modules/types/rust-conversion";
+import { GeoShaderType } from "../modules/types/type";
 import { NodesCanvas } from "../nodes-canvas/nodes-canvas";
 import { Point } from "../std/functions/v0/point";
 
@@ -13,6 +13,8 @@ export type VisualizePayload = {
     preview?: boolean
     style?: any
 }
+
+export const MoveCameraToEvent = new PayloadEventType<{pos: Vector3, a: number, b: number}>("movecamera");
 
 export const VisualizeEvent = new PayloadEventType<VisualizePayload>("visualizestate");
 
@@ -146,11 +148,21 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
     // judge based on rust gf traits
     if (PluginConversion.isRenderable(item)) {
         let {type, buffers} = PluginConversion.getShaderAndBuffers(item)!;
-        if (type == 0) {
+        if (type == GeoShaderType.Point) {
             return MultiVector3.fromData([buffers.x, buffers.y, buffers.z]); // TODO buffer & aggregate
-        } else {
-            Debug.warn("type", type, "is unknown!");
-        }
+        } else if (type === GeoShaderType.MultiPoint) {
+            return MultiVector3.fromData(buffers.verts); // TODO buffer & aggregate
+        } else if (type === GeoShaderType.PointCloud) {
+            return MultiVector3.fromData(buffers.verts); // TODO buffer & aggregate
+        } else if (type === GeoShaderType.BoundingBox) {
+            return undefined
+        } else if (type === GeoShaderType.Plane) {
+            // return Plane.
+        } else if (type === GeoShaderType.Mesh) {
+            return Mesh.new(MultiVector3.fromData(buffers.verts), buffers.cells); 
+        } 
+        Debug.warn("type", type, "is unknown!");
+        return undefined;
     }
 
     if (typename == "Array") 
