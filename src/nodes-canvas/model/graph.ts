@@ -61,6 +61,20 @@ export class NodesGraph {
         if (this.onWidgetChangeCallback) this.onWidgetChangeCallback(hash);
     }
 
+    /**
+     * destructor
+     */
+    onDestroy() {
+        let keys = [];
+        for (let key of this.nodes.keys()) {
+            keys.push(key);
+        }
+
+        for (let key of keys) {
+            this.deleteNode(key);
+        }
+    }
+
     // ---- True Graph Business 
 
     clone() {  
@@ -222,7 +236,6 @@ export class NodesGraph {
             node.core.onDestroy();
             node.widget!.setOnChangeCallback(undefined);
             this.widgets.delete(hash);
-
             // TODO remove the widget itself??
         }
 

@@ -166,6 +166,9 @@ export class NodesCanvas {
      * NOTE that resetting the graph also means resetting the catalogue to an extend
      */
     resetGraph(graph = NodesGraph.new()) {
+        if (this.graph !== graph) {
+            this.graph.onDestroy();
+        }
         this.graph = graph;
         this.graphHistory.reset(graph);
         this.graph.setWidgetChangeCallback(this.onWidgetChange.bind(this));

@@ -58,7 +58,6 @@ export class STD {
         let TODO_LIBRARY = [TODO("TODO: Create this library!")];
         let TODO_SPECIAL = [TODO("TODO: Create this special feature!")];
 
-
         let map = function(list: (FunctionShim | Divider)[]) : MapTree<FunctionShim | "divider"> {
             let mapped = list.map((item, index) : [string, FunctionShim | "divider"] => {
                 if (item == "divider") {
