@@ -15,9 +15,9 @@ export class TypeShim {
     traits: GFTypes[] = [];
 
     private constructor(
-        public name:  string,  // what to show up as name 
+        public name:  string, // what to show as name 
         public type: JsType, // the actual type  
-        public readonly glyph?: string,  // how to visualize the type or variable briefly
+        public readonly glyph?: string,  // how to visualize the type or variable in shortened form
         public readonly children?: TypeShim[], // sub-variables (and with it, sub types). a list will have a item sub-variable for example
     ) {}
 

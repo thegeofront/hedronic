@@ -24,7 +24,8 @@ export class NodesGraph {
 
     constructor(
         public nodes: Map<string, GeonNode>, 
-        public widgets: Set<string>) {}
+        public widgets: Set<string>
+    ) {}
 
     static new(
         nodes = new Map<string, GeonNode>(),
@@ -455,7 +456,7 @@ export class NodesGraph {
         });
 
         node.forEachOutputSocket((s, connections) => {
-            if (connections == []) return;
+            if (connections.length == 0) return;
             for (let con of connections) {
                 if (!overrideOutputConnections && this.hasInputConnectionAt(con)) return;
                 this.setInputConnectionAt(con, s);
@@ -478,7 +479,7 @@ export class NodesGraph {
             });
             
             node.forEachOutputSocket((socket, cons) => {
-                if (cons == []) return;
+                if (cons.length == 0) return;
                 for (let con of cons) {
                     if (!this.hasInputConnectionAt(con) || 
                         !this.getInputConnectionAt(con)!.equals(socket)) {

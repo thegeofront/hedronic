@@ -267,6 +267,28 @@ function setNodeStyle(ctx: CTX, state: DrawState, component: number, componentDr
     }
 }
 
+class CableSocketMetaData {
+
+    constructor(
+        public index: number, 
+        public height: number) {}
+
+    static new(index: number, height: number): CableSocketMetaData {
+        return new CableSocketMetaData(index, height)
+    }
+
+    // how much must a zig zag line move minimally in order to not cross the node itself?
+    minZigZagUp() {
+        return -this.index;
+    }
+
+    // how much must a zig zag line move minimally in order to not cross the node itself?
+    minZigZagDown() {
+        return (this.height + 1) - this.index;
+    }
+}
+
+
 
 export function drawMultiCable(ctx: CTX, from: Socket, tos: Socket[], style: CableStyle, canvas: NodesCanvas, graph: NodesGraph) {
 
@@ -274,10 +296,12 @@ export function drawMultiCable(ctx: CTX, from: Socket, tos: Socket[], style: Cab
     let lines = [];
     let fromNode = graph.nodes.get(from.hash)!;
     let fromGridPos = fromNode.getConnectorGridPosition(from.idx)!;
+    let fromIndexAndHeight = CableSocketMetaData.new(Math.abs(from.idx), fromNode.getHeight());
     for (let to of tos) {
         let toNode = graph.nodes.get(to.hash)!;
         let toGridPos = toNode.getConnectorGridPosition(to.idx)!;
-        let line = generateCableLine(fromGridPos, toGridPos, canvas);
+        let toIndexAndHeight =  CableSocketMetaData.new(Math.abs(to.idx), toNode.getHeight());
+        let line = generateCableLine(fromGridPos, toGridPos, canvas, fromIndexAndHeight, toIndexAndHeight);
         if (line) lines.push(line);
     }
     strokeLines(ctx, style, lines);
@@ -344,11 +368,12 @@ export function strokeLines(ctx: CTX, style: CableStyle, lines: MultiVector2[]) 
 /**
  *  line goes : (a) --- hor --- (b) --- diagonal --- (c) --- ver --- (d) --- diagonal --- (e) --- hor --- (f)
  */
-export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas) {
+export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canvas: NodesCanvas, fromData?: CableSocketMetaData, toData?: CableSocketMetaData) {
 
     let size = canvas.size;
     let hgs = canvas.size / 2;
 
+    // a and f are the start & end points
     let a = canvas.toWorld(fromGridPos).addn(hgs, hgs);
     let f = canvas.toWorld(toGridPos).addn(hgs, hgs);
 
@@ -376,7 +401,6 @@ export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canv
     }
 
     // make the vertical line break move correctly  
-    let yBreak = 1;
     let line;
 
     // apply horizontal line break
@@ -389,29 +413,57 @@ export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canv
         distanceToSocket.x = -xBreak;
     }  
 
-    // apply vertical line break
+    
     if (delta.x < 1) {
         fillet = size * 0.25;
+        
+        // make an S line
+        let yZigZagDelta = 1;
+
+        // make the zigzag very small if delta is 1
         if (delta.y == -1 || delta.y == 1) {
-            yBreak = 0.5;
+            yZigZagDelta = 0.5;
         }    
-        if (delta.y < 0) {
-            yBreak *= -1;
+
+        // if true, this is a upwards zigzag
+        let upwardsZigZag = delta.y < 0;
+        if (upwardsZigZag) {
+            
+            yZigZagDelta *= -1;
+        } 
+    
+        // construct deltas
+        if (fromData && toData) {
+            // if upwardszigzag from moves up, to moves down
+            let fromMin = upwardsZigZag ? fromData.minZigZagUp() : fromData.minZigZagDown();
+            let toMin = upwardsZigZag ? toData.minZigZagDown() : toData.minZigZagUp();
+
+            let leftover = Math.abs(delta.y) - Math.abs(fromMin) - Math.abs(toMin);
+            
+            if (leftover < 0) {
+                // if not enough space: divide equally,
+                leftover *= (upwardsZigZag ? -1 : 1);
+                distanceFromSocket.y = fromMin + leftover * 0.5;
+                distanceToSocket.y = toMin - leftover * 0.5;    
+            } else {
+                // else, 
+                leftover *= (upwardsZigZag ? -1 : 1);
+                distanceFromSocket.y = fromMin + leftover;
+                distanceToSocket.y = toMin;
+            }            
+        } else {
+            // fallback delta 
+            distanceFromSocket.y = delta.y - yZigZagDelta;
+            distanceToSocket.y = -yZigZagDelta;
         }
-        // distanceFromSocket.y = yBreak;
-        // distanceToSocket.y = -delta.y + yBreak;
 
-        distanceFromSocket.y = delta.y - yBreak;
-        distanceToSocket.y = -yBreak;
-
-        // 
+        // apply all delta's 
         let b = a.clone();
         let c = a.clone();
 
         let d = f.clone();
         let e = f.clone();
 
-        // figure out b and c 
         b.x += distanceFromSocket.x * size;
         c.x += distanceFromSocket.x * size;
         c.y += distanceFromSocket.y * size;
@@ -429,7 +481,7 @@ export function generateCableLine(fromGridPos: Vector2, toGridPos: Vector2, canv
             f,
         ]);
     } else {
-        // 
+        // make a straight line 
         let b = a.clone();
         let e = f.clone();
 
