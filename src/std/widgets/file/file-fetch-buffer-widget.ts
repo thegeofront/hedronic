@@ -7,6 +7,8 @@ import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 
 export class FileFetchBufferWidget extends Widget {
     
+    dataState: Uint8Array | undefined = undefined;
+
     static new(state: State) {
         let outs = [TypeShim.new("content", JsType.Blob)];
         return new FileFetchBufferWidget("file fetch as blob", WidgetSide.Input, Vector2.new(2,2), [], outs, state);
@@ -17,7 +19,7 @@ export class FileFetchBufferWidget extends Widget {
     }
 
     makeMenu(): HTMLElement[] {
-        return [MenuMaker.textarea("url", "./assets/autzen.las", this.onInput.bind(this))];
+        return [MenuMaker.textarea("url", this.saveState || "", this.onInput.bind(this))];
     }
 
     onClick() {
@@ -27,6 +29,7 @@ export class FileFetchBufferWidget extends Widget {
 
     async onInput(str: string) {
         if (!str) return;
+        this.saveState = str;
         
         let blob = await WebIO.getBlob(str);
         let buffer = await blob.arrayBuffer();
@@ -35,7 +38,11 @@ export class FileFetchBufferWidget extends Widget {
             return;  
         } 
         var uint8View = new Uint8Array(buffer);
-        this.saveState = uint8View; // NOTE: this is a sad way of doing things...
+        this.dataState = uint8View; // NOTE: this is a sad way of doing things...
         this.onChange();
     }   
+
+    async run(...args: State[]) : Promise<State | State[]> {
+        return this.dataState; 
+    }
 }

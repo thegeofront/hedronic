@@ -10,6 +10,7 @@ export namespace WasmLoading {
     export async function moduleFromWasmPack(jsPath: string, dtsPath: string, wasmPath: string) {
         // console.log("creating a wasm shim")
         let code = await WebIO.getText(jsPath);
+
         // let fakeWasmPath = "wasm-modules/cityjson_validator_bg.wasm";
         let wasmModule = fetch(wasmPath);
         let url = URL.createObjectURL(new Blob([code], {type: 'text/javascript'}));
@@ -18,7 +19,6 @@ export namespace WasmLoading {
 
         //@ts-ignore
         let module = await import(/* webpackIgnore: true */url);
-        
         if (!module) throw new Error("module not found at: " +  url);
 
         // init the module

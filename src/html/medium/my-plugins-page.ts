@@ -70,7 +70,7 @@ export const UpdatePluginsEvent = new PayloadEventType<Catalogue>("updateplugins
                 <div class="form-row">
                     <div class="col-md-3 mb-3">
                         <label for="url-field">Url</label>
-                        <input type="text" class="form-control" id="url-field" placeholder="https://cdn.jsdelivr.net/npm/geofront/" required>
+                        <input type="text" class="form-control" id="url-field" required value="https://cdn.jsdelivr.net/npm/<your module>/">
                         <div class="invalid-tooltip">
                             Please provide a valid Url.
                         </div>

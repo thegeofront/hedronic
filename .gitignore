@@ -4,3 +4,4 @@ node_modules
 public/index.js  
 public/wasm-modules/**/*
 public/modules/**/*
+samples/
