@@ -76,7 +76,7 @@ export class ViewerApp extends App {
                 dr.set(u, key, style);
             }
         } else if (unit) {
-            dr.set(unit, id);
+            dr.set(unit, id, style);
         }
     }
 

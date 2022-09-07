@@ -105,7 +105,7 @@ export class Widget {
     toJson() {
         return {
             name: this.name,
-            state: this.saveState,
+            state: (this.side == WidgetSide.Input) ? this.saveState : undefined,
         }
     }
 

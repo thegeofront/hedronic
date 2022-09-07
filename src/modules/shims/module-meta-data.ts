@@ -106,7 +106,10 @@ export class ModuleMetaData {
         // for now: only save version.
         // custom names & icons can get confusing real quick
         let dict: any = {};
-        if (this.version !== "latest" && this.version !== "") dict["version"] = this.version; 
+        if (this.version !== "latest" && this.version !== "") 
+            dict["version"] = this.version;
+        dict["filename"] = this.filename; 
+        dict["url"] = this.url; 
         return dict;
     }
 }

@@ -12,7 +12,7 @@ export class ViewWidget extends Widget {
     count = 0;
 
     static new(state: State) {
-        let ins = [TypeShim.new("Renderable", JsType.any), TypeShim.new("color", JsType.string)] 
+        let ins = [TypeShim.new("Renderable", JsType.any), TypeShim.new("color", JsType.any)] 
         let outs: TypeShim[] = [];
         let widget = new ViewWidget("view", WidgetSide.Output, Vector2.new(1,2), ins, outs, state);
         widget.count = ViewWidget.count;
@@ -21,8 +21,10 @@ export class ViewWidget extends Widget {
     }
 
     async run(...args: State[]) {
+        let state = args[0];
         let style = args[1];
-        HTML.dispatch(VisualizeEvent, { state: args[0], id: this.count.toString(), style });
+        let id = this.count.toString();
+        HTML.dispatch(VisualizeEvent, { state, id, style });
         return [];
     }
 

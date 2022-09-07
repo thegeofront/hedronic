@@ -35,6 +35,8 @@ import { MultiPoint } from "./functions/v0/multi-point";
 import { Noise } from "./functions/math/noise";
 import { FileLoadBufferWidget } from "./widgets/file/file-load-buffer-widget";
 import { FileFetchBufferWidget } from "./widgets/file/file-fetch-buffer-widget";
+import { Functions as ConverterFunctions } from "./functions/converters";
+import { JsonFunctions } from "./functions/json";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -81,9 +83,8 @@ export class STD {
         );
         
         let std = MapTree.new([
-            ["Types", MapTree.new([
-                ["Converters", map(["divider", "divider", "divider"])]
-            ])],
+            ["Types", map(ConverterFunctions)],
+            ["Json", map(JsonFunctions)],
             ["Iterate", MapTree.new([
                 ["Sequence", TODO_LIBRARY],
                 ["Tree", TODO_LIBRARY],

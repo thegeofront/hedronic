@@ -43,6 +43,9 @@ export class FileFetchBufferWidget extends Widget {
     }   
 
     async run(...args: State[]) : Promise<State | State[]> {
+        if (!this.dataState && this.saveState) {
+            this.onInput(this.saveState);
+        }
         return this.dataState; 
     }
 }
