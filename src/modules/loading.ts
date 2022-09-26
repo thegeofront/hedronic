@@ -122,11 +122,12 @@ export namespace ModuleLoading {
 
     export async function loadWasmModule(
         meta: ModuleMetaData,
-        types = new Map<string, TypeShim>()) {
+        types = new Map<string, TypeShim>()
+    ) {
 
         // TODO expand on this
-        const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput"]);
-        const funcBlacklist = Misc.setFromList(["init", "free"]);
+        const typeBlacklist = Misc.setFromList(["InitInput", "InitOutput", "SyncInitInput"]);
+        const funcBlacklist = Misc.setFromList(["init", "free", "initSync", "initsync"]);
 
         const res = await WasmLoading.moduleFromWasmPack(meta.jsPath, meta.dtsPath, meta.wasmPath).catch((e) => {
             Debug.warn(e);
@@ -149,7 +150,11 @@ export namespace ModuleLoading {
     }
 
 
-    export async function loadModule(jsPath: string, dtsPath: string, dtsName: string) {
+    export async function loadModule(
+        jsPath: string, 
+        dtsPath: string, 
+        dtsName: string
+    ) {
         // console.log("loading", jsPath, "and", dtsPath)
         let js = await JSLoading.loadModule(jsPath);
         let syntaxTree = await DTSLoading.load(dtsPath, dtsName, {});
@@ -165,7 +170,7 @@ export namespace ModuleLoading {
         types= new Map<string, TypeShim>(), 
         jsModule: any, 
         syntaxTree: ts.SourceFile, 
-        ) {
+    ) {
         
         types = DTSLoading.extractTypeDeclarations(syntaxTree, types);
         let shims = DTSLoading.extractFunctionShims(syntaxTree, meta.nickname, jsModule, types);
