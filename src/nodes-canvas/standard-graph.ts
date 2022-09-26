@@ -1,4 +1,4 @@
-export const STANDARD_GRAPH =  {
+export const STANDARD_GRAPH = {
   "meta": {
     "name": "graph",
     "date": 1662549796555
