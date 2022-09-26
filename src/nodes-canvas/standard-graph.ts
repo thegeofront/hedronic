@@ -4,17 +4,17 @@ export const STANDARD_GRAPH = {
     "date": 1662549796555
   },
   "dependencies": {
-    "geofront": {
-      "filename": "geofront",
-      "url": "./wasm-modules/geofront"
+    "std_gf": {
+      "url": "./plugins/std"
     },
-    "gfp-startin": {
-      "filename": "gfp_startin",
-      "url": "./wasm-modules/startin"
+    "startin_gf": {
+      "url": "./plugins/startin"
     },
-    "copc_front": {
-      "filename": "copc_front",
-      "url": "./wasm-modules/copc_front"
+    "copc_gf": {
+      "url": "./plugins/copc"
+    },
+    "rust-min_gf": {
+      "url": "./plugins/rust-min"
     }
   },
   "graph": {

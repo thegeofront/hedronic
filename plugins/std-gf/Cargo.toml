@@ -1,5 +1,5 @@
 [package]
-name = "geofront"
+name = "std-gf"
 version = "0.1.1"
 authors = ["josfeenstra <me@josfeenstra.nl>"]
 edition = "2018"

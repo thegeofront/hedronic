@@ -1,5 +1,5 @@
 [package]
-name = "plugin_minimal_rust"
+name = "rust-min-gf"
 version = "0.1.0"
 edition = "2021"
 
