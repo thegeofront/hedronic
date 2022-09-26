@@ -1,12 +1,11 @@
 <script src="raw/a.out.js"></script>
 <script>
 
-
 Module.onRuntimeInitialized = _ => {
-    const c = new Module.Counter(22);
-    console.log(c.counter); // prints 22
+    const c = new Module.Point(3, 4);
+    console.log(c.x); 
     c.increase();
-    console.log(c.counter); // prints 23
-    console.log(c.squareCounter()); // prints 529
+    console.log(c.x); 
+    console.log(c.squareCounter()); 
 };
 </script>

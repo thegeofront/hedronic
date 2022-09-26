@@ -9,19 +9,19 @@ float add(float left, float right) {
 
 class Point {
 public:
-    double _x;
-    double _y;
+    double x;
+    double y;
 
     Point(double x, double y) :
-    _x(x),
-    _y(y) {}
+        x(x),
+        y(y) {}
 
     void increase() {
-        _x++;
+        x++;
     }
 
     int squareCounter() {
-        return _x * _y;
+        return x * y;
     }
 };
 
@@ -31,5 +31,6 @@ EMSCRIPTEN_BINDINGS(cpp_min) {
         .constructor<double, double>()
         .function("increase", &Point::increase)
         .function("squareCounter", &Point::squareCounter)
-        .property("counter", &Point::counter);
+        .property("x", &Point::x)
+        .property("y", &Point::y);
 }
