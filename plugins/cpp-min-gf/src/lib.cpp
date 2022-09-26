@@ -7,27 +7,29 @@ float add(float left, float right) {
     return left + right;
 }
 
-class Counter {
+class Point {
 public:
-    int counter;
+    double _x;
+    double _y;
 
-    Counter(int init) :
-    counter(init) {}
+    Point(double x, double y) :
+    _x(x),
+    _y(y) {}
 
     void increase() {
-        counter++;
+        _x++;
     }
 
     int squareCounter() {
-        return counter * counter;
+        return _x * _y;
     }
 };
 
 EMSCRIPTEN_BINDINGS(cpp_min) {
     function("add", &add);
-    class_<Counter>("Counter")
-        .constructor<int>()
-        .function("increase", &Counter::increase)
-        .function("squareCounter", &Counter::squareCounter)
-        .property("counter", &Counter::counter);
+    class_<Point>("Point")
+        .constructor<double, double>()
+        .function("increase", &Point::increase)
+        .function("squareCounter", &Point::squareCounter)
+        .property("counter", &Point::counter);
 }
