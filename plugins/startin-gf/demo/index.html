@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startin wasm demo</title>
+    <style>
+        :root {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+
+        import init, { Triangulation } from "../pkg/gfp_startin.js";
+
+        function make_canvas() {
+            let canvas = document.createElement("canvas");
+            let ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ff0000ff";
+            ctx.fillStyle = "green";
+            ctx.strokeStyle = "#ff0000ff";
+            ctx.strokeStyle = "green";
+            document.body.appendChild(canvas);
+            canvas.width = 1000;
+            canvas.height = 1000;
+            return ctx;
+        }
+
+        function plot_circle(ctx, x=50, y=50, radius=3) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+            ctx.fill();
+        }
+
+        function plot_lines(ctx, lines) {
+            const WIDTH = 6;
+            let count = lines.length / WIDTH;
+            
+            let get = (i, j) => {
+                return lines[(i * WIDTH) + j];
+            }
+
+            ctx.beginPath();
+            for (let i = 0 ; i < count; i++) {
+                ctx.moveTo(get(i, 0), get(i, 1));
+                ctx.lineTo(get(i, 3), get(i, 4));
+            }
+            ctx.strokeWidth = 0.1;
+            ctx.stroke();
+        }
+
+
+        async function run() {
+            await init();
+            let ctx = make_canvas();
+
+            let data = [];
+            for (let i = 0; i < 100; i++) {
+                data.push(Math.random() * 1000);
+                data.push(Math.random() * 1000);
+                data.push(Math.random() * 1);
+            }
+            let dt = Triangulation.new_from_vec(data);
+
+            // draw verts
+            let vertData = dt.all_vertices();
+            for (let i = 1 ; i < vertData.length / 3; i++) {
+                let v = [
+                    vertData[(i * 3) + 0],
+                    vertData[(i * 3) + 1],
+                    vertData[(i * 3) + 2],
+                ];
+                plot_circle(ctx, v[0], v[1], 2);
+            }
+
+            // draw iso's 
+            let count = 10;
+            for (let i = 0 ; i < count; i++) {
+                let normLevel = i / count + (0.5 / count);
+                let lvl = dt.isolevel(normLevel);
+                console.log(lvl);
+                plot_lines(ctx, lvl);
+            }
+        } 
+        run()
+    </script>
+</body>
+</html>

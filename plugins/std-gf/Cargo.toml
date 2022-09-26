@@ -1,0 +1,43 @@
+[package]
+name = "geofront"
+version = "0.1.1"
+authors = ["josfeenstra <me@josfeenstra.nl>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.63", features = ["serde-serialize"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.79"
+las = "0.7.6"
+rand = "0.8.5"
+getrandom = { version = "0.2", features = ["js"] }
+# choose your weapon. for reference: https://github.com/bitshifter/mathbench-rs. Choosing nalgebra for now
+# nalgebra = "0.31.0"
+# nalgebra-glm = "0.17.0"
+# seems awesome for a game, but too sparse for what ill be needing
+glam = {version = "0.21", features = ["serde", "rand"]}
+
+# seems a bit too sparse
+# euclid = "0.22.7"
+
+# this one seems like a bit too much, but it does have SVD which is nice
+
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.6", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.13"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"

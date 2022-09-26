@@ -1,0 +1,92 @@
+# DESIGN RULES 
+- only 3 levels, not deeper 
+- use static methods over normal methods
+- just a namespace with functions? still expose it like an object, for easy js <--> rust translation
+- break all these rules rather than doing something really stupid
+
+
+# At Javascript 
+- Widgets 
+- Types & basic type conversion
+- 
+
+=========================================================================================
+
+# Lets create the basics of all these categories
+
+# Widgets ( At Geofront )
+L Display [X]
+L Inputs [X]
+L IO [X] 
+L Scriptable (js) [ ]
+
+# Types [ ] ( I THINK THIS SHOULD ALSO BE DONE AT THE GEOFRONT SIDE OF THINGS )
+L All Types [ ]
+L From Json / To Json [ ]
+
+# Data [ ]
+L Sequencing / Traversal [ ]
+L List [ ]
+L Table [ ]
+L Map [ ]
+L Json [ ] 
+
+# Maths
+L Boolean
+  L AND
+  L OR
+  L NOT
+L Operators
+  L add 
+  L mul 
+  L sin 
+  L pow
+L Range
+  L Range1
+  L Range2
+  L Range3
+L Noise
+L Various 
+
+# Transformations
+L Matrix
+L Relocate
+L CRS
+
+# Raster 
+L Image 
+
+# Zero Dimentionals
+L Point 
+L Vector
+
+# One Dimentionals  
+L Polyline
+
+# Two Dimentionals  
+L Surface 
+L Polygon 
+
+# Three Dimentionals 
+L Cuboid
+L Mesh 
+L Solid
+
+# Multi
+L MultiPoint
+L MultiMesh
+L MultiPolygon
+
+# Various 
+L Color
+L Date 
+
+------
+
+Plugins 
+
+
+
+# Maybe's 
+
+Rename this to GSL ( Geofront Standard Library ) ?
