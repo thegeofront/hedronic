@@ -7,10 +7,10 @@
         "install-all": "cd ../engine npm install && npm install",
         
         "build-plugins": "npm run build-startin && npm run build-std && npm run build-min-rust && build-copc",
-        "build-startin": "cd plugins/startin-gf && wasm-pack build --out-dir ../../public/plugins/startin --target web",
-        "build-std": "cd plugins/std-gf && wasm-pack build --out-dir ../../public/plugins/std --target web",
-        "build-min-rust": "cd plugins/rust-min-gf && wasm-pack build --out-dir ../../public/plugins/rust-min --target web",
-        "build-copc": "cd plugins/copc-gf && wasm-pack build --out-dir ../../public/plugins/copc --target web",
+        "build-startin": "cd plugins/startin-gf && wasm-pack build --out-dir ../../public/plugins/startin --target web --release",
+        "build-std": "cd plugins/std-gf && wasm-pack build --out-dir ../../public/plugins/std --target web --release",
+        "build-min-rust": "cd plugins/rust-min-gf && wasm-pack build --out-dir ../../public/plugins/rust-min --target web --release",
+        "build-copc": "cd plugins/copc-gf && wasm-pack build --out-dir ../../public/plugins/copc --target web --release",
 
         "build": "webpack --mode production --env=prod",
         "build-production-and-publish": "webpack --mode production --env=prod && cd ../www && cp -r ../public . && git add . && git commit -m 'auto-update' && git push",

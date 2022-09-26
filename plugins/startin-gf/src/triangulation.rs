@@ -32,6 +32,8 @@ impl Triangulation {
         }
     }
 
+    // ...
+
     pub fn insert_one_pt(&mut self, px: f64, py: f64, pz: f64) -> bool {
         let _re = self.dt.insert_one_pt(px, py, pz);
         true
@@ -91,17 +93,13 @@ impl Triangulation {
         }
     }
 
-    pub fn remove(&mut self, v: usize) -> bool {
-        let re = self.dt.remove(v);
-        if re.is_err() == true {
-            false
-        } else {
-            true
+    pub fn remove_vertices_with_index(mut self, ids: Vec<usize>) -> Self {
+        for id in ids {
+            let re = self.dt.remove(id);
         }
+        self
     }
 
-    // TODO: add this to startin itself (if hugo likes it!)
-    // 
     pub fn isolevel(&self, level: f64, levels: Option<Vec<f64>>) -> Option<Vec<f64>> {
 
         // ensure valid levels. if ommited, use z value of vertices
@@ -118,7 +116,6 @@ impl Triangulation {
         // first, implement 'marching triangle'
         // just an array of line segments. TODO do a better data structure
         let mut edges: Vec<f64> = Vec::new();
-
         let verts = self.dt.all_vertices();
 
         // each triangle will produce 0 or 1 line segments

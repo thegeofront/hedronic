@@ -61,6 +61,7 @@
 
         async function run() {
             await init();
+            
             let ctx = make_canvas();
 
             let data = [];
@@ -83,11 +84,10 @@
             }
 
             // draw iso's 
-            let count = 10;
+            let count = 100;
             for (let i = 0 ; i < count; i++) {
                 let normLevel = i / count + (0.5 / count);
                 let lvl = dt.isolevel(normLevel);
-                console.log(lvl);
                 plot_lines(ctx, lvl);
             }
         } 

@@ -18,7 +18,7 @@ impl Point {
         Self { x, y }
     }
 
-    pub fn distance(&self, other: &Self) -> f32 {
+    pub fn distance(&self, other: &Point) -> f32 {
         ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).powf(0.5) 
     }
 }
