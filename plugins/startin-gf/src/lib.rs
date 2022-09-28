@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::*;
 
 mod utils;
 mod triangulation;
+mod bindings;
 
 #[wasm_bindgen]
 extern "C" {

@@ -3,8 +3,11 @@
  * 
  */ 
 
+use glam::Vec3;
 use wasm_bindgen::{prelude::*, JsObject};
 use startin;
+
+use crate::bindings::{GeoShaderType, MeshBuffer};
 
 #[wasm_bindgen]
 pub struct Triangulation {
@@ -84,21 +87,17 @@ impl Triangulation {
         trs
     }
 
-    pub fn closest_point(&self, px: f64, py: f64) -> usize {
-        let re = self.dt.closest_point(px, py);
-        if re.is_none() {
-            0
-        } else {
-            re.unwrap()
-        }
-    }
+    // pub fn closest_point(&self, px: f64, py: f64) -> usize {
+    //     let re = self.dt.closest_point(px, py);
+        
+    // }
 
-    pub fn remove_vertices_with_index(mut self, ids: Vec<usize>) -> Self {
-        for id in ids {
-            let re = self.dt.remove(id);
-        }
-        self
-    }
+    // pub fn remove_vertices_with_index(mut self, ids: Vec<usize>) -> Self {
+    //     for id in ids {
+    //         let re = self.dt.remove(id);
+    //     }
+    //     self
+    // }
 
     pub fn isolevel(&self, level: f64, levels: Option<Vec<f64>>) -> Option<Vec<f64>> {
 
@@ -170,6 +169,48 @@ impl Triangulation {
         return Some(edges);
     }
 }
+
+impl Triangulation {
+    
+    pub fn bounding_box(&self) -> Option<f32> {
+        None
+        // let hull = self.dt.convex_hull();
+
+        // if hull.len() < 1 {
+        //     return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+        // }
+
+        // let min = DVec3::new();
+
+        // for i in hull {
+        //     i
+        // }
+    }
+}
+
+// impl Renderable for Triangulation 
+#[wasm_bindgen]
+impl Triangulation {
+
+    pub fn gf_has_trait_renderable() -> bool {
+        true
+    }
+
+    pub fn gf_get_shader_type() -> GeoShaderType {
+        GeoShaderType::Mesh
+    }
+
+    pub fn gf_get_buffers(&self) -> JsValue {
+        let buffer = MeshBuffer {
+            verts: self.all_vertices(),
+            cells: self.all_triangles(),
+        };
+        serde_wasm_bindgen::to_value(&buffer).unwrap()
+    }
+}
+
+
+
 
 /**
  * normalize parameter `p` in the domain `a` to `b`;
