@@ -1,11 +1,25 @@
-<script src="raw/a.out.js"></script>
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>cpp test</title>
+</head>
+<body>
+    <script type="module">
+        
+        import init from "./cpp_min.js";
+        
+        let mod = await init();
 
-Module.onRuntimeInitialized = _ => {
-    const c = new Module.Point(3, 4);
-    console.log(c.x); 
-    c.increase();
-    console.log(c.x); 
-    console.log(c.squareCounter()); 
-};
-</script>
+        console.log(mod.add(40, 2)); // 42
+
+        let p1 = new mod.Point(-1,-1);
+        let p2 = new mod.Point(2, 3);
+
+        console.log(p1.distance(p2)); // 5
+
+        p1.delete()
+        p2.delete()
+
+    </script>
+</body>
+</html>

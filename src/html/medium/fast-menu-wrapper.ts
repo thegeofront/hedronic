@@ -14,7 +14,7 @@ class FastMenuWrapper extends WebComponent {
     <!-- <fast-design-system-provider use-defaults> -->
         <section>
             <h1 >Geofront</h1>
-            <p >Modern geoprocessing<p>
+            <p >Modern geoprocessing</p>
         
             <fast-button>Clickme</fast-button>
     
@@ -53,13 +53,13 @@ class FastMenuWrapper extends WebComponent {
                         <fast-menu-item>Menu item 2.1</fast-menu-item>
                         <fast-menu-item>Menu item 2.2</fast-menu-item>
                         <fast-menu-item>Menu item 2.3</fast-menu-item>
-                    </fast-menu>
+                        </fast-menu>
                 </fast-menu-item>
                 <fast-menu-item>
                     Menu item 3
                     <fast-menu slot="submenu">
-                        <fast-menu-item>Menu item 3.1</fast-menu-item>
                         <fast-menu-item>Menu item 3.2</fast-menu-item>
+                        <fast-menu-item>Menu item 3.1</fast-menu-item>
                         <fast-menu-item>Menu item 3.3</fast-menu-item>
                     </fast-menu>
                 </fast-menu-item>

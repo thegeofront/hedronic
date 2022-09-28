@@ -20,6 +20,9 @@ export abstract class WebComponent extends HTMLElement {
         return this.shadowRoot!;
     }
 
+    /**
+     * Append shadow html based opon a template
+     */
     addFrom(template: HTMLTemplateElement, deep=true) {
         this.shadowRoot!.appendChild(template.content.cloneNode(deep));
     }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>cpp test</title>
+    <style>
+        * {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <p></p>
+    <script type="module">
+        
+        import init from "./cpp_min.js";
+        
+        // generate the whitelist
+        let whitelist = [];
+        let whitelist_blacklist = ["Point", "add"];
+        let mod = await init();
+
+        for (let key in mod) {
+            if (whitelist_blacklist.includes(key)) {
+                continue;
+            }
+            whitelist.push(key);
+        }
+
+        console.log(whitelist)
+
+        let a = document.querySelector("p");
+        a.innerText = whitelist.join("\n");
+        // document.body.appendChild()
+
+    </script>
+</body>
+</html>
