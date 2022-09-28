@@ -105,7 +105,7 @@ export class Widget {
     toJson() {
         return {
             name: this.name,
-            state: (this.side == WidgetSide.Input) ? this.saveState : undefined,
+            state: this.saveState, // savestate gets highjacked as general cache... by process and output nodes...
         }
     }
 

@@ -159,7 +159,7 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
         } else if (type === GeoShaderType.Plane) {
             // return Plane.
         } else if (type === GeoShaderType.Mesh) {
-            return Mesh.new(MultiVector3.fromData(buffers.verts), buffers.cells); 
+            return Mesh.new(MultiVector3.fromData(buffers.verts), IntMatrix.fromList(buffers.cells, 3)); 
         } 
         Debug.warn("type", type, "is unknown!");
         return undefined;

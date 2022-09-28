@@ -37,6 +37,7 @@ export class GetWidget extends Widget {
         let outs = state ? GetWidget.makeOuts(state.keys, state.types) : [];
         let widget = new GetWidget("get", WidgetSide.Process, undefined, ins, outs, state);
         widget.saveState = state;
+        widget.bufferState = state;
         return widget;
     }
 
@@ -90,6 +91,9 @@ export class GetWidget extends Widget {
     }
 
     clone() {
+        if (!this.saveState) {
+            return GetWidget.new(undefined);
+        }
         return GetWidget.new(JSON.parse(JSON.stringify(this.saveState)));
     }
 }
