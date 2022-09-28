@@ -14,11 +14,21 @@ export const BasicFunctions = [
     make(cos),
     make(tan),
     make(sqrt),
+    make(distance),
+    make(Point),
 ];
 
 
 function add(a: number, b: number) {
     return a + b;
+}
+
+function distance(a: number, b: number) {
+    return 5;
+}
+
+function Point(in1: number, in2: number) {
+    return 5;
 }
 
 function sub(a: number, b: number) {
