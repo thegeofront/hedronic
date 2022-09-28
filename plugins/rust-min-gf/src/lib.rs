@@ -7,15 +7,15 @@ pub fn add(left: usize, right: usize) -> usize {
 
 #[wasm_bindgen]
 pub struct Point {
-    x: f32,
-    y: f32,
+    pub x: f32,
+    pub y: f32,
 }
 
 #[wasm_bindgen]
 impl Point {
 
-    pub fn new(x: f32, y: f32) -> Self {
-        Self { x, y }
+    pub fn new(x: f32, y: f32) -> Point {
+        Point { x, y }
     }
 
     pub fn distance(&self, other: &Point) -> f32 {

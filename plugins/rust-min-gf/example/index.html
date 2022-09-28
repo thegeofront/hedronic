@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Demo</title>
+</head>
+<body>
+    <script type="module">
+        import init, {add, Point} from  "../pkg/rust_min_gf.js";
+        
+        await init();
+
+        console.log(add(2.0, 40.0)) // result: 42.0
+
+        let p1 = Point.new(-1.0, -1.0);
+        let p2 = Point.new(2.0, 3.0);
+
+        console.log(p1.distance(p2)); // result: 5.0
+
+        p1.free()
+        p2.free()
+    </script>
+</body>
+</html>
