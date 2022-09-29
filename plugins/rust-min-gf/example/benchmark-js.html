@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Js Test</title>
+</head>
+<body>
+    <script type="module">
+
+        function add(a, b) {
+            return a + b;
+        }
+
+        class Point {
+            x; 
+            y;
+
+            constructor(x, y) {}
+
+            static new(x, y) {
+                return new Point( x, y);
+            }
+
+            distance(other) {
+                Math.pow(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2), 0.5);
+            }
+        }
+
+        let acc_distance = 0;
+        let count = 1e6
+        console.time(count + " iterations");
+        for (let i = 0 ; i < count; i++) {     
+            let p1 = Point.new(-1.0, -acc_distance);
+            let p2 = Point.new( 4.0, -acc_distance);
+            acc_distance = add(acc_distance, p1.distance(p2));
+        }
+        console.timeLog(count + " iterations");
+        
+    </script>
+</body>
+</html>

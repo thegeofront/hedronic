@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Rust Test</title>
+</head>
+<body>
+    <script type="module">
+        
+        import init, {add, Point} from  "../pkg/rust_min_gf.js";
+        
+        console.time("init");
+        await init();
+        console.timeLog("init");
+
+        let acc_distance = 0;
+        let count = 1e6
+        console.time(count + " iterations");
+        for (let i = 0 ; i < count; i++) {     
+            let p1 = Point.new(-1.0, -acc_distance);
+            let p2 = Point.new( 4.0, -acc_distance);
+            // acc_distance = add(acc_distance, p1.distance(p2));
+            p1.free()
+            p2.free()
+        }
+        console.timeLog(count + " iterations");
+
+    </script>
+</body>
+</html>
