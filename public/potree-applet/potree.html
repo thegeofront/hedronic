@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Potree Applet</title>
+
+	<link rel="stylesheet" type="text/css" href="./libs/potree/potree.css">
+	<link rel="stylesheet" type="text/css" href="./libs/jquery-ui/jquery-ui.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="./potree_lib/openlayers3/ol.css"> -->
+	<!-- <link rel="stylesheet" type="text/css" href="./potree_lib/spectrum/spectrum.css"> -->
+	<!-- <link rel="stylesheet" type="text/css" href="./potree_lib/jstree/themes/mixed/style.css"> -->
+</head>
+
+<body>
+	<script src="./libs/jquery/jquery-3.1.1.min.js"></script>
+	<script src="./libs/spectrum/spectrum.js"></script>
+	<script src="./libs/jquery-ui/jquery-ui.min.js"></script>
+	<script src="./libs/other/BinaryHeap.js"></script>
+	<script src="./libs/tween/tween.min.js"></script>
+	<script src="./libs/d3/d3.js"></script>
+	<script src="./libs/proj4/proj4.js"></script>
+	<script src="./libs/openlayers3/ol.js"></script>
+	<script src="./libs/i18next/i18next.js"></script>
+	<script src="./libs/jstree/jstree.js"></script>
+	<script src="./libs/potree/potree.js"></script>
+	<script src="./libs/plasio/js/laslaz.js"></script>
+	
+	<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; ">
+		<div id="potree_render_area"></div>
+		<div id="potree_sidebar_container"> </div>
+	</div>	
+
+	<p>
+		<button id="open">OPEN WINDOW</button> <button id="send">SEND MESSAGE</button>
+	</p>
+
+
+	<script type="Module">
+
+		import * as THREE from "./libs/three.js/build/three.module.js";
+
+		const domain = window.location.toString().replace("/potree-app/potree.html", "");
+
+		const POTREE = Potree; // signal that we are using a magic, global object
+
+		const HOST_APP = undefined;
+
+		function main() {
+
+			window.potree = POTREE;
+			window.viewer = new POTREE.Viewer(document.getElementById("potree_render_area"));
+			viewer.setEDLEnabled(true);
+			viewer.setFOV(60);
+			viewer.setPointBudget(1_000_000);
+			viewer.loadSettingsFromURL();
+
+			viewer.setControls(viewer.earthControls);
+			viewer.setDescription("This applet will return all visualized points. To limit this, clip the area using potree's clipping tools");
+
+			viewer.loadGUI(() => {
+				viewer.setLanguage('en');
+				// $("#menu_appearance").next().show();
+				// viewer.toggleSidebar();
+			});
+		}
+
+		function extractPointCloudDataFromOct(pointcloud, dict={}, depth=0) {
+			for (let child of pointcloud.children) {
+				// console.log(child.name);
+				console.log(child)
+
+				let data = child.geometry.attributes.position.array;
+				let position = child.position;
+				let boundingBox = child.geometry.boundingBox;
+
+				dict[child.name] = {
+					data,
+					position,
+					boundingBox,
+				};
+				dict = extractPointCloudDataFromOct(child, dict, depth + 1);
+			}
+			return dict;
+		}
+
+		function extractClippedPoints() {
+
+			// find pointclouds
+			let pc = window.viewer.scene.pointclouds[0]
+
+			// NOTE: points might need to be moved!
+			// console.log(THREE)
+			// console.log(pc.position);
+
+			let oct = extractPointCloudDataFromOct(pc);
+			// console.log(oct);
+
+			// TODO clip
+			let volumes = window.viewer.scene.volumes;
+			for (let volume of volumes) {
+				let boundingbox = volume // dat is 1
+				// console.log(boundingbox);	
+			}
+			return oct;
+		}
+		
+		function loadPointCloud(path, name) {
+			POTREE.loadPointCloud(path, name, function(e){
+				viewer.scene.addPointCloud(e.pointcloud);
+				
+				let material = e.pointcloud.material;
+				material.size = 0.8;
+				material.minSize = 2.0;
+				material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+				material.shape = Potree.PointShape.CIRCLE;
+				material.activeAttributeName = "elevation";
+				material.elevationRange = [-1, 65];
+
+				e.pointcloud.position.x += 3;
+				e.pointcloud.position.y -= 3;
+				e.pointcloud.position.z += 4;
+				
+				viewer.fitToScreen();
+			});
+		}
+
+		function processMessage(message, source) {
+			if (message.type == "LoadPointCloud") {
+				let path = message.content;
+				let name = message.name;
+				loadPointCloud(path, name);
+				console.log("loading point cloud with path: {}...", message.path);
+			} else if (message.type == "GetPoints") {
+				let points = extractClippedPoints();
+				source.postMessage(points, domain);
+			} else {
+				console.log("did not understand message...");
+				source.postMessage("potree did not understand this message", domain);
+			}
+		}
+
+		function getPointsInBox(boxNode){
+
+			if (!this.sceneNode){
+				return null;
+			}
+
+			let buffer = this.geometryNode.buffer;
+
+			let posOffset = buffer.offset("position");
+			let stride = buffer.stride;
+			let view = new DataView(buffer.data);
+
+			let worldToBox = boxNode.matrixWorld.clone().invert();
+			let objectToBox = new THREE.Matrix4().multiplyMatrices(worldToBox, this.sceneNode.matrixWorld);
+
+			let inBox = [];
+
+			let pos = new Vector4();
+			for (let i = 0; i < buffer.numElements; i++){
+				let x = view.getFloat32(i * stride + posOffset + 0, true);
+				let y = view.getFloat32(i * stride + posOffset + 4, true);
+				let z = view.getFloat32(i * stride + posOffset + 8, true);
+
+				pos.set(x, y, z, 1);
+				pos.applyMatrix4(objectToBox);
+
+				if (-0.5 < pos.x && pos.x < 0.5 && 
+					-0.5 < pos.y && pos.y < 0.5 && 
+					-0.5 < pos.z && pos.z < 0.5 
+				) {	
+					pos.set(x, y, z, 1).applyMatrix4(this.sceneNode.matrixWorld);
+					inBox.push(new Vector3(pos.x, pos.y, pos.z));
+				}
+			}
+
+			return inBox;
+		}
+
+
+		// establish connection with host app
+		window.addEventListener('message', function(e) {
+			console.log("processing message from main app");
+			var origin = e.origin;
+			processMessage(e.data, e.source)
+		}, false);
+
+		window.addEventListener('keypress', (e) => {
+            if (e.key != ' ') return;
+            extractClippedPoints();
+        })
+
+		main();
+		// loadPointCloud("http://ahn2.pointclouds.nl/potree_data/tile_all/cloud.js", "ahn");
+
+	</script>
+  </body>
+</html>
