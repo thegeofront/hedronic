@@ -37,6 +37,7 @@ import { FileLoadBufferWidget } from "./widgets/file/file-load-buffer-widget";
 import { FileFetchBufferWidget } from "./widgets/file/file-fetch-buffer-widget";
 import { Functions as ConverterFunctions } from "./functions/converters";
 import { JsonFunctions } from "./functions/json";
+import { PotreeWidget } from "./widgets/applet/inspect-widget";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -207,6 +208,7 @@ export class STD {
 
 export function getDefaultWidgets() {
     return [
+        PotreeWidget.new(),
         ButtonWidget.new(false),
         InputWidget.new("hello world"),
         SliderWidget.new(5),

@@ -1,5 +1,5 @@
 {
-    "name": "geon-vpl",
+    "name": "geofront",
     "version": "0.0.1",
     "description": "",
     "main": "index.js",
@@ -16,7 +16,8 @@
         "build-production-and-publish": "webpack --mode production --env=prod && cd ../www && cp -r ../public . && git add . && git commit -m 'auto-update' && git push",
         "build-dev": "webpack --env=dev",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "watch": "webpack --watch --mode development"
+        "watch": "webpack --watch --mode development",
+        "start": "npm run watch"
     },
     "keywords": [
         "geon",
