@@ -1,6 +1,6 @@
-use crate::vec2;
+use crate::Vec2;
 
 pub struct BoundingRect {
-    min: vec2,
-    max: vec2,
+    min: Vec2,
+    max: Vec2,
 }

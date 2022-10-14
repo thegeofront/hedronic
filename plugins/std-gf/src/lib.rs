@@ -13,9 +13,11 @@ pub use glam::{DVec3 as Vec3};
 mod algorithms;
 mod basic;
 mod data;
+mod util;
 
 pub use crate::data::*;
 pub use crate::basic::*;
+pub use crate::util::*;
 
 mod wasm;
 
