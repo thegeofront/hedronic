@@ -47,11 +47,14 @@ export class GetWidget extends Widget {
 
         // if per chance, this is a plugin datatype, convert it
         // TODO: we should make cable converters which automatically deal with all the types & conversions...
-        if (PluginConversion.isConvertableTo(obj, GeoType.Json)) {
-            obj = PluginConversion.tryConvertTo(obj, GeoType.Json);  
-        } 
+        // if (PluginConversion.isConvertableTo(obj, GeoType.Json)) {
+        //     obj = PluginConversion.tryConvertTo(obj, GeoType.Json);  
+        // } 
 
         this.buffer(obj);
+        if (this.saveState.keys.length == 1) {
+            return this.saveState.keys.map(key => obj[key])[0];
+        }
         return this.saveState.keys.map(key => obj[key]);
     }
 
