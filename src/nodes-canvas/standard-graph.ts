@@ -1,28 +1,32 @@
 export const STANDARD_GRAPH = {
   "meta": {
     "name": "graph",
-    "date": 1662549796555
+    "date": 1665765961220
   },
   "dependencies": {
     "std_gf": {
-      "url": "./plugins/std"
+      "filename": "std_gf",
+      "url": "./plugins/std/"
     },
     "startin_gf": {
-      "url": "./plugins/startin"
+      "filename": "startin_gf",
+      "url": "./plugins/startin/"
     },
     "copc_gf": {
-      "url": "./plugins/copc"
+      "filename": "copc_gf",
+      "url": "./plugins/copc/"
     },
     "rust-min_gf": {
-      "url": "./plugins/rust-min"
+      "filename": "rust_min_gf",
+      "url": "./plugins/rust-min/"
     }
   },
   "graph": {
     "76ddb65a-c329": {
       "hash": "76ddb65a-c329",
       "position": {
-        "x": 5,
-        "y": 12
+        "x": 9,
+        "y": 14
       },
       "type": 0,
       "process": {
@@ -61,8 +65,8 @@ export const STANDARD_GRAPH = {
     "a3861169-ab7e": {
       "hash": "a3861169-ab7e",
       "position": {
-        "x": 1,
-        "y": 12
+        "x": 4,
+        "y": 14
       },
       "type": 1,
       "process": {
@@ -83,8 +87,8 @@ export const STANDARD_GRAPH = {
     "3f05d5da-33b2": {
       "hash": "3f05d5da-33b2",
       "position": {
-        "x": 1,
-        "y": 10
+        "x": 4,
+        "y": 11
       },
       "type": 1,
       "process": {
@@ -105,8 +109,8 @@ export const STANDARD_GRAPH = {
     "11c65996-071e": {
       "hash": "11c65996-071e",
       "position": {
-        "x": 13,
-        "y": 8
+        "x": 15,
+        "y": 14
       },
       "type": 0,
       "process": {
@@ -146,8 +150,12 @@ export const STANDARD_GRAPH = {
       "outputs": [
         [
           {
-            "node": "1dfc7764-22e7",
+            "node": "b7c2ce9f-37fe",
             "index": -1
+          },
+          {
+            "node": "6b51d652-a511",
+            "index": -2
           }
         ]
       ],
@@ -156,8 +164,8 @@ export const STANDARD_GRAPH = {
     "0b1667d0-fc1e": {
       "hash": "0b1667d0-fc1e",
       "position": {
-        "x": 6,
-        "y": 15
+        "x": 4,
+        "y": 16
       },
       "type": 1,
       "process": {
@@ -178,8 +186,8 @@ export const STANDARD_GRAPH = {
     "c9a238b6-5914": {
       "hash": "c9a238b6-5914",
       "position": {
-        "x": 5,
-        "y": 8
+        "x": 9,
+        "y": 9
       },
       "type": 0,
       "process": {
@@ -229,8 +237,8 @@ export const STANDARD_GRAPH = {
     "800c3410-5424": {
       "hash": "800c3410-5424",
       "position": {
-        "x": 1,
-        "y": 9
+        "x": 4,
+        "y": 10
       },
       "type": 1,
       "process": {
@@ -251,8 +259,8 @@ export const STANDARD_GRAPH = {
     "d1d284e2-24bc": {
       "hash": "d1d284e2-24bc",
       "position": {
-        "x": 1,
-        "y": 8
+        "x": 4,
+        "y": 9
       },
       "type": 1,
       "process": {
@@ -265,128 +273,6 @@ export const STANDARD_GRAPH = {
           {
             "node": "c9a238b6-5914",
             "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "1dfc7764-22e7": {
-      "hash": "1dfc7764-22e7",
-      "position": {
-        "x": 13,
-        "y": 12
-      },
-      "type": 0,
-      "process": {
-        "name": "MultiPoint",
-        "path": [
-          "std",
-          "Multi",
-          "Multi Point",
-          "MultiPoint"
-        ],
-        "inCount": 1,
-        "outCount": 1,
-        "ins": [
-          "List<>"
-        ],
-        "outs": [
-          "Object {}"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "11c65996-071e",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "2a280810-f1a6",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "2a280810-f1a6": {
-      "hash": "2a280810-f1a6",
-      "position": {
-        "x": 13,
-        "y": 15
-      },
-      "type": 0,
-      "process": {
-        "name": "Delaunay",
-        "path": [
-          "std",
-          "3D",
-          "Mesh",
-          "Delaunay"
-        ],
-        "inCount": 1,
-        "outCount": 1,
-        "ins": [
-          "List<>"
-        ],
-        "outs": [
-          "Object {}"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "1dfc7764-22e7",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "ea1b0552-d74e",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
-    "ea1b0552-d74e": {
-      "hash": "ea1b0552-d74e",
-      "position": {
-        "x": 21,
-        "y": 8
-      },
-      "type": 1,
-      "process": {
-        "name": "get",
-        "state": {
-          "keys": [
-            "verts",
-            "faces"
-          ],
-          "types": [
-            7,
-            5
-          ]
-        }
-      },
-      "inputs": [
-        {
-          "node": "2a280810-f1a6",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "20824799-e446",
-            "index": -1
-          }
-        ],
-        [
-          {
-            "node": "598b049f-c6d2",
-            "index": -2
           }
         ]
       ],
@@ -416,7 +302,7 @@ export const STANDARD_GRAPH = {
       },
       "inputs": [
         {
-          "node": "20824799-e446",
+          "node": "11c65996-071e",
           "index": 1
         }
       ],
@@ -437,54 +323,10 @@ export const STANDARD_GRAPH = {
       ],
       "looping": true
     },
-    "20824799-e446": {
-      "hash": "20824799-e446",
-      "position": {
-        "x": 21,
-        "y": 11
-      },
-      "type": 0,
-      "process": {
-        "name": "iterate",
-        "path": [
-          "std",
-          "Multi",
-          "Multi Point",
-          "iterate"
-        ],
-        "inCount": 1,
-        "outCount": 1,
-        "ins": [
-          "Object {}"
-        ],
-        "outs": [
-          "List<>"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "ea1b0552-d74e",
-          "index": 1
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "b7c2ce9f-37fe",
-            "index": -1
-          },
-          {
-            "node": "6b51d652-a511",
-            "index": -2
-          }
-        ]
-      ],
-      "looping": false
-    },
     "2587d4d7-a555": {
       "hash": "2587d4d7-a555",
       "position": {
-        "x": 13,
+        "x": 9,
         "y": 18
       },
       "type": 0,
@@ -544,7 +386,7 @@ export const STANDARD_GRAPH = {
     "6b51d652-a511": {
       "hash": "6b51d652-a511",
       "position": {
-        "x": 21,
+        "x": 15,
         "y": 18
       },
       "type": 0,
@@ -572,7 +414,7 @@ export const STANDARD_GRAPH = {
           "index": 1
         },
         {
-          "node": "20824799-e446",
+          "node": "11c65996-071e",
           "index": 1
         }
       ],
@@ -589,7 +431,7 @@ export const STANDARD_GRAPH = {
     "657a09b4-b59d": {
       "hash": "657a09b4-b59d",
       "position": {
-        "x": 30,
+        "x": 27,
         "y": 14
       },
       "type": 0,
@@ -636,56 +478,11 @@ export const STANDARD_GRAPH = {
       ],
       "looping": true
     },
-    "598b049f-c6d2": {
-      "hash": "598b049f-c6d2",
-      "position": {
-        "x": 30,
-        "y": 8
-      },
-      "type": 0,
-      "process": {
-        "name": "Mesh",
-        "path": [
-          "std",
-          "3D",
-          "Mesh",
-          "Mesh"
-        ],
-        "inCount": 2,
-        "outCount": 1,
-        "ins": [
-          "Object {}",
-          "List<>"
-        ],
-        "outs": [
-          "Object {}"
-        ]
-      },
-      "inputs": [
-        {
-          "node": "3d0eef34-60ae",
-          "index": 1
-        },
-        {
-          "node": "ea1b0552-d74e",
-          "index": 2
-        }
-      ],
-      "outputs": [
-        [
-          {
-            "node": "567d4443-7ba7",
-            "index": -1
-          }
-        ]
-      ],
-      "looping": false
-    },
     "3d0eef34-60ae": {
       "hash": "3d0eef34-60ae",
       "position": {
-        "x": 30,
-        "y": 11
+        "x": 27,
+        "y": 18
       },
       "type": 0,
       "process": {
@@ -714,7 +511,7 @@ export const STANDARD_GRAPH = {
       "outputs": [
         [
           {
-            "node": "598b049f-c6d2",
+            "node": "fedb1d44-f4eb",
             "index": -1
           }
         ]
@@ -724,13 +521,13 @@ export const STANDARD_GRAPH = {
     "575d6ba1-1ffd": {
       "hash": "575d6ba1-1ffd",
       "position": {
-        "x": 9,
+        "x": 4,
         "y": 18
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 0.76
+        "state": 0.61
       },
       "inputs": [],
       "outputs": [
@@ -746,13 +543,13 @@ export const STANDARD_GRAPH = {
     "1dfcbeeb-0f8f": {
       "hash": "1dfcbeeb-0f8f",
       "position": {
-        "x": 9,
+        "x": 4,
         "y": 19
       },
       "type": 1,
       "process": {
         "name": "slider",
-        "state": 0.46
+        "state": 0.47000000000000003
       },
       "inputs": [],
       "outputs": [
@@ -768,7 +565,7 @@ export const STANDARD_GRAPH = {
     "ca2df10e-ec6c": {
       "hash": "ca2df10e-ec6c",
       "position": {
-        "x": 9,
+        "x": 4,
         "y": 20
       },
       "type": 1,
@@ -790,7 +587,7 @@ export const STANDARD_GRAPH = {
     "ef6409fc-5a1a": {
       "hash": "ef6409fc-5a1a",
       "position": {
-        "x": 9,
+        "x": 4,
         "y": 21
       },
       "type": 1,
@@ -812,7 +609,7 @@ export const STANDARD_GRAPH = {
     "ca4657a4-cc34": {
       "hash": "ca4657a4-cc34",
       "position": {
-        "x": 9,
+        "x": 4,
         "y": 22
       },
       "type": 1,
@@ -834,7 +631,7 @@ export const STANDARD_GRAPH = {
     "3d41cb3f-8f60": {
       "hash": "3d41cb3f-8f60",
       "position": {
-        "x": 29,
+        "x": 19,
         "y": 21
       },
       "type": 1,
@@ -856,7 +653,7 @@ export const STANDARD_GRAPH = {
     "8c111aa8-a244": {
       "hash": "8c111aa8-a244",
       "position": {
-        "x": 30,
+        "x": 21,
         "y": 18
       },
       "type": 0,
@@ -898,34 +695,11 @@ export const STANDARD_GRAPH = {
       ],
       "looping": true
     },
-    "567d4443-7ba7": {
-      "hash": "567d4443-7ba7",
-      "position": {
-        "x": 37,
-        "y": 8
-      },
-      "type": 1,
-      "process": {
-        "name": "view"
-      },
-      "inputs": [
-        {
-          "node": "598b049f-c6d2",
-          "index": 1
-        },
-        {
-          "node": "3da838e0-3a0e",
-          "index": 1
-        }
-      ],
-      "outputs": [],
-      "looping": false
-    },
     "3da838e0-3a0e": {
       "hash": "3da838e0-3a0e",
       "position": {
-        "x": 38,
-        "y": 11
+        "x": 40,
+        "y": 19
       },
       "type": 1,
       "process": {
@@ -936,7 +710,226 @@ export const STANDARD_GRAPH = {
       "outputs": [
         [
           {
-            "node": "567d4443-7ba7",
+            "node": "50a399fe-83bb",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "6a8a9c8a-3e9a": {
+      "hash": "6a8a9c8a-3e9a",
+      "position": {
+        "x": 35,
+        "y": 16
+      },
+      "type": 0,
+      "process": {
+        "name": "new_from_vec",
+        "path": [
+          "startin_gf",
+          "Triangulation",
+          "new_from_vec"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "Ref->Float64Array"
+        ],
+        "outs": [
+          "Ref->Triangulation"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "fedb1d44-f4eb",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "50a399fe-83bb",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "fedb1d44-f4eb": {
+      "hash": "fedb1d44-f4eb",
+      "position": {
+        "x": 35,
+        "y": 14
+      },
+      "type": 1,
+      "process": {
+        "name": "get",
+        "state": {
+          "keys": [
+            "data"
+          ],
+          "types": [
+            5
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "node": "3d0eef34-60ae",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "6a8a9c8a-3e9a",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "50a399fe-83bb": {
+      "hash": "50a399fe-83bb",
+      "position": {
+        "x": 40,
+        "y": 16
+      },
+      "type": 1,
+      "process": {
+        "name": "view"
+      },
+      "inputs": [
+        {
+          "node": "6a8a9c8a-3e9a",
+          "index": 1
+        },
+        {
+          "node": "3da838e0-3a0e",
+          "index": 1
+        }
+      ],
+      "outputs": [],
+      "looping": false
+    },
+    "7e4fbcfb-a6db": {
+      "hash": "7e4fbcfb-a6db",
+      "position": {
+        "x": 21,
+        "y": 7
+      },
+      "type": 1,
+      "process": {
+        "name": "Load From Potree",
+        "state": "http://ahn2.pointclouds.nl/potree_data/tile_all/cloud.js"
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "1b80b0cf-790b",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "26f11582-535c": {
+      "hash": "26f11582-535c",
+      "position": {
+        "x": 27,
+        "y": 10
+      },
+      "type": 0,
+      "process": {
+        "name": "MultiPoint from array",
+        "path": [
+          "std",
+          "Multi",
+          "Multi Point",
+          "MultiPoint from array"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "List<>"
+        ],
+        "outs": [
+          "Object {}"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "1b80b0cf-790b",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        []
+      ],
+      "looping": false
+    },
+    "1b80b0cf-790b": {
+      "hash": "1b80b0cf-790b",
+      "position": {
+        "x": 27,
+        "y": 7
+      },
+      "type": 0,
+      "process": {
+        "name": "scale_array",
+        "path": [
+          "copc_gf",
+          "DumbHelpers",
+          "scale_array"
+        ],
+        "inCount": 2,
+        "outCount": 1,
+        "ins": [
+          "Ref->Float64Array",
+          "number"
+        ],
+        "outs": [
+          "Ref->Float64Array"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "7e4fbcfb-a6db",
+          "index": 1
+        },
+        {
+          "node": "7ff0f556-80c1",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "26f11582-535c",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "7ff0f556-80c1": {
+      "hash": "7ff0f556-80c1",
+      "position": {
+        "x": 21,
+        "y": 11
+      },
+      "type": 1,
+      "process": {
+        "name": "slider",
+        "state": 10
+      },
+      "inputs": [],
+      "outputs": [
+        [
+          {
+            "node": "1b80b0cf-790b",
             "index": -2
           }
         ]
