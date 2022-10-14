@@ -62,3 +62,27 @@ We require a clear distinction between:
 - Collection type (Item, List, Object)
 - Construct type (Point, Color, Polygon, Mesh, Vector, MultiVector) ( Collections filled with labelled Primitives or other Collections ) -> Meaning just an object
 
+
+
+
+
+
+
+-------------------------------
+
+POST P4, PRE P5
+
+TODO:
+X - schrijf officiele reactie naar ken & stelios
+X - maak scoped plan voor jezelf 
+X - voeg potree toe aan geofront 
+  - maak de filter stap in orde
+  - save to obj
+
+- fix save / load -> werkt blijkbaar weer ????
+- make required rust std tools -> voorlopig niet nodig??? 
+- join the pointcloud to one data structure
+- do the pointcloud filtering on -> 
+  the geofront side of things using geon engine
+
+- 

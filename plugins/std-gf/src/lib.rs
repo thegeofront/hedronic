@@ -2,16 +2,14 @@
 
 use wasm_bindgen::prelude::*;
 
-// these things are so common and 'basic' in a sense, that I think the lowercase stuff is justified
-pub use glam::{DAffine2 as aff2};
-pub use glam::{DAffine3 as aff3};
-pub use glam::{DMat3 as mat3};
-pub use glam::{DMat4 as mat4};
-pub use glam::{DQuat as quad};
-pub use glam::{DVec2 as vec2};
-pub use glam::{DVec3 as vec3};
+pub use glam::{DAffine2 as Aff2};
+pub use glam::{DAffine3 as Aff3};
+pub use glam::{DMat3 as Mat3};
+pub use glam::{DMat4 as Mat4};
+pub use glam::{DQuat as Quad};
+pub use glam::{DVec2 as Vec2};
+pub use glam::{DVec3 as Vec3};
 
-// all exports 
 mod algorithms;
 mod basic;
 mod data;
@@ -19,7 +17,6 @@ mod data;
 pub use crate::data::*;
 pub use crate::basic::*;
 
-// the setup for wasm loading
 mod wasm;
 
 #[wasm_bindgen]

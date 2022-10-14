@@ -70,7 +70,7 @@
 		function extractPointCloudDataFromOct(pointcloud, dict={}, depth=0) {
 			for (let child of pointcloud.children) {
 				// console.log(child.name);
-				console.log(child)
+				// console.log(child)
 
 				let data = child.geometry.attributes.position.array;
 				let position = child.position;
@@ -86,6 +86,35 @@
 			return dict;
 		}
 
+		// turn oct dataset into a flat data structure
+		function flatFromOct(oct) {
+			
+			// get total
+			let total = 0;
+			for (let key in oct) {
+				total += oct[key].data.length;
+			}
+
+			// join datasets
+			let totalData = new Float32Array(total);
+			let totalIndex = 0;
+
+			for (let key in oct) {
+				let subset = oct[key].data;
+				let offset = [
+					oct[key].position.x, 
+					oct[key].position.y, 
+					oct[key].position.z
+				];
+				for (let i = 0; i < subset.length; i++) {
+					let j = i % 3;
+					totalData[totalIndex] = subset[i] + offset[j];
+					totalIndex += 1;
+				}
+			}
+			return totalData;
+		}
+
 		function extractClippedPoints() {
 
 			// find pointclouds
@@ -96,15 +125,19 @@
 			// console.log(pc.position);
 
 			let oct = extractPointCloudDataFromOct(pc);
+			let flat = flatFromOct(oct);
+			console.log(flat);
 			// console.log(oct);
 
 			// TODO clip
+			let clippers = [];
 			let volumes = window.viewer.scene.volumes;
 			for (let volume of volumes) {
 				let boundingbox = volume // dat is 1
-				// console.log(boundingbox);	
+				// console.log(boundingbox);
+				console.log(boundingbox.matrixWorld.clone().invert());	
 			}
-			return oct;
+			return flat;
 		}
 		
 		function loadPointCloud(path, name) {

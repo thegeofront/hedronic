@@ -174,7 +174,6 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
     if (typename == "Line" || typename == "Line3") 
         return MultiLine.fromLines(MultiVector3.fromData([item.a.x, item.a.y, item.a.z, item.b.x, item.b.y, item.b.z]));
 
-
     // STD
     if (typename.includes("Mesh")) {
         return Mesh.new(
@@ -182,6 +181,9 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
             IntMatrix.fromList(item.faces, 3)
         );
     }
+
+    if (item["data"] !== undefined) 
+        return MultiVector3.fromData(item.data); 
 
     
     // second, judge based on trait. (geofront type, just a way to flag a json)
@@ -192,7 +194,6 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
 
     if (trait == "vector-2") 
         return MultiVector2.fromData([item.x, item.y]).to3D()
-    
 
     if (trait == "mesh-2") {
         const {vertices, triangles} = item;
@@ -219,6 +220,9 @@ function tryConvert(item: any, style?: any) : RenderableUnit | RenderableUnit[] 
 
     if (trait == "mesh") 
         return Mesh.new(MultiVector3.fromData(item.vertices), item.triangles); 
+
+
+
 
     return undefined;
 }
