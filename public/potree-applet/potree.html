@@ -87,7 +87,7 @@
 		}
 
 		// turn oct dataset into a flat data structure
-		function flatFromOct(oct) {
+		function flatFromOct(oct, totalOffset=[0,0,0]) {
 			
 			// get total
 			let total = 0;
@@ -108,14 +108,14 @@
 				];
 				for (let i = 0; i < subset.length; i++) {
 					let j = i % 3;
-					totalData[totalIndex] = subset[i] + offset[j];
+					totalData[totalIndex] = subset[i] + offset[j] + totalOffset[j];
 					totalIndex += 1;
 				}
 			}
 			return totalData;
 		}
 
-		function extractClippedPoints() {
+		function extractClippedPoints(reorient=true) {
 
 			// find pointclouds
 			let pc = window.viewer.scene.pointclouds[0]
@@ -125,19 +125,41 @@
 			// console.log(pc.position);
 
 			let oct = extractPointCloudDataFromOct(pc);
-			let flat = flatFromOct(oct);
-			console.log(flat);
-			// console.log(oct);
+			let flat = flatFromOct(oct, [pc.position.x, pc.position.y, pc.position.z]);
+		
+			// clipping
+			if (window.viewer.scene.volumes.length == 0) {
+				return flat;
+			}
 
 			// TODO clip
-			let clippers = [];
-			let volumes = window.viewer.scene.volumes;
-			for (let volume of volumes) {
+			let someMatrix; // = pc.matrixWorld.clone().invert();
+			for (let volume of window.viewer.scene.volumes) {
 				let boundingbox = volume // dat is 1
-				// console.log(boundingbox);
-				console.log(boundingbox.matrixWorld.clone().invert());	
+				someMatrix = boundingbox.matrixWorld.clone().invert();
 			}
-			return flat;
+
+			let pos = new THREE.Vector3(0,0,0);
+			let culled = [];
+			for (let i = 0 ; i < flat.length; i+=3) {
+				pos.set(flat[i], flat[i+1], flat[i+2]);
+				pos = pos.applyMatrix4(someMatrix);
+				
+				if (-0.5 < pos.x && pos.x < 0.5 && 
+					-0.5 < pos.y && pos.y < 0.5 && 
+					-0.5 < pos.z && pos.z < 0.5 
+				) {	
+					// console.log("jup!");
+					if (reorient) {
+						culled.push(pos.x, pos.y, pos.z);
+					} else {
+						culled.push(flat[i], flat[i+1], flat[i+2]);
+					}
+				}
+			}
+
+			console.log("finished culling");
+			return culled;
 		}
 		
 		function loadPointCloud(path, name) {
