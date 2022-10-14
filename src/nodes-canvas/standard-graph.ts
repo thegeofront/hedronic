@@ -1,7 +1,7 @@
-export const STANDARD_GRAPH = {
+export const STANDARD_GRAPH =  {
   "meta": {
-    "name": "graph",
-    "date": 1665765961220
+    "name": "graph with obj downloader",
+    "date": 1665779887218
   },
   "dependencies": {
     "std_gf": {
@@ -698,8 +698,8 @@ export const STANDARD_GRAPH = {
     "3da838e0-3a0e": {
       "hash": "3da838e0-3a0e",
       "position": {
-        "x": 40,
-        "y": 19
+        "x": 43,
+        "y": 15
       },
       "type": 1,
       "process": {
@@ -751,6 +751,14 @@ export const STANDARD_GRAPH = {
           {
             "node": "50a399fe-83bb",
             "index": -1
+          },
+          {
+            "node": "01e86d59-763f",
+            "index": -1
+          },
+          {
+            "node": "11883165-2f45",
+            "index": -1
           }
         ]
       ],
@@ -793,8 +801,8 @@ export const STANDARD_GRAPH = {
     "50a399fe-83bb": {
       "hash": "50a399fe-83bb",
       "position": {
-        "x": 40,
-        "y": 16
+        "x": 47,
+        "y": 14
       },
       "type": 1,
       "process": {
@@ -934,6 +942,148 @@ export const STANDARD_GRAPH = {
           }
         ]
       ],
+      "looping": false
+    },
+    "11883165-2f45": {
+      "hash": "11883165-2f45",
+      "position": {
+        "x": 41,
+        "y": 17
+      },
+      "type": 0,
+      "process": {
+        "name": "all_vertices",
+        "path": [
+          "startin_gf",
+          "Triangulation",
+          "all_vertices"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "Ref->Triangulation"
+        ],
+        "outs": [
+          "Ref->Float64Array"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "6a8a9c8a-3e9a",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "b130d591-5e82",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "01e86d59-763f": {
+      "hash": "01e86d59-763f",
+      "position": {
+        "x": 41,
+        "y": 20
+      },
+      "type": 0,
+      "process": {
+        "name": "all_triangles",
+        "path": [
+          "startin_gf",
+          "Triangulation",
+          "all_triangles"
+        ],
+        "inCount": 1,
+        "outCount": 1,
+        "ins": [
+          "Ref->Triangulation"
+        ],
+        "outs": [
+          "Ref->Uint32Array"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "6a8a9c8a-3e9a",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "b130d591-5e82",
+            "index": -2
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "b130d591-5e82": {
+      "hash": "b130d591-5e82",
+      "position": {
+        "x": 47,
+        "y": 17
+      },
+      "type": 0,
+      "process": {
+        "name": "write_obj",
+        "path": [
+          "std_gf",
+          "Misc",
+          "write_obj"
+        ],
+        "inCount": 2,
+        "outCount": 1,
+        "ins": [
+          "Ref->Float64Array",
+          "Ref->Uint32Array"
+        ],
+        "outs": [
+          "string"
+        ]
+      },
+      "inputs": [
+        {
+          "node": "11883165-2f45",
+          "index": 1
+        },
+        {
+          "node": "01e86d59-763f",
+          "index": 1
+        }
+      ],
+      "outputs": [
+        [
+          {
+            "node": "81c50fc7-49b9",
+            "index": -1
+          }
+        ]
+      ],
+      "looping": false
+    },
+    "81c50fc7-49b9": {
+      "hash": "81c50fc7-49b9",
+      "position": {
+        "x": 53,
+        "y": 17
+      },
+      "type": 1,
+      "process": {
+        "name": "file save string",
+        "state": "",
+      },
+      "inputs": [
+        {
+          "node": "b130d591-5e82",
+          "index": 1
+        }
+      ],
+      "outputs": [],
       "looping": false
     }
   }

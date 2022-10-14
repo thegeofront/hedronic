@@ -14,7 +14,7 @@ import { GetWidget } from "./widgets/data/get-widget";
 import { ListSetWidget } from "./widgets/data/list-widget";
 import { SetWidget } from "./widgets/data/set-widget";
 import { FileLoadStringWidget } from "./widgets/file/file-load-string-widget";
-import { FileSaveWidget } from "./widgets/file/file-save-widget";
+import { FileSaveBlobWidget } from "./widgets/file/file-save-blob-widget";
 import { ImageWidget } from "./widgets/image-widget";
 import { InputWidget } from "./widgets/input-widget";
 import { InspectWidget } from "./widgets/inspect-widget";
@@ -38,6 +38,7 @@ import { FileFetchBufferWidget } from "./widgets/file/file-fetch-buffer-widget";
 import { Functions as ConverterFunctions } from "./functions/converters";
 import { JsonFunctions } from "./functions/json";
 import { PotreeWidget } from "./widgets/applet/inspect-widget";
+import { FileSaveStringWidget } from "./widgets/file/file-save-string-widget";
 
 /**
  * NOTE: this WHOLE folder exist just in order to create this
@@ -216,7 +217,8 @@ export function getDefaultWidgets() {
         ConsoleWidget.new(false),
         ImageWidget.new("<image>"),
         ViewWidget.new(false),
-        FileSaveWidget.new(false),
+        FileSaveStringWidget.new(false),
+        FileSaveBlobWidget.new(false),
         FileLoadStringWidget.new(false),
         FileLoadBufferWidget.new(false),
         FileFetchBufferWidget.new(false),

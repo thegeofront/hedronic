@@ -5,9 +5,9 @@ import { JsType } from "../../../modules/types/type";
 import { State } from "../../../nodes-canvas/model/state";
 import { Widget, WidgetSide } from "../../../nodes-canvas/model/widget";
 
-export class FileSaveWidget extends Widget {
+export class FileSaveStringWidget extends Widget {
 
-    filename = "my-result.txt";
+    filename = "my-result.obj";
     
     get filecontent() : string | undefined {
         return this.saveState as string || undefined;
@@ -15,7 +15,7 @@ export class FileSaveWidget extends Widget {
 
     static new(state: State) {
         let ins = [TypeShim.new("content", JsType.string)]
-        return new FileSaveWidget("file save", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
+        return new FileSaveStringWidget("file save string", WidgetSide.Output, Vector2.new(2,2), ins, [], state);
     }
 
     async run(...args: State[]) {
@@ -24,7 +24,7 @@ export class FileSaveWidget extends Widget {
     }
 
     clone() {
-        return FileSaveWidget.new(this.saveState);
+        return FileSaveStringWidget.new(this.saveState);
     }
 
     makeMenu(): HTMLElement[] {
